@@ -280,18 +280,19 @@
                         <!-- RIGHT COLUMN: PET LISTINGS GRID & CONTROLS -->
                         <div class="listings-main-area">
                             
-                            <!-- Section Title -->
-                            <div class="listings-title-block">
-                                <h2 class="listings-section-title">Pet Listings</h2>
-                                <p class="listings-subtitle">Showing matching pet listings</p>
-                            </div>
-
-                            <!-- Header Controls Row (Mobile Filter Button + View & Sort Controls) -->
-                            <div class="listings-controls-header">
-                                <button type="button" class="mobile-filter-trigger" id="mobileFilterToggleBtn">
-                                    <i class="fas fa-sliders-h"></i>
-                                    <span>Filters</span>
-                                </button>
+                            <div class="listings-header-wrapper">
+                                <!-- Section Title -->
+                                <div class="listings-title-block">
+                                    <h2 class="listings-section-title">Pet Listings</h2>
+                                    <p class="listings-subtitle">Showing matching pet listings</p>
+                                </div>
+    
+                                <!-- Header Controls Row (Mobile Filter Button + View & Sort Controls) -->
+                                <div class="listings-controls-header">
+                                    <button type="button" class="mobile-filter-trigger" id="mobileFilterToggleBtn">
+                                        <i class="fas fa-sliders-h"></i>
+                                        <span>Filters</span>
+                                    </button>
 
                                 <div class="listings-controls-right">
                                     <div class="view-toggle-group">
@@ -334,6 +335,7 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                             </div>
 
                             <!-- PET CARDS GRID (2 Columns on Mobile, 3 Columns on Desktop) -->
