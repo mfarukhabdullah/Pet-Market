@@ -1,6 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PetController;
+use App\Http\Controllers\SellerController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,14 +18,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
-
-Route::get('/pet-details', function () {
-    return view('pet-details');
-});
-
-Route::get('/seller-profile', function () {
-    return view('seller-profile');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/category', [CategoryController::class, 'index'])->name('category');
+Route::get('/pet-details', [PetController::class, 'details'])->name('pet.details');
+Route::get('/seller-profile', [SellerController::class, 'profile'])->name('seller.profile');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/seller/listings', [SellerController::class, 'listings'])->name('seller.listings');
+Route::get('/seller/messages', [SellerController::class, 'messages'])->name('seller.messages');
+Route::get('/seller/settings', [SellerController::class, 'settings'])->name('seller.settings');
+Route::get('/seller/settings/contact', [SellerController::class, 'settingsContact'])->name('seller.settings.contact');
+Route::get('/seller/settings/security', [SellerController::class, 'settingsSecurity'])->name('seller.settings.security');
