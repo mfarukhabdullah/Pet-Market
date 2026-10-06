@@ -1,0 +1,521 @@
+﻿Created At: 2026-10-05T15:25:42+05:00
+Completed At: 2026-10-05T15:25:42+05:00
+File Path: `file:///c:/Users/DELL/Desktop/pet-workshop/resources/views/home.blade.php`
+Total Lines: 522
+Total Bytes: 46439
+Showing lines 1 to 522
+Content truncated: showing bytes 0-46080 of 46439. To see more, call this tool again with the same line range and ContentOffset=46080.
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1:     <main class="site-wrapper">
+2:         
+3:         <!-- HERO SECTION WRAPPER -->
+4:         <section style="position: relative; background-color: #F7EFE2; padding-bottom: 70px;">
+5: 
+6:             <!-- Background Decorative Shapes Container (Clipped so shapes don't overflow) -->
+7:             <div style="position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 1440px; overflow: hidden; pointer-events: none; z-index: 1;">
+8:             
+9:             <!-- Bottom-left soft beige hill shape (Replaced with SVG) -->
+10:             <img src="{{ asset('images/herobottom.svg') }}" style="position: absolute; bottom: 0; left: -8%; width: 751px; max-width: 100%;" alt="">
+11: 
+12:             <!-- Center small floating diamond accents -->
+13:             <div style="position: absolute; top: 55px; left: 51%; width: 12px; height: 12px; background-color: #F6D592; border-radius: 3px; transform: rotate(20deg);"></div>
+14:             <div style="position: absolute; top: 112px; left: 49.8%; width: 18px; height: 18px; background-color: #F6D592; border-radius: 4px; transform: rotate(15deg);"></div>
+15:             <div style="position: absolute; top: 115px; left: 49.4%; width: 16px; height: 16px; background-color: #14794A; border-radius: 4px; transform: rotate(45deg);"></div>
+16: 
+17:             <!-- Right-side Green organic shape -->
+18:             <div style="position: absolute; bottom: -79px; right: 21%; width: 320px; height: 390px; background-color: #147A4D; border-radius: 65px; transform: rotate(12deg);"></div>
+19: 
+20:             <!-- Right-side Warm Yellow tilted rectangle shape -->
+21:             <div style="position: absolute; bottom: -110px; right: 7%; width: 470px; height: 420px; background-color: #F7DBA7; border-radius: 65px; transform: rotate(22deg);"></div>
+22:             </div>
+23: 
+24:             <!-- HERO MAIN CONTENT -->
+25:             <div class="hero-inner" style="position: relative; z-index: 2; width: 100%; max-width: 1200px; margin: 0 auto; padding: 65px 0 10px 0; display: flex; align-items: center; justify-content: space-between; gap: 30px;">
+26:             
+27:             <!-- Left Column: Heading & Subtitle -->
+28:             <div class="hero-text" style="flex: 1; max-width: 500px;">
+29:                 <h1 style="font-size: 48px; font-weight: 800; color: #161616; line-height: 1.15; letter-spacing: -0.8px; margin-bottom: 22px;">
+30:                 Find the right pet for<br />your family.
+31:                 </h1>
+32:                 <p style="font-size: 16px; font-weight: 400; color: #202020; line-height: 24px; max-width: 450px; text-align: justify;">
+33:                 Search pets by category, breed, location and price, then review the listing and seller before making contact.
+34:                 </p>
+35:             </div>
+36: 
+37:             <!-- Right Column: Dog & Owner Image -->
+38:             <!-- Right Column: Dog & Owner Image -->
+39:             <div style="flex: 1; display: flex; justify-content: flex-end;">
+40:                 <div style="position: relative; display: inline-block;">
+41:                     <!-- Comic Excitement Lines SVG near the dog head -->
+42:                     <svg style="position: absolute; top: 7%; right: 40%; z-index: 15; transform: scale(1.2);" width="38" height="38" viewBox="0 0 40 40" fill="none">
+43:                     <path d="M5 14L18 8" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>
+44:                     <path d="M12 25L22 17" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>
+45:                     <path d="M27 32L29 19" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>
+46:                     </svg>
+47: 
+48:                     <!-- Cutout Pet Image (Replace src with your transparent PNG if needed) -->
+49:                     <img 
+50:                     src="{{ asset('images/home-hero-image.png') }}" 
+51:                     alt="Happy person holding a Corgi dog" 
+52:                     style="width: 100%; max-width: 560px; height: auto; object-fit: contain; z-index: 5; position: relative; margin-bottom: -80px;" 
+53:                     />
+54:                 </div>
+55:             </div>
+56: 
+57:             </div>
+58: 
+59:             <!-- FLOATING SEARCH BAR (Overlapping bottom edge) -->
+60:             <div class="search-bar-wrapper" style="position: absolute; left: 0; right: 0; bottom: 0; transform: translateY(50%); z-index: 10; width: 100%; max-width: 1200px; margin: 0 auto;">
+61:             
+62:             <div class="search-bar" style="background-color: #FFFFFF; border-radius: 14px; padding: 16px 18px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08); display: flex; align-items: center; gap: 14px; border: 1px solid #F0F0F0;">
+63:                 
+64:                 <!-- Filter 1: PET CATEGORY -->
+65:                 <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; border: 1px solid #DCDCDC; border-radius: 10px; padding: 10px 14px; cursor: pointer; background: #FFF;">
+66:                 <div style="display: flex; align-items: center; gap: 12px;">
+67:                     <!-- Green Paw Icon -->
+68:                     <svg width="20" height="20" viewBox="0 0 24 24" fill="#14794A">
+69:                     <circle cx="7" cy="7.5" r="2.2"/>
+70:                     <circle cx="12" cy="5.5" r="2.2"/>
+71:                     <circle cx="17" cy="7.5" r="2.2"/>
+72:                     <circle cx="4.5" cy="12" r="2"/>
+73:                     <path d="M12 10.5c-3.2 0-5.5 2.4-5.5 5.2 0 1.8 1.4 3.3 3.2 3.3 1 0 1.6-.4 2.3-.4s1.3.4 2.3.4c1.8 0 3.2-1.5 3.2-3.3 0-2.8-2.3-5.2-5.5-5.2z"/>
+74:                     </svg>
+75:                     <div>
+76:                     <span style="display: block; font-size: 10px; font-weight: 600; color: #6B7280; letter-spacing: 0.4px; text-transform: uppercase;">PET CATEGORY</span>
+77:                     <span style="display: block; font-size: 13.5px; font-weight: 600; color: #1F2937; margin-top: 2px;">Any category</span>
+78:                     </div>
+79:                 </div>
+80:                 <!-- Dropdown Arrow -->
+81:                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+82:                 </div>
+83: 
+84:                 <!-- Filter 2: BREED -->
+85:                 <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; border: 1px solid #DCDCDC; border-radius: 10px; padding: 10px 14px; cursor: pointer; background: #FFF;">
+86:                 <div style="display: flex; align-items: center; gap: 12px;">
+87:                     <!-- Green Breed/DNA Ribbon Icon -->
+88:                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14794A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+89:                     <path d="M6 3h12l-6 9 6 9H6l6-9-6-9z"/>
+90:                     </svg>
+91:                     <div>
+92:                     <span style="display: block; font-size: 10px; font-weight: 600; color: #6B7280; letter-spacing: 0.4px; text-transform: uppercase;">BREED</span>
+93:                     <span style="display: block; font-size: 13.5px; font-weight: 600; color: #1F2937; margin-top: 2px;">Any breed</span>
+94:                     </div>
+95:                 </div>
+96:                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+97:                 </div>
+98: 
+99:                 <!-- Filter 3: LOCATION -->
+100:                 <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; border: 1px solid #DCDCDC; border-radius: 10px; padding: 10px 14px; cursor: pointer; background: #FFF;">
+101:                 <div style="display: flex; align-items: center; gap: 12px;">
+102:                     <!-- Green Location Pin Icon -->
+103:                     <svg width="20" height="20" viewBox="0 0 24 24" fill="#14794A">
+104:                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+105:                     </svg>
+106:                     <div>
+107:                     <span style="display: block; font-size: 10px; font-weight: 600; color: #6B7280; letter-spacing: 0.4px; text-transform: uppercase;">LOCATION</span>
+108:                     <span style="display: block; font-size: 13.5px; font-weight: 600; color: #1F2937; margin-top: 2px;">Any location</span>
+109:                     </div>
+110:                 </div>
+111:                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+112:                 </div>
+113: 
+114:                 <!-- Filter 4: PRICE -->
+115:                 <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; border: 1px solid #DCDCDC; border-radius: 10px; padding: 10px 14px; cursor: pointer; background: #FFF;">
+116:                 <div style="display: flex; align-items: center; gap: 12px;">
+117:                     <!-- Green Price Tag Icon -->
+118:                     <svg width="20" height="20" viewBox="0 0 24 24" fill="#14794A">
+119:                     <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/>
+120:                     </svg>
+121:                     <div>
+122:                     <span style="display: block; font-size: 10px; font-weight: 600; color: #6B7280; letter-spacing: 0.4px; text-transform: uppercase;">PRICE</span>
+123:                     <span style="display: block; font-size: 13.5px; font-weight: 600; color: #1F2937; margin-top: 2px;">Any price</span>
+124:                     </div>
+125:                 </div>
+126:                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+127:                 </div>
+128: 
+129:                 <!-- CTA Button: Find a Pet -->
+130:                 <button class="search-btn" style="background-color: #14794A; color: #FFFFFF; border: none; border-radius: 10px; padding: 16px 26px; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 9px; cursor: pointer; white-space: nowrap;">
+131:                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+132:                     <circle cx="11" cy="11" r="8"></circle>
+133:                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+134:                 </svg>
+135:                 Find a Pet
+136:                 </button>
+137: 
+138:             </div>
+139:             </div>
+140: 
+141:         </section>
+142: 
+143:         <!-- Next Section Spacer (So the overlapping search bar looks natural) -->
+144:         <div style="height: 60px; background-color: transparent;"></div>
+145: 
+146:         <!-- CATEGORIES -->
+147:         <div class="my-section" style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 0;">
+148:             <h2 class="my-sec-title" style="font-size: 28px; margin-bottom: 8px;">Browse by Pet Category</h2>
+149:             <p class="my-sec-desc" style="margin-bottom: 45px;">Start your search by choosing the type of companion you're looking for.</p>
+150:             <div class="my-categories" style="display: flex; justify-content: space-between;">
+151:                 <div class="my-cat-item" style="width: 150px;">
+152:                     <div class="my-cat-img" style="width: 150px; height: 150px; border: none; box-shadow: none; background: transparent;"><img src="{{ asset('images/cat_dog.jpg') }}" alt="Dogs" style="border-radius: 50%;"></div>
+153:                     <div class="my-cat-name" style="font-size: 15px;">Dogs</div>
+154:                 </div>
+155:                 <div class="my-cat-item" style="width: 150px;">
+156:                     <div class="my-cat-img" style="width: 150px; height: 150px; border: none; box-shadow: none; background: transparent;"><img src="{{ asset('images/cat_cat.jpg') }}" alt="Cats" style="border-radius: 50%;"></div>
+157:                     <div class="my-cat-name" style="font-size: 15px;">Cats</div>
+158:                 </div>
+159:                 <div class="my-cat-item" style="width: 150px;">
+160:                     <div class="my-cat-img" style="width: 150px; height: 150px; border: none; box-shadow: none; background: transparent;"><img src="{{ asset('images/cat_bird.jpg') }}" alt="Birds" style="border-radius: 50%;"></div>
+161:                     <div class="my-cat-name" style="font-size: 15px;">Birds</div>
+162:                 </div>
+163:                 <div class="my-cat-item" style="width: 150px;">
+164:                     <div class="my-cat-img" style="width: 150px; height: 150px; border: none; box-shadow: none; background: transparent;"><img src="{{ asset('images/cat_fish.jpg') }}" alt="Fish" style="border-radius: 50%;"></div>
+165:                     <div class="my-cat-name" style="font-size: 15px;">Fish</div>
+166:                 </div>
+167:                 <div class="my-cat-item" style="width: 150px;">
+168:                     <div class="my-cat-img" style="width: 150px; height: 150px; border: none; box-shadow: none; background: transparent;"><img src="{{ asset('images/cat_reptile.jpg') }}" alt="Reptiles" style="border-radius: 50%;"></div>
+169:                     <div class="my-cat-name" style="font-size: 15px;">Reptiles</div>
+170:                 </div>
+171:                 <div class="my-cat-item" style="width: 150px;">
+172:                     <div class="my-cat-img" style="width: 150px; height: 150px; border: none; box-shadow: none; background: transparent;"><img src="{{ asset('images/cat_horse.jpg') }}" alt="Horses & Farm" style="border-radius: 50%;"></div>
+173:                     <div class="my-cat-name" style="font-size: 15px;">Horses & Farm</div>
+174:                 </div>
+175:             </div>
+176:         </div>
+177: 
+178:         <!-- FEATURED PETS -->
+179:         <div style="margin-top: 21px; background-color: #F9F2E7; padding: 30px 0;">
+180:             <div style="width: 100%; max-width: 1200px; margin: 0 auto;">
+181:                 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
+182:                     <div>
+183:                         <h2 class="my-sec-title" style="font-size: 28px; margin-bottom: 8px;">Featured Pets</h2>
+184:                         <p class="my-sec-desc" style="margin:0;">Highlighted pet listings from sellers on the marketplace.</p>
+185:                     </div>
+186:                     <button class="my-btn" style="background: transparent; color: #147A4D; border: 1px solid #147A4D; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer;">View All Pets</button>
+187:                 </div>
+188:                 <div class="my-pets-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+189:                     <!-- Card 1 -->
+190:                     <div class="my-pet-card" style="border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 12px;">
+191:                         <div style="position: relative;">
+192:                             <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever" class="my-pet-img" style="height: 236px; border-radius: 12px 12px 0 0;">
+193:                             <span class="my-badge" style="background: #FADFA7; color: #161616; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; top: 12px; left: 12px;">FEATURED</span>
+194:                             <div class="my-pet-fav" style="top: 12px; right: 12px; width: 28px; height: 28px; font-size: 12px;"><i class="fa-regular fa-heart"></i></div>
+195:                         </div>
+196:                         <div class="my-pet-info" style="padding: 16px;">
+197:                             <h3 class="my-pet-title" style="font-size: 16px; margin-bottom: 4px;">Golden Retriever Puppy</h3>
+198:                             <p class="my-pet-breed" style="font-size: 12px; margin-bottom: 12px; color: #94a3b8;">Golden Retriever</p>
+199:                             <div class="my-pet-price" style="font-size: 16px; color: #147A4D; margin-bottom: 12px;">Rs. 85,000</div>
+200:                             <div class="my-pet-meta" style="border: none; padding-top: 0; margin-bottom: 12px; justify-content: flex-start; gap: 16px; font-size: 12px;">
+201:                                 <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 3 Months</span>
+202:                                 <span><i class="fa-solid fa-mars" style="margin-right: 4px;"></i> Male</span>
+203:                             </div>
+204:                             <div style="font-size: 12px; color: #64748b;"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Lahore</div>
+205:                         </div>
+206:                     </div>
+207:                     <!-- Card 2 -->
+208:                     <div class="my-pet-card" style="border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 12px;">
+209:                         <div style="position: relative;">
+210:                             <img src="{{ asset('images/card_persian.jpg') }}" alt="Persian Cat" class="my-pet-img" style="height: 236px; border-radius: 12px 12px 0 0;">
+211:                             <span class="my-badge" style="background: #FADFA7; color: #161616; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; top: 12px; left: 12px;">FEATURED</span>
+212:                             <div class="my-pet-fav" style="top: 12px; right: 12px; width: 28px; height: 28px; font-size: 12px;"><i class="fa-regular fa-heart"></i></div>
+213:                         </div>
+214:                         <div class="my-pet-info" style="padding: 16px;">
+215:                             <h3 class="my-pet-title" style="font-size: 16px; margin-bottom: 4px;">Persian Cat</h3>
+216:                             <p class="my-pet-breed" style="font-size: 12px; margin-bottom: 12px; color: #94a3b8;">Persian</p>
+217:                             <div class="my-pet-price" style="font-size: 16px; color: #147A4D; margin-bottom: 12px;">Rs. 42,000</div>
+218:                             <div class="my-pet-meta" style="border: none; padding-top: 0; margin-bottom: 12px; justify-content: flex-start; gap: 16px; font-size: 12px;">
+219:                                 <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 7 Months</span>
+220:                                 <span><i class="fa-solid fa-venus" style="margin-right: 4px;"></i> Female</span>
+221:                             </div>
+222:                             <div style="font-size: 12px; color: #64748b;"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Islamabad</div>
+223:                         </div>
+224:                     </div>
+225:                     <!-- Card 3 -->
+226:                     <div class="my-pet-card" style="border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 12px;">
+227:                         <div style="position: relative;">
+228:                             <img src="{{ asset('images/card_parrot.jpg') }}" alt="African Grey Parrot" class="my-pet-img" style="height: 236px; border-radius: 12px 12px 0 0;">
+229:                             <span class="my-badge" style="background: #FADFA7; color: #161616; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; top: 12px; left: 12px;">FEATURED</span>
+230:                             <div class="my-pet-fav" style="top: 12px; right: 12px; width: 28px; height: 28px; font-size: 12px;"><i class="fa-regular fa-heart"></i></div>
+231:                         </div>
+232:                         <div class="my-pet-info" style="padding: 16px;">
+233:                             <h3 class="my-pet-title" style="font-size: 16px; margin-bottom: 4px;">African Grey Parrot</h3>
+234:                             <p class="my-pet-breed" style="font-size: 12px; margin-bottom: 12px; color: #94a3b8;">African Grey</p>
+235:                             <div class="my-pet-price" style="font-size: 16px; color: #147A4D; margin-bottom: 12px;">Rs. 65,000</div>
+236:                             <div class="my-pet-meta" style="border: none; padding-top: 0; margin-bottom: 12px; justify-content: flex-start; gap: 16px; font-size: 12px;">
+237:                                 <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 1 Year</span>
+238:                                 <span><i class="fa-solid fa-mars" style="margin-right: 4px;"></i> Male</span>
+239:                             </div>
+240:                             <div style="font-size: 12px; color: #64748b;"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Karachi</div>
+241:                         </div>
+242:                     </div>
+243:                     <!-- Card 4 -->
+244:                     <div class="my-pet-card" style="border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 12px;">
+245:                         <div style="position: relative;">
+246:                             <img src="{{ asset('images/card_rabbit.jpg') }}" alt="Mini Lop Rabbit" class="my-pet-img" style="height: 236px; border-radius: 12px 12px 0 0;">
+247:                             <span class="my-badge" style="background: #FADFA7; color: #161616; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; top: 12px; left: 12px;">FEATURED</span>
+248:                             <div class="my-pet-fav" style="top: 12px; right: 12px; width: 28px; height: 28px; font-size: 12px;"><i class="fa-regular fa-heart"></i></div>
+249:                         </div>
+250:                         <div class="my-pet-info" style="padding: 16px;">
+251:                             <h3 class="my-pet-title" style="font-size: 16px; margin-bottom: 4px;">Mini Lop Rabbit</h3>
+252:                             <p class="my-pet-breed" style="font-size: 12px; margin-bottom: 12px; color: #94a3b8;">Mini Lop</p>
+253:                             <div class="my-pet-price" style="font-size: 16px; color: #147A4D; margin-bottom: 12px;">Rs. 12,500</div>
+254:                             <div class="my-pet-meta" style="border: none; padding-top: 0; margin-bottom: 12px; justify-content: flex-start; gap: 16px; font-size: 12px;">
+255:                                 <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 5 Months</span>
+256:                                 <span><i class="fa-solid fa-venus" style="margin-right: 4px;"></i> Female</span>
+257:                             </div>
+258:                             <div style="font-size: 12px; color: #64748b;"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Lahore</div>
+259:                         </div>
+260:                     </div>
+261:                 </div>
+262:             </div>
+263:         </div>
+264: 
+265:         <!-- LATEST PET LISTINGS -->
+266:         <div class="my-section" style="background: #FFFFFF; width: 100%; padding: 30px 0;">
+267:             <div style="width: 100%; max-width: 1200px; margin: 0 auto;">
+268:                 <div style="text-align: center; margin-bottom: 40px;">
+269:                     <h2 class="my-sec-title" style="font-size: 28px; margin-bottom: 8px;">Latest Pet Listings</h2>
+270:                     <p class="my-sec-desc" style="margin:0 auto; max-width: 600px;">Fresh listings recently posted by pet owners and businesses.</p>
+271:                 </div>
+272:                 <div class="my-pets-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+273:                     <!-- Card 1 -->
+274:                     <div class="my-pet-card" style="border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 12px;">
+275:                         <div style="position: relative;">
+276:                             <img src="{{ asset('images/card_gsd.jpg') }}" alt="German Shepherd" class="my-pet-img" style="height: 236px; border-radius: 12px 12px 0 0;">
+277:                             <div class="my-pet-fav" style="top: 12px; right: 12px; width: 28px; height: 28px; font-size: 12px;"><i class="fa-regular fa-heart"></i></div>
+278:                         </div>
+279:                         <div class="my-pet-info" style="padding: 16px;">
+280:                             <h3 class="my-pet-title" style="font-size: 16px; margin-bottom: 4px;">German Shepherd</h3>
+281:                             <p class="my-pet-breed" style="font-size: 12px; margin-bottom: 12px; color: #94a3b8;">German Shepherd</p>
+282:                             <div class="my-pet-price" style="font-size: 16px; color: #147A4D; margin-bottom: 12px;">Rs. 85,000</div>
+283:                             <div class="my-pet-meta" style="border: none; padding-top: 0; margin-bottom: 12px; justify-content: flex-start; gap: 16px; font-size: 12px;">
+284:                                 <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 3 Months</span>
+285:                                 <span><i class="fa-solid fa-mars" style="margin-right: 4px;"></i> Male</span>
+286:                             </div>
+287:                             <div style="font-size: 12px; color: #64748b;"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Lahore</div>
+288:                         </div>
+289:                     </div>
+290:                     <!-- Card 2 -->
+291:                     <div class="my-pet-card" style="border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 12px;">
+292:                         <div style="position: relative;">
+293:                             <img src="{{ asset('images/card_british.jpg') }}" alt="British Shorthair" class="my-pet-img" style="height: 236px; border-radius: 12px 12px 0 0;">
+294:                             <div class="my-pet-fav" style="top: 12px; right: 12px; width: 28px; height: 28px; font-size: 12px;"><i class="fa-regular fa-heart"></i></div>
+295:                         </div>
+296:                         <div class="my-pet-info" style="padding: 16px;">
+297:                             <h3 class="my-pet-title" style="font-size: 16px; margin-bottom: 4px;">British Shorthair</h3>
+298:                             <p class="my-pet-breed" style="font-size: 12px; margin-bottom: 12px; color: #94a3b8;">British Shorthair</p>
+299:                             <div class="my-pet-price" style="font-size: 16px; color: #147A4D; margin-bottom: 12px;">Rs. 42,000</div>
+300:                             <div class="my-pet-meta" style="border: none; padding-top: 0; margin-bottom: 12px; justify-content: flex-start; gap: 16px; font-size: 12px;">
+301:                                 <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 7 Months</span>
+302:                                 <span><i class="fa-solid fa-venus" style="margin-right: 4px;"></i> Female</span>
+303:                             </div>
+304:                             <div style="font-size: 12px; color: #64748b;"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Islamabad</div>
+305:                         </div>
+306:                     </div>
+307:                     <!-- Card 3 -->
+308:                     <div class="my-pet-card" style="border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 12px;">
+309:                         <div style="position: relative;">
+310:                             <img src="{{ asset('images/card_shihtzu.jpg') }}" alt="Shih Tzu Puppy" class="my-pet-img" style="height: 236px; border-radius: 12px 12px 0 0;">
+311:                             <div class="my-pet-fav" style="top: 12px; right: 12px; width: 28px; height: 28px; font-size: 12px;"><i class="fa-regular fa-heart"></i></div>
+312:                         </div>
+313:                         <div class="my-pet-info" style="padding: 16px;">
+314:                             <h3 class="my-pet-title" style="font-size: 16px; margin-bottom: 4px;">Shih Tzu Puppy</h3>
+315:                             <p class="my-pet-breed" style="font-size: 12px; margin-bottom: 12px; color: #94a3b8;">Shih Tzu</p>
+316:                             <div class="my-pet-price" style="font-size: 16px; color: #147A4D; margin-bottom: 12px;">Rs. 65,000</div>
+317:                             <div class="my-pet-meta" style="border: none; padding-top: 0; margin-bottom: 12px; justify-content: flex-start; gap: 16px; font-size: 12px;">
+318:                                 <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 1 Year</span>
+319:                                 <span><i class="fa-solid fa-mars" style="margin-right: 4px;"></i> Male</span>
+320:                             </div>
+321:                             <div style="font-size: 12px; color: #64748b;"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Karachi</div>
+322:                         </div>
+323:                     </div>
+324:                     <!-- Card 4 -->
+325:                     <div class="my-pet-card" style="border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 12px;">
+326:                         <div style="position: relative;">
+327:                             <img src="{{ asset('images/card_parrot.jpg') }}" alt="Lovebird Pair" class="my-pet-img" style="height: 236px; border-radius: 12px 12px 0 0;">
+328:                             <div class="my-pet-fav" style="top: 12px; right: 12px; width: 28px; height: 28px; font-size: 12px;"><i class="fa-regular fa-heart"></i></div>
+329:                         </div>
+330:                         <div class="my-pet-info" style="padding: 16px;">
+331:                             <h3 class="my-pet-title" style="font-size: 16px; margin-bottom: 4px;">Lovebird Pair</h3>
+332:                             <p class="my-pet-breed" style="font-size: 12px; margin-bottom: 12px; color: #94a3b8;">Lovebird</p>
+333:                             <div class="my-pet-price" style="font-size: 16px; color: #147A4D; margin-bottom: 12px;">Rs. 12,500</div>
+334:                             <div class="my-pet-meta" style="border: none; padding-top: 0; margin-bottom: 12px; justify-content: flex-start; gap: 16px; font-size: 12px;">
+335:                                 <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 5 Months</span>
+336:                                 <span><i class="fa-solid fa-venus" style="margin-right: 4px;"></i> Female</span>
+337:                             </div>
+338:                             <div style="font-size: 12px; color: #64748b;"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Lahore</div>
+339:                         </div>
+340:                     </div>
+341:                 </div>
+342:             </div>
+343:         </div>
+344:         <!-- CTA BANNER -->
+345:         <div style="position: relative; width: 100%; max-width: 1200px; min-height: 378px; background-color: #147A4D; border-radius: 20px; overflow: hidden; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box; margin: 20px auto 0;">
+346: 
+347:             <!-- Left Side Decorative Dark Shape (Background) -->
+348:             <div style="position: absolute; bottom: -180px; left: -120px; width: 650px; height: 500px; background-color: #147A4D; border-radius: 99px; transform: rotate(25deg); z-index: 1;"></div>
+349: 
+350:             <!-- Right Side Decorative Cream Shape (Background) -->
+351:             <div style="position: absolute; top: -160px; right: -140px; width: 780px; height: 650px; background-color: #FCEED5; border-radius: 99px; transform: rotate(25deg); z-index: 1;"></div>
+352: 
+353:             <!-- Left Side: Image Container -->
+354:             <div style="position: relative; z-index: 2; width: 48%; height: 100%; display: flex; align-items: flex-end; justify-content: center; padding-top: 30px;">
+355:                 <!-- Yahan src="" mein apni transparent girl & dog wali PNG image ka path lagayein -->
+356:                 <img src="{{ asset('images/more-friend.png') }}" alt="Woman kissing dog" style="max-width: 100%; height: auto; max-height: 360px; display: block; object-fit: contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+357:                 
+358:                 <!-- Fallback Box (Jab tak aap apni asli image nahi lagate tab tak yeh dikhega) -->
+359:                 <div style="display: none; width: 380px; height: 320px; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); border: 2px dashed rgba(255,255,255,0.5); border-radius: 16px 16px 0 0; color: #ffffff; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; font-size: 14px;">
+360:                     [ Yahan Apni Girl & Dog Wali Transparent PNG Image Lagayein ]
+361:                 </div>
+362:             </div>
+363: 
+364:             <!-- Right Side: Text & Buttons Container -->
+365:             <div style="position: relative; z-index: 2; width: 52%; padding: 40px 65px 40px 100px; text-align: left; box-sizing: border-box; display: flex; flex-direction: column; align-items: flex-start;">
+366:                 
+367:                 <!-- Main Heading -->
+368:                 <h1 style="margin: 0; font-size: 34px; font-weight: 800; color: #000000; line-height: 1.2;">
+369:                     One More Friend
+370:                 </h1>
+371:                 
+372:                 <!-- Sub Heading -->
+373:                 <h2 style="margin: 6px 0 18px 0; font-size: 34px; font-weight: 700; color: #000000; line-height: 44px;">
+374:                     Thousands More Fun!
+375:                 </h2>
+376:                 
+377:                 <!-- Description Paragraph -->
+378:                 <p style="margin: 0 0 28px 0; font-size: 16px; font-weight: 400; color: #202020; line-height: 24px; max-width: 400px; text-align: justify;">
+379:                     Having a pet means you have more joy, a new friend, a happy person who will always be with you to have fun. We have 200+ different pets that can meet your needs!
+380:                 </p>
+381: 
+382:                 <!-- Buttons Wrapper -->
+383:                 <div style="display: flex; gap: 16px; justify-content: flex-start; flex-wrap: wrap;">
+384:                     
+385:                     <!-- Browse Dogs Button (Solid Fill) -->
+386:                     <a href="#" style="text-decoration: none; width: 173px; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #ffffff; font-weight: 600; font-size: 14px; background-color: #147A4D; box-sizing: border-box;">
+387:                         Browse Dogs
+388:                     </a>
+389:                     
+390:                     <!-- Browse Cats Button (Outline) -->
+391:                     <a href="#" style="text-decoration: none; width: 173px; height: 52px; display: flex; align-items: center; justify-content: center; border: 2px solid #147A4D; border-radius: 12px; color: #147A4D; font-weight: 600; font-size: 14px; background-color: transparent; box-sizing: border-box;">
+392:                         Browse Cats
+393:                     </a>
+394: 
+395:                 </div>
+396: 
+397:             </div>
+398: 
+399:         </div>
+400: 
+401:         <!-- POPULAR BREEDS SECTION -->
+402:         <section style="background-color: #F7F3EC; padding: 40px 0; margin: 40px 0; width: 100%; box-sizing: border-box; display: flex; justify-content: center;">
+403:             <div style="width: 100%; max-width: 1200px; margin: 0 auto;">
+404:                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 30px;">
+405:                     <div>
+406:                         <h2 style="margin: 0 0 8px 0; font-size: 28px; font-weight: 700; color: #000000; line-height: 1.2;">
+407:                             Popular Breeds
+408:                         </h2>
+409:                         <p style="margin: 0; font-size: 13px; font-weight: 400; color: #333333;">
+410:                             Explore listings by commonly searched breeds.
+411:                         </p>
+412:                     </div>
+413:                     <a href="#" style="text-decoration: none; padding: 10px 20px; border: 1px solid #0E6B40; border-radius: 6px; color: #0E6B40; font-size: 13px; font-weight: 600; background-color: transparent; display: inline-block;">
+414:                         View All Breeds
+415:                     </a>
+416:                 </div>
+417: 
+418:                 <div style="display: flex; gap: 20px; justify-content: space-between; flex-wrap: wrap;">
+419:                     <!-- Card 1: Golden Retriever -->
+420:                     <div style="width: 280px; height: 272px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; box-sizing: border-box;">
+421:                         <img src="{{ asset('images/golden_retriever.jpg') }}" alt="Golden Retriever" style="width: 180px; height: 180px; border-radius: 50%; border: 3px solid #ffffff; object-fit: cover; position: absolute; top: 0; z-index: 2; box-sizing: border-box; background-color: #ccc;">
+422:                         <div style="width: 100%; height: 180px; background-color: #FCE5C9; border-radius: 12px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 22px; box-sizing: border-box; z-index: 1;">
+423:                             <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #000000;">Golden Retriever</h3>
+424:                             <span style="font-size: 12px; font-weight: 400; color: #333333;">320 available</span>
+425:                         </div>
+426:                     </div>
+427: 
+428:                     <!-- Card 2: German Shepherd -->
+429:                     <div style="width: 280px; height: 272px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; box-sizing: border-box;">
+430:                         <img src="{{ asset('images/german_shepherd.jpg') }}" alt="German Shepherd" style="width: 180px; height: 180px; border-radius: 50%; border: 3px solid #ffffff; object-fit: cover; position: absolute; top: 0; z-index: 2; box-sizing: border-box; background-color: #ccc;">
+431:                         <div style="width: 100%; height: 180px; background-color: #E0ECFB; border-radius: 12px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 22px; box-sizing: border-box; z-index: 1;">
+432:                             <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #000000;">German Shepherd</h3>
+433:                             <span style="font-size: 12px; font-weight: 400; color: #333333;">320 available</span>
+434:                         </div>
+435:                     </div>
+436: 
+437:                     <!-- Card 3: Persian -->
+438:                     <div style="width: 280px; height: 272px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; box-sizing: border-box;">
+439:                         <img src="{{ asset('images/persian.jpg') }}" alt="Persian" style="width: 180px; height: 180px; border-radius: 50%; border: 3px solid #ffffff; object-fit: cover; position: absolute; top: 0; z-index: 2; box-sizing: border-box; background-color: #ccc;">
+440:                         <div style="width: 100%; height: 180px; background-color: #FDC5BC; border-radius: 12px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 22px; box-sizing: border-box; z-index: 1;">
+441:                             <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #000000;">Persian</h3>
+442:                             <span style="font-size: 12px; font-weight: 400; color: #333333;">320 available</span>
+443:                         </div>
+444:                     </div>
+445: 
+446:                     <!-- Card 4: British Shorthair -->
+447:                     <div style="width: 280px; height: 272px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; box-sizing: border-box;">
+448:                         <img src="{{ asset('images/british_shorthair.jpg') }}" alt="British Shorthair" style="width: 180px; height: 180px; border-radius: 50%; border: 3px solid #ffffff; object-fit: cover; position: absolute; top: 0; z-index: 2; box-sizing: border-box; background-color: #ccc;">
+449:                         <div style="width: 100%; height: 180px; background-color: #F9DCE5; border-radius: 12px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 22px; box-sizing: border-box; z-index: 1;">
+450:                             <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #000000;">British Shorthair</h3>
+451:                             <span style="font-size: 12px; font-weight: 400; color: #333333;">320 available</span>
+452:                         </div>
+453:                     </div>
+454:                 </div>
+455:             </div>
+456:         </section>
+457: 
+458:         <!-- LOCATIONS -->
+459:         <div class="my-section" style="background: #147A4D; width: 100%; padding: 50px 0;">
+460:             <div style="width: 100%; max-width: 1200px; margin: 0 auto; color: white;">
+461:                 <div style="margin-bottom: 40px;">
+462:                     <h2 class="my-sec-title" style="color: white; margin-bottom: 12px; font-size: 28px;">Find Pets by Location</h2>
+463:                     <p class="my-sec-desc" style="color: rgba(255,255,255,0.8); max-width: 600px; margin: 0;">Browse pets available in major cities and find listings closer to your location.</p>
+464:                 </div>
+465:                 <div class="my-loc-grid">
+466:                     <div class="my-loc-card"><div><h3>Lahore</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+467:                     <div class="my-loc-card"><div><h3>Faisalabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+468:                     <div class="my-loc-card"><div><h3>Multan</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+469:                     <div class="my-loc-card"><div><h3>Sialkot</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+470:                     
+471:                     <div class="my-loc-card"><div><h3>Karachi</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+472:                     <div class="my-loc-card"><div><h3>Peshawar</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+473:                     <div class="my-loc-card"><div><h3>Islamabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+474:                     <div class="my-loc-card"><div><h3>All Locations</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+475:                 </div>
+476:             </div>
+477:         </div>
+478: 
+479:         <!-- JOURNEY -->
+480:         <div class="my-section" style="width: 100%; max-width: 1200px; margin: 0 auto; padding-top: 120px; padding-bottom: 0px;">
+481:             <h2 class="my-sec-title" style="text-align: center;">A Simple Marketplace Journey</h2>
+482:             <p class="my-sec-desc" style="text-align: center;">How to buy or sell pets easily and safely.</p>
+483:             <div class="my-journey">
+484:                 <div class="my-step s1" style="position: relative; padding: 30px;">
+485:                     <img src="{{ asset('images/search.svg') }}" style="position: absolute; right: 20px; top: 30px; width: 100px; height: 100px; opacity: 1; z-index: 0; filter: brightness(0) invert(1); pointer-events: none;">
+486:                     <div style="position: relative; z-index: 1;">
+487:                         <div class="my-step-icon"><img src="{{ asset('images/search.svg') }}" style="width: 20px; height: 20px;"></div>
+488:                         <h3 style="font-family: 'Outfit', sans-serif; font-weight: 700;">Search and Filter</h3>
+489:                         <p style="font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 400; line-height: 30px; color: #000000; max-width: 85%; margin: 0;">Search by pet category, breed, location and price to find relevant listings.</p>
+490:                     </div>
+491:                 </div>
+492:                 <div class="my-step s2" style="position: relative; padding: 30px;">
+493:                     <img src="{{ asset('images/review-icon.svg') }}" style="position: absolute; right: 20px; top: 30px; width: 100px; height: 100px; opacity: 1; z-index: 0; filter: brightness(0) invert(1); pointer-events: none;">
+494:                     <div style="position: relative; z-index: 1;">
+495:                         <div class="my-step-icon"><img src="{{ asset('images/review-icon.svg') }}" style="width: 20px; height: 20px;"></div>
+496:                         <h3 style="font-family: 'Outfit', sans-serif; font-weight: 700;">Review the Listing</h3>
+497:                         <p style="font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 400; line-height: 30px; color: #000000; max-width: 85%; margin: 0;">Check photos, pet details, health information and seller profile before making contact.</p>
+498:                     </div>
+499:                 </div>
+500:                 <div class="my-step s3" style="position: relative; padding: 30px;">
+501:                     <!-- Floating Animals on top of card -->
+502:                     <img src="{{ asset('images/cat-journey.png') }}" style="position: absolute; top: -161px; left: 45px; width: 130px; z-index: 5; pointer-events: none;">
+503:                     <img src="{{ asset('images/dog-journey.png') }}" style="position: absolute; top: -201px; left: 150px; width: 180px; z-index: 4; pointer-events: none;">
+504:                     
+505:                     <img src="{{ asset('images/contact-seller.svg') }}" style="position: absolute; right: 20px; top: 30px; width: 100px; height: 100px; opacity: 1; z-index: 0; filter: brightness(0) invert(1); pointer-events: none;">
+506:                     <div style="position: relative; z-index: 1;">
+507:                         <div class="my-step-icon"><img src="{{ asset('images/contact-seller.svg') }}" style="width: 20px; height: 20px;"></div>
+508:                         <h3 style="font-family: 'Outfit', sans-serif; font-weight: 700;">Contact the Seller</h3>
+509:                         <p style="font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 400; line-height: 30px; color: #000000; max-width: 85%; margin: 0;">Send 
+The above content was truncated because individual lines are very long. Only a portion of the content is shown.
+<truncated 1 bytes>
+
+NOTE: The output was truncated because it was too long. Use a more targeted query or a smaller range to get the information you need.

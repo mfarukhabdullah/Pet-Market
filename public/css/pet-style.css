@@ -132,7 +132,7 @@ button {
 }
 
 .site-wrapper {
-  max-width: 1440px;
+  max-width: 100%;
   width: 100%;
   margin: 0 auto;
   background-color: var(--bg-shell);
@@ -1475,7 +1475,7 @@ button {
   padding: 64px 0 32px;
   position: relative;
   overflow: hidden;
-  margin-top: 60px;
+  margin-top: 0;
 }
 
 /* Footer Paw Watermark (Exact CSS from Image 3) */
@@ -1776,7 +1776,7 @@ button {
    ========================================================= */
 
 .safety-ownership-section {
-  padding: 85px 0;
+  padding: 40px 0;
   background-color: #ffffff;
   position: relative;
 }
@@ -1885,7 +1885,7 @@ button {
    ========================================================= */
 
 .sell-pet-section {
-  padding: 60px 0 80px;
+  padding: 0 0 40px;
   background-color: #ffffff;
   position: relative;
 }
