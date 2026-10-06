@@ -6,7 +6,7 @@
 
                 <!-- Left Visual Image Column -->
                 <div class="safety-image-col">
-                    <img src="{{ asset('images/Group-img.png') }}" alt="Safety & Responsible Pet Ownership" class="safety-group-img">
+                    <img src="{{ asset('images/safety-responsible.png') }}" alt="Safety & Responsible Pet Ownership" class="safety-group-img">
                 </div>
 
                 <!-- Right Content Column -->
