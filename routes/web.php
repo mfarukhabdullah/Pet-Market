@@ -24,3 +24,8 @@ Route::get('/pet-details', function () {
 Route::get('/seller-profile', function () {
     return view('seller-profile');
 });
+
+Route::get('/category', function () {
+    return view('category');
+})->name('category');
+

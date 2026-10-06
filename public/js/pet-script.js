@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initROICalculator();
   initInfluencerFilters();
   initFAQAccordion();
+  initMobileFilters();
+  initPagination();
 });
 
 /* ==========================================
@@ -203,4 +205,70 @@ function initFAQAccordion() {
       });
     }
   });
+}
+
+/* ==========================================
+   7. Mobile Filters Drawer Toggle
+   ========================================== */
+function initMobileFilters() {
+  const filterToggleBtn = document.getElementById('mobileFilterToggleBtn');
+  const closeFiltersBtn = document.getElementById('closeFiltersBtn');
+  const filtersSidebar = document.getElementById('filtersSidebarCard');
+
+  if (filterToggleBtn && filtersSidebar) {
+    filterToggleBtn.addEventListener('click', () => {
+      filtersSidebar.classList.add('mobile-open');
+    });
+  }
+
+  if (closeFiltersBtn && filtersSidebar) {
+    closeFiltersBtn.addEventListener('click', () => {
+      filtersSidebar.classList.remove('mobile-open');
+    });
+  }
+}
+
+/* ==========================================
+   8. Category Pagination
+   ========================================== */
+function initPagination() {
+  const paginationRow = document.querySelector('.category-pagination-row');
+  if (!paginationRow) return;
+
+  const pageBtns = Array.from(paginationRow.querySelectorAll('.page-num-btn'));
+  const prevBtn = paginationRow.querySelector('button[aria-label="Previous Page"]');
+  const nextBtn = paginationRow.querySelector('button[aria-label="Next Page"]');
+
+  if (!pageBtns.length) return;
+
+  function updateActivePage(newIndex) {
+    if (newIndex < 0 || newIndex >= pageBtns.length) return;
+    
+    pageBtns.forEach(btn => btn.classList.remove('active'));
+    pageBtns[newIndex].classList.add('active');
+  }
+
+  pageBtns.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+      updateActivePage(index);
+    });
+  });
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      const activeIndex = pageBtns.findIndex(btn => btn.classList.contains('active'));
+      if (activeIndex > 0) {
+        updateActivePage(activeIndex - 1);
+      }
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      const activeIndex = pageBtns.findIndex(btn => btn.classList.contains('active'));
+      if (activeIndex !== -1 && activeIndex < pageBtns.length - 1) {
+        updateActivePage(activeIndex + 1);
+      }
+    });
+  }
 }
