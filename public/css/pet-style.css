@@ -2112,7 +2112,7 @@ button {
 /* Hero Banner Section */
 .category-hero-section {
   height: 370px;
-  background-color: #FAF7F2;
+  background-color: #F7EFE2;
   padding: 48px 0 0 0;
   position: relative;
   overflow: visible;
@@ -2269,7 +2269,7 @@ button {
 
 /* Category Listings Main Layout Section */
 .category-listings-section {
-  padding: 144px 0 0px 0;
+  padding: 110px 0 0px 0;
   background-color: #FFFFFF;
 }
 
@@ -2500,26 +2500,32 @@ button {
 .sort-control-group {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 20px;
-  font-weight: 600;
+  gap: 4px;
+  font-size: 1rem;
+  font-weight: 500;
   color: #000;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  background-color: #F8FAFC;
 }
 
 .sort-select-wrapper {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .sort-select-input {
-  height: 36px;
-  padding: 0 32px 0 12px;
-  border: 1px solid #E2E8F0;
-  border-radius: 8px;
+  height: 100%;
+  padding: 0 24px 0 0;
+  border: none;
   font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #0F172A;
-  background-color: #F8FAFC;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #000;
+  background-color: transparent;
   outline: none;
   appearance: none;
   -webkit-appearance: none;
@@ -2528,7 +2534,7 @@ button {
 
 .sort-chevron {
   position: absolute;
-  right: 10px;
+  right: 0px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 0.75rem;
@@ -2752,13 +2758,20 @@ button {
 }
 
 .listings-title-block {
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .listings-controls-header {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 0;
+}
+
+.listings-header-wrapper {
+  display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 24px;
 }
 
@@ -2937,6 +2950,13 @@ button {
     display: none !important;
   }
 
+  .listings-header-wrapper {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+    margin-bottom: 20px !important;
+  }
+
   .listings-controls-header {
     display: flex !important;
     align-items: center !important;
@@ -2966,10 +2986,14 @@ button {
   .sort-control-group {
     display: inline-flex !important;
     align-items: center !important;
-    gap: 0px !important;
+    gap: 5px !important;
     font-size: 0.875rem !important;
     font-weight: 500 !important;
     color: #000000 !important;
+    border: none !important;
+    padding: 0 !important;
+    height: auto !important;
+    background-color: transparent !important;
   }
 
   .sort-select-input {
