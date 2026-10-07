@@ -86,8 +86,9 @@
         <!-- JOURNEY COMPONENT -->
         <x-journey-section />
 
-        <!-- SAFETY & RESPONSIBLE PET OWNERSHIP SECTION COMPONENT -->
-        <x-safety-section />
+        <!-- SAFER INTERACTIONS SECTION (NEW) -->
+        <x-safer-interactions />
+
 
         <!-- SELL PET BANNER COMPONENT -->
         <x-sell-banner />

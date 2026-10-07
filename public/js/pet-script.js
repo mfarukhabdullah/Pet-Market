@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFAQAccordion();
   initMobileFilters();
   initPagination();
+  initSearchFilter();
 });
 
 /* ==========================================
@@ -321,3 +322,62 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+/* ==========================================
+   9. Category Search Filter
+   ========================================== */
+function initSearchFilter() {
+  const searchForm = document.getElementById('searchFilterForm');
+  if (!searchForm) return;
+
+  const searchInput = searchForm.querySelector('.search-form-input');
+  const categorySelect = searchForm.querySelector('select[name="category"]');
+  const locationSelect = searchForm.querySelector('select[name="location"]');
+  const petCards = document.querySelectorAll('.pet-card');
+
+  function filterPets() {
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+    const categoryVal = categorySelect ? categorySelect.value.toLowerCase() : '';
+    const locationVal = locationSelect ? locationSelect.value.toLowerCase() : '';
+
+    petCards.forEach(card => {
+      const title = (card.querySelector('.pet-name')?.innerText || '').toLowerCase();
+      const breedTag = (card.querySelector('.pet-breed-tag')?.innerText || '').toLowerCase();
+      const location = (card.dataset.location || '').toLowerCase();
+
+      // Check text search
+      const matchesSearch = title.includes(searchTerm) || breedTag.includes(searchTerm);
+      
+      // Check category (simple mockup mapping)
+      let matchesCategory = true;
+      if (categoryVal) {
+          const cat = categoryVal.replace(/s$/, ''); // 'dogs' -> 'dog'
+          if (cat === 'dog' && (title.includes('retriever') || title.includes('puppy') || title.includes('dog'))) matchesCategory = true;
+          else if (cat === 'cat' && (title.includes('persian') || title.includes('cat'))) matchesCategory = true;
+          else if (cat === 'bird' && (title.includes('macaw') || title.includes('parrot') || title.includes('bird'))) matchesCategory = true;
+          else matchesCategory = false;
+      }
+      
+      // Check location
+      const matchesLocation = !locationVal || location.includes(locationVal);
+
+      if (matchesSearch && matchesCategory && matchesLocation) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  // Bind events for live filtering
+  if (searchInput) searchInput.addEventListener('input', filterPets);
+  if (categorySelect) categorySelect.addEventListener('change', filterPets);
+  if (locationSelect) locationSelect.addEventListener('change', filterPets);
+  
+  // Prevent form submission refresh
+  searchForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    filterPets();
+  });
+}
+

@@ -529,6 +529,8 @@
                                 <button type="button" class="page-num-btn active">1</button>
                                 <button type="button" class="page-num-btn">2</button>
                                 <button type="button" class="page-num-btn">3</button>
+                                <button type="button" class="page-num-btn">4</button>
+                                <button type="button" class="page-num-btn">5</button>
                                 <span class="page-dots">...</span>
                                 <button type="button" class="page-num-btn">28</button>
                                 <button type="button" class="page-nav-arrow" aria-label="Next Page">
