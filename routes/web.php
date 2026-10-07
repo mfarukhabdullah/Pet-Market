@@ -28,3 +28,8 @@ Route::get('/seller/messages', [SellerController::class, 'messages'])->name('sel
 Route::get('/seller/settings', [SellerController::class, 'settings'])->name('seller.settings');
 Route::get('/seller/settings/contact', [SellerController::class, 'settingsContact'])->name('seller.settings.contact');
 Route::get('/seller/settings/security', [SellerController::class, 'settingsSecurity'])->name('seller.settings.security');
+Route::get('/seller/settings/notifications', [SellerController::class, 'settingsNotifications'])->name('seller.settings.notifications');
+Route::get('/seller/settings/account', [SellerController::class, 'settingsAccount'])->name('seller.settings.account');
+Route::get('/seller/favorites', [SellerController::class, 'favorites'])->name('favorites');
+Route::view('/login', 'login')->name('login');
+Route::view('/register', 'sign')->name('sign');

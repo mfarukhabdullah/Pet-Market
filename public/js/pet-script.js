@@ -272,3 +272,22 @@ function initPagination() {
     });
   }
 }
+
+// Profile Dropdown Logic
+document.addEventListener('DOMContentLoaded', function() {
+    const profileBtn = document.getElementById('profileDropdownBtn');
+    const profileMenu = document.getElementById('profileDropdownMenu');
+    
+    if (profileBtn && profileMenu) {
+        profileBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            profileMenu.classList.toggle('show');
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove('show');
+            }
+        });
+    }
+});

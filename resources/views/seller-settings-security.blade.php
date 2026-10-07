@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Security Settings - Pet Marketplace</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <!-- Additional Fonts for Header/Footer -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS for Header/Footer -->
+    <link rel="stylesheet" href="{{ asset('css/pet-style.css') }}">
     <style>
         :root {
             --primary-green: #128c5a;
@@ -29,27 +35,19 @@
             background-color: var(--bg-color);
             color: var(--text-dark);
             display: flex;
-            height: 100vh;
-            overflow: hidden;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* Main Content */
-        .main-content {
-            margin-left: 280px;
-            padding: 24px 32px;
-            flex-grow: 1;
-            max-width: 1200px;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .main-content { width: 100%; flex-grow: 1; min-height: 100vh; display: flex; flex-direction: column; padding: 24px 0; }
 
         /* Welcome Banner */
         .welcome-banner {
             background-color: var(--primary-green);
             color: white;
             border-radius: 16px;
-            padding: 24px 32px;
+            padding: 24px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -61,6 +59,7 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 4px;
+            color: white;
         }
 
         .welcome-text p {
@@ -85,14 +84,13 @@
         }
 
         .btn-notification svg {
-            width: 20px;
-            height: 20px;
+            width: 32px;
+            height: 32px;
         }
 
         /* Settings Card */
         .settings-card {
             flex-grow: 1;
-            min-height: 0;
             display: flex;
             background: white;
             border-radius: 16px;
@@ -104,7 +102,7 @@
         .settings-menu {
             width: 260px;
             border-right: 1px solid var(--border-color);
-            padding: 24px 16px;
+            padding: 24px 0;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -115,6 +113,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            margin: 0 16px;
             padding: 12px 16px;
             border-radius: 8px;
             color: var(--text-gray);
@@ -150,12 +149,12 @@
         /* Settings Content */
         .settings-content {
             flex-grow: 1;
-            overflow-y: auto;
-            padding: 32px 40px;
+            min-width: 0;
+            padding: 24px 32px;
         }
 
         .content-header {
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .content-header h2 {
@@ -173,22 +172,22 @@
         .divider {
             height: 1px;
             background-color: var(--border-color);
-            margin-bottom: 32px;
+            margin-bottom: 20px;
         }
 
         /* Security Cards */
         .sec-card {
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
+            padding: 16px;
+            margin-bottom: 16px;
         }
 
         .sec-card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .sec-card-title h3 {
@@ -239,7 +238,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 0;
+            padding: 12px 0;
         }
 
         .sec-row.border-top {
@@ -312,21 +311,25 @@
         .login-table {
             width: 100%;
             border-collapse: collapse;
+            text-align: left;
         }
 
         .login-table th {
             text-align: left;
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-gray);
             font-weight: 600;
-            padding-bottom: 16px;
+            padding: 16px;
             border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .login-table td {
-            padding: 16px 0;
+            padding: 16px;
             border-bottom: 1px solid var(--border-color);
-            font-size: 14px;
+            font-size: 15px;
+            color: var(--text-gray);
         }
 
         .login-table tr:last-child td {
@@ -336,7 +339,7 @@
         .device-info {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
         }
 
         .device-icon {
@@ -346,8 +349,8 @@
         }
 
         .device-icon svg {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
         }
 
         .text-current {
@@ -357,15 +360,14 @@
 
         /* Alert Box */
         .alert-box {
-            background-color: #fef3c7;
+            background-color: #fffbeb;
             color: #b45309;
-            padding: 16px;
-            border-radius: 8px;
+            padding: 16px 20px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 14px;
-            margin-top: 16px;
+            font-size: 15px;
             font-weight: 500;
         }
 
@@ -373,16 +375,68 @@
             width: 20px;
             height: 20px;
             color: #d97706;
+            flex-shrink: 0;
+        }
+
+        /* Form Styles for Password */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #000;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon input {
+            width: 100%;
+            padding: 12px 16px;
+            padding-right: 48px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-with-icon input:focus {
+            border-color: var(--primary-green);
+        }
+
+        .input-with-icon svg {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--primary-green);
+            cursor: pointer;
+        }
+
+        .form-actions-right {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
         }
 
     </style>
 </head>
 <body>
 
-    <x-dashboard-sidebar />
+    <x-header />
 
     <!-- Main Content -->
-    <main class="main-content">
+    <div class="shell-1440" style="margin: 0 auto; width: 100%; flex-grow: 1; display: flex; flex-direction: column;"><div class="container" style="flex-grow: 1; display: flex; flex-direction: column;"><main class="main-content">
         <!-- Welcome Banner -->
         <div class="welcome-banner">
             <div class="welcome-text">
@@ -414,11 +468,11 @@
                     <div class="menu-icon" style="mask-image: url('{{ asset('images/ps-sec.svg') }}'); -webkit-mask-image: url('{{ asset('images/ps-sec.svg') }}');"></div>
                     Security
                 </a>
-                <a href="#" class="menu-item">
+                <a href="{{ route('seller.settings.notifications') }}" class="menu-item {{ Route::is('seller.settings.notifications') ? 'active' : '' }}">
                     <div class="menu-icon" style="mask-image: url('{{ asset('images/ps-bell.svg') }}'); -webkit-mask-image: url('{{ asset('images/ps-bell.svg') }}');"></div>
                     Notifications
                 </a>
-                <a href="#" class="menu-item">
+                <a href="{{ route('seller.settings.account') }}" class="menu-item {{ Route::is('seller.settings.account') ? 'active' : '' }}">
                     <div class="menu-icon" style="mask-image: url('{{ asset('images/ps-set.svg') }}'); -webkit-mask-image: url('{{ asset('images/ps-set.svg') }}');"></div>
                     Account
                 </a>
@@ -439,19 +493,52 @@
                             <h3>Password</h3>
                             <p>Keep your account secure with a strong password.</p>
                         </div>
-                        <button class="btn-green">Change Password</button>
+                        <button class="btn-green" id="btn-change-password-toggle">Change Password</button>
                     </div>
-                    <div class="sec-row border-top">
-                        <div class="sec-info">
-                            <div class="icon-circle">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+
+                    <!-- Default View -->
+                    <div id="password-default-view">
+                        <div class="sec-row border-top">
+                            <div class="sec-info">
+                                <div class="icon-circle">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                </div>
+                                <div class="sec-text">
+                                    <h4>Account Password</h4>
+                                    <p>Last changed 3 months ago</p>
+                                </div>
                             </div>
-                            <div class="sec-text">
-                                <h4>Account Password</h4>
-                                <p>Last changed 3 months ago</p>
+                            <div class="badge badge-active">Active</div>
+                        </div>
+                    </div>
+
+                    <!-- Form View -->
+                    <div id="password-form-view" style="display: none; padding-top: 16px;">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <div class="input-with-icon">
+                                <input type="password">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                             </div>
                         </div>
-                        <div class="badge badge-active">Active</div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <div class="input-with-icon">
+                                <input type="password">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <div class="input-with-icon">
+                                <input type="password">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </div>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="button" class="btn-outline" id="btn-cancel-password" style="color: #1f2937; border-color: #1f2937;">Cancel</button>
+                            <button type="button" class="btn-green">Update Password</button>
+                        </div>
                     </div>
                 </div>
 
@@ -493,57 +580,62 @@
                 </div>
 
                 <!-- Recent Login Activity Card -->
-                <div class="sec-card">
-                    <div class="sec-card-header" style="margin-bottom: 16px;">
+                <div class="sec-card" style="margin-top: 32px;">
+                    <div class="sec-card-header" style="margin-bottom: 20px;">
                         <div class="sec-card-title">
-                            <h3>Recent Login Activity</h3>
-                            <p>Review recent sign-ins and flag activity you do not recognize.</p>
+                            <h3 style="font-size: 22px; font-weight: 600; color: var(--text-dark); margin-bottom: 4px;">Recent Login Activity</h3>
+                            <p style="font-size: 15px; color: var(--text-gray);">Review recent sign-ins and flag activity you do not recognize.</p>
                         </div>
                     </div>
-                    <table class="login-table">
-                        <thead>
-                            <tr>
-                                <th>DEVICE</th>
-                                <th>LOCATION</th>
-                                <th>TIME</th>
-                                <th>STATUS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="device-info">
-                                        <div class="device-icon">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+
+                    <div style="border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; margin-bottom: 24px; background: white;">
+                        <table class="login-table">
+                            <thead style="background-color: #f9fafb;">
+                                <tr>
+                                    <th>DEVICE</th>
+                                    <th>LOCATION</th>
+                                    <th>TIME</th>
+                                    <th style="text-align: right;">STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="device-info">
+                                            <div class="device-icon">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                                            </div>
+                                            <div class="sec-text">
+                                                <h4 style="font-size: 16px; font-weight: 600; color: var(--text-dark); white-space: nowrap;">Chrome on Windows</h4>
+                                                <p style="font-size: 14px; color: var(--text-gray); margin-top: 2px;">Current device</p>
+                                            </div>
                                         </div>
-                                        <div class="sec-text">
-                                            <h4 style="font-size: 14px;">Chrome on Windows</h4>
-                                            <p style="font-size: 13px;">Current device</p>
+                                    </td>
+                                    <td>Lahore</td>
+                                    <td>Today, 10:32 AM</td>
+                                    <td class="text-current" style="text-align: right; font-size: 15px; color: var(--primary-green); font-weight: 600;">Current</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="device-info">
+                                            <div class="device-icon">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                                            </div>
+                                            <div class="sec-text">
+                                                <h4 style="font-size: 16px; font-weight: 600; color: var(--text-dark); white-space: nowrap;">Chrome on Android</h4>
+                                                <p style="font-size: 14px; color: var(--text-gray); margin-top: 2px;">Mobile</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>Lahore</td>
-                                <td>Today, 10:32 AM</td>
-                                <td class="text-current">Current</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="device-info">
-                                        <div class="device-icon">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                                        </div>
-                                        <div class="sec-text">
-                                            <h4 style="font-size: 14px;">Chrome on Android</h4>
-                                            <p style="font-size: 13px;">Mobile</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Lahore</td>
-                                <td>Yesterday, 8:14 PM</td>
-                                <td><button class="btn-outline" style="padding: 6px 12px;">Not Me</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    </td>
+                                    <td>Lahore</td>
+                                    <td>Yesterday, 8:14 PM</td>
+                                    <td style="text-align: right;">
+                                        <button class="btn-outline" style="padding: 8px 16px; border-radius: 8px; font-weight: 600; color: #1f2937; border-color: #e5e7eb; white-space: nowrap;">Not Me</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <div class="alert-box">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
@@ -554,7 +646,28 @@
             </div>
 
         </div>
-    </main>
+    </main></div></div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnChangePassword = document.getElementById('btn-change-password-toggle');
+            const btnCancelPassword = document.getElementById('btn-cancel-password');
+            const passwordDefaultView = document.getElementById('password-default-view');
+            const passwordFormView = document.getElementById('password-form-view');
+
+            btnChangePassword.addEventListener('click', function() {
+                passwordDefaultView.style.display = 'none';
+                btnChangePassword.style.display = 'none';
+                passwordFormView.style.display = 'block';
+            });
+
+            btnCancelPassword.addEventListener('click', function() {
+                passwordFormView.style.display = 'none';
+                passwordDefaultView.style.display = 'block';
+                btnChangePassword.style.display = 'block';
+            });
+        });
+    </script>
+    <x-footer />
 </body>
 </html>

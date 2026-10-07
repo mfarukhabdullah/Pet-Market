@@ -2,7 +2,7 @@
     /* Sidebar */
     .sidebar {
         width: 280px;
-        background-color: #128c5a;
+        background-color: #147A4d;
         color: white;
         display: flex;
         flex-direction: column;
@@ -73,10 +73,38 @@
     .user-profile {
         display: flex;
         align-items: center;
-        gap: 12px;
+        justify-content: space-between;
         padding-top: 24px;
         border-top: 1px solid rgba(255, 255, 255, 0.2);
         margin-top: auto;
+    }
+
+    .user-profile-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .logout-btn {
+        color: white;
+        background: none;
+        border: none;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+    }
+
+    .logout-btn:hover {
+        opacity: 1;
+    }
+
+    .logout-btn svg {
+        width: 22px;
+        height: 22px;
     }
 
     .avatar {
@@ -129,19 +157,28 @@
             <img src="{{ asset('images/messages-icon.svg') }}" alt="Messages">
             Messages
         </a>
-        <a href="{{ route('seller.settings') }}" class="nav-item {{ Route::is('seller.settings') ? 'active' : '' }}">
+        <a href="{{ route('seller.settings') }}" class="nav-item {{ Route::is('seller.settings*') ? 'active' : '' }}">
             <img src="{{ asset('images/usericon.svg') }}" alt="Profile">
             Profile Settings
         </a>
     </nav>
 
     <div class="user-profile">
-        <div class="avatar">
-            <img src="{{ asset('images/seller-avatar.jpg') }}" alt="Ahmed" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed&background=random'">
+        <div class="user-profile-left">
+            <div class="avatar">
+                <img src="{{ asset('images/seller-avatar.jpg') }}" alt="Ahmed Khan" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'">
+            </div>
+            <div class="user-info">
+                <span class="user-name">Ahmed Khan</span>
+                <span class="user-role">Individual Seller</span>
+            </div>
         </div>
-        <div class="user-info">
-            <span class="user-name">Ahmed</span>
-            <span class="user-role">Seller Account</span>
-        </div>
+        <button class="logout-btn" title="Logout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+        </button>
     </div>
 </div>
