@@ -8,6 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <!-- Additional Fonts for Header/Footer -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS for Header/Footer -->
+    <link rel="stylesheet" href="{{ asset('css/pet-style.css') }}">
     <style>
         :root {
             --primary-green: #128c5a;
@@ -30,29 +36,21 @@
             background-color: var(--bg-color);
             color: var(--text-dark);
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
         }
 
 
 
         /* Main Content */
-        .main-content {
-            margin-left: 280px;
-            padding: 24px 32px;
-            flex-grow: 1;
-            max-width: 1200px;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        .main-content { width: 100%; flex-grow: 1; min-height: 100vh; display: flex; flex-direction: column; padding: 24px 0; }
 
         /* Welcome Banner */
         .welcome-banner {
             background-color: var(--primary-green);
             color: white;
             border-radius: 16px;
-            padding: 24px 32px;
+            padding: 24px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -64,6 +62,7 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 4px;
+            color: white;
         }
 
         .welcome-text p {
@@ -74,7 +73,11 @@
         .btn-sell {
             background-color: white;
             color: var(--primary-green);
-            padding: 10px 20px;
+            width: 184px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
@@ -111,14 +114,14 @@
         }
 
         .btn-notification svg {
-            width: 20px;
-            height: 20px;
+            width: 32px;
+            height: 32px;
         }
 
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin-bottom: 24px;
             flex-shrink: 0;
@@ -173,13 +176,17 @@
             mask: url("{{ asset('images/sold-icon.svg') }}") no-repeat center / contain;
         }
 
+        .icon-favourites {
+            -webkit-mask: url("{{ asset('images/heart-icon.svg') }}") no-repeat center / contain;
+            mask: url("{{ asset('images/heart-icon.svg') }}") no-repeat center / contain;
+        }
+
         /* Bottom Grid */
         .bottom-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 20px;
             flex-grow: 1;
-            min-height: 0;
         }
 
         /* Card common */
@@ -203,9 +210,7 @@
         }
 
         .card-body {
-            overflow-y: auto;
             flex-grow: 1;
-            min-height: 0;
             padding-right: 8px;
         }
 
@@ -346,22 +351,182 @@
             color: var(--text-gray);
             line-height: 1.4;
         }
+        /* Recent Favorites */
+        .favorite-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .favorite-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .fav-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .fav-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .fav-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .fav-subtitle {
+            font-size: 14px;
+            color: var(--text-gray);
+            margin-bottom: 12px;
+        }
+
+        .fav-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+
+        .fav-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .fav-meta i {
+            color: var(--text-gray);
+        }
+
+        .fav-actions {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 80px;
+        }
+
+        .fav-heart {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ef4444;
+            font-size: 16px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .fav-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .btn-sell-mobile {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+                padding: 24px 20px;
+            }
+            .welcome-actions {
+                display: none;
+            }
+            .btn-sell-mobile {
+                display: flex;
+                background-color: white;
+                color: var(--primary-green);
+                height: 48px;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 16px;
+                margin-top: 20px;
+                width: 200px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .stat-card {
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 16px 24px;
+            }
+            .stat-number {
+                font-size: 24px;
+                margin-bottom: 0;
+                order: 2;
+            }
+            .stat-label {
+                order: 1;
+            }
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+            .favorite-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .fav-img {
+                width: 100%;
+                height: 180px;
+            }
+            .fav-meta {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .fav-actions {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                height: auto;
+                width: 100%;
+                margin-top: 12px;
+            }
+            .btn-sell-mobile {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <x-dashboard-sidebar />
+    <x-header />
 
     <!-- Main Content -->
-    <main class="main-content">
+    <div class="shell-1440" style="flex-grow:1;"><div class="container"><main class="main-content">
         <!-- Welcome Banner -->
         <div class="welcome-banner">
             <div class="welcome-text">
                 <h1>Welcome back, Ahmed</h1>
                 <p>Manage your pet listings, buyer inquiries and account from one place.</p>
             </div>
+            <a href="#sell" class="btn-sell-mobile">Sell a Pet</a>
             <div class="welcome-actions">
-                <button class="btn-sell">Sell a Pet</button>
                 <button class="btn-notification">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -387,6 +552,13 @@
                     New Messages
                 </div>
             </div>
+            <a href="{{ route('favorites') }}" class="stat-card" style="text-decoration:none;">
+                <div class="stat-number">04</div>
+                <div class="stat-label">
+                    <div class="stat-icon icon-favourites"></div>
+                    Favourites
+                </div>
+            </a>
             <div class="stat-card">
                 <div class="stat-number">04</div>
                 <div class="stat-label">
@@ -467,7 +639,75 @@
                 </div>
             </div>
         </div>
-    </main>
 
+        <!-- Recent Favorites -->
+        <div class="card" style="margin-top: 24px; margin-bottom: 24px;">
+            <div class="card-header">
+                <div class="card-title">Recent Favorites</div>
+                <a href="{{ route('favorites') }}" class="card-link">View All</a>
+            </div>
+            
+            <div class="card-body">
+                <div class="favorite-item">
+                    <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
+                    <div class="fav-info">
+                        <div class="fav-title">Golden Retriever Puppy</div>
+                        <div class="fav-subtitle">Golden Retriever</div>
+                        <div class="fav-meta">
+                            <span><i class="fa-solid fa-location-dot"></i> Lahore</span>
+                            <span><i class="fa-solid fa-clock"></i> 3 Months</span>
+                            <span><i class="fa-solid fa-mars"></i> Male</span>
+                        </div>
+                    </div>
+                    <div class="fav-actions">
+                        <div class="fav-heart">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                        <div class="fav-price">Rs. 85,000</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
+                    <div class="fav-info">
+                        <div class="fav-title">Golden Retriever Puppy</div>
+                        <div class="fav-subtitle">Golden Retriever</div>
+                        <div class="fav-meta">
+                            <span><i class="fa-solid fa-location-dot"></i> Lahore</span>
+                            <span><i class="fa-solid fa-clock"></i> 3 Months</span>
+                            <span><i class="fa-solid fa-mars"></i> Male</span>
+                        </div>
+                    </div>
+                    <div class="fav-actions">
+                        <div class="fav-heart">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                        <div class="fav-price">Rs. 85,000</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
+                    <div class="fav-info">
+                        <div class="fav-title">Golden Retriever Puppy</div>
+                        <div class="fav-subtitle">Golden Retriever</div>
+                        <div class="fav-meta">
+                            <span><i class="fa-solid fa-location-dot"></i> Lahore</span>
+                            <span><i class="fa-solid fa-clock"></i> 3 Months</span>
+                            <span><i class="fa-solid fa-mars"></i> Male</span>
+                        </div>
+                    </div>
+                    <div class="fav-actions">
+                        <div class="fav-heart">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                        <div class="fav-price">Rs. 85,000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main></div></div>
+
+    <x-footer />
 </body>
 </html>

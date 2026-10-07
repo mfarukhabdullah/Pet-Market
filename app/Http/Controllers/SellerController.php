@@ -35,4 +35,19 @@ class SellerController extends Controller
     {
         return view('seller-settings-security');
     }
+
+    public function settingsNotifications()
+    {
+        return view('seller-settings-notifications');
+    }
+
+    public function settingsAccount()
+    {
+        return view('seller-settings-account');
+    }
+
+    public function favorites()
+    {
+        return view('favorites');
+    }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Settings - Pet Marketplace</title>
+    <title>Account Settings - Pet Marketplace</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <!-- Additional Fonts for Header/Footer -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -18,6 +18,9 @@
             --text-dark: #1f2937;
             --text-gray: #6b7280;
             --border-color: #e5e7eb;
+            --light-green: #e8f5e9;
+            --red-btn: #dc3545;
+            --red-btn-hover: #c82333;
         }
 
         * {
@@ -87,11 +90,13 @@
         /* Settings Card */
         .settings-card {
             flex-grow: 1;
+            min-height: 0;
             display: flex;
             background: white;
             border-radius: 16px;
             border: 1px solid var(--border-color);
             overflow: hidden;
+            position: relative;
         }
 
         /* Settings Menu */
@@ -121,17 +126,13 @@
         }
 
         .menu-item.active {
-            background-color: #e8f5e9;
+            background-color: var(--light-green);
             color: var(--primary-green);
         }
 
         .menu-item:hover {
             background-color: #f3f4f6;
             color: var(--primary-green);
-        }
-        
-        .menu-item.active:hover {
-            background-color: #e8f5e9;
         }
 
         .menu-icon {
@@ -157,14 +158,14 @@
         }
 
         .content-header h2 {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 4px;
         }
 
         .content-header p {
-            font-size: 14px;
+            font-size: 15px;
             color: var(--text-gray);
         }
 
@@ -174,145 +175,168 @@
             margin-bottom: 20px;
         }
 
-        /* Cover and Profile Photos */
-        .media-section {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .cover-photo-area {
-            height: 96px;
-            width: 100%;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            background-color: #e5e7eb;
-        }
-
-        .cover-photo-area img {
-            width: 100%;
-            height: 124%;
-            object-fit: cover;
-        }
-
-        .btn-upload-cover {
-            position: absolute;
-            right: 16px;
-            bottom: 16px;
-            background: white;
-            color: var(--text-dark);
+        /* Account Cards */
+        .acc-card {
             border: 1px solid var(--border-color);
-            padding: 8px 16px;
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .acc-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .acc-info p {
+            font-size: 15px;
+            color: var(--text-gray);
+        }
+
+        .btn-outline-dark {
+            background-color: white;
+            color: #000;
+            border: 1px solid #000;
+            padding: 10px 24px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: background 0.2s;
+            width: 160px;
         }
 
-        .profile-photo-area {
+        .btn-outline-dark:hover {
+            background-color: #f3f4f6;
+        }
+
+        .btn-red {
+            background-color: #d1494e;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 160px;
+        }
+
+        .btn-red:hover {
+            background-color: #b5383d;
+        }
+
+        .btn-modal-red {
+            background-color: #d1494e;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-modal-red:hover {
+            background-color: #b5383d;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-top: 16px;
+            justify-content: center;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
 
-        .avatar-preview {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            background-color: white;
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        .btn-change-photo {
-            background: white;
-            color: var(--text-dark);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
+        .modal-container {
+            background-color: #d1d1d1;
+            border-radius: 20px;
+            padding: 32px;
+            width: 90%;
+            max-width: 560px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
         }
 
-        /* Form Fields */
-        .form-row {
-            display: flex;
-            gap: 24px;
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #000;
             margin-bottom: 16px;
         }
 
-        .form-group {
-            flex: 1;
+        .modal-text {
+            font-size: 18px;
+            color: #1a1a1a;
+            line-height: 1.5;
+            margin-bottom: 32px;
+        }
+
+        .modal-actions {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .form-group label {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .form-control {
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
-            color: var(--text-dark);
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-green);
-        }
-
-        textarea.form-control {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* Actions */
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             gap: 16px;
-            margin-top: 24px;
         }
 
         .btn-cancel {
-            background: white;
-            color: var(--text-dark);
-            border: 1px solid var(--border-color);
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 14px;
+            background-color: white;
+            color: #000;
+            border: 1px solid #777;
+            padding: 12px 32px;
+            border-radius: 12px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background 0.2s;
         }
 
         .btn-cancel:hover {
-            background: #f3f4f6;
+            background-color: #f3f4f6;
         }
 
-        .btn-save {
-            background: var(--primary-green);
+        .btn-deactivate {
+            background-color: #127546;
             color: white;
-            border: 1px solid var(--primary-green);
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 14px;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 12px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background 0.2s;
         }
 
-        .btn-save:hover {
-            background: #0f764a;
+        .btn-deactivate:hover {
+            background-color: #0e5b36;
         }
     </style>
 </head>
@@ -321,7 +345,7 @@
     <x-header />
 
     <!-- Main Content -->
-    <div class="shell-1440" style="flex-grow:1;"><div class="container"><main class="main-content">
+    <div class="shell-1440" style="margin: 0 auto; width: 100%; flex-grow: 1; display: flex; flex-direction: column;"><div class="container" style="flex-grow: 1; display: flex; flex-direction: column;"><main class="main-content">
         <!-- Welcome Banner -->
         <div class="welcome-banner">
             <div class="welcome-text">
@@ -366,47 +390,97 @@
             <!-- Right Content -->
             <div class="settings-content">
                 <div class="content-header">
-                    <h2>Profile Information</h2>
-                    <p>Update the public information shown on your seller profile.</p>
+                    <h2>Account Settings</h2>
+                    <p>Manage your account status.</p>
                 </div>
                 <div class="divider"></div>
 
-                <div class="media-section">
-                    <div class="cover-photo-area">
-                        <img src="{{ asset('images/seller-profile-hero.jpg') }}" alt="Cover Photo" onerror="this.src='https://images.unsplash.com/photo-1544928147-79a2dbc1f389?auto=format&fit=crop&w=800&q=80'">
-                        <button class="btn-upload-cover">Upload Cover</button>
+                <div class="acc-card">
+                    <div class="acc-info">
+                        <h3>Deactivate Account</h3>
+                        <p>Temporarily disable your account.</p>
                     </div>
-                    <div class="profile-photo-area">
-                        <img src="{{ asset('images/seller-avatar.jpg') }}" alt="Profile Photo" class="avatar-preview" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'">
-                        <button class="btn-change-photo">Change Photo</button>
-                    </div>
+                    <button class="btn-outline-dark" id="btn-trigger-deactivate">Deactivate</button>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" class="form-control" value="Ahmed Khan">
+                <div class="acc-card">
+                    <div class="acc-info">
+                        <h3>Delete Account</h3>
+                        <p>Permanently delete your account after confirmation.</p>
                     </div>
-                    <div class="form-group">
-                        <label>Account Type</label>
-                        <input type="text" class="form-control" value="Individual Seller" readonly>
-                    </div>
+                    <button class="btn-red" id="btn-trigger-delete">Delete Account</button>
                 </div>
 
-                <div class="form-group">
-                    <label>About Seller</label>
-                    <textarea class="form-control">Pet owner based in Lahore. Buyers can review my active listings and contact me through the marketplace.</textarea>
-                </div>
+            </div>
 
-                <div class="form-actions">
-                    <button class="btn-cancel">Cancel</button>
-                    <button class="btn-save">Save Changes</button>
+            <!-- Deactivate Modal -->
+            <div class="modal-overlay" id="deactivate-modal">
+                <div class="modal-container">
+                    <h2 class="modal-title">Deactivate your account?</h2>
+                    <p class="modal-text">Your seller profile and active marketplace activity will be temporarily unavailable. You can reactivate your account by signing in again.</p>
+                    <div class="modal-actions">
+                        <button class="btn-cancel" id="btn-cancel-deactivate">Cancel</button>
+                        <button class="btn-deactivate">Deactivate Account</button>
+                    </div>
                 </div>
             </div>
 
+            <!-- Delete Modal -->
+            <div class="modal-overlay" id="delete-modal">
+                <div class="modal-container">
+                    <h2 class="modal-title">Delete your account permanently?</h2>
+                    <p class="modal-text">This action may permanently remove your account. Review what happens to your listings, messages and profile data before continuing.</p>
+                    <div class="modal-actions">
+                        <button class="btn-cancel" id="btn-cancel-delete">Cancel</button>
+                        <button class="btn-modal-red">Delete Account</button>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </main></div></div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnTriggerDeactivate = document.getElementById('btn-trigger-deactivate');
+            const modalDeactivate = document.getElementById('deactivate-modal');
+            const btnCancelDeactivate = document.getElementById('btn-cancel-deactivate');
+
+            const btnTriggerDelete = document.getElementById('btn-trigger-delete');
+            const modalDelete = document.getElementById('delete-modal');
+            const btnCancelDelete = document.getElementById('btn-cancel-delete');
+
+            // Deactivate Modal Logic
+            btnTriggerDeactivate.addEventListener('click', function() {
+                modalDeactivate.classList.add('active');
+            });
+
+            btnCancelDeactivate.addEventListener('click', function() {
+                modalDeactivate.classList.remove('active');
+            });
+
+            modalDeactivate.addEventListener('click', function(e) {
+                if(e.target === modalDeactivate) {
+                    modalDeactivate.classList.remove('active');
+                }
+            });
+
+            // Delete Modal Logic
+            btnTriggerDelete.addEventListener('click', function() {
+                modalDelete.classList.add('active');
+            });
+
+            btnCancelDelete.addEventListener('click', function() {
+                modalDelete.classList.remove('active');
+            });
+
+            modalDelete.addEventListener('click', function(e) {
+                if(e.target === modalDelete) {
+                    modalDelete.classList.remove('active');
+                }
+            });
+        });
+    </script>
     <x-footer />
 </body>
 </html>

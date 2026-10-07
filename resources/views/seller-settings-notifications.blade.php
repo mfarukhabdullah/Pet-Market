@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Settings - Pet Marketplace</title>
+    <title>Notification Preferences - Pet Marketplace</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <!-- Additional Fonts for Header/Footer -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -18,6 +18,7 @@
             --text-dark: #1f2937;
             --text-gray: #6b7280;
             --border-color: #e5e7eb;
+            --light-green: #e8f5e9;
         }
 
         * {
@@ -121,17 +122,13 @@
         }
 
         .menu-item.active {
-            background-color: #e8f5e9;
+            background-color: var(--light-green);
             color: var(--primary-green);
         }
 
         .menu-item:hover {
             background-color: #f3f4f6;
             color: var(--primary-green);
-        }
-        
-        .menu-item.active:hover {
-            background-color: #e8f5e9;
         }
 
         .menu-icon {
@@ -149,170 +146,101 @@
         /* Settings Content */
         .settings-content {
             flex-grow: 1;
-            padding: 24px 32px;
+            padding: 20px 32px;
         }
 
         .content-header {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .content-header h2 {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 4px;
         }
 
         .content-header p {
-            font-size: 14px;
+            font-size: 15px;
             color: var(--text-gray);
         }
 
         .divider {
             height: 1px;
             background-color: var(--border-color);
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
-        /* Cover and Profile Photos */
-        .media-section {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .cover-photo-area {
-            height: 96px;
-            width: 100%;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            background-color: #e5e7eb;
-        }
-
-        .cover-photo-area img {
-            width: 100%;
-            height: 124%;
-            object-fit: cover;
-        }
-
-        .btn-upload-cover {
-            position: absolute;
-            right: 16px;
-            bottom: 16px;
-            background: white;
-            color: var(--text-dark);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .profile-photo-area {
+        /* Notification Rows */
+        .notif-row {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 16px;
-            margin-top: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .avatar-preview {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
+        .notif-row:last-child {
+            border-bottom: none;
+        }
+
+        .notif-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .notif-info p {
+            font-size: 15px;
+            color: var(--text-gray);
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
             background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .btn-change-photo {
-            background: white;
-            color: var(--text-dark);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
+        input:checked + .slider {
+            background-color: var(--primary-green);
         }
 
-        /* Form Fields */
-        .form-row {
-            display: flex;
-            gap: 24px;
-            margin-bottom: 16px;
-        }
-
-        .form-group {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .form-group label {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .form-control {
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
-            color: var(--text-dark);
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-green);
-        }
-
-        textarea.form-control {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* Actions */
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 16px;
-            margin-top: 24px;
-        }
-
-        .btn-cancel {
-            background: white;
-            color: var(--text-dark);
-            border: 1px solid var(--border-color);
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-cancel:hover {
-            background: #f3f4f6;
-        }
-
-        .btn-save {
-            background: var(--primary-green);
-            color: white;
-            border: 1px solid var(--primary-green);
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-save:hover {
-            background: #0f764a;
+        input:checked + .slider:before {
+            transform: translateX(22px);
         }
     </style>
 </head>
@@ -321,7 +249,7 @@
     <x-header />
 
     <!-- Main Content -->
-    <div class="shell-1440" style="flex-grow:1;"><div class="container"><main class="main-content">
+    <div class="shell-1440" style="margin: 0 auto; width: 100%; flex-grow: 1; display: flex; flex-direction: column;"><div class="container" style="flex-grow: 1; display: flex; flex-direction: column;"><main class="main-content">
         <!-- Welcome Banner -->
         <div class="welcome-banner">
             <div class="welcome-text">
@@ -366,44 +294,56 @@
             <!-- Right Content -->
             <div class="settings-content">
                 <div class="content-header">
-                    <h2>Profile Information</h2>
-                    <p>Update the public information shown on your seller profile.</p>
+                    <h2>Notification Preferences</h2>
+                    <p>Choose how you receive marketplace updates.</p>
                 </div>
                 <div class="divider"></div>
 
-                <div class="media-section">
-                    <div class="cover-photo-area">
-                        <img src="{{ asset('images/seller-profile-hero.jpg') }}" alt="Cover Photo" onerror="this.src='https://images.unsplash.com/photo-1544928147-79a2dbc1f389?auto=format&fit=crop&w=800&q=80'">
-                        <button class="btn-upload-cover">Upload Cover</button>
+                <div class="notif-row">
+                    <div class="notif-info">
+                        <h3>New Buyer Inquiry</h3>
+                        <p>Notify me when a buyer messages about a listing.</p>
                     </div>
-                    <div class="profile-photo-area">
-                        <img src="{{ asset('images/seller-avatar.jpg') }}" alt="Profile Photo" class="avatar-preview" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'">
-                        <button class="btn-change-photo">Change Photo</button>
-                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" class="form-control" value="Ahmed Khan">
+                <div class="notif-row">
+                    <div class="notif-info">
+                        <h3>Listing Status Updates</h3>
+                        <p>Notify me when a listing is approved, rejected or removed.</p>
                     </div>
-                    <div class="form-group">
-                        <label>Account Type</label>
-                        <input type="text" class="form-control" value="Individual Seller" readonly>
-                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
                 </div>
 
-                <div class="form-group">
-                    <label>About Seller</label>
-                    <textarea class="form-control">Pet owner based in Lahore. Buyers can review my active listings and contact me through the marketplace.</textarea>
+                <div class="notif-row">
+                    <div class="notif-info">
+                        <h3>Email Notifications</h3>
+                        <p>Receive supported updates by email.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
                 </div>
 
-                <div class="form-actions">
-                    <button class="btn-cancel">Cancel</button>
-                    <button class="btn-save">Save Changes</button>
+                <div class="notif-row">
+                    <div class="notif-info">
+                        <h3>SMS Notifications</h3>
+                        <p>Optional if SMS notifications are enabled.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
                 </div>
+
             </div>
-
         </div>
     </main></div></div>
 

@@ -8,6 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <!-- Additional Fonts for Header/Footer -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS for Header/Footer -->
+    <link rel="stylesheet" href="{{ asset('css/pet-style.css') }}">
     <style>
         :root {
             --primary-green: #128c5a;
@@ -28,27 +34,19 @@
             background-color: var(--bg-color);
             color: var(--text-dark);
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
         }
 
         /* Main Content */
-        .main-content {
-            margin-left: 280px;
-            padding: 24px 32px;
-            flex-grow: 1;
-            max-width: 1200px;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        .main-content { width: 100%; flex-grow: 1; min-height: 100vh; display: flex; flex-direction: column; padding: 24px 0; }
 
         /* Welcome Banner */
         .welcome-banner {
             background-color: var(--primary-green);
             color: white;
             border-radius: 16px;
-            padding: 24px 32px;
+            padding: 24px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -60,6 +58,7 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 4px;
+            color: white;
         }
 
         .welcome-text p {
@@ -111,8 +110,8 @@
         }
 
         .btn-notification svg {
-            width: 20px;
-            height: 20px;
+            width: 32px;
+            height: 32px;
         }
 
         /* Status Tabs */
@@ -154,9 +153,7 @@
         /* Listings Container */
         .listings-container {
             flex-grow: 1;
-            overflow-y: auto;
-            min-height: 0;
-            padding-right: 8px;
+            padding-right: 0px;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -302,10 +299,10 @@
 </head>
 <body>
 
-    <x-dashboard-sidebar />
+    <x-header />
 
     <!-- Main Content -->
-    <main class="main-content">
+    <div class="shell-1440" style="flex-grow:1;"><div class="container"><main class="main-content">
         <!-- Welcome Banner -->
         <div class="welcome-banner">
             <div class="welcome-text">
@@ -440,7 +437,8 @@
             </div>
 
         </div>
-    </main>
+    </main></div></div>
 
+    <x-footer />
 </body>
 </html>

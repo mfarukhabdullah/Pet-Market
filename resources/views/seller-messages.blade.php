@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messages - Pet Marketplace</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <!-- Additional Fonts for Header/Footer -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS for Header/Footer -->
+    <link rel="stylesheet" href="{{ asset('css/pet-style.css') }}">
     <style>
         :root {
             --primary-green: #128c5a;
@@ -25,27 +31,19 @@
             background-color: var(--bg-color);
             color: var(--text-dark);
             display: flex;
-            height: 100vh;
-            overflow: hidden;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* Main Content */
-        .main-content {
-            margin-left: 280px;
-            padding: 24px 32px;
-            flex-grow: 1;
-            max-width: 1200px;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .main-content { width: 100%; flex-grow: 1; min-height: 100vh; display: flex; flex-direction: column; padding: 24px 0; }
 
         /* Welcome Banner */
         .welcome-banner {
             background-color: var(--primary-green);
             color: white;
             border-radius: 16px;
-            padding: 24px 32px;
+            padding: 24px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -57,6 +55,7 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 4px;
+            color: white;
         }
 
         .welcome-text p {
@@ -81,19 +80,21 @@
         }
 
         .btn-notification svg {
-            width: 20px;
-            height: 20px;
+            width: 32px;
+            height: 32px;
         }
 
         /* Chat Layout */
         .chat-container {
-            flex-grow: 1;
-            min-height: 0;
+            position: sticky;
+            top: 24px;
+            height: 700px;
             display: flex;
             background: white;
             border-radius: 16px;
             border: 1px solid var(--border-color);
             overflow: hidden;
+            margin-bottom: 24px;
         }
 
         /* Left Sidebar (Chat List) */
@@ -108,6 +109,10 @@
         .chat-sidebar-header {
             padding: 20px;
             border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
         }
 
         .chat-sidebar-header h2 {
@@ -149,7 +154,7 @@
         .chat-tab.active {
             background: #e8f5e9;
             color: var(--primary-green);
-            border-color: transparent;
+            border-color: var(--primary-green);
         }
 
         .chat-list {
@@ -262,7 +267,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .chat-header-info {
@@ -521,10 +528,10 @@
 </head>
 <body>
 
-    <x-dashboard-sidebar />
+    <x-header />
 
     <!-- Main Content -->
-    <main class="main-content">
+    <div class="shell-1440" style="flex-grow:1;"><div class="container"><main class="main-content">
         <!-- Welcome Banner -->
         <div class="welcome-banner">
             <div class="welcome-text">
@@ -592,6 +599,136 @@
                             </div>
                             <div class="chat-item-pet">Golden Retriever Puppy</div>
                             <div class="chat-item-preview">Is the Golden Retriever still...</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Item 4 -->
+                    <div class="chat-item">
+                        <img src="https://ui-avatars.com/api/?name=Sarah+Khan&background=random" alt="Sarah Khan" class="chat-avatar">
+                        <div class="chat-item-info">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">Sarah Khan</span>
+                                <span class="chat-item-time">2h</span>
+                            </div>
+                            <div class="chat-item-pet">Persian Cat</div>
+                            <div class="chat-item-preview">What is the final price?</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Item 5 -->
+                    <div class="chat-item">
+                        <img src="https://ui-avatars.com/api/?name=Usman+Ahmed&background=random" alt="Usman Ahmed" class="chat-avatar">
+                        <div class="chat-item-info">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">Usman Ahmed</span>
+                                <span class="chat-item-time">3h</span>
+                            </div>
+                            <div class="chat-item-pet">German Shepherd</div>
+                            <div class="chat-item-preview">Where are you located?</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Item 6 -->
+                    <div class="chat-item">
+                        <img src="https://ui-avatars.com/api/?name=Aisha+Malik&background=random" alt="Aisha Malik" class="chat-avatar">
+                        <div class="chat-item-info">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">Aisha Malik</span>
+                                <span class="chat-item-time">5h</span>
+                            </div>
+                            <div class="chat-item-pet">British Shorthair</div>
+                            <div class="chat-item-preview">Is this male or female?</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Item 7 -->
+                    <div class="chat-item">
+                        <img src="https://ui-avatars.com/api/?name=Zain+Ali&background=random" alt="Zain Ali" class="chat-avatar">
+                        <div class="chat-item-info">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">Zain Ali</span>
+                                <span class="chat-item-time">1d</span>
+                            </div>
+                            <div class="chat-item-pet">Mini Lop Rabbit</div>
+                            <div class="chat-item-preview">Can you deliver it to Islamabad?</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Item 8 -->
+                    <div class="chat-item">
+                        <img src="https://ui-avatars.com/api/?name=Fatima+Tariq&background=random" alt="Fatima Tariq" class="chat-avatar">
+                        <div class="chat-item-info">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">Fatima Tariq</span>
+                                <span class="chat-item-time">1d</span>
+                            </div>
+                            <div class="chat-item-pet">African Grey Parrot</div>
+                            <div class="chat-item-preview">How old is it?</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Item 9 -->
+                    <div class="chat-item">
+                        <img src="https://ui-avatars.com/api/?name=Bilal+Mustafa&background=random" alt="Bilal Mustafa" class="chat-avatar">
+                        <div class="chat-item-info">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">Bilal Mustafa</span>
+                                <span class="chat-item-time">2d</span>
+                            </div>
+                            <div class="chat-item-pet">Shih Tzu Puppy</div>
+                            <div class="chat-item-preview">I am interested, please reply.</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Item 10 -->
+                    <div class="chat-item">
+                        <img src="https://ui-avatars.com/api/?name=Sana+Nadeem&background=random" alt="Sana Nadeem" class="chat-avatar">
+                        <div class="chat-item-info">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">Sana Nadeem</span>
+                                <span class="chat-item-time">2d</span>
+                            </div>
+                            <div class="chat-item-pet">Lovebird Pair</div>
+                            <div class="chat-item-preview">Do they come with a cage?</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Item 11 -->
+                    <div class="chat-item">
+                        <img src="https://ui-avatars.com/api/?name=Kamran+Shah&background=random" alt="Kamran Shah" class="chat-avatar">
+                        <div class="chat-item-info">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">Kamran Shah</span>
+                                <span class="chat-item-time">3d</span>
+                            </div>
+                            <div class="chat-item-pet">Beagle Puppy</div>
+                            <div class="chat-item-preview">Thanks!</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Item 12 -->
+                    <div class="chat-item">
+                        <img src="https://ui-avatars.com/api/?name=Nida+Hassan&background=random" alt="Nida Hassan" class="chat-avatar">
+                        <div class="chat-item-info">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">Nida Hassan</span>
+                                <span class="chat-item-time">4d</span>
+                            </div>
+                            <div class="chat-item-pet">Siberian Husky</div>
+                            <div class="chat-item-preview">Are the vaccinations complete?</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Item 13 -->
+                    <div class="chat-item">
+                        <img src="https://ui-avatars.com/api/?name=Fahad+Qureshi&background=random" alt="Fahad Qureshi" class="chat-avatar">
+                        <div class="chat-item-info">
+                            <div class="chat-item-header">
+                                <span class="chat-item-name">Fahad Qureshi</span>
+                                <span class="chat-item-time">5d</span>
+                            </div>
+                            <div class="chat-item-pet">Cockatiel</div>
+                            <div class="chat-item-preview">I will visit tomorrow morning.</div>
                         </div>
                     </div>
                 </div>
@@ -669,6 +806,62 @@
                             <span class="msg-time">10:26 AM</span>
                         </div>
                     </div>
+
+                    <div class="msg-bubble-container sent">
+                        <div class="msg-bubble">
+                            Sure, all vaccinations are up to date. I will share the records.
+                            <span class="msg-time">10:28 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="msg-bubble-container sent">
+                        <div class="msg-bubble">
+                            You can visit tomorrow evening between 5 PM and 8 PM. Does that work for you?
+                            <span class="msg-time">10:28 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="msg-bubble-container received">
+                        <div class="msg-bubble">
+                            Tomorrow evening works perfectly for me.
+                            <span class="msg-time">10:35 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="msg-bubble-container received">
+                        <div class="msg-bubble">
+                            Could you please share your exact address?
+                            <span class="msg-time">10:35 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="msg-bubble-container sent">
+                        <div class="msg-bubble">
+                            Yes, it's House 123, Block C, Phase 1, DHA Lahore.
+                            <span class="msg-time">10:40 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="msg-bubble-container received">
+                        <div class="msg-bubble">
+                            Got it. Is the price negotiable?
+                            <span class="msg-time">10:45 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="msg-bubble-container sent">
+                        <div class="msg-bubble">
+                            We can discuss the price when you visit. I am open to slight negotiation.
+                            <span class="msg-time">10:50 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="msg-bubble-container received">
+                        <div class="msg-bubble">
+                            Sounds good. See you tomorrow.
+                            <span class="msg-time">10:55 AM</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Input Area -->
@@ -693,7 +886,7 @@
                 </div>
             </div>
         </div>
-    </main>
+    </main></div></div>
 
     <script>
         function toggleDropdown() {
@@ -713,5 +906,6 @@
             }
         }
     </script>
+    <x-footer />
 </body>
 </html>
