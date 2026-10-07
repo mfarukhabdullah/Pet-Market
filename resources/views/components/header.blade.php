@@ -35,7 +35,7 @@
                     <a href="{{ route('category') }}" class="header-nav-item">Categories</a>
                     <a href="#breeds" class="header-nav-item">Breeds</a>
                     <a href="#locations" class="header-nav-item">Locations</a>
-                    <a href="#safety" class="header-nav-item">Safety</a>
+                    <a href="{{ route('about') }}" class="header-nav-item">About Us</a>
                 </nav>
 
                 <!-- Action Buttons & Mobile Controls -->
@@ -98,7 +98,7 @@
             <li><a href="{{ route('category') }}">Categories</a></li>
             <li><a href="#breeds">Breeds</a></li>
             <li><a href="#locations">Locations</a></li>
-            <li><a href="#safety">Safety</a></li>
+            <li><a href="{{ route('about') }}">About Us</a></li>
         </ul>
     </div>
     <div style="margin-top:32px;">
@@ -123,7 +123,7 @@
         <span>Chat</span>
     </a>
     <div class="nav-fab-wrapper">
-        <a href="#sell" class="nav-fab">
+        <a href="{{ route('seller.create-listing') }}" class="nav-fab">
             <i class="fa-solid fa-plus"></i>
         </a>
     </div>

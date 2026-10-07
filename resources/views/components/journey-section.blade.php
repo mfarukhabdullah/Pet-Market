@@ -1,3 +1,5 @@
+
+
 <div class="home-journey-section">
     <h2 class="home-sec-title home-sec-title--center">A Simple Marketplace Journey</h2>
     <p class="home-sec-desc home-sec-desc--center">How to buy or sell pets easily and safely.</p>
@@ -20,8 +22,10 @@
         </div>
         <div class="home-step home-step--3">
             <!-- Floating Animals on top of card -->
-            <img src="{{ asset('images/cat-journey.png') }}" class="home-step-cat" alt="">
-            <img src="{{ asset('images/dog-journey.png') }}" class="home-step-dog" alt="">
+            @if(!request()->is('about'))
+                <img src="{{ asset('images/cat-journey.png') }}" class="home-step-cat" alt="">
+                <img src="{{ asset('images/dog-journey.png') }}" class="home-step-dog" alt="">
+            @endif
 
             <img src="{{ asset('images/contact-seller.svg') }}" class="home-step-bg-icon" alt="">
             <div class="home-step-body">

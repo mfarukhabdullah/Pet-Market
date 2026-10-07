@@ -21,8 +21,8 @@
 }
 
 .about-purpose-image {
-    width: 562.79px;
-    flex-shrink: 0;
+    flex: 1;
+    max-width: 562px;
     display: flex;
 }
 
@@ -35,8 +35,7 @@
 }
 
 .about-purpose-content {
-    width: 623.21px;
-    flex-shrink: 0;
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -104,7 +103,7 @@
 .about-marketplace {
     background-color: #FCF3EC;
     /* Light beige matching screenshot */
-    padding: 40px 0;
+    padding: 40px 0 20px 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -112,7 +111,7 @@
 
 .about-marketplace-container {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 88px;
     max-width: 1238px;
     width: 100%;
@@ -125,14 +124,12 @@
 
 .about-marketplace-image {
     width: 575px;
-    height: 415px;
-    /* height to match the proportion within 575 container */
     flex-shrink: 0;
 }
 
 .about-marketplace-image img {
     width: 100%;
-    height: auto;
+    height: 100%;
     border-radius: 20px;
     object-fit: cover;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
@@ -147,18 +144,22 @@
 }
 
 .about-need-title {
-    font-family: 'Outfit', sans-serif;
-    font-size: 16px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 18px;
     font-weight: 700;
+    line-height: 100%;
+    letter-spacing: 0px;
     color: #000000;
     margin-bottom: 6px;
 }
 
 .about-need-desc {
     font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #555555;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20.8px;
+    letter-spacing: 0px;
+    color: #000000;
     margin: 0;
 }
 
@@ -193,5 +194,130 @@
 
     .about-sec-title {
         font-size: 24px;
+    }
+}
+
+/* Safer Interactions Section */
+.safer-interactions-section {
+    padding: 60px 0;
+    background-color: #FAFAFA;
+}
+
+.safer-interactions-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+.safer-left-box {
+    background-color: #0C5E3A; /* Dark green from Figma */
+    border-radius: 24px;
+    padding: 40px;
+    color: #FFFFFF;
+    width: 628.97px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.safer-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 100%;
+    color: #FFFFFF;
+}
+
+.safer-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 28px;
+    margin-bottom: 24px;
+    color: #FFFFFF;
+}
+
+.safer-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.safer-checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 100%;
+    color: #FFFFFF;
+}
+
+.safer-checklist li:last-child {
+    margin-bottom: 0;
+}
+
+.safer-checklist li i {
+    color: #A3E4D7;
+    margin-top: 4px;
+}
+
+.safer-right-cards {
+    width: 514.62px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+}
+
+.safer-card {
+    background-color: #FFFFFF;
+    border-radius: 18px;
+    border: 0.67px solid #E2E7E3;
+    padding: 24px;
+    display: flex;
+    gap: 16px;
+    box-shadow: 0 0 14px rgba(0, 0, 0, 0.1);
+    align-items: flex-start;
+}
+
+.safer-card-icon {
+    color: #147A4D;
+    font-size: 20px;
+    margin-top: 2px;
+}
+
+.safer-card-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #17211C;
+    margin-bottom: 8px;
+    line-height: 100%;
+}
+
+.safer-card-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 21.45px;
+    color: #000000;
+    margin: 0;
+}
+
+@media (max-width: 992px) {
+    .safer-interactions-container {
+        flex-direction: column;
+        gap: 40px;
+    }
+    .safer-left-box,
+    .safer-right-cards {
+        width: 100%;
+        max-width: 100%;
     }
 }
