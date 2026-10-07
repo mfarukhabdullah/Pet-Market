@@ -104,7 +104,7 @@
 .about-marketplace {
     background-color: #FCF3EC;
     /* Light beige matching screenshot */
-    height: 575px;
+    padding: 40px 0;
     display: flex;
     align-items: center;
     justify-content: center;
