@@ -42,10 +42,7 @@
                 <div class="header-action-btns">
                     <a href="#login" class="btn-login-register">Login / Register</a>
                     <a href="#sell" class="btn-sell-pet">Sell a Pet</a>
-                    <a href="#login" class="mobile-user-btn" aria-label="Account">
-                        <i class="far fa-user"></i>
-                    </a>
-                    <button id="mobileToggleBtn" class="mobile-menu-btn" aria-label="Toggle Mobile Menu">
+                    <button class="mobile-menu-btn" aria-label="Toggle Mobile Menu">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
@@ -78,4 +75,29 @@
         <a href="#sell" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
         <a href="#login" class="btn-login-register" style="width:100%; justify-content:center;">Login / Register</a>
     </div>
+</div>
+
+<!-- MOBILE BOTTOM NAVIGATION BAR -->
+<div class="mobile-bottom-nav">
+    <a href="/" class="nav-item active">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+    </a>
+    <a href="#chat" class="nav-item">
+        <i class="fa-regular fa-comment-dots"></i>
+        <span>Chat</span>
+    </a>
+    <div class="nav-fab-wrapper">
+        <a href="#sell" class="nav-fab">
+            <i class="fa-solid fa-plus"></i>
+        </a>
+    </div>
+    <a href="#myads" class="nav-item">
+        <i class="fa-solid fa-bullhorn"></i>
+        <span>My Ads</span>
+    </a>
+    <button id="mobileToggleBtn" class="nav-item" aria-label="More">
+        <i class="fa-solid fa-bars"></i>
+        <span>More</span>
+    </button>
 </div>

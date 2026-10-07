@@ -1,0 +1,1201 @@
+/*
+  HOME PAGE STYLES
+  All classes are prefixed with "home-" so they never clash with pet-style.css
+  or with other pages. Structure:
+    1. Hero
+    2. Search bar
+    3. Section titles / shared buttons
+    4. Categories
+    5. Pet cards (Featured + Latest)
+    6. CTA banner
+    7. Popular breeds
+    8. Locations
+    9. Journey
+   10. Responsive (<= 992px)
+*/
+
+/* ==========================================================================
+   1. HERO
+   ========================================================================== */
+.home-hero {
+  position: relative;
+  background-color: #F7EFE2;
+  padding-bottom: 70px;
+}
+
+/* Clipped container for background decorative shapes */
+.home-hero-shapes {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1440px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.home-hero-hill {
+  position: absolute;
+  bottom: 0;
+  left: -8%;
+  width: 751px;
+  max-width: 100%;
+}
+
+.home-hero-diamond-1,
+.home-hero-diamond-2,
+.home-hero-diamond-3 {
+  position: absolute;
+}
+
+.home-hero-diamond-1 {
+  top: 55px;
+  left: 51%;
+  width: 12px;
+  height: 12px;
+  background-color: #F6D592;
+  border-radius: 3px;
+  transform: rotate(20deg);
+}
+
+.home-hero-diamond-2 {
+  top: 112px;
+  left: 49.8%;
+  width: 18px;
+  height: 18px;
+  background-color: #F6D592;
+  border-radius: 4px;
+  transform: rotate(15deg);
+}
+
+.home-hero-diamond-3 {
+  top: 115px;
+  left: 49.4%;
+  width: 16px;
+  height: 16px;
+  background-color: #14794A;
+  border-radius: 4px;
+  transform: rotate(45deg);
+}
+
+.home-hero-shape-green {
+  position: absolute;
+  bottom: -79px;
+  right: 21%;
+  width: 320px;
+  height: 390px;
+  background-color: #147A4D;
+  border-radius: 65px;
+  transform: rotate(12deg);
+}
+
+.home-hero-shape-yellow {
+  position: absolute;
+  bottom: -110px;
+  right: 7%;
+  width: 470px;
+  height: 420px;
+  background-color: #F7DBA7;
+  border-radius: 65px;
+  transform: rotate(22deg);
+}
+
+.home-hero-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 65px 0 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.home-hero-text {
+  flex: 1;
+  max-width: 500px;
+}
+
+.home-hero-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  color: #000000;
+  line-height: 1.15;
+  letter-spacing: -0.8px;
+  margin-bottom: 22px;
+}
+
+.home-hero-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #000000;
+  line-height: 24px;
+  max-width: 450px;
+  text-align: justify;
+}
+
+.home-hero-visual {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.home-hero-visual-inner {
+  position: relative;
+  display: inline-block;
+}
+
+.home-hero-excite {
+  position: absolute;
+  top: 7%;
+  right: 40%;
+  z-index: 15;
+  transform: scale(1.2);
+}
+
+.home-hero-img {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  object-fit: contain;
+  z-index: 5;
+  position: relative;
+  margin-bottom: -80px;
+}
+
+.home-hero-spacer {
+  height: 60px;
+  background-color: transparent;
+}
+
+/* ==========================================================================
+   2. SEARCH BAR (floating over hero bottom edge)
+   ========================================================================== */
+.home-search-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateY(50%);
+  z-index: 10;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home-search-bar {
+  background-color: #FFFFFF;
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid #F0F0F0;
+}
+
+.home-filter {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #DCDCDC;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  background: #FFF;
+}
+
+.home-filter-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.home-filter-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: #6B7280;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.home-filter-value {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-top: 2px;
+}
+
+.home-search-btn {
+  background-color: #14794A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 26px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   3. SECTION TITLES & SHARED BUTTONS
+   ========================================================================== */
+.home-section {
+  padding: 60px 0;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.home-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-sec-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.home-sec-title--md {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.home-sec-title--light {
+  color: white;
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.home-sec-title--center {
+  text-align: center;
+}
+
+.home-sec-desc {
+  color: #202020;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  margin-bottom: 40px;
+  text-align: justify;
+}
+
+.home-sec-desc--spaced {
+  margin-bottom: 45px;
+}
+
+.home-sec-desc--flush {
+  margin: 0;
+}
+
+.home-sec-desc--latest {
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.home-sec-desc--light {
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 600px;
+  margin: 0;
+}
+
+.home-sec-desc--center {
+  text-align: center;
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+}
+
+.home-header--latest {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.home-header--popular {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.home-header-text-left {
+  text-align: left;
+}
+
+.home-btn-outline {
+  background: transparent;
+  color: #147A4D;
+  border: 1px solid #147A4D;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.home-btn-outline--block {
+  width: 100%;
+}
+
+.home-btn-solid {
+  text-decoration: none;
+  background: #147A4D;
+  color: #ffffff;
+  border: 1px solid #147A4D;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: inline-block;
+  width: calc(100% - 40px);
+}
+
+/* "View All" button shown under the grid on mobile only */
+.home-mobile-btn-wrap {
+  display: none;
+  margin-top: 24px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   4. CATEGORIES
+   ========================================================================== */
+.home-categories-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.home-categories {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.home-cat-item {
+  width: 150px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.home-cat-item:hover {
+  transform: translateY(-5px);
+}
+
+.home-cat-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-cat-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.home-cat-name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 15px;
+}
+
+/* ==========================================================================
+   5. PET CARDS (Featured + Latest)
+   ========================================================================== */
+.home-featured {
+  margin-top: 21px;
+  background-color: #F9F2E7;
+  padding: 30px 0;
+}
+
+.home-latest {
+  background: #FFFFFF;
+  width: 100%;
+  padding: 30px 0;
+  margin: 0 auto;
+}
+
+.home-pets-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.home-pet-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border: none;
+  transition: 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+
+.home-pet-card:hover {
+  transform: translateY(-5px);
+}
+
+.home-pet-media {
+  position: relative;
+}
+
+.home-pet-img {
+  width: 100%;
+  height: 236px;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+}
+
+.home-pet-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #FADFA7;
+  color: #161616;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.home-pet-fav {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.home-pet-info {
+  padding: 16px;
+}
+
+.home-pet-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.home-pet-breed {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.home-pet-price {
+  font-size: 16px;
+  font-weight: 800;
+  color: #147A4D;
+  margin-bottom: 12px;
+}
+
+.home-pet-meta {
+  display: flex;
+  justify-content: flex-start;
+  gap: 16px;
+  font-size: 12px;
+  color: #64748b;
+  border: none;
+  padding-top: 0;
+  margin-bottom: 12px;
+}
+
+.home-pet-location {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.home-pet-meta i,
+.home-pet-location i {
+  margin-right: 4px;
+}
+
+/* ==========================================================================
+   6. CTA BANNER ("One More Friend")
+   ========================================================================== */
+.home-cta {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  min-height: 378px;
+  background-color: #147A4D;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  margin: 20px auto 0;
+}
+
+.home-cta-dark {
+  position: absolute;
+  bottom: -180px;
+  left: -120px;
+  width: 650px;
+  height: 500px;
+  background-color: #147A4D;
+  border-radius: 99px;
+  transform: rotate(25deg);
+  z-index: 1;
+}
+
+.home-cta-cream {
+  position: absolute;
+  top: -160px;
+  right: -140px;
+  width: 780px;
+  height: 650px;
+  background-color: #FCEED5;
+  border-radius: 99px;
+  transform: rotate(25deg);
+  z-index: 1;
+}
+
+.home-cta-img-wrap {
+  position: relative;
+  z-index: 2;
+  width: 48%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-top: 30px;
+}
+
+.home-cta-img {
+  max-width: 100%;
+  height: auto;
+  max-height: 360px;
+  display: block;
+  object-fit: contain;
+}
+
+.home-cta-img-fallback {
+  display: none;
+  width: 380px;
+  height: 320px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 16px 16px 0 0;
+  color: #ffffff;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.home-cta-text {
+  position: relative;
+  z-index: 2;
+  width: 52%;
+  padding: 40px 65px 40px 100px;
+  text-align: left;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.home-cta-title {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 800;
+  color: #000000;
+  line-height: 1.2;
+}
+
+.home-cta-subtitle {
+  margin: 6px 0 18px 0;
+  font-size: 34px;
+  font-weight: 700;
+  color: #000000;
+  line-height: 44px;
+}
+
+.home-cta-desc {
+  margin: 0 0 28px 0;
+  font-size: 16px;
+  font-weight: 400;
+  color: #202020;
+  line-height: 24px;
+  max-width: 400px;
+  text-align: justify;
+}
+
+.home-cta-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.home-cta-btn {
+  text-decoration: none;
+  width: 173px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.home-cta-btn--solid {
+  color: #ffffff;
+  background-color: #147A4D;
+}
+
+.home-cta-btn--outline {
+  border: 2px solid #147A4D;
+  color: #147A4D;
+  background-color: transparent;
+}
+
+/* ==========================================================================
+   7. POPULAR BREEDS
+   ========================================================================== */
+.home-popular {
+  background-color: #F7F3EC;
+  padding: 40px 0;
+  margin: 40px 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+
+.home-popular-title {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #000000;
+  line-height: 1.2;
+}
+
+.home-popular-desc {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: #333333;
+}
+
+.home-popular-link {
+  text-decoration: none;
+  padding: 10px 20px;
+  border: 1px solid #0E6B40;
+  border-radius: 6px;
+  color: #0E6B40;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: transparent;
+  display: inline-block;
+}
+
+.home-popular-grid {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.home-breed-card {
+  width: 280px;
+  height: 272px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+.home-breed-img {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  background-color: #ccc;
+}
+
+.home-breed-info {
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 22px;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.home-breed-info--cream { background-color: #FCE5C9; }
+.home-breed-info--blue  { background-color: #E0ECFB; }
+.home-breed-info--rose  { background-color: #FDC5BC; }
+.home-breed-info--pink  { background-color: #F9DCE5; }
+
+.home-breed-name {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.home-breed-count {
+  font-size: 12px;
+  font-weight: 400;
+  color: #333333;
+}
+
+/* ==========================================================================
+   8. LOCATIONS
+   ========================================================================== */
+.home-locations {
+  background: #147A4D;
+  width: 100%;
+  padding: 50px 0;
+  margin: 0 auto;
+}
+
+.home-locations-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: white;
+}
+
+.home-locations-head {
+  margin-bottom: 40px;
+}
+
+.home-loc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.home-loc-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 0.67px solid rgba(255, 255, 255, 0.1);
+  border-top: 0.67px solid rgba(255, 255, 255, 0.72);
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.3s;
+  min-height: 122px;
+  box-sizing: border-box;
+}
+
+.home-loc-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-top-color: #ffffff;
+}
+
+.home-loc-card h3 {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 24.8px;
+  letter-spacing: 0.5px;
+  margin: 0;
+  font-family: 'Manrope', sans-serif;
+  color: #FFFFFF;
+}
+
+.home-loc-card p {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 18.6px;
+  margin: 6px 0 0;
+  color: #EBEBEB;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ==========================================================================
+   9. JOURNEY
+   ========================================================================== */
+.home-journey-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 120px;
+  padding-bottom: 0;
+}
+
+.home-journey {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.home-step {
+  padding: 30px;
+  border-radius: 16px;
+  position: relative;
+}
+
+.home-step--1 { background: #FCE5C9; }
+.home-step--2 { background: #D6EADF; }
+.home-step--3 { background: #FDC5BC; }
+
+.home-step-bg-icon {
+  position: absolute;
+  right: 20px;
+  top: 30px;
+  width: 100px;
+  height: 100px;
+  opacity: 1;
+  z-index: 0;
+  filter: brightness(0) invert(1);
+  pointer-events: none;
+}
+
+.home-step-body {
+  position: relative;
+  z-index: 1;
+}
+
+.home-step-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  background: #147A4D;
+}
+
+.home-step-icon img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+}
+
+.home-step-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.home-step-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 30px;
+  color: #000000;
+  max-width: 85%;
+  margin: 0;
+}
+
+/* Floating animals above the 3rd step card */
+.home-step-cat {
+  position: absolute;
+  top: -161px;
+  left: 45px;
+  width: 130px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.home-step-dog {
+  position: absolute;
+  top: -201px;
+  left: 150px;
+  width: 180px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   10. RESPONSIVE (<= 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+
+  /* Hero layout */
+  .home-hero {
+    padding-bottom: 40px;
+    margin-bottom: 350px;
+    overflow: visible;
+    box-sizing: border-box;
+  }
+
+  .home-hero-inner {
+    flex-direction: column;
+    padding: 24px 20px 0;
+    align-items: center;
+    gap: 0;
+  }
+
+  .home-hero-text {
+    max-width: 100%;
+    align-self: flex-start;
+    padding: 0;
+    margin-bottom: 0;
+  }
+
+  .home-hero-title br {
+    display: block;
+  }
+
+  .home-hero-title {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 38px;
+    text-align: left;
+    margin-bottom: 12px;
+    color: #000000;
+  }
+
+  .home-hero-desc {
+    text-align: justify;
+    font-size: 18px;
+    line-height: 26px;
+    width: 100%;
+    margin-bottom: 0;
+    color: #000000;
+  }
+
+  .home-hero-visual {
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    margin-top: 15px;
+  }
+
+  .home-hero-visual-inner {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 414px;
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .home-hero-img {
+    margin-bottom: 0;
+    width: 100%;
+    max-width: 414px;
+    display: block;
+    position: relative;
+    z-index: 5;
+  }
+
+  .home-hero-excite {
+    right: 15px;
+    top: -5px;
+    z-index: 20;
+    transform: scale(0.9);
+  }
+
+  /* Hero decorative shapes */
+  .home-hero-diamond-1 {
+    display: block;
+    left: -15px;
+    top: 25%;
+    transform: rotate(20deg);
+  }
+
+  .home-hero-diamond-2 {
+    display: block;
+    left: 10px;
+    top: 35%;
+    transform: rotate(15deg);
+  }
+
+  .home-hero-diamond-3 {
+    display: block;
+    left: -5px;
+    top: 45%;
+    transform: rotate(45deg);
+  }
+
+  .home-hero-hill {
+    display: block;
+    width: 600px;
+    max-width: none;
+    left: -100px;
+    bottom: 0;
+  }
+
+  .home-hero-shape-green {
+    right: auto;
+    bottom: auto;
+    left: 0;
+    top: 360px;
+    width: 140px;
+    height: 280px;
+    transform: rotate(-5deg);
+    border-radius: 70px;
+    z-index: 1;
+  }
+
+  .home-hero-shape-yellow {
+    right: auto;
+    bottom: auto;
+    left: 60px;
+    top: 150px;
+    width: 340px;
+    height: 340px;
+    transform: rotate(20deg);
+    border-radius: 80px;
+    z-index: 1;
+  }
+
+  .home-hero-spacer {
+    display: none;
+  }
+
+  .home-search-wrap {
+    position: absolute;
+    bottom: 0;
+    transform: translateY(80%);
+    z-index: 20;
+    padding: 0;
+    margin: 0;
+  }
+
+  .home-search-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 21px 15px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(20, 35, 28, 0.06);
+    width: 350px;
+    height: 390px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .home-filter {
+    width: 100%;
+    height: 60px;
+    padding: 0 16px;
+    border-radius: 12px;
+    border: 0.67px solid #B1B1B1;
+    background-color: #FFFFFF;
+    box-sizing: border-box;
+  }
+
+  .home-search-btn {
+    width: 100%;
+    height: 60px;
+    justify-content: center;
+    padding: 0;
+    box-sizing: border-box;
+    border-radius: 12px;
+    background-color: #147A4D;
+  }
+
+  /* "View All" buttons: header one hidden, bottom one shown */
+  .home-btn-desktop {
+    display: none;
+  }
+
+  .home-mobile-btn-wrap {
+    display: block;
+  }
+
+  /* Categories */
+  .home-categories {
+    gap: 15px;
+    justify-content: center;
+  }
+
+  .home-cat-item {
+    width: 110px;
+  }
+
+  .home-cat-img {
+    width: 90px;
+    height: 90px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .home-cat-name {
+    font-size: 14px;
+  }
+
+  /* Pet cards */
+  .home-pets-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .home-pet-img {
+    height: 160px;
+  }
+
+  /* Locations & Journey */
+  .home-loc-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .home-journey {
+    grid-template-columns: 1fr;
+  }
+}

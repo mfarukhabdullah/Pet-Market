@@ -24,3 +24,7 @@ Route::get('/pet-details', function () {
 Route::get('/seller-profile', function () {
     return view('seller-profile');
 });
+
+Route::get('/contact', function () {
+    return view('contact');
+});
