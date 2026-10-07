@@ -16,6 +16,11 @@ class SellerController extends Controller
         return view('seller-listings');
     }
 
+    public function createListing()
+    {
+        return view('create-listings');
+    }
+
     public function messages()
     {
         return view('seller-messages');
