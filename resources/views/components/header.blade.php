@@ -32,7 +32,7 @@
                 <!-- Navigation Links -->
                 <nav class="header-nav-menu">
                     <a href="#featured" class="header-nav-item">Featured Pets</a>
-                    <a href="#categories" class="header-nav-item">Categories</a>
+                    <a href="{{ route('category') }}" class="header-nav-item">Categories</a>
                     <a href="#breeds" class="header-nav-item">Breeds</a>
                     <a href="#locations" class="header-nav-item">Locations</a>
                     <a href="#safety" class="header-nav-item">Safety</a>
@@ -95,7 +95,7 @@
         </div>
         <ul class="mobile-nav-list">
             <li><a href="#featured">Featured Pets</a></li>
-            <li><a href="#categories">Categories</a></li>
+            <li><a href="{{ route('category') }}">Categories</a></li>
             <li><a href="#breeds">Breeds</a></li>
             <li><a href="#locations">Locations</a></li>
             <li><a href="#safety">Safety</a></li>
