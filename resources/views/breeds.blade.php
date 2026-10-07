@@ -11,7 +11,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700&display=swap" rel="stylesheet">
     
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,7 +25,7 @@
 
         .breeds-page-wrapper {
             background-color: #FAFAF8;
-            padding-bottom: 80px;
+            padding-bottom: 50px;
         }
 
         .breed-search-card {
@@ -38,7 +38,7 @@
             display: flex;
             align-items: center;
             padding: 0 24px;
-            margin: 32px 15px 24px 15px;
+            margin: 32px 15px 48px 15px;
             position: relative;
             z-index: 10;
         }
@@ -104,17 +104,18 @@
             justify-content: space-evenly;
             margin-bottom: 50px;
             flex-wrap: wrap;
-            margin-top: 30px;
+            margin-top: 110px;
         }
 
         .breed-tag {
             padding: 10px 29px;
             background-color: #D6EADF;
-            border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
-            font-weight: 600;
-            font-size: 14px;
-            color: #17211C;
+            border-radius: 10px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 24px;
+            color: #000000;
             text-decoration: none;
             transition: all 0.2s ease;
         }
@@ -124,8 +125,12 @@
         }
 
         .breed-category-section {
-            margin-bottom: 80px;
+            margin-bottom: 60px;
             scroll-margin-top: 100px;
+        }
+
+        .breed-category-section:last-of-type {
+            margin-bottom: 0px;
         }
 
         .breed-section-header {
@@ -135,8 +140,8 @@
         }
 
         .breed-section-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 24px;
+            font-family: 'manrope', sans-serif;
+            font-size: 34px;
             font-weight: 700;
             color: #17211C;
             margin: 0;
@@ -202,8 +207,8 @@
         }
 
         .breed-name {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 16px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 20px;
             font-weight: 700;
             color: #17211C;
             margin: 0 0 4px 0;
@@ -211,15 +216,16 @@
 
         .breed-count {
             font-family: 'DM Sans', sans-serif;
-            font-size: 12px;
+            font-weight: 500;
+            font-size: 16px;
             color: #667069;
         }
 
         @media (max-width: 768px) {
             .breed-search-card {
                 height: auto;
-                padding: 24px;
-                margin-top: -32px;
+                padding: 18px;
+                margin: 40px 5px 25px 5px;
             }
             .breed-search-form {
                 flex-direction: column;
@@ -229,11 +235,56 @@
                 justify-content: center;
             }
             .breed-tags-container {
-                gap: 12px;
+                gap: 16px;
+                margin-top: 160px;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                justify-content: flex-start;
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+                padding-bottom: 4px;
+            }
+            .breed-tags-container::-webkit-scrollbar {
+                display: none; /* Chrome, Safari and Opera */
             }
             .breed-tag {
-                padding: 8px 16px;
-                font-size: 13px;
+                padding: 12px 24px;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+            .breed-section-header {
+                justify-content: center;
+                margin-bottom: 70px;
+            }
+            .breed-section-title {
+                font-size: 24px;
+            }
+            .breed-section-line {
+                display: none;
+            }
+            .breeds-grid {
+                grid-template-columns: 1fr 1fr;
+                column-gap: 12px;
+                row-gap: 70px;
+            }
+            .breed-card {
+                height: 120px;
+                padding: 12px;
+                padding-top: 56px;
+            }
+            .breed-img-wrapper {
+                width: 110px;
+                height: 110px;
+                top: -66px;
+                border-width: 3px;
+            }
+            .breed-name {
+                font-size: 16px;
+                line-height: 18.21px;
+            }
+            .breed-count {
+                font-size: 14px;
+                line-height: 14.57px;
             }
         }
     </style>
