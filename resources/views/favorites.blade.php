@@ -204,7 +204,7 @@
                     </div>
                     <div class="welcome-actions">
                         <button class="btn-notification">
-                            <i class="fa-regular fa-bell" style="font-size: 24px; color: #fff;"></i>
+                            <i class="fa-regular fa-bell" style="font-size: 32px; color: #fff;"></i>
                         </button>
                     </div>
                 </div>
