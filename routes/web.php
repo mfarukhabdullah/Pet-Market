@@ -23,6 +23,7 @@ Route::get('/about', function () { return view('about'); })->name('about');
 Route::get('/account', function () { return view('account'); })->name('account');
 Route::get('/contact', function () { return view('contact'); })->name('contact');
 Route::get('/category', [CategoryController::class, 'index'])->name('category');
+Route::view('/breeds', 'breeds')->name('breeds');
 Route::get('/pet-details', [PetController::class, 'details'])->name('pet.details');
 Route::get('/seller-profile', [SellerController::class, 'profile'])->name('seller.profile');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

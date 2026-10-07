@@ -28,33 +28,7 @@
     <main class="site-wrapper">
 
         <!-- HERO BANNER SECTION (#FAF7F2 / Cream background, 1440px shell -> 1250px container) -->
-        <section class="category-hero-section">
-            <div class="shell-1440">
-                <div class="container">
-                    <div class="category-hero-grid">
-                        
-                        <!-- Left Hero Text Content -->
-                        <div class="category-hero-text">
-                            <h1 class="category-hero-title">Browse Pet Listings</h1>
-                            <p class="category-hero-desc">
-                                Search and filter pet listings by category, breed, location, price, age, gender and other relevant details.
-                            </p>
-                        </div>
-
-                        <!-- Right Hero Animal Collage Visual -->
-                        <div class="category-hero-visual">
-                            <div class="category-hero-img-wrapper">
-                                <img src="{{ asset('images/Rectangle 5.svg') }}" class="hero-shape hero-shape-5" alt="">
-                                <img src="{{ asset('images/Rectangle 6.svg') }}" class="hero-shape hero-shape-6" alt="">
-                                <img src="{{ asset('images/Rectangle 7.svg') }}" class="hero-shape hero-shape-7" alt="">
-                                <img src="{{ asset('images/category-hero-img.png') }}" alt="Pets Collage" class="category-hero-pets-img">
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
+        <x-hero title="Browse Pet Listings" description="Search and filter pet listings by category, breed, location, price, age, gender and other relevant details.">
             <!-- Floating Search Card Container -->
             <div class="shell-1440">
                 <div class="container">
@@ -103,7 +77,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </x-hero>
 
         <!-- MAIN CATEGORY LISTINGS & SIDEBAR FILTERS SECTION -->
         <section class="category-listings-section">
