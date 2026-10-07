@@ -24,6 +24,7 @@ Route::get('/pet-details', [PetController::class, 'details'])->name('pet.details
 Route::get('/seller-profile', [SellerController::class, 'profile'])->name('seller.profile');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/seller/listings', [SellerController::class, 'listings'])->name('seller.listings');
+Route::get('/seller/create-listing', [SellerController::class, 'createListing'])->name('seller.create-listing');
 Route::get('/seller/messages', [SellerController::class, 'messages'])->name('seller.messages');
 Route::get('/seller/settings', [SellerController::class, 'settings'])->name('seller.settings');
 Route::get('/seller/settings/contact', [SellerController::class, 'settingsContact'])->name('seller.settings.contact');
