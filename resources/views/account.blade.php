@@ -138,7 +138,24 @@
     </style>
 </head>
 <body>
-
+    <style>
+        .account-page-wrapper {
+            max-width: 480px;
+            margin: 40px auto;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        @media (max-width: 768px) {
+            .account-page-wrapper {
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+                max-width: 100%;
+            }
+        }
+    </style>
     <!-- HEADER COMPONENT -->
     <x-header />
 

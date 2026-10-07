@@ -123,7 +123,7 @@
         <span>Chat</span>
     </a>
     <div class="nav-fab-wrapper">
-        <a href="#sell" class="nav-fab">
+        <a href="{{ route('seller.create-listing') }}" class="nav-fab">
             <i class="fa-solid fa-plus"></i>
         </a>
     </div>
