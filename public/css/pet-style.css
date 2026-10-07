@@ -3492,3 +3492,148 @@ button {
   -webkit-mask: url('../images/send-icon.svg') no-repeat center / contain;
   mask: url('../images/send-icon.svg') no-repeat center / contain;
 }
+
+/* =========================================================
+   ACCOUNT NAV DRAWER (Mobile)
+   ========================================================= */
+.account-nav-drawer {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  max-width: 380px;
+  height: 100vh;
+  background-color: #ffffff;
+  z-index: 2000;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+  transition: right 0.4s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.account-nav-drawer.open {
+  right: 0;
+}
+
+.account-nav-header {
+  background-color: #147A4D;
+  padding: 40px 24px 30px 24px;
+}
+
+.account-nav-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.account-nav-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.account-nav-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.account-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: #e0e0e0;
+  color: #666;
+  font-size: 28px;
+}
+
+.account-nav-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-nav-name {
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.account-nav-link {
+  color: #ffffff;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.9;
+}
+.account-nav-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.account-nav-body {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.account-nav-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 16px;
+  margin-top: 0;
+}
+
+.account-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.account-nav-list li {
+  border-bottom: 1px solid #eeeeee;
+}
+
+.account-nav-list li.logout-item {
+  border-bottom: none;
+  margin-top: 16px;
+}
+
+.account-nav-list li a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  color: #111111;
+  text-decoration: none;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+}
+
+.account-nav-list li a .list-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.account-nav-list li a .list-left i {
+  width: 24px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #555555;
+}
+
+.account-nav-list li a .list-arrow {
+  font-size: 0.85rem;
+  color: #999999;
+}
