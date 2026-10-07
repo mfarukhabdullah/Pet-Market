@@ -1890,6 +1890,59 @@ button {
   }
 }
 
+@media (max-width: 768px) {
+  .safety-ownership-section {
+    padding: 10px 16px 40px;
+  }
+
+  .safety-grid {
+    gap: 24px;
+  }
+
+  .safety-image-col {
+    justify-content: flex-start;
+  }
+
+  .safety-group-img {
+    width: 100%;
+    max-width: 360px;
+    margin: 0;
+  }
+
+  .safety-title {
+    font-size: 20px;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+
+  .safety-lead {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .safety-checklist {
+    gap: 14px;
+  }
+
+  .safety-check-item {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .safety-check-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .safety-check-text {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+
 /* =========================================================
    SELL PET CTA BANNER STYLES (Figma Specifications)
    ========================================================= */
@@ -2067,22 +2120,55 @@ button {
 
 @media (max-width: 768px) {
   .sell-banner-card {
-    padding: 36px 24px;
+    padding: 28px 20px 0 20px; /* 0 bottom padding so image touches the bottom */
     min-height: auto;
+    border-radius: 16px;
+    background-color: #FCEED5;
+  }
+
+  .sell-banner-card::before,
+  .sell-banner-card::after {
+    display: none;
   }
 
   .sell-banner-content {
     max-width: 100%;
-    text-align: center;
+    text-align: left;
   }
 
   .sell-badge {
-    justify-content: center;
+    justify-content: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .sell-badge-text {
+    font-size: 16px;
+  }
+
+  .sell-badge-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .sell-banner-title {
+    font-size: 20px;
+    line-height: 1.25;
+    margin-bottom: 8px;
   }
 
   .sell-banner-desc {
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 0;
+    margin-right: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    max-width: 100%;
+  }
+
+  .btn-sell-pet-banner {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
   }
 
   .sell-banner-visuals {
@@ -2091,24 +2177,49 @@ button {
     left: auto;
     right: auto;
     bottom: auto;
-    margin-top: 32px;
-    height: 260px;
+    margin: 100px -20px 0 -20px;
+    height: auto;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .sell-banner-visuals::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0,0 C104,31 84,34 100,23 L100,100 L0,100 Z' fill='%23FFAB68'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+    z-index: 0;
+  }
+
+  .sell-banner-visuals::after {
+    content: '';
+    position: absolute;
+    top: -80px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 15% 120%, rgba(252, 238, 213, 0.45) 0%, rgba(252, 238, 213, 0.45) 45%, transparent 45.5%) no-repeat;
+    z-index: 0;
   }
 
   .cta-hand-img {
-    width: 320px;
-    height: auto;
-    top: -50px;
-    right: -20px;
-    left: auto;
+    display: none;
   }
 
   .cta-animal-img {
-    width: 340px;
+    position: relative;
+    width: 130%;
+    max-width: none;
     height: auto;
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: auto;
+    bottom: auto;
+    left: -15%;
+    transform: none;
+    display: block;
+    z-index: 1;
   }
 
   /* Show mobile bottom nav */
@@ -3205,3 +3316,148 @@ button {
     left: 0;
   }
 }
+
+/* =========================================================
+   ACCOUNT NAV DRAWER (Mobile)
+   ========================================================= */
+.account-nav-drawer {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  max-width: 380px;
+  height: 100vh;
+  background-color: #ffffff;
+  z-index: 2000;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+  transition: right 0.4s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.account-nav-drawer.open {
+  right: 0;
+}
+
+.account-nav-header {
+  background-color: #147A4D;
+  padding: 40px 24px 30px 24px;
+}
+
+.account-nav-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.account-nav-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.account-nav-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.account-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: #e0e0e0;
+  color: #666;
+  font-size: 28px;
+}
+
+.account-nav-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-nav-name {
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.account-nav-link {
+  color: #ffffff;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.9;
+}
+.account-nav-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.account-nav-body {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.account-nav-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 16px;
+  margin-top: 0;
+}
+
+.account-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.account-nav-list li {
+  border-bottom: 1px solid #eeeeee;
+}
+
+.account-nav-list li.logout-item {
+  border-bottom: none;
+  margin-top: 16px;
+}
+
+.account-nav-list li a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  color: #111111;
+  text-decoration: none;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+}
+
+.account-nav-list li a .list-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.account-nav-list li a .list-left i {
+  width: 24px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #555555;
+}
+
+.account-nav-list li a .list-arrow {
+  font-size: 0.85rem;
+  color: #999999;
+}

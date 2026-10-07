@@ -19,6 +19,9 @@ use App\Http\Controllers\DashboardController;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/about', function () { return view('about'); })->name('about');
+Route::get('/account', function () { return view('account'); })->name('account');
+Route::get('/contact', function () { return view('contact'); })->name('contact');
 Route::get('/category', [CategoryController::class, 'index'])->name('category');
 Route::get('/pet-details', [PetController::class, 'details'])->name('pet.details');
 Route::get('/seller-profile', [SellerController::class, 'profile'])->name('seller.profile');

@@ -44,26 +44,56 @@ function updateThemeIcon(theme) {
    2. Mobile Drawer Navigation
    ========================================== */
 function initMobileMenu() {
-  const mobileToggleBtn = document.getElementById('mobileToggleBtn');
-  const closeDrawerBtn = document.getElementById('closeDrawerBtn');
-  const drawer = document.getElementById('mobileNavDrawer');
-  const mobileLinks = document.querySelectorAll('.mobile-nav-list a');
+  // Bottom Nav Account Button -> Account Drawer
+  const accountToggleBtn = document.getElementById('mobileToggleBtn');
+  const accountDrawer = document.getElementById('accountNavDrawer');
+  
+  // Top Header Menu Button -> Main Mobile Nav Drawer
+  const mainToggleBtn = document.querySelector('.mobile-menu-btn');
+  const mainDrawer = document.getElementById('mobileNavDrawer');
+  const closeMainDrawerBtn = document.getElementById('closeDrawerBtn');
 
-  if (mobileToggleBtn && drawer) {
-    mobileToggleBtn.addEventListener('click', () => {
-      drawer.classList.add('open');
+  // Open Account Drawer
+  if (accountToggleBtn && accountDrawer) {
+    accountToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      accountDrawer.classList.toggle('open');
+      if (mainDrawer) mainDrawer.classList.remove('open');
     });
   }
 
-  if (closeDrawerBtn && drawer) {
-    closeDrawerBtn.addEventListener('click', () => {
-      drawer.classList.remove('open');
+  // Open Main Drawer
+  if (mainToggleBtn && mainDrawer) {
+    mainToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mainDrawer.classList.toggle('open');
+      if (accountDrawer) accountDrawer.classList.remove('open');
     });
   }
 
+  // Close Main Drawer Button
+  if (closeMainDrawerBtn && mainDrawer) {
+    closeMainDrawerBtn.addEventListener('click', () => {
+      mainDrawer.classList.remove('open');
+    });
+  }
+
+  // Close both drawers when clicking outside
+  document.addEventListener('click', (e) => {
+    if (accountDrawer && accountDrawer.classList.contains('open') && !accountDrawer.contains(e.target)) {
+      accountDrawer.classList.remove('open');
+    }
+    if (mainDrawer && mainDrawer.classList.contains('open') && !mainDrawer.contains(e.target)) {
+      mainDrawer.classList.remove('open');
+    }
+  });
+
+  // Close when clicking a link
+  const mobileLinks = document.querySelectorAll('.mobile-nav-list a, .account-nav-list a');
   mobileLinks.forEach(link => {
     link.addEventListener('click', () => {
-      if (drawer) drawer.classList.remove('open');
+      if (mainDrawer) mainDrawer.classList.remove('open');
+      if (accountDrawer) accountDrawer.classList.remove('open');
     });
   });
 }

@@ -19,6 +19,9 @@
 
                 <!-- Right-side Warm Yellow tilted rectangle shape -->
                 <div class="home-hero-shape-yellow"></div>
+                
+                <!-- Bottom-left Warm Yellow tilted shape (mobile only) -->
+                <div class="home-hero-shape-yellow-bottom"></div>
             </div>
 
             <!-- HERO MAIN CONTENT -->
@@ -61,7 +64,14 @@
                 <div class="home-search-bar">
 
                     <!-- Filter 1: PET CATEGORY -->
-                    <div class="home-filter">
+                    <div class="home-filter" style="position: relative;">
+                        <select class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
+                            <option value="" disabled selected>Any category</option>
+                            <option value="dogs">Dogs</option>
+                            <option value="cats">Cats</option>
+                            <option value="birds">Birds</option>
+                            <option value="small">Small Pets</option>
+                        </select>
                         <div class="home-filter-left">
                             <!-- Green Paw Icon -->
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="#14794A">
@@ -81,7 +91,14 @@
                     </div>
 
                     <!-- Filter 2: BREED -->
-                    <div class="home-filter">
+                    <div class="home-filter" style="position: relative;">
+                        <select class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
+                            <option value="" disabled selected>Any breed</option>
+                            <option value="golden">Golden Retriever</option>
+                            <option value="husky">Husky</option>
+                            <option value="persian">Persian Cat</option>
+                            <option value="mixed">Mixed Breed</option>
+                        </select>
                         <div class="home-filter-left">
                             <!-- Green Breed Icon (DNA) -->
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14794A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -100,7 +117,14 @@
                     </div>
 
                     <!-- Filter 3: LOCATION -->
-                    <div class="home-filter">
+                    <div class="home-filter" style="position: relative;">
+                        <select class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
+                            <option value="" disabled selected>Any location</option>
+                            <option value="ny">New York</option>
+                            <option value="ca">California</option>
+                            <option value="tx">Texas</option>
+                            <option value="fl">Florida</option>
+                        </select>
                         <div class="home-filter-left">
                             <!-- Green Location Pin Icon -->
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="#14794A">
@@ -115,7 +139,14 @@
                     </div>
 
                     <!-- Filter 4: PRICE -->
-                    <div class="home-filter">
+                    <div class="home-filter" style="position: relative;">
+                        <select class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
+                            <option value="" disabled selected>Any price</option>
+                            <option value="0-100">$0 - $100</option>
+                            <option value="100-500">$100 - $500</option>
+                            <option value="500-1000">$500 - $1000</option>
+                            <option value="1000+">$1000+</option>
+                        </select>
                         <div class="home-filter-left">
                             <!-- Green Price Tag Icon -->
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="#14794A">
@@ -179,7 +210,7 @@
         </div>
 
         <!-- FEATURED PETS -->
-        <div class="home-featured">
+        <div class="home-featured home-pets-section">
             <div class="home-container">
                 <div class="home-header">
                     <div>
@@ -262,14 +293,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="home-mobile-btn-wrap">
-                    <button class="home-btn-outline home-btn-outline--block">View All Pets</button>
+                <div class="home-mobile-btn-wrap home-mobile-btn-wrap--featured">
+                    <a href="{{ route('category') }}" class="home-btn-viewall" id="featured-view-all-mobile">View All Pets</a>
                 </div>
             </div>
         </div>
 
         <!-- LATEST PET LISTINGS -->
-        <div class="home-latest">
+        <div class="home-latest home-pets-section">
             <div class="home-container">
                 <div class="home-header home-header--latest">
                     <div class="home-header-text-left">
@@ -348,8 +379,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="home-mobile-btn-wrap">
-                    <button class="home-btn-outline home-btn-outline--block">View All</button>
+                <div class="home-mobile-btn-wrap home-mobile-btn-wrap--featured">
+                    <a href="{{ route('category') }}" class="home-btn-viewall" id="latest-view-all-mobile">View All Pets</a>
                 </div>
             </div>
         </div>
@@ -366,7 +397,7 @@
                 <img src="{{ asset('images/more-friend.png') }}" alt="Woman kissing dog" class="home-cta-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
 
                 <div class="home-cta-img-fallback">
-                    [ Yahan Apni Girl & Dog Wali Transparent PNG Image Lagayein ]
+                    <img src="{{ asset('images/cta-green-mb-vw.png') }}" alt="CTA Banner Image" class="home-cta-fallback-img">
                 </div>
             </div>
 
@@ -442,8 +473,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="home-mobile-btn-wrap">
-                    <a href="#" class="home-btn-solid">View All Breeds</a>
+                <div class="home-mobile-btn-wrap home-mobile-btn-wrap--popular">
+                    <a href="#" class="home-btn-viewall">View All Pets</a>
                 </div>
             </div>
         </section>
@@ -469,41 +500,8 @@
             </div>
         </div>
 
-        <!-- JOURNEY -->
-        <div class="home-journey-section">
-            <h2 class="home-sec-title home-sec-title--center">A Simple Marketplace Journey</h2>
-            <p class="home-sec-desc home-sec-desc--center">How to buy or sell pets easily and safely.</p>
-            <div class="home-journey">
-                <div class="home-step home-step--1">
-                    <img src="{{ asset('images/search.svg') }}" class="home-step-bg-icon" alt="">
-                    <div class="home-step-body">
-                        <div class="home-step-icon"><img src="{{ asset('images/search.svg') }}" alt=""></div>
-                        <h3 class="home-step-title">Search and Filter</h3>
-                        <p class="home-step-text">Search by pet category, breed, location and price to find relevant listings.</p>
-                    </div>
-                </div>
-                <div class="home-step home-step--2">
-                    <img src="{{ asset('images/review-icon.svg') }}" class="home-step-bg-icon" alt="">
-                    <div class="home-step-body">
-                        <div class="home-step-icon"><img src="{{ asset('images/review-icon.svg') }}" alt=""></div>
-                        <h3 class="home-step-title">Review the Listing</h3>
-                        <p class="home-step-text">Check photos, pet details, health information and seller profile before making contact.</p>
-                    </div>
-                </div>
-                <div class="home-step home-step--3">
-                    <!-- Floating Animals on top of card -->
-                    <img src="{{ asset('images/cat-journey.png') }}" class="home-step-cat" alt="">
-                    <img src="{{ asset('images/dog-journey.png') }}" class="home-step-dog" alt="">
-
-                    <img src="{{ asset('images/contact-seller.svg') }}" class="home-step-bg-icon" alt="">
-                    <div class="home-step-body">
-                        <div class="home-step-icon"><img src="{{ asset('images/contact-seller.svg') }}" alt=""></div>
-                        <h3 class="home-step-title">Contact the Seller</h3>
-                        <p class="home-step-text">Send an inquiry or message without exposing private contact details by default.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- JOURNEY COMPONENT -->
+        <x-journey-section />
 
         <!-- SAFETY & RESPONSIBLE PET OWNERSHIP SECTION COMPONENT -->
         <x-safety-section />
