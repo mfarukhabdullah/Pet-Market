@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initROICalculator();
   initInfluencerFilters();
   initFAQAccordion();
-  initFavorites();
+  initMobileFilters();
+  initPagination();
 });
 
 /* ==========================================
@@ -207,43 +208,67 @@ function initFAQAccordion() {
 }
 
 /* ==========================================
-   7. Favorites Toggle
+   7. Mobile Filters Drawer Toggle
    ========================================== */
-function initFavorites() {
-  const favBtns = document.querySelectorAll('.my-pet-fav, .home-pet-fav, .pd-fav-btn');
-  favBtns.forEach(btn => {
-    // Add transition styling for smooth animation
-    const icon = btn.querySelector('i');
-    if (icon) {
-      icon.style.transition = 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s';
-    }
+function initMobileFilters() {
+  const filterToggleBtn = document.getElementById('mobileFilterToggleBtn');
+  const closeFiltersBtn = document.getElementById('closeFiltersBtn');
+  const filtersSidebar = document.getElementById('filtersSidebarCard');
 
-    btn.addEventListener('click', function(e) {
-      e.preventDefault(); // Stop navigation if inside a link
-      e.stopPropagation(); // Stop event bubbling
-      
-      const i = this.querySelector('i');
-      if (!i) return;
+  if (filterToggleBtn && filtersSidebar) {
+    filterToggleBtn.addEventListener('click', () => {
+      filtersSidebar.classList.add('mobile-open');
+    });
+  }
 
-      if (i.classList.contains('fa-regular')) {
-        // Mark as favorite
-        i.classList.remove('fa-regular');
-        i.classList.add('fa-solid');
-        i.style.color = '#f43f5e'; // Brand accent red/pink color
-        
-        // Pop animation
-        i.style.transform = 'scale(1.3)';
-        setTimeout(() => i.style.transform = 'scale(1)', 200);
-      } else {
-        // Unmark as favorite
-        i.classList.remove('fa-solid');
-        i.classList.add('fa-regular');
-        i.style.color = ''; // Revert to default color
-        
-        // Pop animation
-        i.style.transform = 'scale(0.8)';
-        setTimeout(() => i.style.transform = 'scale(1)', 200);
-      }
+  if (closeFiltersBtn && filtersSidebar) {
+    closeFiltersBtn.addEventListener('click', () => {
+      filtersSidebar.classList.remove('mobile-open');
+    });
+  }
+}
+
+/* ==========================================
+   8. Category Pagination
+   ========================================== */
+function initPagination() {
+  const paginationRow = document.querySelector('.category-pagination-row');
+  if (!paginationRow) return;
+
+  const pageBtns = Array.from(paginationRow.querySelectorAll('.page-num-btn'));
+  const prevBtn = paginationRow.querySelector('button[aria-label="Previous Page"]');
+  const nextBtn = paginationRow.querySelector('button[aria-label="Next Page"]');
+
+  if (!pageBtns.length) return;
+
+  function updateActivePage(newIndex) {
+    if (newIndex < 0 || newIndex >= pageBtns.length) return;
+
+    pageBtns.forEach(btn => btn.classList.remove('active'));
+    pageBtns[newIndex].classList.add('active');
+  }
+
+  pageBtns.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+      updateActivePage(index);
     });
   });
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      const activeIndex = pageBtns.findIndex(btn => btn.classList.contains('active'));
+      if (activeIndex > 0) {
+        updateActivePage(activeIndex - 1);
+      }
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      const activeIndex = pageBtns.findIndex(btn => btn.classList.contains('active'));
+      if (activeIndex !== -1 && activeIndex < pageBtns.length - 1) {
+        updateActivePage(activeIndex + 1);
+      }
+    });
+  }
 }
