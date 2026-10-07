@@ -1,5 +1,13 @@
 @props(['title', 'description'])
 
+<style>
+    @media (max-width: 768px) {
+        .category-hero-section .container {
+            padding: 0 !important;
+        }
+    }
+</style>
+
 <section class="category-hero-section">
     <div class="shell-1440">
         <div class="container">
