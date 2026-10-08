@@ -57,11 +57,11 @@
                                   
                                   <div class="dropdown-divider"></div>
 
-                                  <a href="{{ route('dashboard') }}" class="dropdown-item"><span class="dd-icon icon-dash-dd"></span> Dashboard</a>
-                                  <a href="{{ route('seller.listings') }}" class="dropdown-item"><span class="dd-icon icon-list-dd"></span> My Listings</a>
-                                  <a href="{{ route('seller.messages') }}" class="dropdown-item"><span class="dd-icon icon-msg-dd"></span> Messages</a>
-                                  <a href="{{ route('favorites') }}" class="dropdown-item"><span class="dd-icon icon-fav-dd"></span> Favorites</a>
-                                  <a href="{{ route('seller.settings') }}" class="dropdown-item"><span class="dd-icon icon-ps-dd"></span> Profile Settings</a>
+                                  <a href="{{ route('dashboard') }}" class="dropdown-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"><span class="dd-icon icon-dash-dd"></span> Dashboard</a>
+                                  <a href="{{ route('seller.listings') }}" class="dropdown-item {{ request()->routeIs('seller.listings') ? 'active' : '' }}"><span class="dd-icon icon-list-dd"></span> My Listings</a>
+                                  <a href="{{ route('seller.messages') }}" class="dropdown-item {{ request()->routeIs('seller.messages') ? 'active' : '' }}"><span class="dd-icon icon-msg-dd"></span> Messages</a>
+                                  <a href="{{ route('favorites') }}" class="dropdown-item {{ request()->routeIs('favorites') ? 'active' : '' }}"><span class="dd-icon icon-fav-dd"></span> Favorites</a>
+                                  <a href="{{ route('seller.settings') }}" class="dropdown-item {{ request()->routeIs('seller.settings*') ? 'active' : '' }}"><span class="dd-icon icon-ps-dd"></span> Profile Settings</a>
                                   
                                   <a href="/" class="dropdown-item">
                                       <i class="fa-solid fa-arrow-right-from-bracket" style="width:20px; font-size:18px; text-align:center;"></i> Log Out
@@ -202,23 +202,4 @@
     </div>
 </div>
 
-<script>
-// Profile Dropdown Logic
-document.addEventListener('DOMContentLoaded', function() {
-    const profileBtn = document.getElementById('profileDropdownBtn');
-    const profileMenu = document.getElementById('profileDropdownMenu');
-    
-    if (profileBtn && profileMenu) {
-        profileBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileMenu.classList.toggle('show');
-        });
-        
-        document.addEventListener('click', function(e) {
-            if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
-                profileMenu.classList.remove('show');
-            }
-        });
-    }
-});
-</script>
+

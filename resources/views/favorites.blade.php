@@ -185,6 +185,60 @@
         .fav-card-location i, .fav-card-meta i {
             color: var(--text-gray);
         }
+
+        @media (max-width: 768px) {
+            .favorites-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .fav-card-img-wrapper {
+                height: 140px;
+            }
+
+            .fav-heart-btn {
+                width: 28px;
+                height: 28px;
+                top: 8px;
+                right: 8px;
+                font-size: 14px;
+            }
+
+            .fav-card-content {
+                padding: 12px;
+            }
+
+            .fav-card-title {
+                font-size: 13px;
+                margin-bottom: 2px;
+            }
+
+            .fav-card-subtitle {
+                font-size: 11px;
+                margin-bottom: 8px;
+            }
+
+            .fav-card-price {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .fav-card-meta {
+                gap: 8px;
+                font-size: 10px;
+                margin-bottom: 8px;
+                padding-bottom: 8px;
+            }
+
+            .fav-card-meta span {
+                gap: 4px;
+            }
+
+            .fav-card-location {
+                font-size: 10px;
+                gap: 4px;
+            }
+        }
     </style>
 </head>
 <body>

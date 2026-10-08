@@ -226,6 +226,84 @@
             padding-right: 40px;
         }
 
+        /* Custom Dropdown */
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+            user-select: none;
+        }
+
+        .custom-select-trigger {
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            color: #000;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(18, 140, 90, 0.1);
+        }
+
+        .custom-select-trigger i {
+            color: var(--text-gray);
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger i {
+            transform: rotate(180deg);
+        }
+
+        .custom-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-top: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s;
+            overflow: hidden;
+        }
+
+        .custom-select-wrapper.open .custom-options {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .custom-option {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .custom-option:last-child {
+            border-bottom: none;
+        }
+
+        .custom-option:hover, .custom-option.selected {
+            background-color: var(--primary-green);
+            color: white;
+        }
+
         /* Actions */
         .form-actions {
             display: flex;
@@ -265,6 +343,84 @@
         .btn-save:hover {
             background: #0f764a;
         }
+
+        @media (max-width: 768px) {
+            .welcome-banner {
+                padding: 24px 20px;
+                border-radius: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .welcome-text h1 { font-size: 22px; }
+            .welcome-text p { font-size: 14px; }
+            .btn-notification { display: none; }
+            
+            .settings-card {
+                flex-direction: column;
+                background: transparent;
+                border: none;
+                overflow: visible;
+            }
+            
+            .settings-menu {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                border-right: none;
+                padding: 0 4px 4px 4px;
+                margin-bottom: 24px;
+                overflow-x: auto;
+                gap: 12px;
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .settings-menu::-webkit-scrollbar { display: none; }
+            
+            .menu-item {
+                display: flex;
+                flex-direction: column;
+                margin: 0;
+                padding: 0;
+                width: 108px;
+                height: 68px;
+                flex-shrink: 0;
+                background-color: white;
+                border-radius: 12px;
+                gap: 8px;
+                justify-content: center;
+                align-items: center;
+                border: 1px solid var(--border-color);
+            }
+            .hide-on-mobile { display: none; }
+            .menu-item.active {
+                background-color: #eaf7f0;
+                border-color: #eaf7f0;
+                color: var(--primary-green);
+            }
+            
+            .settings-content {
+                background: white;
+                border: 1px solid var(--border-color);
+                border-radius: 16px;
+                padding: 24px 16px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .form-actions {
+                flex-direction: row;
+                gap: 12px;
+                margin-top: 24px;
+            }
+            .btn-cancel, .btn-save {
+                flex: 1;
+                text-align: center;
+                padding: 10px 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -298,7 +454,7 @@
                 </a>
                 <a href="{{ route('seller.settings.contact') }}" class="menu-item {{ Route::is('seller.settings.contact') ? 'active' : '' }}">
                     <div class="menu-icon" style="mask-image: url('{{ asset('images/ps-con-icon.svg') }}'); -webkit-mask-image: url('{{ asset('images/ps-con-icon.svg') }}');"></div>
-                    Contact & Location
+                    Contact<span class="hide-on-mobile"> & Location</span>
                 </a>
                 <a href="{{ route('seller.settings.security') }}" class="menu-item {{ Route::is('seller.settings.security') ? 'active' : '' }}">
                     <div class="menu-icon" style="mask-image: url('{{ asset('images/ps-sec.svg') }}'); -webkit-mask-image: url('{{ asset('images/ps-sec.svg') }}');"></div>
@@ -336,11 +492,18 @@
                 <div class="form-row">
                     <div class="form-group" style="margin-bottom: 0;">
                         <label>City</label>
-                        <select class="form-control">
-                            <option>Lahore</option>
-                            <option>Karachi</option>
-                            <option>Islamabad</option>
-                        </select>
+                        <div class="custom-select-wrapper" id="citySelectWrapper">
+                            <div class="custom-select-trigger" onclick="document.getElementById('citySelectWrapper').classList.toggle('open')">
+                                <span id="selectedCity">Lahore</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="custom-options">
+                                <div class="custom-option selected" onclick="selectCity('Lahore', this)">Lahore</div>
+                                <div class="custom-option" onclick="selectCity('Karachi', this)">Karachi</div>
+                                <div class="custom-option" onclick="selectCity('Islamabad', this)">Islamabad</div>
+                            </div>
+                            <input type="hidden" name="city" id="cityInput" value="Lahore">
+                        </div>
                     </div>
                     <div class="form-group" style="margin-bottom: 0;">
                         <label>Area</label>
@@ -350,12 +513,19 @@
 
                 <div class="form-group">
                     <label>Contact Preference</label>
-                    <p>Choose how buyers should contact you. Marketplace Messages keeps your personal contact details private.</p>
-                    <select class="form-control">
-                        <option>Marketplace Messages</option>
-                        <option>Direct Phone Call</option>
-                        <option>Email Only</option>
-                    </select>
+                    <p style="color: #000;">Choose how buyers should contact you. Marketplace Messages keeps your personal contact details private.</p>
+                    <div class="custom-select-wrapper" id="contactPrefWrapper">
+                        <div class="custom-select-trigger" onclick="document.getElementById('contactPrefWrapper').classList.toggle('open')">
+                            <span id="selectedContactPref">Marketplace Messages</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="custom-options">
+                            <div class="custom-option selected" onclick="selectPref('Marketplace Messages', this)">Marketplace Messages</div>
+                            <div class="custom-option" onclick="selectPref('Direct Phone Call', this)">Direct Phone Call</div>
+                            <div class="custom-option" onclick="selectPref('Email Only', this)">Email Only</div>
+                        </div>
+                        <input type="hidden" name="contact_preference" id="contactPrefInput" value="Marketplace Messages">
+                    </div>
                 </div>
 
                 <div class="form-actions">
@@ -368,5 +538,39 @@
     </main></div></div>
 
     <x-footer />
+
+    <script>
+        function selectPref(value, element) {
+            document.getElementById('selectedContactPref').innerText = value;
+            document.getElementById('contactPrefInput').value = value;
+            
+            document.querySelectorAll('#contactPrefWrapper .custom-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            document.getElementById('contactPrefWrapper').classList.remove('open');
+        }
+
+        function selectCity(value, element) {
+            document.getElementById('selectedCity').innerText = value;
+            document.getElementById('cityInput').value = value;
+            
+            document.querySelectorAll('#citySelectWrapper .custom-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            document.getElementById('citySelectWrapper').classList.remove('open');
+        }
+
+        document.addEventListener('click', function(e) {
+            const prefWrapper = document.getElementById('contactPrefWrapper');
+            if (prefWrapper && !prefWrapper.contains(e.target)) {
+                prefWrapper.classList.remove('open');
+            }
+
+            const cityWrapper = document.getElementById('citySelectWrapper');
+            if (cityWrapper && !cityWrapper.contains(e.target)) {
+                cityWrapper.classList.remove('open');
+            }
+        });
+    </script>
 </body>
 </html>

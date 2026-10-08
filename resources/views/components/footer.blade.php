@@ -1,4 +1,13 @@
 <!-- FOOTER COMPONENT (#223129 - Full Screen Width Background) -->
+@if(request()->is('seller/*') || request()->is('dashboard'))
+<style>
+    @media (max-width: 768px) {
+        .marketplace-footer {
+            display: none !important;
+        }
+    }
+</style>
+@endif
 <footer class="marketplace-footer">
     <div class="shell-1440" style="position: relative;">
         <!-- Watermark Paw Image as specified in 3rd Image -->
@@ -81,3 +90,4 @@
         </div>
     </div>
 </footer>
+<script src="{{ asset('js/pet-script.js') }}"></script>

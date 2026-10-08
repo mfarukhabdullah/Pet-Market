@@ -365,9 +365,9 @@
             padding: 16px 20px;
             border-radius: 12px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
-            font-size: 15px;
+            font-size: 11px;
             font-weight: 500;
         }
 
@@ -429,6 +429,204 @@
             margin-top: 24px;
         }
 
+        @media (max-width: 768px) {
+            .welcome-banner {
+                padding: 24px 20px;
+                border-radius: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .welcome-text h1 { font-size: 22px; }
+            .welcome-text p { font-size: 14px; }
+            .btn-notification { display: none; }
+            
+            .settings-card {
+                flex-direction: column;
+                background: transparent;
+                border: none;
+                overflow: visible;
+                padding: 0;
+            }
+            
+            .settings-menu {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                border-right: none;
+                padding: 0 4px 4px 4px;
+                margin-bottom: 24px;
+                overflow-x: auto;
+                gap: 12px;
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .settings-menu::-webkit-scrollbar { display: none; }
+            
+            .menu-item {
+                display: flex;
+                flex-direction: column;
+                margin: 0;
+                padding: 0;
+                width: 108px;
+                height: 68px;
+                flex-shrink: 0;
+                background-color: white;
+                border-radius: 12px;
+                gap: 8px;
+                justify-content: center;
+                align-items: center;
+                border: 1px solid var(--border-color);
+            }
+            .menu-item.active {
+                background-color: #eaf7f0;
+                border-color: #eaf7f0;
+                color: var(--primary-green);
+            }
+            .hide-on-mobile { display: none; }
+            
+            .settings-content {
+                background: white;
+                border: 1px solid var(--border-color);
+                border-radius: 16px;
+                padding: 24px 16px;
+            }
+
+            .sec-card {
+                padding: 16px;
+            }
+            
+            .sec-card-header {
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .sec-card-title {
+                flex: 1;
+            }
+            
+            .sec-card-title h3 {
+                font-size: 16px;
+            }
+            
+            .sec-card-title p {
+                font-size: 12px;
+                line-height: 1.4;
+            }
+            
+            .btn-green {
+                font-size: 13px;
+                padding: 8px 12px;
+                white-space: nowrap;
+            }
+            
+            .icon-circle {
+                border-radius: 12px;
+                width: 44px;
+                height: 44px;
+                flex-shrink: 0;
+            }
+            
+            .sec-row {
+                padding: 16px 0;
+            }
+
+            .sec-info {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .sec-info .sec-text h4 {
+                font-size: 14px;
+                font-weight: 700;
+                color: #1f2937;
+                margin-bottom: 2px;
+            }
+            
+            .sec-info .sec-text p {
+                font-size: 13px;
+                color: #6b7280;
+            }
+
+            .badge {
+                font-size: 12px;
+                padding: 6px 12px;
+                font-weight: 700;
+                text-align: center;
+            }
+            
+            .action-group {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+            }
+
+            .btn-outline {
+                font-size: 12px;
+                font-weight: 700;
+                padding: 6px 0;
+                text-align: center;
+                border-radius: 8px;
+                color: #1f2937;
+            }
+
+            .login-table th, .login-table td {
+                padding: 12px 6px;
+                font-size: 7px;
+                color: #111827;
+            }
+            .login-table th { 
+                font-size: 7px; 
+                color: #6b7280;
+                font-weight: 600;
+                padding: 10px 6px;
+            }
+            .device-name-text {
+                font-size: 11px !important;
+            }
+            .device-sub-text {
+                font-size: 7px !important;
+            }
+            .text-current {
+                font-size: 10px !important;
+            }
+            .btn-not-me {
+                font-size: 10px !important;
+            }
+            .device-icon svg { width: 20px; height: 20px; stroke-width: 2; }
+            .device-info { gap: 3px; align-items: flex-start; }
+            
+            /* Password Form Mobile Overrides */
+            #password-form-view .input-with-icon input {
+                border-radius: 12px;
+                padding: 14px 16px;
+                padding-right: 48px;
+            }
+            #password-form-view .form-actions-right {
+                display: flex;
+                flex-direction: row;
+                gap: 12px;
+                width: 100%;
+                margin-top: 24px;
+            }
+            #password-form-view .form-actions-right button {
+                flex: 1;
+                padding: 14px 0;
+                font-size: 15px;
+                font-weight: 700;
+                border-radius: 12px;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            #password-form-view .form-actions-right .btn-outline {
+                color: #000 !important;
+                border: 1px solid #000 !important;
+            }
+        }
+
+
     </style>
 </head>
 <body>
@@ -462,7 +660,7 @@
                 </a>
                 <a href="{{ route('seller.settings.contact') }}" class="menu-item {{ Route::is('seller.settings.contact') ? 'active' : '' }}">
                     <div class="menu-icon" style="mask-image: url('{{ asset('images/ps-con-icon.svg') }}'); -webkit-mask-image: url('{{ asset('images/ps-con-icon.svg') }}');"></div>
-                    Contact & Location
+                    Contact<span class="hide-on-mobile"> & Location</span>
                 </a>
                 <a href="{{ route('seller.settings.security') }}" class="menu-item {{ Route::is('seller.settings.security') ? 'active' : '' }}">
                     <div class="menu-icon" style="mask-image: url('{{ asset('images/ps-sec.svg') }}'); -webkit-mask-image: url('{{ asset('images/ps-sec.svg') }}');"></div>
@@ -606,13 +804,13 @@
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
                                             </div>
                                             <div class="sec-text">
-                                                <h4 style="font-size: 16px; font-weight: 600; color: var(--text-dark); white-space: nowrap;">Chrome on Windows</h4>
-                                                <p style="font-size: 14px; color: var(--text-gray); margin-top: 2px;">Current device</p>
+                                                <h4 class="device-name-text" style="font-size: 16px; font-weight: 600; color: var(--text-dark); white-space: normal;">Chrome on Windows</h4>
+                                                <p class="device-sub-text" style="font-size: 14px; color: var(--text-gray); margin-top: 2px;">Current device</p>
                                             </div>
                                         </div>
                                     </td>
                                     <td>Lahore</td>
-                                    <td>Today, 10:32 AM</td>
+                                    <td>Today,<br>10:32 AM</td>
                                     <td class="text-current" style="text-align: right; font-size: 15px; color: var(--primary-green); font-weight: 600;">Current</td>
                                 </tr>
                                 <tr>
@@ -622,15 +820,15 @@
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
                                             </div>
                                             <div class="sec-text">
-                                                <h4 style="font-size: 16px; font-weight: 600; color: var(--text-dark); white-space: nowrap;">Chrome on Android</h4>
-                                                <p style="font-size: 14px; color: var(--text-gray); margin-top: 2px;">Mobile</p>
+                                                <h4 class="device-name-text" style="font-size: 16px; font-weight: 600; color: var(--text-dark); white-space: normal;">Chrome on Android</h4>
+                                                <p class="device-sub-text" style="font-size: 14px; color: var(--text-gray); margin-top: 2px;">Mobile</p>
                                             </div>
                                         </div>
                                     </td>
                                     <td>Lahore</td>
-                                    <td>Yesterday, 8:14 PM</td>
+                                    <td>Yesterday,<br>10:32 AM</td>
                                     <td style="text-align: right;">
-                                        <button class="btn-outline" style="padding: 8px 16px; border-radius: 8px; font-weight: 600; color: #1f2937; border-color: #e5e7eb; white-space: nowrap;">Not Me</button>
+                                        <button class="btn-not-me" style="padding: 0; background: transparent; border: none; font-weight: 700; color: #1f2937; white-space: nowrap; font-size: 14px; cursor: pointer;">Not Me</button>
                                     </td>
                                 </tr>
                             </tbody>

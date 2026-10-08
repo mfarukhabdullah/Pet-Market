@@ -127,7 +127,7 @@
             background-color: white;
             border: 1px solid var(--border-color);
             color: var(--text-dark);
-            width: 183px;
+            flex: 1;
             height: 64px;
             display: flex;
             align-items: center;
@@ -338,6 +338,7 @@
                 display: none;
             }
             .tab-btn {
+                flex: none;
                 width: 35vw;
                 padding: 0;
                 height: 40px;
@@ -434,7 +435,6 @@
                 <p>Manage your pet listings, review their status, edit details or mark them sold/rehomed.</p>
             </div>
             <div class="welcome-actions">
-                <button class="btn-sell">Create Listing</button>
                 <button class="btn-notification">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -563,6 +563,34 @@
         </div>
     </main></div></div>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.tab-btn');
+        const cards = document.querySelectorAll('.listing-card');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const filter = tab.textContent.trim().toLowerCase();
+
+                cards.forEach(card => {
+                    const badge = card.querySelector('.status-badge');
+                    if (!badge) return;
+                    
+                    const status = badge.textContent.trim().toLowerCase();
+                    
+                    if (filter === 'all' || status === filter) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+    </script>
     <x-footer />
 </body>
 </html>

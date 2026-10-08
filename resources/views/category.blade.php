@@ -342,7 +342,7 @@
                                         <span class="featured-badge">FEATURED</span>
                                         <img src="{{ asset('images/pets/golden-retriever.jpg') }}" alt="Golden Retriever Puppy" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -364,7 +364,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/persian-cat.jpg') }}" alt="Persian Cat" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -386,7 +386,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/african-grey.jpg') }}" alt="African Grey Parrot" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -409,7 +409,7 @@
                                         <span class="featured-badge">FEATURED</span>
                                         <img src="{{ asset('images/pets/mini-lop.jpg') }}" alt="Mini Lop Rabbit" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -431,7 +431,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/german-shepherd.jpg') }}" alt="German Shepherd" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -453,7 +453,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/british-shorthair.jpg') }}" alt="British Shorthair" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -475,7 +475,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/shih-tzu.jpg') }}" alt="Shih Tzu Puppy" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -497,7 +497,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/lovebird.jpg') }}" alt="Lovebird Pair" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">

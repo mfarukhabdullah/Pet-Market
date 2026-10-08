@@ -203,7 +203,7 @@
             <a href="{{ url('/pet-details') }}" class="my-pet-card">
                 <div style="position: relative;">
                     <img src="{{ asset('images/card_gsd.jpg') }}" alt="German Shepherd" class="my-pet-img" onerror="this.src='https://placehold.co/400x300';">
-                    <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                    <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                 </div>
                 <div class="my-pet-info">
                     <h3 class="my-pet-title">German Shepherd</h3>
@@ -221,7 +221,7 @@
             <a href="{{ url('/pet-details') }}" class="my-pet-card">
                 <div style="position: relative;">
                     <img src="{{ asset('images/card_british.jpg') }}" alt="British Shorthair" class="my-pet-img" onerror="this.src='https://placehold.co/400x300';">
-                    <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                    <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                 </div>
                 <div class="my-pet-info">
                     <h3 class="my-pet-title">British Shorthair</h3>
@@ -239,7 +239,7 @@
             <a href="{{ url('/pet-details') }}" class="my-pet-card">
                 <div style="position: relative;">
                     <img src="{{ asset('images/card_shihtzu.jpg') }}" alt="Shih Tzu Puppy" class="my-pet-img" onerror="this.src='https://placehold.co/400x300';">
-                    <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                    <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                 </div>
                 <div class="my-pet-info">
                     <h3 class="my-pet-title">Shih Tzu Puppy</h3>
@@ -257,7 +257,7 @@
             <a href="{{ url('/pet-details') }}" class="my-pet-card">
                 <div style="position: relative;">
                     <img src="{{ asset('images/card_parrot.jpg') }}" alt="Lovebird Pair" class="my-pet-img" onerror="this.src='https://placehold.co/400x300';">
-                    <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                    <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                 </div>
                 <div class="my-pet-info">
                     <h3 class="my-pet-title">Lovebird Pair</h3>

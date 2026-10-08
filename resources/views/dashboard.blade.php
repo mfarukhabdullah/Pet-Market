@@ -573,20 +573,23 @@
                 position: absolute;
                 top: 8px;
                 right: 8px;
-                width: 24px;
-                height: 24px;
+                width: 32px;
+                height: 32px;
                 background-color: white;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                box-shadow: 0 2px 5px rgba(0,0,0,0.15);
                 display: flex !important;
                 z-index: 10;
+                cursor: pointer !important;
+                pointer-events: auto !important;
             }
             .fav-heart i {
                 color: #666;
-                font-size: 12px;
+                font-size: 14px;
+                pointer-events: none;
             }
             .btn-sell-mobile {
                 width: 100%;
