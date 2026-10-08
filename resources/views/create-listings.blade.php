@@ -75,7 +75,7 @@
             font-weight: 700;
             color: #667069;
             line-height: 1;
-            cursor: pointer;
+            cursor: default;
         }
 
         .step-item.active {
@@ -795,23 +795,23 @@
 
             <!-- Stepper -->
             <div class="stepper-container">
-                <div class="step-item active active-bg" id="stepper-1" onclick="goToStep(1)">
+                <div class="step-item active active-bg" id="stepper-1">
                     <span class="step-number">1</span>
                     Pet Details
                 </div>
-                <div class="step-item" id="stepper-2" onclick="goToStep(2)">
+                <div class="step-item" id="stepper-2">
                     <span class="step-number">2</span>
                     Health &amp; Description
                 </div>
-                <div class="step-item" id="stepper-3" onclick="goToStep(3)">
+                <div class="step-item" id="stepper-3">
                     <span class="step-number">3</span>
                     Price, Location &amp; Contact
                 </div>
-                <div class="step-item" id="stepper-4" onclick="goToStep(4)">
+                <div class="step-item" id="stepper-4">
                     <span class="step-number">4</span>
                     Media
                 </div>
-                <div class="step-item" id="stepper-5" onclick="goToStep(5)">
+                <div class="step-item" id="stepper-5">
                     <span class="step-number">5</span>
                     Review
                 </div>
@@ -835,8 +835,14 @@
                         <label class="form-label">Pet Category *</label>
                         <select id="input-category" class="form-select">
                             <option value="" disabled selected>Select Category</option>
-                            <option>Dog</option>
-                            <option>Cat</option>
+                            <option value="dog">Dog</option>
+                            <option value="cat">Cat</option>
+                            <option value="bird">Bird</option>
+                            <option value="rabbit">Rabbit</option>
+                            <option value="fish">Fish</option>
+                            <option value="reptile">Reptile</option>
+                            <option value="horse">Horse</option>
+                            <option value="exotic">Exotic</option>
                         </select>
                     </div>
                     
@@ -856,7 +862,7 @@
                     </div>
 
                     <div class="form-group half-width-mobile">
-                        <label class="form-label">Age Unit</label>
+                        <label class="form-label">Age Unit *</label>
                         <select id="input-age-unit" class="form-select">
                             <option value="" disabled selected>Select Unit</option>
                             <option>Month</option>
@@ -865,7 +871,7 @@
                     </div>
 
                     <div class="form-group half-width-mobile">
-                        <label class="form-label">Gender</label>
+                        <label class="form-label">Gender *</label>
                         <select id="input-gender" class="form-select">
                             <option value="" disabled selected>Select Gender</option>
                             <option>Male</option>
@@ -889,8 +895,8 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn-outline">Save Draft</button>
-                    <button type="button" class="btn-primary" onclick="goToStep(2)">Next <i class="fa-solid fa-arrow-right"></i></button>
+                    <button type="button" class="btn-outline" onclick="saveDraftData(false, this)">Save Draft</button>
+                    <button type="button" class="btn-primary" onclick="validateAndGo(1, 2)">Next <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
             </div>
 
@@ -952,10 +958,10 @@
                 </div>
 
                 <div class="form-actions form-actions-split">
-                    <button type="button" class="btn-outline">Save Draft</button>
+                    <button type="button" class="btn-outline" onclick="saveDraftData(false, this)">Save Draft</button>
                     <div class="right-actions">
                         <button type="button" class="btn-outline" onclick="goToStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                        <button type="button" class="btn-primary" onclick="goToStep(3)">Next <i class="fa-solid fa-arrow-right"></i></button>
+                        <button type="button" class="btn-primary" onclick="validateAndGo(2, 3)">Next <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
                 </div>
             </div>
@@ -972,7 +978,7 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Currency</label>
+                        <label class="form-label">Currency *</label>
                         <input type="text" id="input-currency" class="form-input" placeholder="Specify the currency">
                     </div>
 
@@ -986,7 +992,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Country</label>
+                        <label class="form-label">Country *</label>
                         <input type="text" class="form-input" id="country-input" placeholder="Enter your country">
                     </div>
 
@@ -1019,10 +1025,10 @@
                 </div>
 
                 <div class="form-actions form-actions-split">
-                    <button type="button" class="btn-outline">Save Draft</button>
+                    <button type="button" class="btn-outline" onclick="saveDraftData(false, this)">Save Draft</button>
                     <div class="right-actions">
                         <button type="button" class="btn-outline" onclick="goToStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                        <button type="button" class="btn-primary" onclick="goToStep(4)">Next <i class="fa-solid fa-arrow-right"></i></button>
+                        <button type="button" class="btn-primary" onclick="validateAndGo(3, 4)">Next <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
                 </div>
             </div>
@@ -1032,10 +1038,11 @@
                 <h2 class="form-section-title">Media</h2>
                 <p class="form-section-subtitle subtitle-with-line">Upload multiple clear photos. Video is optional.</p>
 
-                <div class="upload-box" onclick="document.getElementById('pet-photos-input').click()">
+                <div class="upload-box" onclick="document.getElementById('pet-photos-input').click()" style="position: relative;">
                     <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
-                    <div class="upload-title">Upload Pet Photos</div>
+                    <div class="upload-title">Upload Pet Photos *</div>
                     <div class="upload-subtitle">Choose multiple clear images of the pet.</div>
+                    <input type="text" id="fake-image-validation" style="opacity: 0; position: absolute; top: 50%; left: 50%; pointer-events: none; width: 1px; height: 1px; padding: 0; border: none;" tabindex="-1">
                 </div>
                 <input type="file" id="pet-photos-input" multiple accept="image/*" style="display: none;">
 
@@ -1049,10 +1056,10 @@
                 </div>
 
                 <div class="form-actions form-actions-split">
-                    <button type="button" class="btn-outline">Save Draft</button>
+                    <button type="button" class="btn-outline" onclick="saveDraftData(false, this)">Save Draft</button>
                     <div class="right-actions">
                         <button type="button" class="btn-outline" onclick="goToStep(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                        <button type="button" class="btn-primary" onclick="goToStep(5)">Next <i class="fa-solid fa-arrow-right"></i></button>
+                        <button type="button" class="btn-primary" onclick="validateAndGo(4, 5)">Next <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
                 </div>
             </div>
@@ -1185,6 +1192,72 @@
 
     <script src="{{ asset('js/pet-script.js') }}"></script>
     <script>
+        function validateAndGo(current, target) {
+            if (target > current) {
+                const showError = (el) => {
+                    if (el) {
+                        el.setCustomValidity('Please fill out this field.');
+                        el.reportValidity();
+                        el.addEventListener('input', function() {
+                            el.setCustomValidity('');
+                        }, { once: true });
+                        el.addEventListener('change', function() {
+                            el.setCustomValidity('');
+                        }, { once: true });
+                    }
+                };
+
+                if (current === 1) {
+                    const req = ['input-category', 'input-breed', 'input-title', 'input-age-value', 'input-age-unit', 'input-gender'];
+                    for(let i=0; i<req.length; i++) {
+                        const el = document.getElementById(req[i]);
+                        if(!el || !el.value) {
+                            showError(el);
+                            return;
+                        }
+                    }
+                }
+                if (current === 2) {
+                    const desc = document.getElementById('input-description');
+                    if (!desc || !desc.value.trim()) {
+                        showError(desc);
+                        return;
+                    }
+                }
+                if (current === 3) {
+                    const req3 = ['input-price', 'input-currency', 'country-input', 'city-select'];
+                    for(let i=0; i<req3.length; i++) {
+                        const el = document.getElementById(req3[i]);
+                        if(!el || !el.value) {
+                            showError(el);
+                            return;
+                        }
+                    }
+                }
+                if (current === 4) {
+                    const previewContainer = document.getElementById('image-preview-container');
+                    if (!previewContainer || previewContainer.children.length === 0) {
+                        const fakeInput = document.getElementById('fake-image-validation');
+                        if (fakeInput) {
+                            fakeInput.setCustomValidity('Please upload at least one pet photo.');
+                            fakeInput.reportValidity();
+                            
+                            // Clear validation error when a file is selected
+                            const fileInput = document.getElementById('pet-photos-input');
+                            if (fileInput) {
+                                fileInput.addEventListener('change', function() {
+                                    fakeInput.setCustomValidity('');
+                                }, { once: true });
+                            }
+                        }
+                        return;
+                    }
+                }
+            }
+            saveDraftData(true);
+            goToStep(target);
+        }
+
         function goToStep(stepNumber) {
             // Hide all steps
             document.querySelectorAll('.form-step').forEach(function(step) {
@@ -1295,8 +1368,84 @@
             setVal('review-contact', document.getElementById('input-contact')?.value);
         }
 
+        function saveDraftData(silent = false, btn = null) {
+            const draft = {};
+            document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(el => {
+                if (el.id) {
+                    draft[el.id] = el.value;
+                }
+            });
+            
+            document.querySelectorAll('.radio-input:checked').forEach(radio => {
+                if (radio.name) {
+                    const spanText = radio.nextElementSibling.nextElementSibling.innerText.trim();
+                    draft['radio_' + radio.name] = spanText;
+                }
+            });
+
+            localStorage.setItem('petMarketDraft', JSON.stringify(draft));
+            if (!silent && btn) {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            }
+        }
+
+        function loadDraftData() {
+            const draftStr = localStorage.getItem('petMarketDraft');
+            if (!draftStr) return;
+            
+            try {
+                const draft = JSON.parse(draftStr);
+                
+                document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(el => {
+                    if (el.id && draft[el.id] !== undefined) {
+                        el.value = draft[el.id];
+                        
+                        if (el.id === 'country-input') {
+                            el.dispatchEvent(new Event('input'));
+                        }
+                    }
+                });
+                
+                if (draft['city-select']) {
+                    setTimeout(() => {
+                        const citySel = document.getElementById('city-select');
+                        if (citySel) citySel.value = draft['city-select'];
+                    }, 50);
+                }
+                
+                document.querySelectorAll('.radio-input').forEach(radio => {
+                    if (radio.name && draft['radio_' + radio.name]) {
+                        const spanText = radio.nextElementSibling.nextElementSibling.innerText.trim();
+                        if (spanText === draft['radio_' + radio.name]) {
+                            radio.checked = true;
+                            radio.dataset.wasChecked = 'true';
+                        } else {
+                            radio.checked = false;
+                            radio.dataset.wasChecked = 'false';
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error("Error loading draft data", e);
+            }
+        }
+
         // Dynamic City Population based on Country Input
         document.addEventListener('DOMContentLoaded', function() {
+            loadDraftData();
+            
+            // Auto-save in real-time as the user types or selects options
+            document.querySelectorAll('.form-input, .form-select, .form-textarea, .radio-input').forEach(el => {
+                el.addEventListener('change', () => saveDraftData(true));
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    el.addEventListener('input', () => saveDraftData(true));
+                }
+            });
+            
             const countryInput = document.getElementById('country-input');
             const citySelect = document.getElementById('city-select');
 
@@ -1327,6 +1476,25 @@
                     }
                 });
             }
+            
+            // Allow unselecting radio buttons by clicking on them again
+            document.querySelectorAll('.radio-input').forEach(radio => {
+                // Initialize state
+                radio.dataset.wasChecked = radio.checked ? 'true' : 'false';
+                
+                radio.addEventListener('click', function(e) {
+                    if (this.dataset.wasChecked === 'true') {
+                        this.checked = false;
+                        this.dataset.wasChecked = 'false';
+                    } else {
+                        // Uncheck others in the same group
+                        document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+                            r.dataset.wasChecked = 'false';
+                        });
+                        this.dataset.wasChecked = 'true';
+                    }
+                });
+            });
             
             // Image Upload and Preview Logic
             const fileInput = document.getElementById('pet-photos-input');
