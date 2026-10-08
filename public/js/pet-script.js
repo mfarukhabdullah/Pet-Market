@@ -65,7 +65,7 @@ function initMobileMenu() {
   // Bottom Nav Account Button -> Account Drawer
   const accountToggleBtn = document.getElementById('mobileToggleBtn');
   const accountDrawer = document.getElementById('accountNavDrawer');
-  
+
   // Top Header Menu Button -> Main Mobile Nav Drawer
   const mainToggleBtn = document.querySelector('.mobile-menu-btn');
   const mainDrawer = document.getElementById('mobileNavDrawer');
@@ -321,23 +321,20 @@ function initPagination() {
   }
 }
 
-// Profile Dropdown Logic
-document.addEventListener('DOMContentLoaded', function() {
-    const profileBtn = document.getElementById('profileDropdownBtn');
-    const profileMenu = document.getElementById('profileDropdownMenu');
-    
-    if (profileBtn && profileMenu) {
-        profileBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileMenu.classList.toggle('show');
-        });
-        
-        document.addEventListener('click', function(e) {
-            if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
-                profileMenu.classList.remove('show');
-            }
-        });
+// Profile Dropdown Logic (Event Delegation)
+document.addEventListener('click', function (e) {
+  const profileBtn = e.target.closest('#profileDropdownBtn');
+  const profileMenu = document.getElementById('profileDropdownMenu');
+
+  if (profileBtn && profileMenu) {
+    e.preventDefault(); // In case it's inside an a tag
+    profileMenu.classList.toggle('show');
+  } else if (profileMenu) {
+    // If clicked outside
+    if (!profileMenu.contains(e.target)) {
+      profileMenu.classList.remove('show');
     }
+  }
 });
 
 /* ==========================================
@@ -366,17 +363,17 @@ function initSearchFilter() {
 
       // Check text search
       const matchesSearch = title.includes(searchTerm) || breedTag.includes(searchTerm);
-      
+
       // Check category (simple mockup mapping)
       let matchesCategory = true;
       if (categoryVal) {
-          const cat = categoryVal.replace(/s$/, ''); // 'dogs' -> 'dog'
-          if (cat === 'dog' && (title.includes('retriever') || title.includes('puppy') || title.includes('dog'))) matchesCategory = true;
-          else if (cat === 'cat' && (title.includes('persian') || title.includes('cat'))) matchesCategory = true;
-          else if (cat === 'bird' && (title.includes('macaw') || title.includes('parrot') || title.includes('bird'))) matchesCategory = true;
-          else matchesCategory = false;
+        const cat = categoryVal.replace(/s$/, ''); // 'dogs' -> 'dog'
+        if (cat === 'dog' && (title.includes('retriever') || title.includes('puppy') || title.includes('dog'))) matchesCategory = true;
+        else if (cat === 'cat' && (title.includes('persian') || title.includes('cat'))) matchesCategory = true;
+        else if (cat === 'bird' && (title.includes('macaw') || title.includes('parrot') || title.includes('bird'))) matchesCategory = true;
+        else matchesCategory = false;
       }
-      
+
       // Check location
       const matchesLocation = !locationVal || location.includes(locationVal);
 
@@ -392,11 +389,82 @@ function initSearchFilter() {
   if (searchInput) searchInput.addEventListener('input', filterPets);
   if (categorySelect) categorySelect.addEventListener('change', filterPets);
   if (locationSelect) locationSelect.addEventListener('change', filterPets);
-  
+
   // Prevent form submission refresh
   searchForm.addEventListener('submit', (e) => {
     e.preventDefault();
     filterPets();
+  });
+}
+
+/* ==========================================
+   10. Custom UI Dropdowns for Hero Search
+   ========================================== */
+function initCustomDropdowns() {
+  const filters = document.querySelectorAll('.home-filter');
+
+  filters.forEach(filter => {
+    const select = filter.querySelector('select.hidden-filter-select');
+    if (!select) return;
+
+    // Hide the native select
+    select.style.display = 'none';
+
+    // Create custom dropdown container
+    const menu = document.createElement('div');
+    menu.className = 'custom-dropdown-menu';
+
+    // Populate options
+    Array.from(select.options).forEach(option => {
+      if (option.disabled) return; // Skip placeholder/disabled options
+
+      const item = document.createElement('div');
+      item.className = 'custom-dropdown-item';
+      item.textContent = option.text;
+      item.dataset.value = option.value;
+
+      item.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent bubbling up to the filter click
+
+        // Update native select
+        select.value = option.value;
+
+        // Manually trigger the inline onchange logic of the select
+        const valueSpan = filter.querySelector('.home-filter-value');
+        if (valueSpan) {
+          valueSpan.innerText = option.text;
+        }
+
+        // Dispatch event in case other scripts listen to it
+        select.dispatchEvent(new Event('change'));
+
+        // Close menu
+        menu.classList.remove('show');
+      });
+
+      menu.appendChild(item);
+    });
+
+    filter.appendChild(menu);
+
+    // Toggle menu on click
+    filter.addEventListener('click', (e) => {
+      // Close all other dropdowns
+      document.querySelectorAll('.custom-dropdown-menu.show').forEach(m => {
+        if (m !== menu) m.classList.remove('show');
+      });
+
+      menu.classList.toggle('show');
+    });
+  });
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.home-filter')) {
+      document.querySelectorAll('.custom-dropdown-menu.show').forEach(m => {
+        m.classList.remove('show');
+      });
+    }
   });
 }
 
@@ -416,7 +484,7 @@ function initSidebarFilter() {
     const categoryVal = categorySelect ? categorySelect.value.toLowerCase() : '';
     const breedVal = breedSelect ? breedSelect.value.toLowerCase() : '';
     const locationVal = locationSelect ? locationSelect.value.toLowerCase() : '';
-    
+
     // Get checked genders
     const checkedGenders = Array.from(sidebarForm.querySelectorAll('input[name="gender"]:checked')).map(cb => cb.value.toLowerCase());
 
@@ -433,9 +501,9 @@ function initSidebarFilter() {
     const minAgeUnit = ageMinUnitEl ? ageMinUnitEl.value : 'months';
     let minDays = null;
     if (!isNaN(minAgeVal)) {
-        if (minAgeUnit === 'years') minDays = minAgeVal * 365;
-        else if (minAgeUnit === 'months') minDays = minAgeVal * 30;
-        else minDays = minAgeVal;
+      if (minAgeUnit === 'years') minDays = minAgeVal * 365;
+      else if (minAgeUnit === 'months') minDays = minAgeVal * 30;
+      else minDays = minAgeVal;
     }
 
     const ageMaxEl = document.getElementById('ageMax');
@@ -444,9 +512,9 @@ function initSidebarFilter() {
     const maxAgeUnit = ageMaxUnitEl ? ageMaxUnitEl.value : 'months';
     let maxDays = null;
     if (!isNaN(maxAgeVal)) {
-        if (maxAgeUnit === 'years') maxDays = maxAgeVal * 365;
-        else if (maxAgeUnit === 'months') maxDays = maxAgeVal * 30;
-        else maxDays = maxAgeVal;
+      if (maxAgeUnit === 'years') maxDays = maxAgeVal * 365;
+      else if (maxAgeUnit === 'months') maxDays = maxAgeVal * 30;
+      else maxDays = maxAgeVal;
     }
 
     let visibleCount = 0;
@@ -461,12 +529,12 @@ function initSidebarFilter() {
       // Check category
       let matchesCategory = true;
       if (categoryVal) {
-          const cat = categoryVal.replace(/s$/, ''); // 'dogs' -> 'dog'
-          if (cat === 'dog' && (title.includes('retriever') || title.includes('puppy') || title.includes('dog') || title.includes('shih tzu') || title.includes('shepherd'))) matchesCategory = true;
-          else if (cat === 'cat' && (title.includes('persian') || title.includes('cat') || title.includes('shorthair'))) matchesCategory = true;
-          else if (cat === 'bird' && (title.includes('macaw') || title.includes('parrot') || title.includes('bird') || title.includes('lovebird'))) matchesCategory = true;
-          else if (cat === 'rabbit' && title.includes('rabbit')) matchesCategory = true;
-          else matchesCategory = false;
+        const cat = categoryVal.replace(/s$/, ''); // 'dogs' -> 'dog'
+        if (cat === 'dog' && (title.includes('retriever') || title.includes('puppy') || title.includes('dog') || title.includes('shih tzu') || title.includes('shepherd'))) matchesCategory = true;
+        else if (cat === 'cat' && (title.includes('persian') || title.includes('cat') || title.includes('shorthair'))) matchesCategory = true;
+        else if (cat === 'bird' && (title.includes('macaw') || title.includes('parrot') || title.includes('bird') || title.includes('lovebird'))) matchesCategory = true;
+        else if (cat === 'rabbit' && title.includes('rabbit')) matchesCategory = true;
+        else matchesCategory = false;
       }
 
       // Check breed
@@ -474,7 +542,7 @@ function initSidebarFilter() {
 
       // Check location
       const matchesLocation = !locationVal || location === locationVal;
-      
+
       // Check gender
       const matchesGender = checkedGenders.length === 0 || checkedGenders.includes(gender);
 
@@ -484,30 +552,30 @@ function initSidebarFilter() {
       const ageText = (clockIcon && clockIcon.parentElement) ? clockIcon.parentElement.innerText.toLowerCase().trim() : '';
       let cardAgeDays = null;
       if (ageText) {
-          const match = ageText.match(/(\d+)\s*(day|month|year)/);
-          if (match) {
-              const num = parseInt(match[1]);
-              const unit = match[2];
-              if (unit === 'year') cardAgeDays = num * 365;
-              else if (unit === 'month') cardAgeDays = num * 30;
-              else if (unit === 'day') cardAgeDays = num;
-          }
+        const match = ageText.match(/(\d+)\s*(day|month|year)/);
+        if (match) {
+          const num = parseInt(match[1]);
+          const unit = match[2];
+          if (unit === 'year') cardAgeDays = num * 365;
+          else if (unit === 'month') cardAgeDays = num * 30;
+          else if (unit === 'day') cardAgeDays = num;
+        }
       }
       if (cardAgeDays !== null) {
-          if (minDays !== null && cardAgeDays < minDays) matchesAge = false;
-          if (maxDays !== null && cardAgeDays > maxDays) matchesAge = false;
+        if (minDays !== null && cardAgeDays < minDays) matchesAge = false;
+        if (maxDays !== null && cardAgeDays > maxDays) matchesAge = false;
       }
 
       // Check Price
       let matchesPrice = true;
       const priceEl = card.querySelector('.pet-price');
       if (priceEl) {
-          const priceText = priceEl.innerText.replace(/[^0-9]/g, '');
-          const priceVal = parseInt(priceText);
-          if (!isNaN(priceVal)) {
-              if (!isNaN(priceMin) && priceVal < priceMin) matchesPrice = false;
-              if (!isNaN(priceMax) && priceVal > priceMax) matchesPrice = false;
-          }
+        const priceText = priceEl.innerText.replace(/[^0-9]/g, '');
+        const priceVal = parseInt(priceText);
+        if (!isNaN(priceVal)) {
+          if (!isNaN(priceMin) && priceVal < priceMin) matchesPrice = false;
+          if (!isNaN(priceMax) && priceVal > priceMax) matchesPrice = false;
+        }
       }
 
       // Check Featured
@@ -515,10 +583,10 @@ function initSidebarFilter() {
       const isFeaturedOnly = urlParams.get('featured') === 'true';
       let matchesFeatured = true;
       if (isFeaturedOnly) {
-          const featuredBadge = card.querySelector('.featured-badge');
-          if (!featuredBadge) {
-              matchesFeatured = false;
-          }
+        const featuredBadge = card.querySelector('.featured-badge');
+        if (!featuredBadge) {
+          matchesFeatured = false;
+        }
       }
 
       if (matchesCategory && matchesBreed && matchesLocation && matchesGender && matchesAge && matchesPrice && matchesFeatured) {
@@ -532,7 +600,7 @@ function initSidebarFilter() {
     // Handle No Results Message
     const grid = document.getElementById('petCardsGrid');
     const noResultsMsg = document.getElementById('noResultsMessage');
-    
+
     if (grid && noResultsMsg) {
       if (visibleCount === 0) {
         grid.style.display = 'none';
@@ -541,6 +609,82 @@ function initSidebarFilter() {
         grid.style.display = 'grid'; // Restore grid
         noResultsMsg.style.display = 'none';
       }
+    }
+
+    // --- Render Active Filter Chips ---
+    const activeFiltersContainer = document.getElementById('activeFiltersContainer');
+    if (activeFiltersContainer) {
+      activeFiltersContainer.innerHTML = '';
+      const chips = [];
+
+      if (categoryVal) {
+        const text = categorySelect.options[categorySelect.selectedIndex].text;
+        chips.push({ label: `Category: ${text}`, clear: () => { categorySelect.value = ''; } });
+      }
+
+      if (breedVal) {
+        const text = breedSelect.options[breedSelect.selectedIndex].text;
+        chips.push({ label: `Breed: ${text}`, clear: () => { breedSelect.value = ''; } });
+      }
+
+      if (locationVal) {
+        const text = locationSelect.options[locationSelect.selectedIndex].text;
+        chips.push({ label: `Location: ${text}`, clear: () => { locationSelect.value = ''; } });
+      }
+
+      const genderInputs = sidebarForm.querySelectorAll('input[name="gender"]:checked');
+      genderInputs.forEach(cb => {
+        chips.push({ label: `Gender: ${cb.nextElementSibling.innerText}`, clear: () => { cb.checked = false; } });
+      });
+
+      const healthInputs = sidebarForm.querySelectorAll('input[name="health"]:checked');
+      healthInputs.forEach(cb => {
+        chips.push({ label: `Health: ${cb.nextElementSibling.innerText}`, clear: () => { cb.checked = false; } });
+      });
+
+      const pedigreeInputs = sidebarForm.querySelectorAll('input[name="pedigree"]:checked');
+      pedigreeInputs.forEach(cb => {
+        chips.push({ label: `Pedigree: ${cb.nextElementSibling.innerText}`, clear: () => { cb.checked = false; } });
+      });
+
+      const sellerInputs = sidebarForm.querySelectorAll('input[name="seller_type"]:checked');
+      sellerInputs.forEach(cb => {
+        chips.push({ label: `Seller: ${cb.nextElementSibling.innerText}`, clear: () => { cb.checked = false; } });
+      });
+
+      if (!isNaN(priceMin) || !isNaN(priceMax)) {
+        let label = 'Price: ';
+        if (!isNaN(priceMin) && !isNaN(priceMax)) label += `${priceMin} - ${priceMax}`;
+        else if (!isNaN(priceMin)) label += `Min ${priceMin}`;
+        else if (!isNaN(priceMax)) label += `Max ${priceMax}`;
+        chips.push({ label: label, clear: () => { if (priceMinEl) priceMinEl.value = ''; if (priceMaxEl) priceMaxEl.value = ''; } });
+      }
+
+      if (minDays !== null || maxDays !== null) {
+        let label = 'Age: ';
+        if (minDays !== null && maxDays !== null) label += `${minAgeVal} ${minAgeUnit} - ${maxAgeVal} ${maxAgeUnit}`;
+        else if (minDays !== null) label += `Min ${minAgeVal} ${minAgeUnit}`;
+        else if (maxDays !== null) label += `Max ${maxAgeVal} ${maxAgeUnit}`;
+        chips.push({ label: label, clear: () => { if (ageMinEl) ageMinEl.value = ''; if (ageMaxEl) ageMaxEl.value = ''; } });
+      }
+
+      const dateSelect = document.getElementById('filterDate');
+      if (dateSelect && dateSelect.value) {
+        const text = dateSelect.options[dateSelect.selectedIndex].text;
+        chips.push({ label: `Date: ${text}`, clear: () => { dateSelect.value = ''; } });
+      }
+
+      chips.forEach(chip => {
+        const el = document.createElement('div');
+        el.className = 'filter-chip';
+        el.innerHTML = `<span>${chip.label}</span> <div class="filter-chip-remove" title="Remove filter"><i class="fas fa-times"></i></div>`;
+        el.querySelector('.filter-chip-remove').addEventListener('click', (e) => {
+          e.stopPropagation();
+          chip.clear();
+          applySidebarFilters(); // Re-trigger filter update
+        });
+        activeFiltersContainer.appendChild(el);
+      });
     }
 
     // Handle Reset Button and Pagination Visibility
@@ -579,47 +723,47 @@ function initSidebarFilter() {
   let hasUrlParams = false;
 
   if (urlParams.has('category')) {
-      const val = urlParams.get('category');
-      if (categorySelect) categorySelect.value = val;
-      const topCategorySelect = document.querySelector('.search-input-group select[name="category"]');
-      if (topCategorySelect) topCategorySelect.value = val;
-      hasUrlParams = true;
+    const val = urlParams.get('category');
+    if (categorySelect) categorySelect.value = val;
+    const topCategorySelect = document.querySelector('.search-input-group select[name="category"]');
+    if (topCategorySelect) topCategorySelect.value = val;
+    hasUrlParams = true;
   }
   if (urlParams.has('breed')) {
-      const val = urlParams.get('breed');
-      if (breedSelect) breedSelect.value = val;
-      hasUrlParams = true;
+    const val = urlParams.get('breed');
+    if (breedSelect) breedSelect.value = val;
+    hasUrlParams = true;
   }
   if (urlParams.has('location')) {
-      const val = urlParams.get('location');
-      if (locationSelect) locationSelect.value = val;
-      const topLocationSelect = document.querySelector('.search-input-group select[name="location"]');
-      if (topLocationSelect) topLocationSelect.value = val;
-      hasUrlParams = true;
+    const val = urlParams.get('location');
+    if (locationSelect) locationSelect.value = val;
+    const topLocationSelect = document.querySelector('.search-input-group select[name="location"]');
+    if (topLocationSelect) topLocationSelect.value = val;
+    hasUrlParams = true;
   }
   if (urlParams.has('price')) {
-      const priceVal = urlParams.get('price'); // e.g., "0-20000", "20000-50000", "100000+"
-      if (priceVal.endsWith('+')) {
-          const minVal = priceVal.replace('+', '');
-          const priceMinEl = document.getElementById('priceMin');
-          if (priceMinEl) priceMinEl.value = minVal;
-      } else {
-          const parts = priceVal.split('-');
-          if (parts.length === 2) {
-              const priceMinEl = document.getElementById('priceMin');
-              const priceMaxEl = document.getElementById('priceMax');
-              if (priceMinEl) priceMinEl.value = parts[0];
-              if (priceMaxEl) priceMaxEl.value = parts[1];
-          }
+    const priceVal = urlParams.get('price'); // e.g., "0-20000", "20000-50000", "100000+"
+    if (priceVal.endsWith('+')) {
+      const minVal = priceVal.replace('+', '');
+      const priceMinEl = document.getElementById('priceMin');
+      if (priceMinEl) priceMinEl.value = minVal;
+    } else {
+      const parts = priceVal.split('-');
+      if (parts.length === 2) {
+        const priceMinEl = document.getElementById('priceMin');
+        const priceMaxEl = document.getElementById('priceMax');
+        if (priceMinEl) priceMinEl.value = parts[0];
+        if (priceMaxEl) priceMaxEl.value = parts[1];
       }
-      hasUrlParams = true;
+    }
+    hasUrlParams = true;
   }
   if (urlParams.has('featured')) {
-      hasUrlParams = true;
+    hasUrlParams = true;
   }
 
   if (hasUrlParams) {
-      applySidebarFilters();
+    applySidebarFilters();
   }
 }
 
@@ -630,7 +774,7 @@ function initFavorites() {
   if (window._favoritesInitialized) return;
   window._favoritesInitialized = true;
 
-  document.addEventListener('click', function(e) {
+  document.addEventListener('click', function (e) {
     const heartBtn = e.target.closest(
       '.fav-heart, .fav-heart-btn, .btn-wishlist-heart, .favorite-btn, .home-pet-fav, .my-pet-fav, #pdLikeBtn, .pd-icon-btn, .pet-card-fav'
     );

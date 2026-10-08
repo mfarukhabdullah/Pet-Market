@@ -38,3 +38,20 @@ Route::get('/seller/settings/account', [SellerController::class, 'settingsAccoun
 Route::get('/seller/favorites', [SellerController::class, 'favorites'])->name('favorites');
 Route::view('/login', 'login')->name('login');
 Route::view('/register', 'sign')->name('sign');
+
+Route::post('/login', function (\Illuminate\Http\Request $request) {
+    session(['is_logged_in' => true]);
+    $redirectUrl = $request->input('redirect', route('dashboard'));
+    return redirect($redirectUrl);
+})->name('login.post');
+
+Route::post('/register', function (\Illuminate\Http\Request $request) {
+    session(['is_logged_in' => true]);
+    $redirectUrl = $request->input('redirect', route('dashboard'));
+    return redirect($redirectUrl);
+})->name('sign.post');
+
+Route::get('/logout', function () {
+    session()->forget('is_logged_in');
+    return redirect('/');
+})->name('logout');

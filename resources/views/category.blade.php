@@ -342,6 +342,11 @@
                             </div>
                             </div>
 
+                            <!-- Active Filters Container -->
+                            <div id="activeFiltersContainer" class="active-filters-container">
+                                <!-- Chips will be injected here via JS -->
+                            </div>
+
                             <!-- PET CARDS GRID (2 Columns on Mobile, 3 Columns on Desktop) -->
                             <div class="pet-cards-grid" id="petCardsGrid">
 
