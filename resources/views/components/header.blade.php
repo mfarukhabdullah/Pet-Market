@@ -1,4 +1,14 @@
 <!-- HEADER COMPONENT -->
+@php
+    $currentUrl = request()->fullUrl();
+    if (request()->is('login') || request()->is('sign') || request()->is('register')) {
+        $loginUrl = route('login') . (request()->has('redirect') ? '?redirect=' . urlencode(request()->get('redirect')) : '');
+        $signUrl = route('sign') . (request()->has('redirect') ? '?redirect=' . urlencode(request()->get('redirect')) : '');
+    } else {
+        $loginUrl = route('login') . '?redirect=' . urlencode($currentUrl);
+        $signUrl = route('sign') . '?redirect=' . urlencode($currentUrl);
+    }
+@endphp
 <!-- Top Green Notice Bar (#0C5E3A - Full Screen Width Background) -->
 <div class="header-top-bar">
     <div class="shell-1440">
@@ -34,7 +44,7 @@
                     <a href="{{ route('category', ['featured' => 'true']) }}" class="header-nav-item">Featured Pets</a>
                     <a href="{{ route('category') }}" class="header-nav-item">Categories</a>
                     <a href="{{ route('breeds') }}" class="header-nav-item">Breeds</a>
-                    <a href="#locations" class="header-nav-item">Locations</a>
+                    <a href="{{ route('category') }}" class="header-nav-item">Locations</a>
                     <a href="{{ route('about') }}" class="header-nav-item">About Us</a>
                 </nav>
 
@@ -70,12 +80,16 @@
                           </div>
                       @else
                         <div class="btn-login-register" style="display: flex; align-items: center; justify-content: center; gap: 4px; cursor: default;">
-                            <a href="{{ route('login') }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#147A4D'" onmouseout="this.style.color='inherit'">Login</a>
+                            <a href="{{ $loginUrl }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#147A4D'" onmouseout="this.style.color='inherit'">Login</a>
                             <span>/</span>
-                            <a href="{{ route('sign') }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#147A4D'" onmouseout="this.style.color='inherit'">Register</a>
+                            <a href="{{ $signUrl }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#147A4D'" onmouseout="this.style.color='inherit'">Register</a>
                         </div>
                     @endif
-                    <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet">Sell a Pet</a>
+                    @if(request()->is('dashboard') || request()->is('seller/*'))
+                        <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet">Sell a Pet</a>
+                    @else
+                        <a href="{{ route('login') }}?redirect={{ urlencode(route('seller.create-listing')) }}" class="btn-sell-pet">Sell a Pet</a>
+                    @endif
                     <button class="mobile-menu-btn" aria-label="Toggle Mobile Menu">
                         <i class="fas fa-bars"></i>
                     </button>
@@ -101,20 +115,21 @@
             <li><a href="{{ route('category', ['featured' => 'true']) }}">Featured Pets</a></li>
             <li><a href="{{ route('category') }}">Categories</a></li>
             <li><a href="{{ route('breeds') }}">Breeds</a></li>
-            <li><a href="#locations">Locations</a></li>
+            <li><a href="{{ route('category') }}">Locations</a></li>
             <li><a href="{{ route('about') }}">About Us</a></li>
         </ul>
     </div>
     <div style="margin-top:32px;">
-        <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
         @if(request()->is('dashboard') || request()->is('seller/*'))
+            <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
             <a href="{{ route('dashboard') }}" class="btn-login-register" style="width:100%; justify-content:center; background-color:#eaf7f0; color:#147A4D; border:none;"><i class="fa-solid fa-user" style="margin-right:8px;"></i> My Account</a>
             <a href="/" class="btn-login-register text-danger" style="width:100%; justify-content:center; margin-top:12px; border:none;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:8px;"></i> Log Out</a>
         @else
+            <a href="{{ route('login') }}?redirect={{ urlencode(route('seller.create-listing')) }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
             <div class="btn-login-register" style="width:100%; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: default;">
-                <a href="{{ route('login') }}" style="color: inherit; text-decoration: none;">Login</a>
+                <a href="{{ $loginUrl }}" style="color: inherit; text-decoration: none;">Login</a>
                 <span>/</span>
-                <a href="{{ route('sign') }}" style="color: inherit; text-decoration: none;">Register</a>
+                <a href="{{ $signUrl }}" style="color: inherit; text-decoration: none;">Register</a>
             </div>
         @endif
     </div>

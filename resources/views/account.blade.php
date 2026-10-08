@@ -138,6 +138,17 @@
     </style>
 </head>
 <body>
+    <script>
+        // Redirect to dashboard if accessed on desktop view
+        if (window.innerWidth > 768) {
+            window.location.href = "{{ route('dashboard') }}";
+        }
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                window.location.href = "{{ route('dashboard') }}";
+            }
+        });
+    </script>
     <style>
         .account-page-wrapper {
             max-width: 480px;

@@ -76,7 +76,7 @@
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label class="form-label">Full Name</label>
-                                            <input type="text" class="form-input" placeholder="Your full name">
+                                            <input type="text" class="form-input" placeholder="Your full name" pattern="^[^0-9]*$" title="Numbers are not allowed in the name" oninput="this.value = this.value.replace(/[0-9]/g, '')" required>
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label">Email Address</label>
@@ -86,7 +86,7 @@
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label class="form-label">Phone</label>
-                                            <input type="tel" class="form-input" placeholder="Your phone number">
+                                            <input type="tel" class="form-input" placeholder="Your phone number" pattern="^[0-9\+\-\s\(\)]+$" title="Only numbers and phone symbols are allowed" oninput="this.value = this.value.replace(/[^0-9\+\-\s\(\)]/g, '')" required>
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label">Subject</label>

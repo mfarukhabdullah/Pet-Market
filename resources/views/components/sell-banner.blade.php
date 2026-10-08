@@ -19,7 +19,7 @@
                         Create a pet listing with the required details and photos, then submit it for review.
                     </p>
 
-                    <a href="#sell" class="btn-sell-pet-banner">Sell a Pet</a>
+                    <a href="{{ route('login') }}?redirect={{ urlencode(route('seller.create-listing')) }}" class="btn-sell-pet-banner">Sell a Pet</a>
                 </div>
 
                 <!-- Right Positioned Visual Images (Exact Figma Positioned Elements) -->

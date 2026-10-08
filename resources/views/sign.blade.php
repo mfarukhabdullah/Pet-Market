@@ -42,7 +42,7 @@
 
         .login-container {
             width: 1120px;
-            height: 780px;
+            min-height: 520px;
             background: #FFFFFF;
             border-radius: 26px;
             border: 0.67px solid #E2E7E3;
@@ -50,13 +50,37 @@
             display: flex;
             overflow: hidden;
             max-width: 100%;
+            position: relative;
+        }
+
+        .close-auth-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 36px;
+            height: 36px;
+            background-color: #F2F9F5;
+            color: #147A4D;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .close-auth-btn:hover {
+            background-color: #e0f2e9;
+            color: #0e5e39;
         }
 
         .login-image-side {
             width: 472px;
-            height: 100%;
             position: relative;
             flex-shrink: 0;
+            align-self: stretch;
         }
 
         .login-image-side::after {
@@ -71,6 +95,9 @@
         }
 
         .login-image-side img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -78,7 +105,7 @@
 
         .login-form-side {
             flex: 1;
-            padding: 40px 50px;
+            padding: 24px 32px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -117,10 +144,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 44px;
+            height: 38px;
             font-family: 'DM Sans', sans-serif;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 14px;
             line-height: 24.8px;
             color: #667069;
             cursor: pointer;
@@ -130,12 +157,12 @@
         .auth-tab.active {
             background-color: #FFFFFF;
             color: #147A4D;
-            font-size: 18px;
+            font-size: 15px;
             box-shadow: 0px 4px 14px rgba(20, 35, 28, 0.07);
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .form-label {
@@ -145,7 +172,7 @@
             font-size: 16px;
             line-height: 20.15px;
             color: #17211C;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .input-with-icon {
@@ -171,7 +198,7 @@
 
         .form-input {
             width: 100%;
-            padding: 14px 15px 14px 45px;
+            padding: 10px 15px 10px 40px;
             border: 1px solid #E2E7E3;
             border-radius: 8px;
             font-family: 'DM Sans', sans-serif;
@@ -339,14 +366,14 @@
 
         .btn-login {
             width: 100%;
-            height: 54px;
+            height: 44px;
             background-color: #147A4D;
             color: #FFFFFF;
             border: none;
             border-radius: 10px;
             font-family: 'DM Sans', sans-serif;
             font-weight: 700;
-            font-size: 20px;
+            font-size: 16px;
             line-height: 21.7px;
             display: flex;
             align-items: center;
@@ -452,6 +479,9 @@
 
     <main class="login-page-wrapper">
         <div class="login-container">
+            <a href="{{ route('home') }}" class="close-auth-btn" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
             <div class="login-image-side">
                 <img src="{{ asset('images/login-img.png') }}" alt="Welcome Back Pet">
             </div>
@@ -461,8 +491,11 @@
                 <p class="login-subtitle">Choose your account type and join the marketplace.</p>
 
                 <div class="auth-tabs">
-                    <a href="{{ route('login') }}" class="auth-tab" style="text-decoration: none;">Login</a>
-                    <a href="{{ route('sign') }}" class="auth-tab active" style="text-decoration: none;">Create Account</a>
+                    @php
+                        $redirectSuffix = request()->has('redirect') ? '?redirect=' . urlencode(request()->get('redirect')) : '';
+                    @endphp
+                    <a href="{{ route('login') }}{{ $redirectSuffix }}" class="auth-tab" style="text-decoration: none;">Login</a>
+                    <a href="{{ route('sign') }}{{ $redirectSuffix }}" class="auth-tab active" style="text-decoration: none;">Create Account</a>
                 </div>
                 
                 <form action="#" method="POST" autocomplete="off">
@@ -471,7 +504,7 @@
                             <label class="form-label">Full Name</label>
                             <div class="input-with-icon">
                                 <i class="fa-regular fa-user"></i>
-                                <input type="text" name="name" class="form-input" placeholder="Your full name">
+                                <input type="text" name="name" class="form-input" placeholder="Your full name" pattern="^[^0-9]*$" title="Numbers are not allowed in the name" oninput="this.value = this.value.replace(/[0-9]/g, '')" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -481,7 +514,7 @@
                                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                     <circle cx="12" cy="10" r="3"></circle>
                                 </svg>
-                                <input type="text" name="location" id="location-input" class="form-input" placeholder="Select city" autocomplete="off">
+                                <input type="text" name="location" id="location-input" class="form-input" placeholder="Select city" autocomplete="off" required>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#667069" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; right: 15px; cursor: pointer; pointer-events: none;">
                                     <polyline points="6 9 12 15 18 9"></polyline>
                                 </svg>
@@ -503,7 +536,7 @@
                         <label class="form-label">Email or Phone</label>
                         <div class="input-with-icon">
                             <i class="fa-regular fa-envelope"></i>
-                            <input type="text" name="email" class="form-input" placeholder="Enter email or phone number" autocomplete="off">
+                            <input type="text" name="email" class="form-input" placeholder="Enter email or phone number" autocomplete="off" required>
                         </div>
                     </div>
 
@@ -516,7 +549,7 @@
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                                     <line x1="12" y1="15" x2="12" y2="17"></line>
                                 </svg>
-                                <input type="password" name="password" id="reg-password-input" class="form-input" placeholder="Create password" autocomplete="new-password">
+                                <input type="password" name="password" id="reg-password-input" class="form-input" placeholder="Create password" autocomplete="new-password" required minlength="8">
                                 <i class="fa-regular fa-eye toggle-password-btn" data-target="reg-password-input"></i>
                             </div>
                         </div>
@@ -528,40 +561,13 @@
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                                     <line x1="12" y1="15" x2="12" y2="17"></line>
                                 </svg>
-                                <input type="password" name="password_confirmation" id="reg-password-confirm" class="form-input" placeholder="Confirm password" autocomplete="new-password">
+                                <input type="password" name="password_confirmation" id="reg-password-confirm" class="form-input" placeholder="Confirm password" autocomplete="new-password" required minlength="8">
                                 <i class="fa-regular fa-eye toggle-password-btn" data-target="reg-password-confirm"></i>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Account Type</label>
-                        <div class="account-type-options">
-                            <label class="account-type-card">
-                                <input type="radio" name="account_type" value="buyer" checked>
-                                <div class="card-content">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                    <span>Buyer</span>
-                                </div>
-                            </label>
-                            <label class="account-type-card">
-                                <input type="radio" name="account_type" value="seller">
-                                <div class="card-content">
-                                    <i class="fa-solid fa-user-tag"></i>
-                                    <span>Individual Seller</span>
-                                </div>
-                            </label>
-                            <label class="account-type-card">
-                                <input type="radio" name="account_type" value="business">
-                                <div class="card-content">
-                                    <i class="fa-solid fa-shop"></i>
-                                    <span>Breeder / Business</span>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-options" style="margin-bottom: 16px;">
+                    <div class="form-options" style="margin-bottom: 24px; margin-top: 8px;">
                         <label class="remember-me">
                             <input type="checkbox" required>
                             <span>I agree to the Terms, Privacy Policy and marketplace safety rules.</span>
@@ -570,6 +576,17 @@
 
                     <button type="submit" class="btn-login">
                         <i class="fa-solid fa-user-plus"></i> Create Account
+                    </button>
+                    
+                    <div style="display: flex; align-items: center; justify-content: center; margin: 16px 0;">
+                        <div style="height: 1px; background-color: #E2E7E3; flex: 1;"></div>
+                        <span style="padding: 0 16px; color: #667069; font-family: 'DM Sans', sans-serif; font-size: 14px;">or</span>
+                        <div style="height: 1px; background-color: #E2E7E3; flex: 1;"></div>
+                    </div>
+
+                    <button type="button" class="btn-google" style="width: 100%; height: 44px; background-color: #FFFFFF; color: #17211C; border: 1px solid #E2E7E3; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#F9FAFB'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo" style="width: 20px; height: 20px;">
+                        Continue with Google
                     </button>
                 </form>
             </div>
@@ -646,6 +663,91 @@
                         cityDropdown.classList.remove('active');
                     });
                 });
+            }
+
+            const registerForm = document.querySelector('.login-form-side form');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectUrl = urlParams.get('redirect');
+                    
+                    const pass = document.getElementById('reg-password-input').value;
+                    const confirmPass = document.getElementById('reg-password-confirm').value;
+                    
+                    if (pass !== confirmPass) {
+                        alert("Passwords do not match!");
+                        return;
+                    }
+                    
+                    // Simulate registration delay
+                    const btn = registerForm.querySelector('.btn-login');
+                    if (btn) {
+                        if (!btn.dataset.originalText) btn.dataset.originalText = btn.innerHTML;
+                        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating Account...';
+                        btn.style.opacity = '0.8';
+                    }
+
+                    setTimeout(() => {
+                        if (redirectUrl) {
+                            window.location.href = decodeURIComponent(redirectUrl);
+                        } else {
+                            window.location.href = "{{ route('dashboard') }}";
+                        }
+                    }, 800);
+                });
+            }
+
+            const googleBtn = document.querySelector('.btn-google');
+            if (googleBtn) {
+                googleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const termsCheckbox = document.querySelector('.form-options input[type="checkbox"]');
+                    if (termsCheckbox && !termsCheckbox.checked) {
+                        alert("Please agree to the Terms and Privacy Policy before continuing with Google.");
+                        return;
+                    }
+                    
+                    // Simulate Google Account Selection
+                    const userEmail = prompt("Simulating Google Login...\n\nPlease choose an account to continue to Pet Marketplace:", "user@gmail.com");
+                    
+                    if (!userEmail) {
+                        // User cancelled
+                        return;
+                    }
+                    
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectUrl = urlParams.get('redirect');
+                    
+                    if (!this.dataset.originalText) this.dataset.originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting...';
+                    this.style.opacity = '0.8';
+
+                    setTimeout(() => {
+                        if (redirectUrl) {
+                            window.location.href = decodeURIComponent(redirectUrl);
+                        } else {
+                            window.location.href = "{{ route('dashboard') }}";
+                        }
+                    }, 800);
+                });
+            }
+        });
+
+        // Reset button states on back navigation (bfcache)
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || window.performance && window.performance.navigation.type === 2) {
+                const btn = document.querySelector('.btn-login');
+                if (btn && btn.dataset.originalText) {
+                    btn.innerHTML = btn.dataset.originalText;
+                    btn.style.opacity = '1';
+                }
+                const googleBtn = document.querySelector('.btn-google');
+                if (googleBtn && googleBtn.dataset.originalText) {
+                    googleBtn.innerHTML = googleBtn.dataset.originalText;
+                    googleBtn.style.opacity = '1';
+                }
             }
         });
     </script>

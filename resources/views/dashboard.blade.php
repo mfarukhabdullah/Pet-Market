@@ -609,7 +609,7 @@
                 <h1>Welcome back, Ahmed</h1>
                 <p>Manage your pet listings, buyer inquiries and account from one place.</p>
             </div>
-            <a href="#sell" class="btn-sell-mobile">Sell a Pet</a>
+            <a href="{{ route('seller.create-listing') }}" class="btn-sell-mobile">Sell a Pet</a>
             <div class="welcome-actions">
                 <button class="btn-notification">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
