@@ -258,7 +258,7 @@
 }
 
 .home-search-btn {
-  background-color: #14794A;
+  background-color: #147A4D;
   color: #FFFFFF;
   border: none;
   border-radius: 10px;
@@ -267,6 +267,9 @@
   font-weight: 600;
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 203px;
+  height: 59px;
   gap: 9px;
   cursor: pointer;
   white-space: nowrap;
@@ -852,10 +855,21 @@
   z-index: 1;
 }
 
-.home-breed-info--cream { background-color: #FCE5C9; }
-.home-breed-info--blue  { background-color: #E0ECFB; }
-.home-breed-info--rose  { background-color: #FDC5BC; }
-.home-breed-info--pink  { background-color: #F9DCE5; }
+.home-breed-info--cream {
+  background-color: #FCE5C9;
+}
+
+.home-breed-info--blue {
+  background-color: #E0ECFB;
+}
+
+.home-breed-info--rose {
+  background-color: #FDC5BC;
+}
+
+.home-breed-info--pink {
+  background-color: #F9DCE5;
+}
 
 .home-breed-name {
   margin: 0 0 4px 0;
@@ -967,9 +981,17 @@
   position: relative;
 }
 
-.home-step--1 { background: #FCE5C9; }
-.home-step--2 { background: #D6EADF; }
-.home-step--3 { background: #FDC5BC; }
+.home-step--1 {
+  background: #FCE5C9;
+}
+
+.home-step--2 {
+  background: #D6EADF;
+}
+
+.home-step--3 {
+  background: #FDC5BC;
+}
 
 .home-step-bg-icon {
   position: absolute;
@@ -1305,6 +1327,7 @@
     scroll-padding-left: 20px;
     scroll-padding-right: 20px;
   }
+
   .home-categories::-webkit-scrollbar {
     display: none;
   }
@@ -1314,7 +1337,7 @@
     flex: 0 0 calc(40vw - 20px);
     scroll-snap-align: start;
   }
-  
+
   .home-cat-item:hover {
     transform: none;
   }
@@ -1508,7 +1531,8 @@
 
   /* ---------- CTA "One More Friend" (mobile, Figma) ---------- */
   .home-cta {
-    flex-direction: column-reverse; /* text upar, image neeche */
+    flex-direction: column-reverse;
+    /* text upar, image neeche */
     align-items: center;
     justify-content: flex-start;
     width: auto;
@@ -1633,7 +1657,7 @@
     margin-bottom: 20px;
   }
 
-  .home-header--popular > div {
+  .home-header--popular>div {
     width: 100%;
   }
 
@@ -1696,6 +1720,7 @@
     text-align: center;
     margin-top: 24px;
   }
+
   .home-mobile-btn-wrap--popular .home-btn-viewall {
     width: 210px;
   }
