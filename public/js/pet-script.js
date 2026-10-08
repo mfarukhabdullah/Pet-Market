@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPagination();
   initSearchFilter();
   initSidebarFilter();
+  initFavorites();
 });
 
 /* ==========================================
@@ -601,4 +602,31 @@ function initSidebarFilter() {
   if (hasUrlParams) {
       applySidebarFilters();
   }
+}
+
+/* ==========================================
+   8. Favorites Toggle
+   ========================================== */
+function initFavorites() {
+  const favButtons = document.querySelectorAll('.home-pet-fav, .btn-wishlist-heart');
+  favButtons.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation(); // Prevent card click event from redirecting
+          const icon = this.querySelector('i');
+          if (icon) {
+              if (icon.classList.contains('fa-regular') || icon.classList.contains('far')) {
+                  // Add to favorites
+                  icon.classList.remove('fa-regular', 'far');
+                  icon.classList.add('fa-solid', 'fas');
+                  icon.style.color = '#e91e63'; // Pink/Red color for filled heart
+              } else {
+                  // Remove from favorites
+                  icon.classList.remove('fa-solid', 'fas');
+                  icon.classList.add('fa-regular', 'far');
+                  icon.style.color = ''; // Reset color
+              }
+          }
+      });
+  });
 }
