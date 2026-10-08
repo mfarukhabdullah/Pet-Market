@@ -2143,25 +2143,33 @@ button {
   }
 
   .sell-badge-text {
-    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 34px;
   }
 
   .sell-badge-icon {
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
   }
 
   .sell-banner-title {
-    font-size: 20px;
-    line-height: 1.25;
+    font-family: 'Manrope', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 30px;
     margin-bottom: 8px;
   }
 
   .sell-banner-desc {
     margin-left: 0;
     margin-right: 0;
-    font-size: 13px;
-    line-height: 1.5;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #202020;
     margin-bottom: 24px;
     max-width: 100%;
   }
