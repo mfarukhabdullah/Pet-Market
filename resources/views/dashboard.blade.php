@@ -354,89 +354,79 @@
         /* Recent Favorites */
         .favorite-item {
             display: flex;
-            align-items: center;
             gap: 16px;
-            padding: 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-bottom: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #eee;
         }
-
         .favorite-item:last-child {
-            margin-bottom: 0;
+            /* border-bottom: none; */
         }
-
+        .fav-badge {
+            display: none;
+        }
         .fav-img {
-            width: 80px;
+            width: 120px;
             height: 80px;
-            border-radius: 12px;
+            border-radius: 8px;
             object-fit: cover;
         }
-
         .fav-info {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
-
         .fav-title {
+            font-weight: 600;
             font-size: 16px;
-            font-weight: 700;
-            color: var(--text-dark);
+            color: #333;
             margin-bottom: 4px;
         }
-
         .fav-subtitle {
-            font-size: 14px;
             color: var(--text-gray);
-            margin-bottom: 12px;
+            font-size: 14px;
         }
-
         .fav-meta {
             display: flex;
-            align-items: center;
             gap: 16px;
-            font-size: 13px;
-            color: var(--text-gray);
+            margin-top: 8px;
         }
-
         .fav-meta span {
+            color: var(--text-gray);
+            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
-
-        .fav-meta i {
-            color: var(--text-gray);
-        }
-
         .fav-actions {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             align-items: flex-end;
-            height: 80px;
+            justify-content: space-between;
         }
-
+        .fav-price {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary-green);
+        }
+        .fav-price-mobile {
+            display: none;
+        }
         .fav-heart {
-            width: 36px;
-            height: 36px;
-            border: 1px solid var(--border-color);
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
+            background-color: #f5f5f5;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ef4444;
-            font-size: 16px;
-            background: #fff;
+            color: #666;
             cursor: pointer;
+            transition: all 0.2s;
         }
-
-        .fav-price {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary-green);
+        .fav-heart:hover {
+            background-color: #ffeef0;
+            color: #ff4b68;
         }
 
         .btn-sell-mobile {
@@ -487,25 +477,116 @@
             .bottom-grid {
                 grid-template-columns: 1fr;
             }
+            .favorites-grid-mobile {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
             .favorite-item {
                 flex-direction: column;
                 align-items: stretch;
+                position: relative;
+                padding: 0;
+                overflow: hidden;
+                border: 0.43px solid #E2E7E3;
+                border-radius: 12px;
             }
             .fav-img {
                 width: 100%;
-                height: 180px;
+                height: 140px;
+                border-radius: 12px 12px 0 0;
+                object-fit: cover;
+            }
+            .fav-badge {
+                display: inline-block;
+                position: absolute;
+                top: 8px;
+                left: 8px;
+                background-color: white;
+                color: #333;
+                font-size: 8px;
+                font-weight: 700;
+                padding: 4px 8px;
+                border-radius: 12px;
+                z-index: 10;
+                letter-spacing: 0.5px;
+            }
+            .fav-info {
+                padding: 8px;
+                padding-bottom: 12px;
+            }
+            .fav-title {
+                font-size: 11px;
+                font-weight: 600;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .fav-subtitle {
+                font-size: 10px;
+                margin-bottom: 2px;
+            }
+            .fav-price-mobile {
+                display: block;
+                font-size: 13px;
+                font-weight: 700;
+                color: var(--primary-green);
+                margin-bottom: 6px;
             }
             .fav-meta {
                 flex-wrap: wrap;
-                gap: 8px;
+                gap: 4px;
+                margin-top: 4px;
+                display: flex;
+            }
+            .fav-meta span {
+                font-size: 9px;
+                color: #666;
+                display: flex;
+                align-items: center;
+                gap: 2px;
+            }
+            .fav-meta span i {
+                font-size: 10px;
+            }
+            .fav-meta span:nth-child(1) {
+                order: 3;
+                width: 100%;
+                margin-top: 4px;
+                border-top: 1px solid #eee;
+                padding-top: 6px;
+            }
+            .fav-meta span:nth-child(2) {
+                order: 1;
+                margin-right: 6px;
+            }
+            .fav-meta span:nth-child(3) {
+                order: 2;
             }
             .fav-actions {
-                flex-direction: row;
-                justify-content: space-between;
+                display: contents;
+            }
+            .fav-price {
+                display: none !important;
+            }
+            .fav-heart {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: 24px;
+                height: 24px;
+                background-color: white;
+                border-radius: 50%;
+                display: flex;
                 align-items: center;
-                height: auto;
-                width: 100%;
-                margin-top: 12px;
+                justify-content: center;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                display: flex !important;
+                z-index: 10;
+            }
+            .fav-heart i {
+                color: #666;
+                font-size: 12px;
             }
             .btn-sell-mobile {
                 width: 100%;
@@ -647,12 +728,14 @@
                 <a href="{{ route('favorites') }}" class="card-link">View All</a>
             </div>
             
-            <div class="card-body">
+            <div class="card-body favorites-grid-mobile">
                 <div class="favorite-item">
+                    <span class="fav-badge">FEATURED</span>
                     <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
                     <div class="fav-info">
                         <div class="fav-title">Golden Retriever Puppy</div>
                         <div class="fav-subtitle">Golden Retriever</div>
+                        <div class="fav-price-mobile">Rs. 85,000</div>
                         <div class="fav-meta">
                             <span><i class="fa-solid fa-location-dot"></i> Lahore</span>
                             <span><i class="fa-solid fa-clock"></i> 3 Months</span>
@@ -668,10 +751,12 @@
                 </div>
 
                 <div class="favorite-item">
+                    <span class="fav-badge">FEATURED</span>
                     <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
                     <div class="fav-info">
                         <div class="fav-title">Golden Retriever Puppy</div>
                         <div class="fav-subtitle">Golden Retriever</div>
+                        <div class="fav-price-mobile">Rs. 85,000</div>
                         <div class="fav-meta">
                             <span><i class="fa-solid fa-location-dot"></i> Lahore</span>
                             <span><i class="fa-solid fa-clock"></i> 3 Months</span>
@@ -687,10 +772,12 @@
                 </div>
 
                 <div class="favorite-item">
+                    <span class="fav-badge">FEATURED</span>
                     <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
                     <div class="fav-info">
                         <div class="fav-title">Golden Retriever Puppy</div>
                         <div class="fav-subtitle">Golden Retriever</div>
+                        <div class="fav-price-mobile">Rs. 85,000</div>
                         <div class="fav-meta">
                             <span><i class="fa-solid fa-location-dot"></i> Lahore</span>
                             <span><i class="fa-solid fa-clock"></i> 3 Months</span>

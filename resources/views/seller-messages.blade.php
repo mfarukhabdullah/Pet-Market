@@ -175,12 +175,12 @@
             display: flex;
             gap: 12px;
             cursor: pointer;
-            border-bottom: 1px solid #f3f4f6;
+            border-bottom: 1px solid #E2E7E3;
             position: relative;
         }
 
         .chat-item:hover, .chat-item.active {
-            background: #f9fafb;
+            background: #EAF7F0;
         }
 
         .chat-avatar {
@@ -332,7 +332,7 @@
         }
 
         .dropdown-item:hover {
-            background: #f9fafb;
+            background: #EAF7F0;
         }
 
         .dropdown-item img {
@@ -524,6 +524,117 @@
             height: 16px;
             /* If the icon is black, we might want to invert it using filter, but assuming it's white or transparent */
         }
+    
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 16px;
+            }
+            .welcome-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px;
+                text-align: left;
+            }
+            .welcome-text {
+                width: 100%;
+            }
+            .btn-notification {
+                display: none;
+            }
+            .chat-container {
+                border: none;
+                margin: 0 -16px;
+                border-radius: 0;
+                height: auto;
+                min-height: calc(100vh - 200px);
+                margin-bottom: 0;
+            }
+            .chat-sidebar {
+                width: 100%;
+                border-right: none;
+                background-color:#f7f9f8;
+            }
+            .chat-window {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 10000;
+                background: #fafafa;
+                margin: 0;
+                padding: 0;
+                border: none;
+                border-radius: 0;
+            }
+            body.chat-active .chat-window {
+                display: flex;
+            }
+            footer {
+                display: none !important;
+            }
+            body.chat-active header, body.chat-active .mobile-bottom-nav {
+                display: none !important;
+            }
+            .chat-back-btn {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
+            .chat-header {
+                padding: 12px 16px;
+                flex-shrink: 0;
+            }
+            .chat-context-card {
+                margin: 16px 16px 0 16px;
+            }
+            .chat-messages {
+                padding: 16px;
+            }
+            .chat-input-wrapper {
+                padding: 16px;
+                flex-shrink: 0;
+                padding-bottom: env(safe-area-inset-bottom, 16px);
+            }
+            /* Adjust chat tabs to scroll natively if they are long */
+            .chat-tabs {
+                overflow-x: auto;
+                padding-bottom: 4px;
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .chat-tabs::-webkit-scrollbar {
+                display: none;
+            }
+            .chat-tab {
+                flex-shrink: 0;
+            }
+            .chat-sidebar-header {
+                background-color: #f7f9f8;
+            }
+            .chat-item.active {
+                background-color: transparent;
+            }
+            .chat-item:hover, .chat-item.active:hover {
+                background-color: #EAF7F0;
+            }
+            .chat-tabs {
+                justify-content: space-between;
+                gap: 8px;
+            }
+            .chat-tab {
+                width: 96px;
+                max-width: 96px;
+                height: 36px;
+                border-radius: 10px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -563,7 +674,7 @@
                 
                 <div class="chat-list">
                     <!-- Chat Item 1 (Active) -->
-                    <div class="chat-item active">
+                    <div class="chat-item active" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Ali+Raza&background=random" alt="Ali Raza" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -577,7 +688,7 @@
                     </div>
 
                     <!-- Chat Item 2 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Ali+Raza&background=random" alt="Ali Raza" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -590,7 +701,7 @@
                     </div>
 
                     <!-- Chat Item 3 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Ali+Raza&background=random" alt="Ali Raza" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -603,7 +714,7 @@
                     </div>
 
                     <!-- Chat Item 4 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Sarah+Khan&background=random" alt="Sarah Khan" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -616,7 +727,7 @@
                     </div>
 
                     <!-- Chat Item 5 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Usman+Ahmed&background=random" alt="Usman Ahmed" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -629,7 +740,7 @@
                     </div>
 
                     <!-- Chat Item 6 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Aisha+Malik&background=random" alt="Aisha Malik" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -642,7 +753,7 @@
                     </div>
 
                     <!-- Chat Item 7 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Zain+Ali&background=random" alt="Zain Ali" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -655,7 +766,7 @@
                     </div>
 
                     <!-- Chat Item 8 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Fatima+Tariq&background=random" alt="Fatima Tariq" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -668,7 +779,7 @@
                     </div>
 
                     <!-- Chat Item 9 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Bilal+Mustafa&background=random" alt="Bilal Mustafa" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -681,7 +792,7 @@
                     </div>
 
                     <!-- Chat Item 10 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Sana+Nadeem&background=random" alt="Sana Nadeem" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -694,7 +805,7 @@
                     </div>
 
                     <!-- Chat Item 11 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Kamran+Shah&background=random" alt="Kamran Shah" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -707,7 +818,7 @@
                     </div>
 
                     <!-- Chat Item 12 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Nida+Hassan&background=random" alt="Nida Hassan" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -720,7 +831,7 @@
                     </div>
 
                     <!-- Chat Item 13 -->
-                    <div class="chat-item">
+                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
                         <img src="https://ui-avatars.com/api/?name=Fahad+Qureshi&background=random" alt="Fahad Qureshi" class="chat-avatar">
                         <div class="chat-item-info">
                             <div class="chat-item-header">
@@ -739,6 +850,12 @@
                 <!-- Chat Header -->
                 <div class="chat-header">
                     <div class="chat-header-info">
+                        <button class="chat-back-btn" onclick="document.body.classList.remove('chat-active')" style="display: none; background: none; border: none; cursor: pointer; padding-right: 12px;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                <polyline points="12 19 5 12 12 5"></polyline>
+                            </svg>
+                        </button>
                         <img src="https://ui-avatars.com/api/?name=Ali+Raza&background=random" alt="Ali Raza" class="chat-avatar">
                         <div class="chat-header-text">
                             <h3>Ali Raza</h3>
@@ -774,9 +891,12 @@
                 <!-- Context Card -->
                 <div class="chat-context-card">
                     <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="chat-context-img" onerror="this.src='https://images.unsplash.com/photo-1600804340584-c7db2eacf0bf?auto=format&fit=crop&w=100&q=80'">
-                    <div class="chat-context-details">
+                    <div class="chat-context-details" style="flex-grow: 1;">
                         <h4>Golden Retriever Puppy</h4>
                         <p>Lahore</p>
+                    </div>
+                    <div class="chat-context-price" style="font-weight: 700; color: var(--primary-green); white-space: nowrap;">
+                        Rs. 85,000
                     </div>
                 </div>
 
