@@ -111,9 +111,10 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
-  padding: 65px 0 10px 0;
+  padding: 65px 24px 10px 24px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -190,8 +191,10 @@
   transform: translateY(50%);
   z-index: 10;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
 .home-search-bar {
@@ -280,8 +283,10 @@
 
 .home-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
@@ -393,7 +398,7 @@
   border-radius: 6px;
   font-weight: 600;
   display: inline-block;
-  width: calc(100% - 40px);
+  width: calc(100% - 48px);
   transition: all 0.3s ease;
 }
 
@@ -414,9 +419,10 @@
    ========================================================================== */
 .home-categories-section {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
 .home-categories {
@@ -599,8 +605,8 @@
    ========================================================================== */
 .home-cta {
   position: relative;
-  width: 100%;
-  max-width: 1200px;
+  width: calc(100% - 48px);
+  max-width: 1202px;
   min-height: 378px;
   background-color: #147A4D;
   border-radius: 20px;
@@ -801,14 +807,16 @@
 }
 
 .home-popular-grid {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  width: 100%;
 }
 
 .home-breed-card {
-  width: 280px;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
   height: 272px;
   position: relative;
   display: flex;
@@ -878,8 +886,10 @@
 
 .home-locations-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
   color: white;
 }
 
@@ -938,10 +948,10 @@
    ========================================================================== */
 .home-journey-section {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
-  padding-top: 120px;
-  padding-bottom: 0;
+  padding: 120px 24px 0;
+  box-sizing: border-box;
 }
 
 .home-journey {

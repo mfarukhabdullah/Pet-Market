@@ -274,7 +274,7 @@
                                 <span><i class="fa-regular fa-clock"></i> 3 Months</span>
                                 <span><i class="fa-solid fa-mars"></i> Male</span>
                             </div>
-                            <div class="home-pet-location"><i class="fa-solid fa-location-dot"></i> Lahore</div>
+                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
                         </div>
                     </div>
                     <!-- Card 2 -->
@@ -292,7 +292,7 @@
                                 <span><i class="fa-regular fa-clock"></i> 7 Months</span>
                                 <span><i class="fa-solid fa-venus"></i> Female</span>
                             </div>
-                            <div class="home-pet-location"><i class="fa-solid fa-location-dot"></i> Islamabad</div>
+                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Islamabad</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
                         </div>
                     </div>
                     <!-- Card 3 -->
@@ -310,7 +310,7 @@
                                 <span><i class="fa-regular fa-clock"></i> 1 Year</span>
                                 <span><i class="fa-solid fa-mars"></i> Male</span>
                             </div>
-                            <div class="home-pet-location"><i class="fa-solid fa-location-dot"></i> Karachi</div>
+                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Karachi</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
                         </div>
                     </div>
                     <!-- Card 4 -->
@@ -328,7 +328,7 @@
                                 <span><i class="fa-regular fa-clock"></i> 5 Months</span>
                                 <span><i class="fa-solid fa-venus"></i> Female</span>
                             </div>
-                            <div class="home-pet-location"><i class="fa-solid fa-location-dot"></i> Lahore</div>
+                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
                         </div>
                     </div>
                 </div>
@@ -365,7 +365,7 @@
                                 <span><i class="fa-regular fa-clock"></i> 3 Months</span>
                                 <span><i class="fa-solid fa-mars"></i> Male</span>
                             </div>
-                            <div class="home-pet-location"><i class="fa-solid fa-location-dot"></i> Lahore</div>
+                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
                         </div>
                     </div>
                     <!-- Card 2 -->
@@ -382,7 +382,7 @@
                                 <span><i class="fa-regular fa-clock"></i> 7 Months</span>
                                 <span><i class="fa-solid fa-venus"></i> Female</span>
                             </div>
-                            <div class="home-pet-location"><i class="fa-solid fa-location-dot"></i> Islamabad</div>
+                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Islamabad</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
                         </div>
                     </div>
                     <!-- Card 3 -->
@@ -399,7 +399,7 @@
                                 <span><i class="fa-regular fa-clock"></i> 1 Year</span>
                                 <span><i class="fa-solid fa-mars"></i> Male</span>
                             </div>
-                            <div class="home-pet-location"><i class="fa-solid fa-location-dot"></i> Karachi</div>
+                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Karachi</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
                         </div>
                     </div>
                     <!-- Card 4 -->
@@ -416,7 +416,7 @@
                                 <span><i class="fa-regular fa-clock"></i> 5 Months</span>
                                 <span><i class="fa-solid fa-venus"></i> Female</span>
                             </div>
-                            <div class="home-pet-location"><i class="fa-solid fa-location-dot"></i> Lahore</div>
+                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
                         </div>
                     </div>
                 </div>
@@ -551,3 +551,4 @@
         <x-sell-banner />
 
     </main>
+
