@@ -128,6 +128,10 @@
                             <option value="karachi">Karachi</option>
                             <option value="lahore">Lahore</option>
                             <option value="rawalpindi">Rawalpindi</option>
+                            <option value="faisalabad">Faisalabad</option>
+                            <option value="multan">Multan</option>
+                            <option value="sialkot">Sialkot</option>
+                            <option value="peshawar">Peshawar</option>
                         </select>
                         <div class="home-filter-left">
                             <!-- Green Location Pin Icon -->
@@ -186,64 +190,25 @@
             <h2 class="home-sec-title home-sec-title--md">Browse by Pet Category</h2>
             <p class="home-sec-desc home-sec-desc--spaced">Start your search by choosing the type of companion you're looking for.</p>
             <style>
-                .home-categories-marquee {
-                    overflow: hidden;
-                    white-space: nowrap;
+                .home-categories-wrapper {
                     width: 100%;
+                    overflow-x: auto;
                     padding: 10px 0;
+                    /* Hide scrollbar for Chrome, Safari and Opera */
+                    -ms-overflow-style: none;  /* IE and Edge */
+                    scrollbar-width: none;  /* Firefox */
+                }
+                .home-categories-wrapper::-webkit-scrollbar {
+                    display: none;
                 }
                 .home-categories-track {
                     display: inline-flex;
                     gap: 30px;
-                    animation: marqueeScroll 25s linear infinite;
                     width: max-content;
                 }
-                .home-categories-track:hover {
-                    animation-play-state: paused;
-                }
-                @keyframes marqueeScroll {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(calc(-50% - 15px)); }
-                }
             </style>
-            <div class="home-categories-marquee">
+            <div class="home-categories-wrapper">
                 <div class="home-categories-track">
-                    <!-- Set 1 -->
-                    <div class="home-categories" style="display: flex; gap: 30px; flex-wrap: nowrap;">
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'dogs']) }}'" style="cursor: pointer;">
-                            <div class="home-cat-img"><img src="{{ asset('images/cat_dog.jpg') }}" alt="Dogs"></div>
-                            <div class="home-cat-name">Dogs</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'cats']) }}'" style="cursor: pointer;">
-                            <div class="home-cat-img"><img src="{{ asset('images/cat_cat.jpg') }}" alt="Cats"></div>
-                            <div class="home-cat-name">Cats</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'birds']) }}'" style="cursor: pointer;">
-                            <div class="home-cat-img"><img src="{{ asset('images/cat_bird.jpg') }}" alt="Birds"></div>
-                            <div class="home-cat-name">Birds</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'fish']) }}'" style="cursor: pointer;">
-                            <div class="home-cat-img"><img src="{{ asset('images/cat_fish.jpg') }}" alt="Fish"></div>
-                            <div class="home-cat-name">Fish</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'reptiles']) }}'" style="cursor: pointer;">
-                            <div class="home-cat-img"><img src="{{ asset('images/cat_reptile.jpg') }}" alt="Reptiles"></div>
-                            <div class="home-cat-name">Reptiles</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'rabbits']) }}'" style="cursor: pointer;">
-                            <div class="home-cat-img"><img src="{{ asset('images/card_rabbit.jpg') }}" alt="Rabbits"></div>
-                            <div class="home-cat-name">Rabbits</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'horses-farm']) }}'" style="cursor: pointer;">
-                            <div class="home-cat-img"><img src="{{ asset('images/cat_horse.jpg') }}" alt="Horses & Farm"></div>
-                            <div class="home-cat-name">Horses & Farm</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'exotic']) }}'" style="cursor: pointer;">
-                            <div class="home-cat-img"><img src="{{ asset('images/card_parrot.jpg') }}" alt="Exotic Pets"></div>
-                            <div class="home-cat-name">Exotic Pets</div>
-                        </div>
-                    </div>
-                    <!-- Set 2 (Duplicate for seamless loop) -->
                     <div class="home-categories" style="display: flex; gap: 30px; flex-wrap: nowrap;">
                         <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'dogs']) }}'" style="cursor: pointer;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_dog.jpg') }}" alt="Dogs"></div>
@@ -281,7 +246,6 @@
                 </div>
             </div>
         </div>
-
         <!-- FEATURED PETS -->
         <div class="home-featured home-pets-section">
             <div class="home-container">
@@ -494,8 +458,8 @@
 
                 <!-- Buttons Wrapper -->
                 <div class="home-cta-buttons">
-                    <a href="#" class="home-cta-btn home-cta-btn--solid">Browse Dogs</a>
-                    <a href="#" class="home-cta-btn home-cta-btn--outline">Browse Cats</a>
+                    <a href="{{ route('category', ['category' => 'dogs']) }}" class="home-cta-btn home-cta-btn--solid">Browse Dogs</a>
+                    <a href="{{ route('category', ['category' => 'cats']) }}" class="home-cta-btn home-cta-btn--outline">Browse Cats</a>
                 </div>
 
             </div>
@@ -510,12 +474,12 @@
                         <h2 class="home-popular-title">Popular Breeds</h2>
                         <p class="home-popular-desc">Explore listings by commonly searched breeds.</p>
                     </div>
-                    <a href="#" class="home-popular-link home-btn-desktop">View All Breeds</a>
+                    <a href="{{ route('breeds') }}" class="home-popular-link home-btn-desktop">View All Breeds</a>
                 </div>
 
                 <div class="home-popular-grid">
                     <!-- Card 1: Golden Retriever -->
-                    <div class="home-breed-card">
+                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['breed' => 'golden-retriever']) }}'" style="cursor: pointer;">
                         <img src="{{ asset('images/golden_retriever.jpg') }}" alt="Golden Retriever" class="home-breed-img">
                         <div class="home-breed-info home-breed-info--cream">
                             <h3 class="home-breed-name">Golden Retriever</h3>
@@ -524,7 +488,7 @@
                     </div>
 
                     <!-- Card 2: German Shepherd -->
-                    <div class="home-breed-card">
+                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['breed' => 'german-shepherd']) }}'" style="cursor: pointer;">
                         <img src="{{ asset('images/german_shepherd.jpg') }}" alt="German Shepherd" class="home-breed-img">
                         <div class="home-breed-info home-breed-info--blue">
                             <h3 class="home-breed-name">German Shepherd</h3>
@@ -533,7 +497,7 @@
                     </div>
 
                     <!-- Card 3: Persian -->
-                    <div class="home-breed-card">
+                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['breed' => 'persian']) }}'" style="cursor: pointer;">
                         <img src="{{ asset('images/persian.jpg') }}" alt="Persian" class="home-breed-img">
                         <div class="home-breed-info home-breed-info--rose">
                             <h3 class="home-breed-name">Persian</h3>
@@ -542,7 +506,7 @@
                     </div>
 
                     <!-- Card 4: British Shorthair -->
-                    <div class="home-breed-card">
+                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['breed' => 'british-shorthair']) }}'" style="cursor: pointer;">
                         <img src="{{ asset('images/british_shorthair.jpg') }}" alt="British Shorthair" class="home-breed-img">
                         <div class="home-breed-info home-breed-info--pink">
                             <h3 class="home-breed-name">British Shorthair</h3>
@@ -564,15 +528,15 @@
                     <p class="home-sec-desc home-sec-desc--light">Browse pets available in major cities and find listings closer to your location.</p>
                 </div>
                 <div class="home-loc-grid">
-                    <div class="home-loc-card"><div><h3>Lahore</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card"><div><h3>Faisalabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card"><div><h3>Multan</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card"><div><h3>Sialkot</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'lahore']) }}'" style="cursor: pointer;"><div><h3>Lahore</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'faisalabad']) }}'" style="cursor: pointer;"><div><h3>Faisalabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'multan']) }}'" style="cursor: pointer;"><div><h3>Multan</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'sialkot']) }}'" style="cursor: pointer;"><div><h3>Sialkot</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
 
-                    <div class="home-loc-card"><div><h3>Karachi</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card"><div><h3>Peshawar</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card"><div><h3>Islamabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card"><div><h3>All Locations</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'karachi']) }}'" style="cursor: pointer;"><div><h3>Karachi</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'peshawar']) }}'" style="cursor: pointer;"><div><h3>Peshawar</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'islamabad']) }}'" style="cursor: pointer;"><div><h3>Islamabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category') }}'" style="cursor: pointer;"><div><h3>All Locations</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
                 </div>
             </div>
         </div>

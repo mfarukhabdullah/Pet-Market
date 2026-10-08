@@ -566,6 +566,8 @@ function initSidebarFilter() {
   if (urlParams.has('category')) {
       const val = urlParams.get('category');
       if (categorySelect) categorySelect.value = val;
+      const topCategorySelect = document.querySelector('.search-input-group select[name="category"]');
+      if (topCategorySelect) topCategorySelect.value = val;
       hasUrlParams = true;
   }
   if (urlParams.has('breed')) {
@@ -576,6 +578,8 @@ function initSidebarFilter() {
   if (urlParams.has('location')) {
       const val = urlParams.get('location');
       if (locationSelect) locationSelect.value = val;
+      const topLocationSelect = document.querySelector('.search-input-group select[name="location"]');
+      if (topLocationSelect) topLocationSelect.value = val;
       hasUrlParams = true;
   }
   if (urlParams.has('price')) {

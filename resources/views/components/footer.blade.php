@@ -24,12 +24,11 @@
                 <div class="footer-col">
                     <h4 class="footer-col-title">Quick Links</h4>
                     <ul class="footer-link-list">
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#contact">Contact Us</a></li>
-                        <li><a href="#blog">Blog</a></li>
-                        <li><a href="#privacy">Privacy Policy</a></li>
-                        <li><a href="#terms">Terms & Conditions</a></li>
-                        <li><a href="#safety">Safety Guidelines</a></li>
+                        <li><a href="{{ route('home') }}">Home</a></li>
+                        <li><a href="{{ route('about') }}">About Us</a></li>
+                        <li><a href="{{ route('contact') }}">Contact Us</a></li>
+                        <li><a href="{{ route('category') }}">Categories</a></li>
+                        <li><a href="{{ route('breeds') }}">Breeds</a></li>
                     </ul>
                 </div>
 
@@ -37,12 +36,12 @@
                 <div class="footer-col">
                     <h4 class="footer-col-title">Pet Categories</h4>
                     <ul class="footer-link-list">
-                        <li><a href="#dogs">Dogs</a></li>
-                        <li><a href="#cats">Cats</a></li>
-                        <li><a href="#birds">Birds</a></li>
-                        <li><a href="#rabbits">Rabbits</a></li>
-                        <li><a href="#fish">Fish</a></li>
-                        <li><a href="#horses">Horses & Farm</a></li>
+                        <li><a href="{{ route('category', ['category' => 'dogs']) }}">Dogs</a></li>
+                        <li><a href="{{ route('category', ['category' => 'cats']) }}">Cats</a></li>
+                        <li><a href="{{ route('category', ['category' => 'birds']) }}">Birds</a></li>
+                        <li><a href="{{ route('category', ['category' => 'rabbits']) }}">Rabbits</a></li>
+                        <li><a href="{{ route('category', ['category' => 'fish']) }}">Fish</a></li>
+                        <li><a href="{{ route('category', ['category' => 'horses-farm']) }}">Horses & Farm</a></li>
                     </ul>
                 </div>
 
@@ -72,10 +71,9 @@
 
             </div>
 
-            <!-- Bottom Copyright Row -->
             <div class="footer-bottom-row">
                 <div class="copyright-text">
-                    © 2026 [Marketplace Name]. All rights reserved.
+                    © 2026 Pet Marketplace. All rights reserved.
                 </div>
             </div>
         </div>

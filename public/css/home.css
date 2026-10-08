@@ -371,6 +371,13 @@
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.home-btn-outline:hover {
+  background-color: #147A4D;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(20, 122, 77, 0.2);
 }
 
 .home-btn-outline--block {
@@ -387,6 +394,12 @@
   font-weight: 600;
   display: inline-block;
   width: calc(100% - 40px);
+  transition: all 0.3s ease;
+}
+
+.home-btn-solid:hover {
+  background-color: #0d5e39;
+  box-shadow: 0 4px 12px rgba(20, 122, 77, 0.3);
 }
 
 /* "View All" button shown under the grid on mobile only */
@@ -526,6 +539,14 @@
   justify-content: center;
   color: #94a3b8;
   font-size: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.home-pet-fav:hover {
+  background-color: #f1f5f9;
+  transform: scale(1.1);
+  color: #ff4757;
 }
 
 .home-pet-info {
@@ -707,6 +728,7 @@
   font-weight: 600;
   font-size: 14px;
   box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .home-cta-btn--solid {
@@ -714,10 +736,21 @@
   background-color: #147A4D;
 }
 
+.home-cta-btn--solid:hover {
+  background-color: #0d5e39;
+  box-shadow: 0 4px 12px rgba(20, 122, 77, 0.3);
+}
+
 .home-cta-btn--outline {
   border: 2px solid #147A4D;
   color: #147A4D;
   background-color: transparent;
+}
+
+.home-cta-btn--outline:hover {
+  background-color: #147A4D;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(20, 122, 77, 0.3);
 }
 
 /* ==========================================================================
@@ -758,6 +791,13 @@
   font-weight: 600;
   background-color: transparent;
   display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.home-popular-link:hover {
+  background-color: #0E6B40;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(14, 107, 64, 0.2);
 }
 
 .home-popular-grid {

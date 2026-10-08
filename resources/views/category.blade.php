@@ -67,6 +67,10 @@
                                     <option value="karachi">Karachi</option>
                                     <option value="lahore">Lahore</option>
                                     <option value="rawalpindi">Rawalpindi</option>
+                                    <option value="faisalabad">Faisalabad</option>
+                                    <option value="multan">Multan</option>
+                                    <option value="sialkot">Sialkot</option>
+                                    <option value="peshawar">Peshawar</option>
                                 </select>
                                 <i class="fas fa-chevron-down select-arrow-icon"></i>
                             </div>
@@ -147,6 +151,11 @@
                                             <option value="islamabad">Islamabad</option>
                                             <option value="karachi">Karachi</option>
                                             <option value="lahore">Lahore</option>
+                                            <option value="rawalpindi">Rawalpindi</option>
+                                            <option value="faisalabad">Faisalabad</option>
+                                            <option value="multan">Multan</option>
+                                            <option value="sialkot">Sialkot</option>
+                                            <option value="peshawar">Peshawar</option>
                                         </select>
                                         <i class="fas fa-chevron-down select-chevron"></i>
                                     </div>
