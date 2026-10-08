@@ -51,6 +51,9 @@
                                     <option value="birds">Birds</option>
                                     <option value="rabbits">Rabbits</option>
                                     <option value="fish">Fish</option>
+                                    <option value="reptiles">Reptiles</option>
+                                    <option value="horses-farm">Horses & Farm</option>
+                                    <option value="exotic">Exotic Pets</option>
                                 </select>
                                 <i class="fas fa-chevron-down select-arrow-icon"></i>
                             </div>
@@ -91,23 +94,27 @@
                             <div class="filters-sidebar-header">
                                 <h3 class="filters-title">Filters</h3>
                                 <div class="filters-header-actions">
-                                    <button type="button" class="btn-reset-filters" id="resetFiltersBtn">Reset all</button>
+                                    <button type="button" class="btn-reset-filters" id="resetFiltersBtn" style="display: none;">Reset all</button>
                                     <button type="button" class="close-sidebar-btn" id="closeFiltersBtn" aria-label="Close Filters"><i class="fas fa-times"></i></button>
                                 </div>
                             </div>
 
-                            <form id="sidebarFiltersForm">
+                            <form id="sidebarFiltersForm" action="{{ route('category') }}" method="GET" autocomplete="off">
                                 
                                 <!-- 1. Pet Category -->
                                 <div class="filter-group">
                                     <label class="filter-label" for="filterCategory">Pet Category</label>
                                     <div class="filter-select-wrapper">
-                                        <select id="filterCategory" class="filter-select">
+                                        <select id="filterCategory" name="category" class="filter-select">
                                             <option value="">All Categories</option>
                                             <option value="cats">Cats</option>
                                             <option value="dogs">Dogs</option>
                                             <option value="birds">Birds</option>
                                             <option value="rabbits">Rabbits</option>
+                                            <option value="fish">Fish</option>
+                                            <option value="reptiles">Reptiles</option>
+                                            <option value="horses-farm">Horses & Farm</option>
+                                            <option value="exotic">Exotic Pets</option>
                                         </select>
                                         <i class="fas fa-chevron-down select-chevron"></i>
                                     </div>
@@ -117,7 +124,7 @@
                                 <div class="filter-group">
                                     <label class="filter-label" for="filterBreed">Breed</label>
                                     <div class="filter-select-wrapper">
-                                        <select id="filterBreed" class="filter-select">
+                                        <select id="filterBreed" name="breed" class="filter-select">
                                             <option value="">All Breeds</option>
                                             <option value="british-shorthair">British Shorthair</option>
                                             <option value="shih-tzu">Shih Tzu</option>
@@ -135,7 +142,7 @@
                                 <div class="filter-group">
                                     <label class="filter-label" for="filterLocation">Location / City</label>
                                     <div class="filter-select-wrapper">
-                                        <select id="filterLocation" class="filter-select">
+                                        <select id="filterLocation" name="location" class="filter-select">
                                             <option value="">All Locations</option>
                                             <option value="islamabad">Islamabad</option>
                                             <option value="karachi">Karachi</option>
@@ -149,17 +156,31 @@
                                 <div class="filter-group">
                                     <label class="filter-label">Price Range</label>
                                     <div class="min-max-inputs-row">
-                                        <input type="number" placeholder="Min" class="filter-number-input" id="priceMin">
-                                        <input type="number" placeholder="Max" class="filter-number-input" id="priceMax">
+                                        <input type="number" name="price_min" placeholder="Min" class="filter-number-input" id="priceMin" autocomplete="off">
+                                        <input type="number" name="price_max" placeholder="Max" class="filter-number-input" id="priceMax" autocomplete="off">
                                     </div>
                                 </div>
 
                                 <!-- 5. Age Range -->
                                 <div class="filter-group">
                                     <label class="filter-label">Age Range</label>
-                                    <div class="min-max-inputs-row">
-                                        <input type="text" placeholder="Min" class="filter-number-input" id="ageMin">
-                                        <input type="text" placeholder="Max" class="filter-number-input" id="ageMax">
+                                    <div class="age-inputs-container" style="display: flex; flex-direction: column; gap: 8px;">
+                                        <div style="display: flex; gap: 8px;">
+                                            <input type="number" name="age_min" placeholder="Min" class="filter-number-input" id="ageMin" autocomplete="off" style="flex: 1; min-width: 0;">
+                                            <select name="age_min_unit" id="ageMinUnit" class="filter-select" style="width: 100px; padding: 0 10px; min-height: 44px; border-radius: 8px; border: 1px solid #E5E7EB; background-color: #fff;">
+                                                <option value="days">Days</option>
+                                                <option value="months" selected>Months</option>
+                                                <option value="years">Years</option>
+                                            </select>
+                                        </div>
+                                        <div style="display: flex; gap: 8px;">
+                                            <input type="number" name="age_max" placeholder="Max" class="filter-number-input" id="ageMax" autocomplete="off" style="flex: 1; min-width: 0;">
+                                            <select name="age_max_unit" id="ageMaxUnit" class="filter-select" style="width: 100px; padding: 0 10px; min-height: 44px; border-radius: 8px; border: 1px solid #E5E7EB; background-color: #fff;">
+                                                <option value="days">Days</option>
+                                                <option value="months" selected>Months</option>
+                                                <option value="years">Years</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -235,7 +256,7 @@
                                 <div class="filter-group filter-group-last">
                                     <label class="filter-label" for="filterDate">Date Posted</label>
                                     <div class="filter-select-wrapper">
-                                        <select id="filterDate" class="filter-select">
+                                        <select id="filterDate" name="date" class="filter-select">
                                             <option value="">Any Time</option>
                                             <option value="24h">Past 24 Hours</option>
                                             <option value="week">Past Week</option>
@@ -246,7 +267,7 @@
                                 </div>
 
                                 <!-- Apply Filters Button -->
-                                <button type="button" class="btn-apply-filters" id="applyFiltersBtn">Apply Filters</button>
+                                <button type="submit" class="btn-apply-filters" id="applyFiltersBtn">Apply Filters</button>
 
                             </form>
                         </aside>
@@ -493,6 +514,12 @@
                                     </div>
                                 </article>
 
+                            </div>
+                            
+                            <!-- NO RESULTS MESSAGE -->
+                            <div id="noResultsMessage" style="display: none; text-align: center; padding: 60px 20px; color: #666; font-size: 1.2rem; background: #f9f9f9; border-radius: 16px; margin-top: 20px;">
+                                <i class="fas fa-search" style="font-size: 2.5rem; color: #ccc; margin-bottom: 16px; display: block;"></i>
+                                No pets found matching your filters.
                             </div>
 
                             <!-- PAGINATION COMPONENT -->

@@ -59,18 +59,22 @@
             </div>
 
             <!-- FLOATING SEARCH BAR (Overlapping bottom edge) -->
-            <div class="home-search-wrap">
+            <form action="{{ route('category') }}" method="GET" class="home-search-wrap">
 
                 <div class="home-search-bar">
 
                     <!-- Filter 1: PET CATEGORY -->
                     <div class="home-filter" style="position: relative;">
-                        <select class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
+                        <select name="category" class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
                             <option value="" disabled selected>Any category</option>
                             <option value="dogs">Dogs</option>
                             <option value="cats">Cats</option>
                             <option value="birds">Birds</option>
-                            <option value="small">Small Pets</option>
+                            <option value="rabbits">Rabbits</option>
+                            <option value="fish">Fish</option>
+                            <option value="reptiles">Reptiles</option>
+                            <option value="horses-farm">Horses & Farm</option>
+                            <option value="exotic">Exotic Pets</option>
                         </select>
                         <div class="home-filter-left">
                             <!-- Green Paw Icon -->
@@ -92,12 +96,12 @@
 
                     <!-- Filter 2: BREED -->
                     <div class="home-filter" style="position: relative;">
-                        <select class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
+                        <select name="breed" class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
                             <option value="" disabled selected>Any breed</option>
-                            <option value="golden">Golden Retriever</option>
-                            <option value="husky">Husky</option>
+                            <option value="golden-retriever">Golden Retriever</option>
+                            <option value="german-shepherd">German Shepherd</option>
                             <option value="persian">Persian Cat</option>
-                            <option value="mixed">Mixed Breed</option>
+                            <option value="british-shorthair">British Shorthair</option>
                         </select>
                         <div class="home-filter-left">
                             <!-- Green Breed Icon (DNA) -->
@@ -118,12 +122,12 @@
 
                     <!-- Filter 3: LOCATION -->
                     <div class="home-filter" style="position: relative;">
-                        <select class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
+                        <select name="location" class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
                             <option value="" disabled selected>Any location</option>
-                            <option value="ny">New York</option>
-                            <option value="ca">California</option>
-                            <option value="tx">Texas</option>
-                            <option value="fl">Florida</option>
+                            <option value="islamabad">Islamabad</option>
+                            <option value="karachi">Karachi</option>
+                            <option value="lahore">Lahore</option>
+                            <option value="rawalpindi">Rawalpindi</option>
                         </select>
                         <div class="home-filter-left">
                             <!-- Green Location Pin Icon -->
@@ -140,12 +144,12 @@
 
                     <!-- Filter 4: PRICE -->
                     <div class="home-filter" style="position: relative;">
-                        <select class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
+                        <select name="price" class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
                             <option value="" disabled selected>Any price</option>
-                            <option value="0-100">$0 - $100</option>
-                            <option value="100-500">$100 - $500</option>
-                            <option value="500-1000">$500 - $1000</option>
-                            <option value="1000+">$1000+</option>
+                            <option value="0-20000">Under Rs. 20k</option>
+                            <option value="20000-50000">Rs. 20k - 50k</option>
+                            <option value="50000-100000">Rs. 50k - 100k</option>
+                            <option value="100000+">Rs. 100k+</option>
                         </select>
                         <div class="home-filter-left">
                             <!-- Green Price Tag Icon -->
@@ -161,7 +165,7 @@
                     </div>
 
                     <!-- CTA Button: Find a Pet -->
-                    <button class="home-search-btn">
+                    <button type="submit" class="home-search-btn">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -170,7 +174,7 @@
                     </button>
 
                 </div>
-            </div>
+            </form>
 
         </section>
 
@@ -181,30 +185,99 @@
         <div class="home-categories-section">
             <h2 class="home-sec-title home-sec-title--md">Browse by Pet Category</h2>
             <p class="home-sec-desc home-sec-desc--spaced">Start your search by choosing the type of companion you're looking for.</p>
-            <div class="home-categories">
-                <div class="home-cat-item">
-                    <div class="home-cat-img"><img src="{{ asset('images/cat_dog.jpg') }}" alt="Dogs"></div>
-                    <div class="home-cat-name">Dogs</div>
-                </div>
-                <div class="home-cat-item">
-                    <div class="home-cat-img"><img src="{{ asset('images/cat_cat.jpg') }}" alt="Cats"></div>
-                    <div class="home-cat-name">Cats</div>
-                </div>
-                <div class="home-cat-item">
-                    <div class="home-cat-img"><img src="{{ asset('images/cat_bird.jpg') }}" alt="Birds"></div>
-                    <div class="home-cat-name">Birds</div>
-                </div>
-                <div class="home-cat-item">
-                    <div class="home-cat-img"><img src="{{ asset('images/cat_fish.jpg') }}" alt="Fish"></div>
-                    <div class="home-cat-name">Fish</div>
-                </div>
-                <div class="home-cat-item">
-                    <div class="home-cat-img"><img src="{{ asset('images/cat_reptile.jpg') }}" alt="Reptiles"></div>
-                    <div class="home-cat-name">Reptiles</div>
-                </div>
-                <div class="home-cat-item">
-                    <div class="home-cat-img"><img src="{{ asset('images/cat_horse.jpg') }}" alt="Horses & Farm"></div>
-                    <div class="home-cat-name">Horses & Farm</div>
+            <style>
+                .home-categories-marquee {
+                    overflow: hidden;
+                    white-space: nowrap;
+                    width: 100%;
+                    padding: 10px 0;
+                }
+                .home-categories-track {
+                    display: inline-flex;
+                    gap: 30px;
+                    animation: marqueeScroll 25s linear infinite;
+                    width: max-content;
+                }
+                .home-categories-track:hover {
+                    animation-play-state: paused;
+                }
+                @keyframes marqueeScroll {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(calc(-50% - 15px)); }
+                }
+            </style>
+            <div class="home-categories-marquee">
+                <div class="home-categories-track">
+                    <!-- Set 1 -->
+                    <div class="home-categories" style="display: flex; gap: 30px; flex-wrap: nowrap;">
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'dogs']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_dog.jpg') }}" alt="Dogs"></div>
+                            <div class="home-cat-name">Dogs</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'cats']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_cat.jpg') }}" alt="Cats"></div>
+                            <div class="home-cat-name">Cats</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'birds']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_bird.jpg') }}" alt="Birds"></div>
+                            <div class="home-cat-name">Birds</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'fish']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_fish.jpg') }}" alt="Fish"></div>
+                            <div class="home-cat-name">Fish</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'reptiles']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_reptile.jpg') }}" alt="Reptiles"></div>
+                            <div class="home-cat-name">Reptiles</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'rabbits']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/card_rabbit.jpg') }}" alt="Rabbits"></div>
+                            <div class="home-cat-name">Rabbits</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'horses-farm']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_horse.jpg') }}" alt="Horses & Farm"></div>
+                            <div class="home-cat-name">Horses & Farm</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'exotic']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/card_parrot.jpg') }}" alt="Exotic Pets"></div>
+                            <div class="home-cat-name">Exotic Pets</div>
+                        </div>
+                    </div>
+                    <!-- Set 2 (Duplicate for seamless loop) -->
+                    <div class="home-categories" style="display: flex; gap: 30px; flex-wrap: nowrap;">
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'dogs']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_dog.jpg') }}" alt="Dogs"></div>
+                            <div class="home-cat-name">Dogs</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'cats']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_cat.jpg') }}" alt="Cats"></div>
+                            <div class="home-cat-name">Cats</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'birds']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_bird.jpg') }}" alt="Birds"></div>
+                            <div class="home-cat-name">Birds</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'fish']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_fish.jpg') }}" alt="Fish"></div>
+                            <div class="home-cat-name">Fish</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'reptiles']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_reptile.jpg') }}" alt="Reptiles"></div>
+                            <div class="home-cat-name">Reptiles</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'rabbits']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/card_rabbit.jpg') }}" alt="Rabbits"></div>
+                            <div class="home-cat-name">Rabbits</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'horses-farm']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/cat_horse.jpg') }}" alt="Horses & Farm"></div>
+                            <div class="home-cat-name">Horses & Farm</div>
+                        </div>
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'exotic']) }}'" style="cursor: pointer;">
+                            <div class="home-cat-img"><img src="{{ asset('images/card_parrot.jpg') }}" alt="Exotic Pets"></div>
+                            <div class="home-cat-name">Exotic Pets</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -214,10 +287,12 @@
             <div class="home-container">
                 <div class="home-header">
                     <div>
-                        <h2 class="home-sec-title home-sec-title--md">Featured Pets</h2>
+                        <a href="{{ route('category', ['featured' => 'true']) }}" style="text-decoration: none; color: inherit;">
+                            <h2 class="home-sec-title home-sec-title--md" style="cursor: pointer;">Featured Pets</h2>
+                        </a>
                         <p class="home-sec-desc home-sec-desc--flush">Highlighted pet listings from sellers on the marketplace.</p>
                     </div>
-                    <button class="home-btn-outline home-btn-desktop">View All Pets</button>
+                    <button class="home-btn-outline home-btn-desktop" onclick="window.location='{{ route('category', ['featured' => 'true']) }}'">View All Pets</button>
                 </div>
                 <div class="home-pets-grid">
                     <!-- Card 1 -->
@@ -294,7 +369,7 @@
                     </div>
                 </div>
                 <div class="home-mobile-btn-wrap home-mobile-btn-wrap--featured">
-                    <a href="{{ route('category') }}" class="home-btn-viewall" id="featured-view-all-mobile">View All Pets</a>
+                    <a href="{{ route('category', ['featured' => 'true']) }}" class="home-btn-viewall" id="featured-view-all-mobile">View All Pets</a>
                 </div>
             </div>
         </div>
@@ -304,10 +379,12 @@
             <div class="home-container">
                 <div class="home-header home-header--latest">
                     <div class="home-header-text-left">
-                        <h2 class="home-sec-title home-sec-title--md">Latest Pet Listings</h2>
+                        <a href="{{ route('category') }}" style="text-decoration: none; color: inherit;">
+                            <h2 class="home-sec-title home-sec-title--md" style="cursor: pointer;">Latest Pet Listings</h2>
+                        </a>
                         <p class="home-sec-desc home-sec-desc--latest">Fresh listings recently posted by pet owners and businesses.</p>
                     </div>
-                    <button class="home-btn-outline home-btn-desktop">View All</button>
+                    <button class="home-btn-outline home-btn-desktop" onclick="window.location='{{ route('category') }}'">View All</button>
                 </div>
                 <div class="home-pets-grid">
                     <!-- Card 1 -->

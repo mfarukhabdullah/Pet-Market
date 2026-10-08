@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileFilters();
   initPagination();
   initSearchFilter();
+  initSidebarFilter();
 });
 
 /* ==========================================
@@ -341,8 +342,10 @@ function initSearchFilter() {
     const locationVal = locationSelect ? locationSelect.value.toLowerCase() : '';
 
     petCards.forEach(card => {
-      const title = (card.querySelector('.pet-name')?.innerText || '').toLowerCase();
-      const breedTag = (card.querySelector('.pet-breed-tag')?.innerText || '').toLowerCase();
+      const titleEl = card.querySelector('.pet-name');
+      const title = titleEl ? titleEl.innerText.toLowerCase() : '';
+      const breedTagEl = card.querySelector('.pet-breed-tag');
+      const breedTag = breedTagEl ? breedTagEl.innerText.toLowerCase() : '';
       const location = (card.dataset.location || '').toLowerCase();
 
       // Check text search
@@ -381,3 +384,221 @@ function initSearchFilter() {
   });
 }
 
+/* ==========================================
+   10. Sidebar Filters Logic
+   ========================================== */
+function initSidebarFilter() {
+  const sidebarForm = document.getElementById('sidebarFiltersForm');
+  if (!sidebarForm) return;
+
+  const categorySelect = document.getElementById('filterCategory');
+  const breedSelect = document.getElementById('filterBreed');
+  const locationSelect = document.getElementById('filterLocation');
+  const petCards = document.querySelectorAll('.pet-card');
+
+  function applySidebarFilters() {
+    const categoryVal = categorySelect ? categorySelect.value.toLowerCase() : '';
+    const breedVal = breedSelect ? breedSelect.value.toLowerCase() : '';
+    const locationVal = locationSelect ? locationSelect.value.toLowerCase() : '';
+    
+    // Get checked genders
+    const checkedGenders = Array.from(sidebarForm.querySelectorAll('input[name="gender"]:checked')).map(cb => cb.value.toLowerCase());
+
+    // Parse Price Range Filters
+    const priceMinEl = document.getElementById('priceMin');
+    const priceMin = priceMinEl ? parseInt(priceMinEl.value) : NaN;
+    const priceMaxEl = document.getElementById('priceMax');
+    const priceMax = priceMaxEl ? parseInt(priceMaxEl.value) : NaN;
+
+    // Parse Age Range Filters
+    const ageMinEl = document.getElementById('ageMin');
+    const minAgeVal = ageMinEl ? parseInt(ageMinEl.value) : NaN;
+    const ageMinUnitEl = document.getElementById('ageMinUnit');
+    const minAgeUnit = ageMinUnitEl ? ageMinUnitEl.value : 'months';
+    let minDays = null;
+    if (!isNaN(minAgeVal)) {
+        if (minAgeUnit === 'years') minDays = minAgeVal * 365;
+        else if (minAgeUnit === 'months') minDays = minAgeVal * 30;
+        else minDays = minAgeVal;
+    }
+
+    const ageMaxEl = document.getElementById('ageMax');
+    const maxAgeVal = ageMaxEl ? parseInt(ageMaxEl.value) : NaN;
+    const ageMaxUnitEl = document.getElementById('ageMaxUnit');
+    const maxAgeUnit = ageMaxUnitEl ? ageMaxUnitEl.value : 'months';
+    let maxDays = null;
+    if (!isNaN(maxAgeVal)) {
+        if (maxAgeUnit === 'years') maxDays = maxAgeVal * 365;
+        else if (maxAgeUnit === 'months') maxDays = maxAgeVal * 30;
+        else maxDays = maxAgeVal;
+    }
+
+    let visibleCount = 0;
+
+    petCards.forEach(card => {
+      const breed = (card.dataset.breed || '').toLowerCase();
+      const location = (card.dataset.location || '').toLowerCase();
+      const gender = (card.dataset.gender || '').toLowerCase();
+      const titleEl = card.querySelector('.pet-name');
+      const title = titleEl ? titleEl.innerText.toLowerCase() : '';
+
+      // Check category
+      let matchesCategory = true;
+      if (categoryVal) {
+          const cat = categoryVal.replace(/s$/, ''); // 'dogs' -> 'dog'
+          if (cat === 'dog' && (title.includes('retriever') || title.includes('puppy') || title.includes('dog') || title.includes('shih tzu') || title.includes('shepherd'))) matchesCategory = true;
+          else if (cat === 'cat' && (title.includes('persian') || title.includes('cat') || title.includes('shorthair'))) matchesCategory = true;
+          else if (cat === 'bird' && (title.includes('macaw') || title.includes('parrot') || title.includes('bird') || title.includes('lovebird'))) matchesCategory = true;
+          else if (cat === 'rabbit' && title.includes('rabbit')) matchesCategory = true;
+          else matchesCategory = false;
+      }
+
+      // Check breed
+      const matchesBreed = !breedVal || breed === breedVal;
+
+      // Check location
+      const matchesLocation = !locationVal || location === locationVal;
+      
+      // Check gender
+      const matchesGender = checkedGenders.length === 0 || checkedGenders.includes(gender);
+
+      // Check Age
+      let matchesAge = true;
+      const clockIcon = card.querySelector('.meta-item i.fa-clock');
+      const ageText = (clockIcon && clockIcon.parentElement) ? clockIcon.parentElement.innerText.toLowerCase().trim() : '';
+      let cardAgeDays = null;
+      if (ageText) {
+          const match = ageText.match(/(\d+)\s*(day|month|year)/);
+          if (match) {
+              const num = parseInt(match[1]);
+              const unit = match[2];
+              if (unit === 'year') cardAgeDays = num * 365;
+              else if (unit === 'month') cardAgeDays = num * 30;
+              else if (unit === 'day') cardAgeDays = num;
+          }
+      }
+      if (cardAgeDays !== null) {
+          if (minDays !== null && cardAgeDays < minDays) matchesAge = false;
+          if (maxDays !== null && cardAgeDays > maxDays) matchesAge = false;
+      }
+
+      // Check Price
+      let matchesPrice = true;
+      const priceEl = card.querySelector('.pet-price');
+      if (priceEl) {
+          const priceText = priceEl.innerText.replace(/[^0-9]/g, '');
+          const priceVal = parseInt(priceText);
+          if (!isNaN(priceVal)) {
+              if (!isNaN(priceMin) && priceVal < priceMin) matchesPrice = false;
+              if (!isNaN(priceMax) && priceVal > priceMax) matchesPrice = false;
+          }
+      }
+
+      // Check Featured
+      const urlParams = new URLSearchParams(window.location.search);
+      const isFeaturedOnly = urlParams.get('featured') === 'true';
+      let matchesFeatured = true;
+      if (isFeaturedOnly) {
+          const featuredBadge = card.querySelector('.featured-badge');
+          if (!featuredBadge) {
+              matchesFeatured = false;
+          }
+      }
+
+      if (matchesCategory && matchesBreed && matchesLocation && matchesGender && matchesAge && matchesPrice && matchesFeatured) {
+        card.style.display = '';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    // Handle No Results Message
+    const grid = document.getElementById('petCardsGrid');
+    const noResultsMsg = document.getElementById('noResultsMessage');
+    
+    if (grid && noResultsMsg) {
+      if (visibleCount === 0) {
+        grid.style.display = 'none';
+        noResultsMsg.style.display = 'block';
+      } else {
+        grid.style.display = 'grid'; // Restore grid
+        noResultsMsg.style.display = 'none';
+      }
+    }
+
+    // Handle Reset Button and Pagination Visibility
+    const hasActiveFilters = categoryVal || breedVal || locationVal || checkedGenders.length > 0 || minDays !== null || maxDays !== null || !isNaN(priceMin) || !isNaN(priceMax);
+    const resetBtn = document.getElementById('resetFiltersBtn');
+    const paginationRow = document.querySelector('.category-pagination-row');
+
+    if (resetBtn) {
+      resetBtn.style.display = hasActiveFilters ? 'inline-block' : 'none';
+    }
+
+    if (paginationRow) {
+      paginationRow.style.display = hasActiveFilters ? 'none' : 'flex';
+    }
+  }
+
+  sidebarForm.addEventListener('submit', (e) => {
+    e.preventDefault(); // Prevent page refresh
+    applySidebarFilters();
+  });
+
+  // Live filter on any change or input
+  sidebarForm.addEventListener('change', applySidebarFilters);
+  sidebarForm.addEventListener('input', applySidebarFilters);
+
+  const resetBtn = document.getElementById('resetFiltersBtn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      sidebarForm.reset();
+      applySidebarFilters();
+    });
+  }
+
+  // Parse URL parameters and apply
+  const urlParams = new URLSearchParams(window.location.search);
+  let hasUrlParams = false;
+
+  if (urlParams.has('category')) {
+      const val = urlParams.get('category');
+      if (categorySelect) categorySelect.value = val;
+      hasUrlParams = true;
+  }
+  if (urlParams.has('breed')) {
+      const val = urlParams.get('breed');
+      if (breedSelect) breedSelect.value = val;
+      hasUrlParams = true;
+  }
+  if (urlParams.has('location')) {
+      const val = urlParams.get('location');
+      if (locationSelect) locationSelect.value = val;
+      hasUrlParams = true;
+  }
+  if (urlParams.has('price')) {
+      const priceVal = urlParams.get('price'); // e.g., "0-20000", "20000-50000", "100000+"
+      if (priceVal.endsWith('+')) {
+          const minVal = priceVal.replace('+', '');
+          const priceMinEl = document.getElementById('priceMin');
+          if (priceMinEl) priceMinEl.value = minVal;
+      } else {
+          const parts = priceVal.split('-');
+          if (parts.length === 2) {
+              const priceMinEl = document.getElementById('priceMin');
+              const priceMaxEl = document.getElementById('priceMax');
+              if (priceMinEl) priceMinEl.value = parts[0];
+              if (priceMaxEl) priceMaxEl.value = parts[1];
+          }
+      }
+      hasUrlParams = true;
+  }
+  if (urlParams.has('featured')) {
+      hasUrlParams = true;
+  }
+
+  if (hasUrlParams) {
+      applySidebarFilters();
+  }
+}
