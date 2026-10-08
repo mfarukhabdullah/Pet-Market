@@ -3728,3 +3728,37 @@ button {
 .pet-card-fav i.fas {
   color: #ff4b68 !important;
 }
+
+/* Active Filter Chips */
+.active-filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #374151;
+  font-weight: 500;
+}
+.filter-chip span {
+  white-space: nowrap;
+}
+.filter-chip-remove {
+  cursor: pointer;
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+.filter-chip-remove:hover {
+  color: #EF4444;
+}

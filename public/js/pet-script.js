@@ -543,6 +543,82 @@ function initSidebarFilter() {
       }
     }
 
+    // --- Render Active Filter Chips ---
+    const activeFiltersContainer = document.getElementById('activeFiltersContainer');
+    if (activeFiltersContainer) {
+      activeFiltersContainer.innerHTML = '';
+      const chips = [];
+
+      if (categoryVal) {
+        const text = categorySelect.options[categorySelect.selectedIndex].text;
+        chips.push({ label: `Category: ${text}`, clear: () => { categorySelect.value = ''; } });
+      }
+
+      if (breedVal) {
+        const text = breedSelect.options[breedSelect.selectedIndex].text;
+        chips.push({ label: `Breed: ${text}`, clear: () => { breedSelect.value = ''; } });
+      }
+
+      if (locationVal) {
+        const text = locationSelect.options[locationSelect.selectedIndex].text;
+        chips.push({ label: `Location: ${text}`, clear: () => { locationSelect.value = ''; } });
+      }
+
+      const genderInputs = sidebarForm.querySelectorAll('input[name="gender"]:checked');
+      genderInputs.forEach(cb => {
+        chips.push({ label: `Gender: ${cb.nextElementSibling.innerText}`, clear: () => { cb.checked = false; } });
+      });
+
+      const healthInputs = sidebarForm.querySelectorAll('input[name="health"]:checked');
+      healthInputs.forEach(cb => {
+        chips.push({ label: `Health: ${cb.nextElementSibling.innerText}`, clear: () => { cb.checked = false; } });
+      });
+
+      const pedigreeInputs = sidebarForm.querySelectorAll('input[name="pedigree"]:checked');
+      pedigreeInputs.forEach(cb => {
+        chips.push({ label: `Pedigree: ${cb.nextElementSibling.innerText}`, clear: () => { cb.checked = false; } });
+      });
+
+      const sellerInputs = sidebarForm.querySelectorAll('input[name="seller_type"]:checked');
+      sellerInputs.forEach(cb => {
+        chips.push({ label: `Seller: ${cb.nextElementSibling.innerText}`, clear: () => { cb.checked = false; } });
+      });
+
+      if (!isNaN(priceMin) || !isNaN(priceMax)) {
+         let label = 'Price: ';
+         if (!isNaN(priceMin) && !isNaN(priceMax)) label += `${priceMin} - ${priceMax}`;
+         else if (!isNaN(priceMin)) label += `Min ${priceMin}`;
+         else if (!isNaN(priceMax)) label += `Max ${priceMax}`;
+         chips.push({ label: label, clear: () => { if (priceMinEl) priceMinEl.value = ''; if (priceMaxEl) priceMaxEl.value = ''; } });
+      }
+
+      if (minDays !== null || maxDays !== null) {
+         let label = 'Age: ';
+         if (minDays !== null && maxDays !== null) label += `${minAgeVal} ${minAgeUnit} - ${maxAgeVal} ${maxAgeUnit}`;
+         else if (minDays !== null) label += `Min ${minAgeVal} ${minAgeUnit}`;
+         else if (maxDays !== null) label += `Max ${maxAgeVal} ${maxAgeUnit}`;
+         chips.push({ label: label, clear: () => { if (ageMinEl) ageMinEl.value = ''; if (ageMaxEl) ageMaxEl.value = ''; } });
+      }
+      
+      const dateSelect = document.getElementById('filterDate');
+      if (dateSelect && dateSelect.value) {
+        const text = dateSelect.options[dateSelect.selectedIndex].text;
+        chips.push({ label: `Date: ${text}`, clear: () => { dateSelect.value = ''; } });
+      }
+
+      chips.forEach(chip => {
+        const el = document.createElement('div');
+        el.className = 'filter-chip';
+        el.innerHTML = `<span>${chip.label}</span> <div class="filter-chip-remove" title="Remove filter"><i class="fas fa-times"></i></div>`;
+        el.querySelector('.filter-chip-remove').addEventListener('click', (e) => {
+          e.stopPropagation();
+          chip.clear();
+          applySidebarFilters(); // Re-trigger filter update
+        });
+        activeFiltersContainer.appendChild(el);
+      });
+    }
+
     // Handle Reset Button and Pagination Visibility
     const hasActiveFilters = categoryVal || breedVal || locationVal || checkedGenders.length > 0 || minDays !== null || maxDays !== null || !isNaN(priceMin) || !isNaN(priceMax);
     const resetBtn = document.getElementById('resetFiltersBtn');
