@@ -573,20 +573,23 @@
                 position: absolute;
                 top: 8px;
                 right: 8px;
-                width: 24px;
-                height: 24px;
+                width: 32px;
+                height: 32px;
                 background-color: white;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                box-shadow: 0 2px 5px rgba(0,0,0,0.15);
                 display: flex !important;
                 z-index: 10;
+                cursor: pointer !important;
+                pointer-events: auto !important;
             }
             .fav-heart i {
                 color: #666;
-                font-size: 12px;
+                font-size: 14px;
+                pointer-events: none;
             }
             .btn-sell-mobile {
                 width: 100%;
@@ -606,7 +609,7 @@
                 <h1>Welcome back, Ahmed</h1>
                 <p>Manage your pet listings, buyer inquiries and account from one place.</p>
             </div>
-            <a href="#sell" class="btn-sell-mobile">Sell a Pet</a>
+            <a href="{{ route('seller.create-listing') }}" class="btn-sell-mobile">Sell a Pet</a>
             <div class="welcome-actions">
                 <button class="btn-notification">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

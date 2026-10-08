@@ -1025,6 +1025,40 @@
                 }
             }
         }
+
+        // Chat Tabs Filtering
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatTabs = document.querySelectorAll('.chat-tab');
+            const chatItems = document.querySelectorAll('.chat-item');
+
+            chatTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    chatTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const filter = tab.textContent.trim().toLowerCase();
+
+                    chatItems.forEach(item => {
+                        const isUnread = item.querySelector('.unread-badge') !== null;
+                        const timeText = item.querySelector('.chat-item-time').textContent;
+                        const isRecent = timeText.includes('m') || timeText.includes('h');
+                        const isNew = timeText.includes('m');
+
+                        if (filter === 'all') {
+                            item.style.display = '';
+                        } else if (filter === 'unread' && isUnread) {
+                            item.style.display = '';
+                        } else if (filter === 'recent' && isRecent) {
+                            item.style.display = '';
+                        } else if (filter === 'new' && isNew) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
     </script>
     <x-footer />
 </body>

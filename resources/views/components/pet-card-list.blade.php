@@ -151,6 +151,6 @@
     </div>
     
     <button class="favorite-btn" aria-label="Add to favorites">
-        <i class="fa-regular fa-heart"></i>
+        <i class="fa-solid fa-heart"></i>
     </button>
 </div>

@@ -191,7 +191,7 @@
 
         .cover-photo-area img {
             width: 100%;
-            height: 124%;
+            height: 100%;
             object-fit: cover;
         }
 
@@ -380,31 +380,59 @@
             }
             
             .cover-photo-area {
-                height: 140px;
+                width: 333px;
+                max-width: 100%;
+                height: 96px;
+                border-radius: 20px;
+                overflow: hidden;
+                position: relative;
+            }
+            .cover-photo-area img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
             .btn-upload-cover {
-                padding: 8px 12px;
-                border-radius: 8px;
-                bottom: 12px;
+                position: absolute;
                 right: 12px;
+                bottom: 12px;
+                background: #ffffff;
+                color: #111827;
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                padding: 8px 16px;
+                border-radius: 12px;
                 font-size: 13px;
+                font-weight: 600;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.06);
             }
             
             .profile-photo-area {
-                margin-top: -40px;
-                padding-left: 16px;
-                align-items: flex-end;
-                z-index: 2;
-                position: relative;
+                margin-top: 16px;
+                padding-left: 0;
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                z-index: 1;
+                position: static;
             }
             .avatar-preview {
-                width: 80px;
-                height: 80px;
-                border: 4px solid white;
+                width: 76px;
+                height: 76px;
+                border-radius: 50%;
+                border: none;
+                object-fit: cover;
+                flex-shrink: 0;
             }
             .btn-change-photo {
-                margin-bottom: 4px;
-                border-radius: 8px;
+                margin: 0;
+                background: #ffffff;
+                color: #111827;
+                border: 1px solid #d0d5dd;
+                border-radius: 12px;
+                padding: 10px 20px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
             }
             
             .form-row {
@@ -493,18 +521,14 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" style="max-width: 350px; width: 100%;">
                         <label>Full Name</label>
                         <input type="text" class="form-control" value="Ahmed Khan">
-                    </div>
-                    <div class="form-group">
-                        <label>Account Type</label>
-                        <input type="text" class="form-control" value="Individual Seller" readonly>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>About Seller</label>
+                    <label>About</label>
                     <textarea class="form-control">Pet owner based in Lahore. Buyers can review my active listings and contact me through the marketplace.</textarea>
                 </div>
 

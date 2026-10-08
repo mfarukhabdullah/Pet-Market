@@ -1540,7 +1540,7 @@ button {
 }
 
 .footer-brand-desc {
-  color: #94a3b8;
+  color: #D9D9D9;
   font-size: 0.92rem;
   line-height: 1.65;
   text-align: justify;
@@ -3408,6 +3408,15 @@ button {
   background-color: var(--text-dark);
 }
 
+.dropdown-item.active {
+  background-color: var(--light-green);
+  color: var(--primary-green);
+}
+
+.dropdown-item.active .dd-icon {
+  background-color: var(--primary-green);
+}
+
 .dropdown-divider {
   height: 1px;
   background: var(--border-color);
@@ -3582,6 +3591,7 @@ button {
   gap: 4px;
   opacity: 0.9;
 }
+
 .account-nav-link:hover {
   opacity: 1;
   text-decoration: underline;
@@ -3645,4 +3655,84 @@ button {
 .account-nav-list li a .list-arrow {
   font-size: 0.85rem;
   color: #999999;
+}
+
+/* =========================================================
+   UNIVERSAL INTERACTIVE HEART / FAVORITE BUTTON STYLES
+   ========================================================= */
+.fav-heart,
+.fav-heart-btn,
+.btn-wishlist-heart,
+.favorite-btn,
+.home-pet-fav,
+.my-pet-fav,
+.pd-icon-btn,
+#pdLikeBtn,
+.pet-card-fav {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  user-select: none !important;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease, background-color 0.2s ease, color 0.2s ease;
+  z-index: 10;
+}
+
+.fav-heart:hover,
+.fav-heart-btn:hover,
+.btn-wishlist-heart:hover,
+.favorite-btn:hover,
+.home-pet-fav:hover,
+.my-pet-fav:hover,
+.pd-icon-btn:hover,
+.pet-card-fav:hover {
+  transform: scale(1.12);
+}
+
+.fav-heart:active,
+.fav-heart-btn:active,
+.btn-wishlist-heart:active,
+.favorite-btn:active,
+.home-pet-fav:active,
+.my-pet-fav:active,
+.pd-icon-btn:active,
+.pet-card-fav:active {
+  transform: scale(0.92);
+}
+
+.fav-heart.active,
+.fav-heart.favorited,
+.fav-heart-btn.active,
+.btn-wishlist-heart.active,
+.favorite-btn.active,
+.home-pet-fav.active,
+.my-pet-fav.active,
+.pd-icon-btn.active {
+  color: #ff4b68 !important;
+}
+
+.fav-heart.active i,
+.fav-heart-btn.active i,
+.btn-wishlist-heart.active i,
+.favorite-btn.active i,
+.home-pet-fav.active i,
+.my-pet-fav.active i,
+.pd-icon-btn.active i,
+.pet-card-fav.active i,
+.fav-heart i.fa-solid,
+.fav-heart i.fas,
+.fav-heart-btn i.fa-solid,
+.fav-heart-btn i.fas,
+.btn-wishlist-heart i.fa-solid,
+.btn-wishlist-heart i.fas,
+.favorite-btn i.fa-solid,
+.favorite-btn i.fas,
+.home-pet-fav i.fa-solid,
+.home-pet-fav i.fas,
+.my-pet-fav i.fa-solid,
+.my-pet-fav i.fas,
+.pd-icon-btn i.fa-solid,
+.pd-icon-btn i.fas,
+.pet-card-fav i.fa-solid,
+.pet-card-fav i.fas {
+  color: #ff4b68 !important;
 }

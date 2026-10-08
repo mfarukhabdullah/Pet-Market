@@ -67,6 +67,10 @@
                                     <option value="karachi">Karachi</option>
                                     <option value="lahore">Lahore</option>
                                     <option value="rawalpindi">Rawalpindi</option>
+                                    <option value="faisalabad">Faisalabad</option>
+                                    <option value="multan">Multan</option>
+                                    <option value="sialkot">Sialkot</option>
+                                    <option value="peshawar">Peshawar</option>
                                 </select>
                                 <i class="fas fa-chevron-down select-arrow-icon"></i>
                             </div>
@@ -147,6 +151,11 @@
                                             <option value="islamabad">Islamabad</option>
                                             <option value="karachi">Karachi</option>
                                             <option value="lahore">Lahore</option>
+                                            <option value="rawalpindi">Rawalpindi</option>
+                                            <option value="faisalabad">Faisalabad</option>
+                                            <option value="multan">Multan</option>
+                                            <option value="sialkot">Sialkot</option>
+                                            <option value="peshawar">Peshawar</option>
                                         </select>
                                         <i class="fas fa-chevron-down select-chevron"></i>
                                     </div>
@@ -342,7 +351,7 @@
                                         <span class="featured-badge">FEATURED</span>
                                         <img src="{{ asset('images/pets/golden-retriever.jpg') }}" alt="Golden Retriever Puppy" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -353,9 +362,7 @@
                                             <span class="meta-item"><i class="far fa-clock"></i> 3 Months</span>
                                             <span class="meta-item"><i class="fas fa-mars"></i> Male</span>
                                         </div>
-                                        <div class="pet-meta-row location-row">
-                                            <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Lahore</span>
-                                        </div>
+                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Lahore</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
                                     </div>
                                 </article>
 
@@ -364,7 +371,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/persian-cat.jpg') }}" alt="Persian Cat" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -375,9 +382,7 @@
                                             <span class="meta-item"><i class="far fa-clock"></i> 7 Months</span>
                                             <span class="meta-item"><i class="fas fa-venus"></i> Female</span>
                                         </div>
-                                        <div class="pet-meta-row location-row">
-                                            <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Islamabad</span>
-                                        </div>
+                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Islamabad</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
                                     </div>
                                 </article>
 
@@ -386,7 +391,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/african-grey.jpg') }}" alt="African Grey Parrot" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -397,9 +402,7 @@
                                             <span class="meta-item"><i class="far fa-clock"></i> 1 Year</span>
                                             <span class="meta-item"><i class="fas fa-mars"></i> Male</span>
                                         </div>
-                                        <div class="pet-meta-row location-row">
-                                            <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Karachi</span>
-                                        </div>
+                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Karachi</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
                                     </div>
                                 </article>
 
@@ -409,7 +412,7 @@
                                         <span class="featured-badge">FEATURED</span>
                                         <img src="{{ asset('images/pets/mini-lop.jpg') }}" alt="Mini Lop Rabbit" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -420,9 +423,7 @@
                                             <span class="meta-item"><i class="far fa-clock"></i> 5 Months</span>
                                             <span class="meta-item"><i class="fas fa-venus"></i> Female</span>
                                         </div>
-                                        <div class="pet-meta-row location-row">
-                                            <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Lahore</span>
-                                        </div>
+                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Lahore</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
                                     </div>
                                 </article>
 
@@ -431,7 +432,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/german-shepherd.jpg') }}" alt="German Shepherd" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -442,9 +443,7 @@
                                             <span class="meta-item"><i class="far fa-clock"></i> 4 Months</span>
                                             <span class="meta-item"><i class="fas fa-mars"></i> Male</span>
                                         </div>
-                                        <div class="pet-meta-row location-row">
-                                            <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Rawalpindi</span>
-                                        </div>
+                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Rawalpindi</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
                                     </div>
                                 </article>
 
@@ -453,7 +452,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/british-shorthair.jpg') }}" alt="British Shorthair" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -464,9 +463,7 @@
                                             <span class="meta-item"><i class="far fa-clock"></i> 6 Months</span>
                                             <span class="meta-item"><i class="fas fa-venus"></i> Female</span>
                                         </div>
-                                        <div class="pet-meta-row location-row">
-                                            <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Lahore</span>
-                                        </div>
+                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Lahore</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
                                     </div>
                                 </article>
 
@@ -475,7 +472,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/shih-tzu.jpg') }}" alt="Shih Tzu Puppy" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -486,9 +483,7 @@
                                             <span class="meta-item"><i class="far fa-clock"></i> 2 Months</span>
                                             <span class="meta-item"><i class="fas fa-venus"></i> Female</span>
                                         </div>
-                                        <div class="pet-meta-row location-row">
-                                            <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Faisalabad</span>
-                                        </div>
+                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Faisalabad</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
                                     </div>
                                 </article>
 
@@ -497,7 +492,7 @@
                                     <div class="pet-card-image-box">
                                         <img src="{{ asset('images/pets/lovebird.jpg') }}" alt="Lovebird Pair" class="pet-card-img">
                                         <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="far fa-heart"></i>
+                                            <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
                                     <div class="pet-card-content">
@@ -508,9 +503,7 @@
                                             <span class="meta-item"><i class="far fa-clock"></i> 8 Months</span>
                                             <span class="meta-item"><i class="fas fa-venus"></i> Female</span>
                                         </div>
-                                        <div class="pet-meta-row location-row">
-                                            <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Sialkot</span>
-                                        </div>
+                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Sialkot</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
                                     </div>
                                 </article>
 
@@ -556,3 +549,4 @@
     <script src="{{ asset('js/pet-script.js') }}"></script>
 </body>
 </html>
+

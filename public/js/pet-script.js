@@ -14,7 +14,22 @@ document.addEventListener('DOMContentLoaded', () => {
   initSearchFilter();
   initSidebarFilter();
   initFavorites();
+  initSettingsMenuScroll();
 });
+
+/* ==========================================
+   1. Theme Switcher (Light / Dark)
+   ========================================== */
+function initSettingsMenuScroll() {
+  const settingsMenu = document.querySelector('.settings-menu');
+  if (settingsMenu && window.innerWidth <= 768) {
+    const activeItem = settingsMenu.querySelector('.menu-item.active');
+    if (activeItem) {
+      const scrollPos = activeItem.offsetLeft - (settingsMenu.offsetWidth / 2) + (activeItem.offsetWidth / 2);
+      settingsMenu.scrollLeft = scrollPos > 0 ? scrollPos : 0;
+    }
+  }
+}
 
 /* ==========================================
    1. Theme Switcher (Light / Dark)
@@ -566,6 +581,8 @@ function initSidebarFilter() {
   if (urlParams.has('category')) {
       const val = urlParams.get('category');
       if (categorySelect) categorySelect.value = val;
+      const topCategorySelect = document.querySelector('.search-input-group select[name="category"]');
+      if (topCategorySelect) topCategorySelect.value = val;
       hasUrlParams = true;
   }
   if (urlParams.has('breed')) {
@@ -576,6 +593,8 @@ function initSidebarFilter() {
   if (urlParams.has('location')) {
       const val = urlParams.get('location');
       if (locationSelect) locationSelect.value = val;
+      const topLocationSelect = document.querySelector('.search-input-group select[name="location"]');
+      if (topLocationSelect) topLocationSelect.value = val;
       hasUrlParams = true;
   }
   if (urlParams.has('price')) {
@@ -605,28 +624,49 @@ function initSidebarFilter() {
 }
 
 /* ==========================================
-   8. Favorites Toggle
+   8. Favorites Toggle (Mobile & Desktop)
    ========================================== */
 function initFavorites() {
-  const favButtons = document.querySelectorAll('.home-pet-fav, .btn-wishlist-heart');
-  favButtons.forEach(btn => {
-      btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation(); // Prevent card click event from redirecting
-          const icon = this.querySelector('i');
-          if (icon) {
-              if (icon.classList.contains('fa-regular') || icon.classList.contains('far')) {
-                  // Add to favorites
-                  icon.classList.remove('fa-regular', 'far');
-                  icon.classList.add('fa-solid', 'fas');
-                  icon.style.color = '#e91e63'; // Pink/Red color for filled heart
-              } else {
-                  // Remove from favorites
-                  icon.classList.remove('fa-solid', 'fas');
-                  icon.classList.add('fa-regular', 'far');
-                  icon.style.color = ''; // Reset color
-              }
-          }
-      });
+  if (window._favoritesInitialized) return;
+  window._favoritesInitialized = true;
+
+  document.addEventListener('click', function(e) {
+    const heartBtn = e.target.closest(
+      '.fav-heart, .fav-heart-btn, .btn-wishlist-heart, .favorite-btn, .home-pet-fav, .my-pet-fav, #pdLikeBtn, .pd-icon-btn, .pet-card-fav'
+    );
+
+    if (!heartBtn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const icon = heartBtn.querySelector('i') || (heartBtn.tagName === 'I' ? heartBtn : null);
+
+    if (icon) {
+      const isSolid = icon.classList.contains('fa-solid') || icon.classList.contains('fas');
+
+      if (isSolid) {
+        // Toggle OFF (Filled -> Outline)
+        icon.classList.remove('fa-solid', 'fas');
+        icon.classList.add('fa-regular', 'far');
+        icon.style.color = '#9ca3af';
+        heartBtn.classList.remove('active', 'favorited');
+      } else {
+        // Toggle ON (Outline -> Filled)
+        icon.classList.remove('fa-regular', 'far');
+        icon.classList.add('fa-solid', 'fas');
+        icon.style.color = '#ff4b68';
+        heartBtn.classList.add('active', 'favorited');
+      }
+    } else {
+      heartBtn.classList.toggle('active');
+    }
+
+    // Micro-animation feedback
+    heartBtn.style.transition = 'transform 0.15s ease-in-out';
+    heartBtn.style.transform = 'scale(1.25)';
+    setTimeout(() => {
+      heartBtn.style.transform = 'scale(1)';
+    }, 150);
   });
 }

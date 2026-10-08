@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('category');
+        $category = $request->query('category', 'all');
+        return view('category', compact('category'));
     }
 }

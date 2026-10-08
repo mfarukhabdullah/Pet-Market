@@ -111,9 +111,10 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
-  padding: 65px 0 10px 0;
+  padding: 65px 24px 10px 24px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -190,8 +191,10 @@
   transform: translateY(50%);
   z-index: 10;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
 .home-search-bar {
@@ -255,7 +258,7 @@
 }
 
 .home-search-btn {
-  background-color: #14794A;
+  background-color: #147A4D;
   color: #FFFFFF;
   border: none;
   border-radius: 10px;
@@ -264,6 +267,9 @@
   font-weight: 600;
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 203px;
+  height: 59px;
   gap: 9px;
   cursor: pointer;
   white-space: nowrap;
@@ -280,8 +286,10 @@
 
 .home-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
@@ -371,6 +379,13 @@
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.home-btn-outline:hover {
+  background-color: #147A4D;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(20, 122, 77, 0.2);
 }
 
 .home-btn-outline--block {
@@ -386,7 +401,13 @@
   border-radius: 6px;
   font-weight: 600;
   display: inline-block;
-  width: calc(100% - 40px);
+  width: calc(100% - 48px);
+  transition: all 0.3s ease;
+}
+
+.home-btn-solid:hover {
+  background-color: #0d5e39;
+  box-shadow: 0 4px 12px rgba(20, 122, 77, 0.3);
 }
 
 /* "View All" button shown under the grid on mobile only */
@@ -401,9 +422,10 @@
    ========================================================================== */
 .home-categories-section {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
 .home-categories {
@@ -526,6 +548,14 @@
   justify-content: center;
   color: #94a3b8;
   font-size: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.home-pet-fav:hover {
+  background-color: #f1f5f9;
+  transform: scale(1.1);
+  color: #ff4757;
 }
 
 .home-pet-info {
@@ -578,8 +608,8 @@
    ========================================================================== */
 .home-cta {
   position: relative;
-  width: 100%;
-  max-width: 1200px;
+  width: calc(100% - 48px);
+  max-width: 1202px;
   min-height: 378px;
   background-color: #147A4D;
   border-radius: 20px;
@@ -707,6 +737,7 @@
   font-weight: 600;
   font-size: 14px;
   box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .home-cta-btn--solid {
@@ -714,10 +745,21 @@
   background-color: #147A4D;
 }
 
+.home-cta-btn--solid:hover {
+  background-color: #0d5e39;
+  box-shadow: 0 4px 12px rgba(20, 122, 77, 0.3);
+}
+
 .home-cta-btn--outline {
   border: 2px solid #147A4D;
   color: #147A4D;
   background-color: transparent;
+}
+
+.home-cta-btn--outline:hover {
+  background-color: #147A4D;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(20, 122, 77, 0.3);
 }
 
 /* ==========================================================================
@@ -758,17 +800,26 @@
   font-weight: 600;
   background-color: transparent;
   display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.home-popular-link:hover {
+  background-color: #0E6B40;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(14, 107, 64, 0.2);
 }
 
 .home-popular-grid {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  width: 100%;
 }
 
 .home-breed-card {
-  width: 280px;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
   height: 272px;
   position: relative;
   display: flex;
@@ -804,10 +855,21 @@
   z-index: 1;
 }
 
-.home-breed-info--cream { background-color: #FCE5C9; }
-.home-breed-info--blue  { background-color: #E0ECFB; }
-.home-breed-info--rose  { background-color: #FDC5BC; }
-.home-breed-info--pink  { background-color: #F9DCE5; }
+.home-breed-info--cream {
+  background-color: #FCE5C9;
+}
+
+.home-breed-info--blue {
+  background-color: #E0ECFB;
+}
+
+.home-breed-info--rose {
+  background-color: #FDC5BC;
+}
+
+.home-breed-info--pink {
+  background-color: #F9DCE5;
+}
 
 .home-breed-name {
   margin: 0 0 4px 0;
@@ -838,8 +900,10 @@
 
 .home-locations-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
   color: white;
 }
 
@@ -898,10 +962,10 @@
    ========================================================================== */
 .home-journey-section {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
-  padding-top: 120px;
-  padding-bottom: 0;
+  padding: 120px 24px 0;
+  box-sizing: border-box;
 }
 
 .home-journey {
@@ -917,9 +981,17 @@
   position: relative;
 }
 
-.home-step--1 { background: #FCE5C9; }
-.home-step--2 { background: #D6EADF; }
-.home-step--3 { background: #FDC5BC; }
+.home-step--1 {
+  background: #FCE5C9;
+}
+
+.home-step--2 {
+  background: #D6EADF;
+}
+
+.home-step--3 {
+  background: #FDC5BC;
+}
 
 .home-step-bg-icon {
   position: absolute;
@@ -1255,6 +1327,7 @@
     scroll-padding-left: 20px;
     scroll-padding-right: 20px;
   }
+
   .home-categories::-webkit-scrollbar {
     display: none;
   }
@@ -1264,7 +1337,7 @@
     flex: 0 0 calc(40vw - 20px);
     scroll-snap-align: start;
   }
-  
+
   .home-cat-item:hover {
     transform: none;
   }
@@ -1458,7 +1531,8 @@
 
   /* ---------- CTA "One More Friend" (mobile, Figma) ---------- */
   .home-cta {
-    flex-direction: column-reverse; /* text upar, image neeche */
+    flex-direction: column-reverse;
+    /* text upar, image neeche */
     align-items: center;
     justify-content: flex-start;
     width: auto;
@@ -1583,7 +1657,7 @@
     margin-bottom: 20px;
   }
 
-  .home-header--popular > div {
+  .home-header--popular>div {
     width: 100%;
   }
 
@@ -1646,6 +1720,7 @@
     text-align: center;
     margin-top: 24px;
   }
+
   .home-mobile-btn-wrap--popular .home-btn-viewall {
     width: 210px;
   }

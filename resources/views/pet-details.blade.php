@@ -191,7 +191,7 @@
                     <div class="pd-sum-head">
                         <h1 class="pd-title">Golden Retriever<br>Puppy</h1>
                         <div class="pd-icon-btns">
-                            <button id="pdLikeBtn" class="pd-icon-btn" aria-label="Save to favourites"><i class="fa-regular fa-heart"></i></button>
+                            <button id="pdLikeBtn" class="pd-icon-btn" aria-label="Save to favourites"><i class="fa-solid fa-heart"></i></button>
                             <button id="pdShareBtn" class="pd-icon-btn" aria-label="Share listing"><i class="fa-solid fa-share-nodes"></i></button>
                         </div>
                     </div>
@@ -305,7 +305,7 @@
                         <div style="position: relative;">
                             <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever" class="my-pet-img">
                             <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                         </div>
                         <div class="my-pet-info">
                             <h3 class="my-pet-title">Golden Retriever Puppy</h3>
@@ -323,7 +323,7 @@
                         <div style="position: relative;">
                             <img src="{{ asset('images/card_persian.jpg') }}" alt="Persian Cat" class="my-pet-img">
                             <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                         </div>
                         <div class="my-pet-info">
                             <h3 class="my-pet-title">Persian Cat</h3>
@@ -341,7 +341,7 @@
                         <div style="position: relative;">
                             <img src="{{ asset('images/card_parrot.jpg') }}" alt="African Grey Parrot" class="my-pet-img">
                             <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                         </div>
                         <div class="my-pet-info">
                             <h3 class="my-pet-title">African Grey Parrot</h3>
@@ -359,7 +359,7 @@
                         <div style="position: relative;">
                             <img src="{{ asset('images/card_rabbit.jpg') }}" alt="Mini Lop Rabbit" class="my-pet-img">
                             <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                         </div>
                         <div class="my-pet-info">
                             <h3 class="my-pet-title">Mini Lop Rabbit</h3>
@@ -385,7 +385,7 @@
                         <div style="position: relative;">
                             <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever" class="my-pet-img">
                             <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                         </div>
                         <div class="my-pet-info">
                             <h3 class="my-pet-title">Golden Retriever Puppy</h3>
@@ -403,7 +403,7 @@
                         <div style="position: relative;">
                             <img src="{{ asset('images/card_persian.jpg') }}" alt="Persian Cat" class="my-pet-img">
                             <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                         </div>
                         <div class="my-pet-info">
                             <h3 class="my-pet-title">Persian Cat</h3>
@@ -421,7 +421,7 @@
                         <div style="position: relative;">
                             <img src="{{ asset('images/card_parrot.jpg') }}" alt="African Grey Parrot" class="my-pet-img">
                             <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                         </div>
                         <div class="my-pet-info">
                             <h3 class="my-pet-title">African Grey Parrot</h3>
@@ -439,7 +439,7 @@
                         <div style="position: relative;">
                             <img src="{{ asset('images/card_rabbit.jpg') }}" alt="Mini Lop Rabbit" class="my-pet-img">
                             <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-regular fa-heart"></i></div>
+                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                         </div>
                         <div class="my-pet-info">
                             <h3 class="my-pet-title">Mini Lop Rabbit</h3>
