@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSearchFilter();
   initSidebarFilter();
   initFavorites();
+  initCustomDropdowns();
 });
 
 /* ==========================================
@@ -306,22 +307,19 @@ function initPagination() {
   }
 }
 
-// Profile Dropdown Logic
-document.addEventListener('DOMContentLoaded', function() {
-    const profileBtn = document.getElementById('profileDropdownBtn');
+// Profile Dropdown Logic (Event Delegation)
+document.addEventListener('click', function(e) {
+    const profileBtn = e.target.closest('#profileDropdownBtn');
     const profileMenu = document.getElementById('profileDropdownMenu');
     
     if (profileBtn && profileMenu) {
-        profileBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileMenu.classList.toggle('show');
-        });
-        
-        document.addEventListener('click', function(e) {
-            if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
-                profileMenu.classList.remove('show');
-            }
-        });
+        e.preventDefault(); // In case it's inside an a tag
+        profileMenu.classList.toggle('show');
+    } else if (profileMenu) {
+        // If clicked outside
+        if (!profileMenu.contains(e.target)) {
+            profileMenu.classList.remove('show');
+        }
     }
 });
 
@@ -383,6 +381,77 @@ function initSearchFilter() {
     e.preventDefault();
     filterPets();
   });
+}
+
+/* ==========================================
+   10. Custom UI Dropdowns for Hero Search
+   ========================================== */
+function initCustomDropdowns() {
+    const filters = document.querySelectorAll('.home-filter');
+    
+    filters.forEach(filter => {
+        const select = filter.querySelector('select.hidden-filter-select');
+        if (!select) return;
+        
+        // Hide the native select
+        select.style.display = 'none';
+        
+        // Create custom dropdown container
+        const menu = document.createElement('div');
+        menu.className = 'custom-dropdown-menu';
+        
+        // Populate options
+        Array.from(select.options).forEach(option => {
+            if (option.disabled) return; // Skip placeholder/disabled options
+            
+            const item = document.createElement('div');
+            item.className = 'custom-dropdown-item';
+            item.textContent = option.text;
+            item.dataset.value = option.value;
+            
+            item.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent bubbling up to the filter click
+                
+                // Update native select
+                select.value = option.value;
+                
+                // Manually trigger the inline onchange logic of the select
+                const valueSpan = filter.querySelector('.home-filter-value');
+                if (valueSpan) {
+                    valueSpan.innerText = option.text;
+                }
+                
+                // Dispatch event in case other scripts listen to it
+                select.dispatchEvent(new Event('change'));
+                
+                // Close menu
+                menu.classList.remove('show');
+            });
+            
+            menu.appendChild(item);
+        });
+        
+        filter.appendChild(menu);
+        
+        // Toggle menu on click
+        filter.addEventListener('click', (e) => {
+            // Close all other dropdowns
+            document.querySelectorAll('.custom-dropdown-menu.show').forEach(m => {
+                if (m !== menu) m.classList.remove('show');
+            });
+            
+            menu.classList.toggle('show');
+        });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.home-filter')) {
+            document.querySelectorAll('.custom-dropdown-menu.show').forEach(m => {
+                m.classList.remove('show');
+            });
+        }
+    });
 }
 
 /* ==========================================
