@@ -3333,6 +3333,10 @@ button {
   display: inline-block;
 }
 
+.user-profile-dropdown {
+  position: relative;
+}
+
 .profile-toggle-btn {
   display: flex;
   align-items: center;
@@ -3346,7 +3350,7 @@ button {
 }
 
 .profile-toggle-btn:hover {
-  background: #f3f4f6;
+  /* Removed background on hover per user request */
 }
 
 .header-avatar {

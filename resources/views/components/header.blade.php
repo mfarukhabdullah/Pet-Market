@@ -44,13 +44,12 @@
                     <a href="{{ route('category', ['featured' => 'true']) }}" class="header-nav-item">Featured Pets</a>
                     <a href="{{ route('category') }}" class="header-nav-item">Categories</a>
                     <a href="{{ route('breeds') }}" class="header-nav-item">Breeds</a>
-                    <a href="{{ route('category') }}" class="header-nav-item">Locations</a>
                     <a href="{{ route('about') }}" class="header-nav-item">About Us</a>
                 </nav>
 
                 <!-- Action Buttons & Mobile Controls -->
                 <div class="header-action-btns">
-                    @if(request()->is('dashboard') || request()->is('seller/*'))
+                    @if(session('is_logged_in') || request()->is('dashboard') || request()->is('seller/*'))
                         <div class="user-profile-dropdown">
                             <button class="profile-toggle-btn" id="profileDropdownBtn">
                                 <img src="{{ asset('images/seller-avatar.jpg') }}" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'" alt="Profile" class="header-avatar">
@@ -73,7 +72,7 @@
                                   <a href="{{ route('favorites') }}" class="dropdown-item {{ request()->routeIs('favorites') ? 'active' : '' }}"><span class="dd-icon icon-fav-dd"></span> Favorites</a>
                                   <a href="{{ route('seller.settings') }}" class="dropdown-item {{ request()->routeIs('seller.settings*') ? 'active' : '' }}"><span class="dd-icon icon-ps-dd"></span> Profile Settings</a>
                                   
-                                  <a href="/" class="dropdown-item">
+                                  <a href="{{ route('logout') }}" class="dropdown-item">
                                       <i class="fa-solid fa-arrow-right-from-bracket" style="width:20px; font-size:18px; text-align:center;"></i> Log Out
                                   </a>
                               </div>
@@ -85,7 +84,7 @@
                             <a href="{{ $signUrl }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#147A4D'" onmouseout="this.style.color='inherit'">Register</a>
                         </div>
                     @endif
-                    @if(request()->is('dashboard') || request()->is('seller/*'))
+                    @if(session('is_logged_in') || request()->is('dashboard') || request()->is('seller/*'))
                         <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet">Sell a Pet</a>
                     @else
                         <a href="{{ route('login') }}?redirect={{ urlencode(route('seller.create-listing')) }}" class="btn-sell-pet">Sell a Pet</a>
@@ -115,15 +114,14 @@
             <li><a href="{{ route('category', ['featured' => 'true']) }}">Featured Pets</a></li>
             <li><a href="{{ route('category') }}">Categories</a></li>
             <li><a href="{{ route('breeds') }}">Breeds</a></li>
-            <li><a href="{{ route('category') }}">Locations</a></li>
             <li><a href="{{ route('about') }}">About Us</a></li>
         </ul>
     </div>
     <div style="margin-top:32px;">
-        @if(request()->is('dashboard') || request()->is('seller/*'))
+        @if(session('is_logged_in') || request()->is('dashboard') || request()->is('seller/*'))
             <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
             <a href="{{ route('dashboard') }}" class="btn-login-register" style="width:100%; justify-content:center; background-color:#eaf7f0; color:#147A4D; border:none;"><i class="fa-solid fa-user" style="margin-right:8px;"></i> My Account</a>
-            <a href="/" class="btn-login-register text-danger" style="width:100%; justify-content:center; margin-top:12px; border:none;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:8px;"></i> Log Out</a>
+            <a href="{{ route('logout') }}" class="btn-login-register text-danger" style="width:100%; justify-content:center; margin-top:12px; border:none;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:8px;"></i> Log Out</a>
         @else
             <a href="{{ route('login') }}?redirect={{ urlencode(route('seller.create-listing')) }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
             <div class="btn-login-register" style="width:100%; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: default;">
@@ -146,7 +144,7 @@
         <span>Chat</span>
     </a>
     <div class="nav-fab-wrapper">
-        <a href="{{ route('seller.create-listing') }}" class="nav-fab">
+        <a href="{{ route('category') }}" class="nav-fab">
             <i class="fa-solid fa-plus"></i>
         </a>
     </div>
