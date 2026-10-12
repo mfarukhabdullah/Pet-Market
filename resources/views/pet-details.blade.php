@@ -162,6 +162,117 @@
             .my-pets-grid .my-pet-meta { font-size: 11px; margin-bottom: 8px; justify-content: flex-start; gap: 12px; }
             .my-pets-grid .my-pet-loc { font-size: 11px; padding-top: 8px; }
         }
+
+        /* Modal Backdrop & Report Styling */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .modal-backdrop.show {
+            display: flex;
+        }
+        .modal-close-icon {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #6b7280;
+            cursor: pointer;
+        }
+        .report-modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px 28px 28px 28px;
+            width: 90%;
+            max-width: 440px;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .report-modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 18px;
+            padding-right: 24px;
+        }
+        .report-reasons-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 6px;
+            margin-bottom: 18px;
+        }
+        .report-reasons-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .report-reasons-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .report-reason-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+        }
+        .report-reason-option input[type="radio"] {
+            accent-color: #128c5a;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .report-textarea {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+            height: 80px;
+            margin-bottom: 20px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        .report-textarea:focus {
+            border-color: #128c5a;
+        }
+        .btn-submit-report {
+            background-color: #128c5a;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+        .btn-submit-report:hover {
+            background-color: #0f764a;
+        }
     </style>
 </head>
 <body>
@@ -266,19 +377,19 @@
                 <!-- Sidebar -->
                 <aside class="pd-side">
                     <div class="pd-card pd-seller">
-                        <div class="pd-seller-head">
+                        <a href="{{ route('seller.profile') }}" class="pd-seller-head" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
                             <img class="pd-avatar" src="{{ asset('images/seller-avatar.jpg') }}" alt="Ahmed Khan">
                             <div>
                                 <div class="pd-seller-name">Ahmed Khan <i class="fa-solid fa-circle-check"></i></div>
                                 <div class="pd-seller-type">Individual Seller</div>
                             </div>
-                        </div>
+                        </a>
                         <div class="pd-seller-meta">
                             <span><i class="fa-solid fa-location-dot"></i>Lahore</span>
                             <span><i class="fa-solid fa-shield-halved"></i>Verified Seller</span>
                         </div>
                         <a href="#" id="pdSellerMsgBtn" class="pd-btn pd-btn-primary"><i class="fa-regular fa-message"></i> Send Message</a>
-                        <a href="#" id="pdSellerProfileBtn" class="pd-btn pd-btn-outline"><i class="fa-regular fa-user"></i> View Seller Profile</a>
+                        <a href="{{ route('seller.profile') }}" id="pdSellerProfileBtn" class="pd-btn pd-btn-outline"><i class="fa-regular fa-user"></i> View Seller Profile</a>
                         <a href="#" id="pdReportBtn" class="pd-report"><i class="fa-regular fa-flag"></i> Report Seller</a>
                     </div>
 
@@ -456,7 +567,59 @@
             </section>
 
         </div>
-    </main>
+    <!-- Report User Modal -->
+    <div id="reportModal" class="modal-backdrop">
+        <div class="report-modal-card">
+            <button type="button" class="modal-close-icon" onclick="closeReportModal()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="report-modal-title">Report This User</h3>
+            <form id="reportUserForm" onsubmit="handleReportSubmit(event)">
+                <div class="report-reasons-list">
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Scam / Fraud" checked>
+                        <span>Scam / Fraud</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Fake Listing or Misleading Product">
+                        <span>Fake Listing or Misleading Product</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Asking for Payment Outside the Platform">
+                        <span>Asking for Payment Outside the Platform</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Spam / Unwanted Messages">
+                        <span>Spam / Unwanted Messages</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Harassment / Abusive Messages">
+                        <span>Harassment / Abusive Messages</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Fake Identity / Impersonation">
+                        <span>Fake Identity / Impersonation</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Suspicious Payment Activity">
+                        <span>Suspicious Payment Activity</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Threats or Blackmail">
+                        <span>Threats or Blackmail</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Sharing Personal Information">
+                        <span>Sharing Personal Information</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Other">
+                        <span>Other</span>
+                    </label>
+                </div>
+                <textarea class="report-textarea" id="reportDetailsInput" placeholder="Additional details"></textarea>
+                <button type="submit" class="btn-submit-report">Submit Report</button>
+            </form>
+        </div>
+    </div>
 
     <!-- FOOTER COMPONENT -->
     <x-footer />
@@ -469,8 +632,42 @@
     </div>
 
     <script>
+        function openReportModal() {
+            const modal = document.getElementById('reportModal');
+            if (modal) modal.classList.add('show');
+        }
+
+        function closeReportModal() {
+            const modal = document.getElementById('reportModal');
+            if (modal) modal.classList.remove('show');
+        }
+
+        function handleReportSubmit(e) {
+            if (e) e.preventDefault();
+            const detailsInput = document.getElementById('reportDetailsInput');
+            if (detailsInput) detailsInput.value = '';
+            closeReportModal();
+            
+            var toast = document.getElementById("toast");
+            toast.textContent = "Thank you. Your report has been submitted.";
+            toast.style.visibility = "visible";
+            toast.style.opacity = "1";
+            setTimeout(function(){ 
+                toast.style.opacity = "0"; 
+                setTimeout(function(){ toast.style.visibility = "hidden"; toast.textContent = "Copied to clipboard"; }, 300);
+            }, 3000);
+        }
+
         // Gallery: thumbnail click swaps main image
         (function () {
+            const reportBtn = document.getElementById('pdReportBtn');
+            if (reportBtn) {
+                reportBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openReportModal();
+                });
+            }
+
             const main = document.getElementById('pdMainImg');
             document.querySelectorAll('.pd-thumb').forEach(function (thumb) {
                 thumb.addEventListener('click', function () {
@@ -483,32 +680,38 @@
 
             // Favourite toggle
             const like = document.getElementById('pdLikeBtn');
-            like.addEventListener('click', function () {
-                like.classList.toggle('liked');
-                const icon = like.querySelector('i');
-                icon.classList.toggle('fa-regular');
-                icon.classList.toggle('fa-solid');
-            });
+            if (like) {
+                like.addEventListener('click', function () {
+                    like.classList.toggle('liked');
+                    const icon = like.querySelector('i');
+                    icon.classList.toggle('fa-regular');
+                    icon.classList.toggle('fa-solid');
+                });
+            }
 
             // Share: copy link
-            document.getElementById('pdShareBtn').addEventListener('click', function () {
-                var copyToClipboard = function() {
-                    navigator.clipboard.writeText(location.href).catch(function(){});
-                };
-                
-                // Show toast
-                var toast = document.getElementById("toast");
-                toast.style.visibility = "visible";
-                toast.style.opacity = "1";
-                
-                // Try to copy to clipboard
-                if (navigator.clipboard) { copyToClipboard(); }
-                
-                setTimeout(function(){ 
-                    toast.style.opacity = "0"; 
-                    setTimeout(function(){ toast.style.visibility = "hidden"; }, 300);
-                }, 3000);
-            });
+            const shareBtn = document.getElementById('pdShareBtn');
+            if (shareBtn) {
+                shareBtn.addEventListener('click', function () {
+                    var copyToClipboard = function() {
+                        navigator.clipboard.writeText(location.href).catch(function(){});
+                    };
+                    
+                    // Show toast
+                    var toast = document.getElementById("toast");
+                    toast.textContent = "Copied to clipboard";
+                    toast.style.visibility = "visible";
+                    toast.style.opacity = "1";
+                    
+                    // Try to copy to clipboard
+                    if (navigator.clipboard) { copyToClipboard(); }
+                    
+                    setTimeout(function(){ 
+                        toast.style.opacity = "0"; 
+                        setTimeout(function(){ toast.style.visibility = "hidden"; }, 300);
+                    }, 3000);
+                });
+            }
         })();
     </script>
 </body>

@@ -248,6 +248,11 @@
             gap: 16px;
             padding: 16px 0;
             border-bottom: 1px solid var(--border-color);
+            text-decoration: none;
+            color: inherit;
+        }
+        .listing-item:hover {
+            opacity: 0.8;
         }
 
         .listing-item:last-child {
@@ -309,13 +314,21 @@
             display: flex;
             align-items: flex-start;
             gap: 12px;
-            padding: 16px 0;
+            padding: 12px 8px;
             border-bottom: 1px solid var(--border-color);
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .message-item:hover {
+            background-color: #EAF7F0;
         }
 
         .message-item:last-child {
             border-bottom: none;
-            padding-bottom: 0;
         }
 
         .msg-avatar {
@@ -357,6 +370,11 @@
             gap: 16px;
             padding: 16px 0;
             border-bottom: 1px solid #eee;
+            text-decoration: none;
+            color: inherit;
+        }
+        .favorite-item:hover {
+            opacity: 0.9;
         }
         .favorite-item:last-child {
             /* border-bottom: none; */
@@ -611,12 +629,7 @@
             </div>
             <a href="{{ route('seller.create-listing') }}" class="btn-sell-mobile">Sell a Pet</a>
             <div class="welcome-actions">
-                <button class="btn-notification">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                </button>
+                <x-notification-bell />
             </div>
         </div>
 
@@ -662,32 +675,32 @@
                 </div>
                 
                 <div class="card-body">
-                    <div class="listing-item">
+                    <a href="{{ route('pet.details') }}" class="listing-item">
                         <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever" class="listing-img" onerror="this.src='https://images.unsplash.com/photo-1600804340584-c7db2eacf0bf?auto=format&fit=crop&w=150&q=80'">
                         <div class="listing-info">
                             <div class="listing-name">Golden Retriever Puppy</div>
                             <div class="listing-details"><strong>Rs. 85,000</strong> · Lahore</div>
                         </div>
                         <span class="status-badge status-live">Live</span>
-                    </div>
+                    </a>
 
-                    <div class="listing-item">
+                    <a href="{{ route('seller.listings') }}?tab=pending" class="listing-item">
                         <img src="{{ asset('images/card_gsd.jpg') }}" alt="German Shepherd" class="listing-img" onerror="this.src='https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=150&q=80'">
                         <div class="listing-info">
                             <div class="listing-name">German Shepherd</div>
                             <div class="listing-details"><strong>Rs. 70,000</strong> · Lahore</div>
                         </div>
                         <span class="status-badge status-pending">Pending Review</span>
-                    </div>
+                    </a>
 
-                    <div class="listing-item">
+                    <a href="{{ route('seller.listings') }}?tab=draft" class="listing-item">
                         <img src="{{ asset('images/card_shihtzu.jpg') }}" alt="Shih Tzu Puppy" class="listing-img" onerror="this.src='https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=150&q=80'">
                         <div class="listing-info">
                             <div class="listing-name">Shih Tzu Puppy</div>
                             <div class="listing-details"><strong>Rs. 48,000</strong> · Lahore</div>
                         </div>
                         <span class="status-badge status-draft">Draft</span>
-                    </div>
+                    </a>
                 </div>
             </div>
 
@@ -699,7 +712,7 @@
                 </div>
                 
                 <div class="card-body">
-                    <div class="message-item">
+                    <a href="{{ route('seller.messages') }}?chat=1" class="message-item">
                         <img src="https://ui-avatars.com/api/?name=Ali+Raza&background=random" alt="Ali Raza" class="msg-avatar">
                         <div class="msg-content">
                             <div class="msg-header">
@@ -708,9 +721,9 @@
                             </div>
                             <div class="msg-text">Is the Golden Retriever still available?</div>
                         </div>
-                    </div>
+                    </a>
 
-                    <div class="message-item">
+                    <a href="{{ route('seller.messages') }}?chat=4" class="message-item">
                         <img src="https://ui-avatars.com/api/?name=Sarah&background=random" alt="Sarah" class="msg-avatar">
                         <div class="msg-content">
                             <div class="msg-header">
@@ -719,7 +732,7 @@
                             </div>
                             <div class="msg-text">Can you share vaccination details?</div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -732,7 +745,7 @@
             </div>
             
             <div class="card-body favorites-grid-mobile">
-                <div class="favorite-item">
+                <a href="{{ route('pet.details') }}" class="favorite-item">
                     <span class="fav-badge">FEATURED</span>
                     <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
                     <div class="fav-info">
@@ -751,9 +764,9 @@
                         </div>
                         <div class="fav-price">Rs. 85,000</div>
                     </div>
-                </div>
+                </a>
 
-                <div class="favorite-item">
+                <a href="{{ route('pet.details') }}" class="favorite-item">
                     <span class="fav-badge">FEATURED</span>
                     <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
                     <div class="fav-info">
@@ -772,9 +785,9 @@
                         </div>
                         <div class="fav-price">Rs. 85,000</div>
                     </div>
-                </div>
+                </a>
 
-                <div class="favorite-item">
+                <a href="{{ route('pet.details') }}" class="favorite-item">
                     <span class="fav-badge">FEATURED</span>
                     <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
                     <div class="fav-info">
@@ -793,10 +806,32 @@
                         </div>
                         <div class="fav-price">Rs. 85,000</div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </main></div></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const soldPets = JSON.parse(localStorage.getItem('sold_pets') || '{}');
+        const deletedPets = JSON.parse(localStorage.getItem('deleted_pets') || '{}');
+        document.querySelectorAll('.listing-item').forEach(item => {
+            const titleEl = item.querySelector('.listing-name');
+            if (titleEl) {
+                const key = titleEl.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                if (deletedPets[key]) {
+                    item.style.display = 'none';
+                } else if (soldPets[key]) {
+                    const badge = item.querySelector('.status-badge');
+                    if (badge) {
+                        badge.className = 'status-badge status-sold';
+                        badge.textContent = 'Sold';
+                    }
+                }
+            }
+        });
+    });
+    </script>
 
     <x-footer />
 </body>

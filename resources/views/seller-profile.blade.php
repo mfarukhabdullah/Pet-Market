@@ -287,6 +287,19 @@
             tab.classList.add('active');
         });
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedCover = localStorage.getItem('seller_cover_image');
+        const savedAvatar = localStorage.getItem('seller_avatar_image');
+        if (savedCover) {
+            const coverImg = document.querySelector('.sp-cover');
+            if (coverImg) coverImg.src = savedCover;
+        }
+        if (savedAvatar) {
+            const avatarImg = document.querySelector('.sp-avatar');
+            if (avatarImg) avatarImg.src = savedAvatar;
+        }
+    });
 </script>
 
 </body>

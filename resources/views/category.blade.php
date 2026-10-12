@@ -547,6 +547,21 @@
 
     <!-- Custom JavaScript -->
     <script src="{{ asset('js/pet-script.js') }}"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const soldPets = JSON.parse(localStorage.getItem('sold_pets') || '{}');
+        const deletedPets = JSON.parse(localStorage.getItem('deleted_pets') || '{}');
+        document.querySelectorAll('.pet-card').forEach(card => {
+            const titleEl = card.querySelector('.pet-name');
+            if (titleEl) {
+                const key = titleEl.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                if (soldPets[key] || deletedPets[key]) {
+                    card.style.display = 'none';
+                }
+            }
+        });
+    });
+    </script>
 </body>
 </html>
 

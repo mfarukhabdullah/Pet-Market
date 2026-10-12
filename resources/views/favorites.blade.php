@@ -82,6 +82,11 @@
             opacity: 0.8;
         }
 
+        .btn-notification svg {
+            width: 32px;
+            height: 32px;
+        }
+
         .favorites-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -98,6 +103,13 @@
             flex-direction: column;
             text-decoration: none;
             color: inherit;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .fav-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.1);
         }
 
         .fav-card-img-wrapper {
@@ -257,19 +269,17 @@
                         <p>Keep track of the pets you have saved and revisit their listings anytime.</p>
                     </div>
                     <div class="welcome-actions">
-                        <button class="btn-notification">
-                            <i class="fa-regular fa-bell" style="font-size: 32px; color: #fff;"></i>
-                        </button>
+                        <x-notification-bell />
                     </div>
                 </div>
 
                 <!-- Favorites Grid -->
                 <div class="favorites-grid">
                     <!-- Card 1 -->
-                    <div class="fav-card">
+                    <a href="{{ url('/pet-details') }}" class="fav-card">
                         <div class="fav-card-img-wrapper">
                             <img src="{{ asset('images/card_gsd.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=500&q=80'" alt="German Shepherd" class="fav-card-img">
-                            <button class="fav-heart-btn">
+                            <button type="button" class="fav-heart-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this, event)">
                                 <i class="fa-solid fa-heart"></i>
                             </button>
                         </div>
@@ -285,13 +295,13 @@
                                 <i class="fa-solid fa-location-dot"></i> Lahore
                             </div>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- Card 2 -->
-                    <div class="fav-card">
+                    <a href="{{ url('/pet-details') }}" class="fav-card">
                         <div class="fav-card-img-wrapper">
                             <img src="{{ asset('images/card_gsd.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=500&q=80'" alt="German Shepherd" class="fav-card-img">
-                            <button class="fav-heart-btn">
+                            <button type="button" class="fav-heart-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this, event)">
                                 <i class="fa-solid fa-heart"></i>
                             </button>
                         </div>
@@ -307,13 +317,13 @@
                                 <i class="fa-solid fa-location-dot"></i> Lahore
                             </div>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- Card 3 -->
-                    <div class="fav-card">
+                    <a href="{{ url('/pet-details') }}" class="fav-card">
                         <div class="fav-card-img-wrapper">
                             <img src="{{ asset('images/card_persian.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=500&q=80'" alt="British Shorthair" class="fav-card-img">
-                            <button class="fav-heart-btn">
+                            <button type="button" class="fav-heart-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this, event)">
                                 <i class="fa-solid fa-heart"></i>
                             </button>
                         </div>
@@ -329,13 +339,13 @@
                                 <i class="fa-solid fa-location-dot"></i> Islamabad
                             </div>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- Card 4 -->
-                    <div class="fav-card">
+                    <a href="{{ url('/pet-details') }}" class="fav-card">
                         <div class="fav-card-img-wrapper">
                             <img src="{{ asset('images/card_bird.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1452570053594-1b985d6ea890?auto=format&fit=crop&w=500&q=80'" alt="Shih Tzu Puppy" class="fav-card-img">
-                            <button class="fav-heart-btn">
+                            <button type="button" class="fav-heart-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this, event)">
                                 <i class="fa-solid fa-heart"></i>
                             </button>
                         </div>
@@ -351,7 +361,7 @@
                                 <i class="fa-solid fa-location-dot"></i> Karachi
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
             </main>
@@ -359,5 +369,24 @@
     </div>
 
     <x-footer />
+
+    <script>
+        function toggleFavorite(btn, event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            const icon = btn.querySelector('i');
+            if (icon.classList.contains('fa-solid')) {
+                icon.classList.remove('fa-solid');
+                icon.classList.add('fa-regular');
+                btn.style.color = '#9ca3af';
+            } else {
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+                btn.style.color = '#ff4757';
+            }
+        }
+    </script>
 </body>
 </html>

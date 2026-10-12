@@ -164,7 +164,7 @@
     </nav>
 
     <div class="user-profile">
-        <div class="user-profile-left">
+        <a href="{{ route('seller.profile') }}" class="user-profile-left" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; cursor: pointer;">
             <div class="avatar">
                 <img src="{{ asset('images/seller-avatar.jpg') }}" alt="Ahmed Khan" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'">
             </div>
@@ -172,7 +172,7 @@
                 <span class="user-name">Ahmed Khan</span>
                 <span class="user-role">Individual Seller</span>
             </div>
-        </div>
+        </a>
         <button class="logout-btn" title="Logout">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>

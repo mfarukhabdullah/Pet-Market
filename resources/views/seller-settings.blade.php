@@ -451,6 +451,35 @@
                 padding: 14px 0;
             }
         }
+
+        /* Toast Notification */
+        .toast-notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            color: var(--text-dark);
+            padding: 14px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
     </style>
 
 </head>
@@ -466,12 +495,7 @@
                 <h1>Profile Settings</h1>
                 <p>Manage your seller profile, contact details, security and account preferences.</p>
             </div>
-            <button class="btn-notification">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                </svg>
-            </button>
+            <x-notification-bell />
         </div>
 
         <!-- Settings Card -->
@@ -485,7 +509,7 @@
                 </a>
                 <a href="{{ route('seller.settings.contact') }}" class="menu-item {{ Route::is('seller.settings.contact') ? 'active' : '' }}">
                     <div class="menu-icon" style="mask-image: url('{{ asset('images/ps-con-icon.svg') }}'); -webkit-mask-image: url('{{ asset('images/ps-con-icon.svg') }}');"></div>
-                    Contact<span class="hide-on-mobile"> & Location</span>
+                    Contact Info
                 </a>
                 <a href="{{ route('seller.settings.security') }}" class="menu-item {{ Route::is('seller.settings.security') ? 'active' : '' }}">
                     <div class="menu-icon" style="mask-image: url('{{ asset('images/ps-sec.svg') }}'); -webkit-mask-image: url('{{ asset('images/ps-sec.svg') }}');"></div>
@@ -493,7 +517,7 @@
                 </a>
                 <a href="{{ route('seller.settings.notifications') }}" class="menu-item {{ Route::is('seller.settings.notifications') ? 'active' : '' }}">
                     <div class="menu-icon" style="mask-image: url('{{ asset('images/ps-bell.svg') }}'); -webkit-mask-image: url('{{ asset('images/ps-bell.svg') }}');"></div>
-                    Notifications
+                    Preferences
                 </a>
                 <a href="{{ route('seller.settings.account') }}" class="menu-item {{ Route::is('seller.settings.account') ? 'active' : '' }}">
                     <div class="menu-icon" style="mask-image: url('{{ asset('images/ps-set.svg') }}'); -webkit-mask-image: url('{{ asset('images/ps-set.svg') }}');"></div>
@@ -511,12 +535,14 @@
 
                 <div class="media-section">
                     <div class="cover-photo-area">
-                        <img src="{{ asset('images/seller-profile-hero.jpg') }}" alt="Cover Photo" onerror="this.src='https://images.unsplash.com/photo-1544928147-79a2dbc1f389?auto=format&fit=crop&w=800&q=80'">
-                        <button class="btn-upload-cover">Upload Cover</button>
+                        <img id="coverPhotoImg" src="{{ asset('images/seller-profile-hero.jpg') }}" alt="Cover Photo" onerror="this.src='https://images.unsplash.com/photo-1544928147-79a2dbc1f389?auto=format&fit=crop&w=800&q=80'">
+                        <button type="button" class="btn-upload-cover" id="btnUploadCover">Upload Cover</button>
+                        <input type="file" id="coverFileInput" accept="image/*" style="display: none;">
                     </div>
                     <div class="profile-photo-area">
-                        <img src="{{ asset('images/seller-avatar.jpg') }}" alt="Profile Photo" class="avatar-preview" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'">
-                        <button class="btn-change-photo">Change Photo</button>
+                        <img id="profilePhotoImg" src="{{ asset('images/seller-avatar.jpg') }}" alt="Profile Photo" class="avatar-preview" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'">
+                        <button type="button" class="btn-change-photo" id="btnChangePhoto">Change Photo</button>
+                        <input type="file" id="profileFileInput" accept="image/*" style="display: none;">
                     </div>
                 </div>
 
@@ -541,6 +567,103 @@
         </div>
     </main></div></div>
 
+    <!-- Toast Notification -->
+    <div id="toastNotification" class="toast-notification">
+        <i class="fa-solid fa-circle-check" style="color:#22c55e;"></i>
+        <span id="toastMessage">Photo updated successfully.</span>
+    </div>
+
     <x-footer />
+
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById('toastNotification');
+            const toastMsg = document.getElementById('toastMessage');
+            if (toast && toastMsg) {
+                toastMsg.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const coverPhotoImg = document.getElementById('coverPhotoImg');
+            const profilePhotoImg = document.getElementById('profilePhotoImg');
+            const btnUploadCover = document.getElementById('btnUploadCover');
+            const btnChangePhoto = document.getElementById('btnChangePhoto');
+            const coverFileInput = document.getElementById('coverFileInput');
+            const profileFileInput = document.getElementById('profileFileInput');
+
+            // Load saved photos from localStorage
+            const savedCover = localStorage.getItem('seller_cover_image');
+            const savedAvatar = localStorage.getItem('seller_avatar_image');
+
+            if (savedCover && coverPhotoImg) {
+                coverPhotoImg.src = savedCover;
+            }
+            if (savedAvatar && profilePhotoImg) {
+                profilePhotoImg.src = savedAvatar;
+            }
+
+            // Upload Cover handler
+            if (btnUploadCover && coverFileInput) {
+                btnUploadCover.addEventListener('click', () => {
+                    coverFileInput.click();
+                });
+
+                coverFileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const dataUrl = event.target.result;
+                            if (coverPhotoImg) coverPhotoImg.src = dataUrl;
+                            localStorage.setItem('seller_cover_image', dataUrl);
+                            showToast('Cover photo uploaded successfully!');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // Change Photo handler
+            if (btnChangePhoto && profileFileInput) {
+                btnChangePhoto.addEventListener('click', () => {
+                    profileFileInput.click();
+                });
+
+                profileFileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const dataUrl = event.target.result;
+                            if (profilePhotoImg) profilePhotoImg.src = dataUrl;
+                            localStorage.setItem('seller_avatar_image', dataUrl);
+                            
+                            // Update all header/avatar images on current page
+                            document.querySelectorAll('.header-avatar, .dropdown-user-avatar').forEach(img => {
+                                img.src = dataUrl;
+                            });
+
+                            showToast('Profile photo updated successfully!');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // Save Changes button
+            const saveBtn = document.querySelector('.btn-save');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showToast('Profile settings saved successfully!');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

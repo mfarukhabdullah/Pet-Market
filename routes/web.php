@@ -38,3 +38,4 @@ Route::get('/seller/settings/account', [SellerController::class, 'settingsAccoun
 Route::get('/seller/favorites', [SellerController::class, 'favorites'])->name('favorites');
 Route::view('/login', 'login')->name('login');
 Route::view('/register', 'sign')->name('sign');
+Route::view('/notifications', 'notifications')->name('notifications');

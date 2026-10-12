@@ -1297,6 +1297,32 @@
 
         // Dynamic City Population based on Country Input
         document.addEventListener('DOMContentLoaded', function() {
+            // Check for step / preview query param
+            const urlParams = new URLSearchParams(window.location.search);
+            const stepParam = urlParams.get('step');
+            if (stepParam) {
+                const stepNum = parseInt(stepParam);
+                if (stepNum >= 1 && stepNum <= 5) {
+                    goToStep(stepNum);
+                }
+            }
+
+            if (urlParams.get('pet') === 'german-shepherd') {
+                const setReviewVal = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerText = val;
+                };
+                setReviewVal('review-category', 'Dog');
+                setReviewVal('review-breed', 'German Shepherd');
+                setReviewVal('review-title', 'German Shepherd');
+                setReviewVal('review-age', '1 Year');
+                setReviewVal('review-gender', 'Male');
+                setReviewVal('review-color', 'Black & Tan');
+                setReviewVal('review-price', 'PKR 70,000');
+                setReviewVal('review-location', 'Lahore, Pakistan');
+                setReviewVal('review-seller', 'Ahmed Khan');
+            }
+
             const countryInput = document.getElementById('country-input');
             const citySelect = document.getElementById('city-select');
 

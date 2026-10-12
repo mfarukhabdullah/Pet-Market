@@ -247,7 +247,7 @@
             </div>
         </div>
         <!-- FEATURED PETS -->
-        <div class="home-featured home-pets-section">
+        <div id="featured-pets" class="home-featured home-pets-section">
             <div class="home-container">
                 <div class="home-header">
                     <div>
@@ -551,4 +551,20 @@
         <x-sell-banner />
 
     </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const soldPets = JSON.parse(localStorage.getItem('sold_pets') || '{}');
+        const deletedPets = JSON.parse(localStorage.getItem('deleted_pets') || '{}');
+        document.querySelectorAll('.home-pet-card').forEach(card => {
+            const titleEl = card.querySelector('.home-pet-title');
+            if (titleEl) {
+                const key = titleEl.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                if (soldPets[key] || deletedPets[key]) {
+                    card.style.display = 'none';
+                }
+            }
+        });
+    });
+    </script>
 

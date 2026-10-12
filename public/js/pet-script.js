@@ -323,12 +323,26 @@ function initPagination() {
 
 // Profile Dropdown Logic
 document.addEventListener('DOMContentLoaded', function() {
+    const profileContainer = document.querySelector('.user-profile-dropdown');
+    if (profileContainer) {
+        profileContainer.addEventListener('mouseenter', function() {
+            document.querySelectorAll('#bannerNotifMenu, .notif-dropdown-menu').forEach(m => m.classList.remove('show'));
+        });
+    }
+    const notifContainer = document.querySelector('.notification-dropdown-container');
+    if (notifContainer) {
+        notifContainer.addEventListener('mouseenter', function() {
+            const pm = document.getElementById('profileDropdownMenu');
+            if (pm) pm.classList.remove('show');
+        });
+    }
     const profileBtn = document.getElementById('profileDropdownBtn');
     const profileMenu = document.getElementById('profileDropdownMenu');
     
     if (profileBtn && profileMenu) {
         profileBtn.addEventListener('click', function(e) {
             e.stopPropagation();
+            document.querySelectorAll('#bannerNotifMenu, .notif-dropdown-menu').forEach(m => m.classList.remove('show'));
             profileMenu.classList.toggle('show');
         });
         
@@ -651,6 +665,24 @@ function initFavorites() {
         icon.classList.add('fa-regular', 'far');
         icon.style.color = '#9ca3af';
         heartBtn.classList.remove('active', 'favorited');
+
+        // If inside a favorite list item, animate removal
+        const favContainer = heartBtn.closest('.favorite-item, .fav-card, .fav-card-modern');
+        if (favContainer) {
+          favContainer.style.transition = 'opacity 0.3s ease, height 0.3s ease, margin 0.3s ease, padding 0.3s ease';
+          favContainer.style.opacity = '0';
+          setTimeout(() => {
+            favContainer.style.height = '0';
+            favContainer.style.margin = '0';
+            favContainer.style.padding = '0';
+            favContainer.style.overflow = 'hidden';
+            setTimeout(() => {
+              if (favContainer.parentNode) {
+                favContainer.remove();
+              }
+            }, 300);
+          }, 300);
+        }
       } else {
         // Toggle ON (Outline -> Filled)
         icon.classList.remove('fa-regular', 'far');
@@ -670,3 +702,47 @@ function initFavorites() {
     }, 150);
   });
 }
+
+
+/* ==========================================
+   9. Banner Notification Dropdown
+   ========================================== */
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+        const notifBtns = document.querySelectorAll('#bannerNotifBtn, .btn-notification');
+        const notifMenus = document.querySelectorAll('#bannerNotifMenu, .notif-dropdown-menu');
+        const profileMenu = document.getElementById('profileDropdownMenu');
+        
+        let clickedOnBtn = false;
+        notifBtns.forEach(btn => {
+            if (btn.contains(e.target)) {
+                clickedOnBtn = true;
+
+                // Automatically close profile dropdown when opening notification dropdown
+                if (profileMenu) {
+                    profileMenu.classList.remove('show');
+                }
+
+                const menu = btn.nextElementSibling;
+                // Close other notification menus
+                notifMenus.forEach(m => {
+                    if (m !== menu) {
+                        m.classList.remove('show');
+                    }
+                });
+
+                if (menu && menu.classList.contains('notif-dropdown-menu')) {
+                    menu.classList.toggle('show');
+                }
+            }
+        });
+
+        if (!clickedOnBtn) {
+            notifMenus.forEach(menu => {
+                if (!menu.contains(e.target)) {
+                    menu.classList.remove('show');
+                }
+            });
+        }
+    });
+});

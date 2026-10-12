@@ -181,7 +181,7 @@
                     </div>
                     <div class="account-nav-info">
                         <h3 class="account-nav-name">Ahmed Khan</h3>
-                        <a href="#profile" class="account-nav-link">View Public Profile <i class="fa-solid fa-chevron-right"></i></a>
+                        <a href="{{ route('seller.profile') }}" class="account-nav-link">View Public Profile <i class="fa-solid fa-chevron-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -189,31 +189,31 @@
                 <h4 class="account-nav-section-title">Personal</h4>
                 <ul class="account-nav-list">
                     <li>
-                        <a href="#my-account">
+                        <a href="{{ route('dashboard') }}">
                             <div class="list-left"><i class="fa-solid fa-border-all"></i> <span>My Account</span></div>
                             <i class="fa-solid fa-chevron-right list-arrow"></i>
                         </a>
                     </li>
                     <li>
-                        <a href="#favourites">
+                        <a href="{{ route('favorites') }}">
                             <div class="list-left"><i class="fa-regular fa-heart"></i> <span>Favourites</span></div>
                             <i class="fa-solid fa-chevron-right list-arrow"></i>
                         </a>
                     </li>
                     <li>
-                        <a href="#notifications">
+                        <a href="{{ route('notifications') }}">
                             <div class="list-left"><i class="fa-regular fa-bell"></i> <span>Notifications</span></div>
                             <i class="fa-solid fa-chevron-right list-arrow"></i>
                         </a>
                     </li>
                     <li>
-                        <a href="#settings">
+                        <a href="{{ route('seller.settings') }}">
                             <div class="list-left"><i class="fa-regular fa-user"></i> <span>Profile Settings</span></div>
                             <i class="fa-solid fa-chevron-right list-arrow"></i>
                         </a>
                     </li>
                     <li class="logout-item">
-                        <a href="#logout" class="logout-link">
+                        <a href="/" class="logout-link">
                             <div class="list-left"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span></div>
                         </a>
                     </li>

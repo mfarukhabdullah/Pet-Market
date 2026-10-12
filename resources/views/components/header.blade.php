@@ -50,20 +50,20 @@
 
                 <!-- Action Buttons & Mobile Controls -->
                 <div class="header-action-btns">
-                    @if(request()->is('dashboard') || request()->is('seller/*'))
+                    @if(request()->is('dashboard') || request()->is('seller/*') || request()->is('notifications') || request()->is('account'))
                         <div class="user-profile-dropdown">
                             <button class="profile-toggle-btn" id="profileDropdownBtn">
                                 <img src="{{ asset('images/seller-avatar.jpg') }}" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'" alt="Profile" class="header-avatar">
                                 <i class="fas fa-chevron-down"></i>
                             </button>
                                                           <div class="profile-dropdown-menu" id="profileDropdownMenu">
-                                  <div class="dropdown-user-info">
+                                  <a href="{{ route('seller.profile') }}" class="dropdown-user-info">
                                       <img src="{{ asset('images/seller-avatar.jpg') }}" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'" alt="Ahmed Khan" class="dropdown-user-avatar">
                                       <div class="dropdown-user-details">
                                           <div class="dropdown-user-name">Ahmed Khan</div>
-                                          <div class="dropdown-user-role">View Public Profile</div>
+                                          <div class="dropdown-user-role">View Public Profile <i class="fa-solid fa-chevron-right" style="font-size: 10px; margin-left: 2px;"></i></div>
                                       </div>
-                                  </div>
+                                  </a>
                                   
                                   <div class="dropdown-divider"></div>
 
@@ -71,6 +71,7 @@
                                   <a href="{{ route('seller.listings') }}" class="dropdown-item {{ request()->routeIs('seller.listings') ? 'active' : '' }}"><span class="dd-icon icon-list-dd"></span> My Listings</a>
                                   <a href="{{ route('seller.messages') }}" class="dropdown-item {{ request()->routeIs('seller.messages') ? 'active' : '' }}"><span class="dd-icon icon-msg-dd"></span> Messages</a>
                                   <a href="{{ route('favorites') }}" class="dropdown-item {{ request()->routeIs('favorites') ? 'active' : '' }}"><span class="dd-icon icon-fav-dd"></span> Favorites</a>
+                                  <a href="{{ route('notifications') }}" class="dropdown-item {{ request()->routeIs('notifications') ? 'active' : '' }}"><span class="dd-icon icon-notif-dd"></span> Notifications</a>
                                   <a href="{{ route('seller.settings') }}" class="dropdown-item {{ request()->routeIs('seller.settings*') ? 'active' : '' }}"><span class="dd-icon icon-ps-dd"></span> Profile Settings</a>
                                   
                                   <a href="/" class="dropdown-item">
@@ -85,7 +86,7 @@
                             <a href="{{ $signUrl }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#147A4D'" onmouseout="this.style.color='inherit'">Register</a>
                         </div>
                     @endif
-                    @if(request()->is('dashboard') || request()->is('seller/*'))
+                    @if(request()->is('dashboard') || request()->is('seller/*') || request()->is('notifications') || request()->is('account'))
                         <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet">Sell a Pet</a>
                     @else
                         <a href="{{ route('login') }}?redirect={{ urlencode(route('seller.create-listing')) }}" class="btn-sell-pet">Sell a Pet</a>
@@ -120,7 +121,7 @@
         </ul>
     </div>
     <div style="margin-top:32px;">
-        @if(request()->is('dashboard') || request()->is('seller/*'))
+        @if(request()->is('dashboard') || request()->is('seller/*') || request()->is('notifications') || request()->is('account'))
             <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
             <a href="{{ route('dashboard') }}" class="btn-login-register" style="width:100%; justify-content:center; background-color:#eaf7f0; color:#147A4D; border:none;"><i class="fa-solid fa-user" style="margin-right:8px;"></i> My Account</a>
             <a href="/" class="btn-login-register text-danger" style="width:100%; justify-content:center; margin-top:12px; border:none;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:8px;"></i> Log Out</a>
@@ -177,7 +178,7 @@
             </div>
             <div class="account-nav-info">
                 <h3 class="account-nav-name">Ahmed Khan</h3>
-                <a href="#profile" class="account-nav-link">View Public Profile <i class="fa-solid fa-chevron-right"></i></a>
+                <a href="{{ route('seller.profile') }}" class="account-nav-link">View Public Profile <i class="fa-solid fa-chevron-right"></i></a>
             </div>
         </div>
     </div>
@@ -185,31 +186,31 @@
         <h4 class="account-nav-section-title">Personal</h4>
         <ul class="account-nav-list">
             <li>
-                <a href="#my-account">
+                <a href="{{ route('dashboard') }}">
                     <div class="list-left"><i class="fa-solid fa-border-all"></i> <span>My Account</span></div>
                     <i class="fa-solid fa-chevron-right list-arrow"></i>
                 </a>
             </li>
             <li>
-                <a href="#favourites">
+                <a href="{{ route('favorites') }}">
                     <div class="list-left"><i class="fa-regular fa-heart"></i> <span>Favourites</span></div>
                     <i class="fa-solid fa-chevron-right list-arrow"></i>
                 </a>
             </li>
             <li>
-                <a href="#notifications">
+                <a href="{{ route('notifications') }}">
                     <div class="list-left"><i class="fa-regular fa-bell"></i> <span>Notifications</span></div>
                     <i class="fa-solid fa-chevron-right list-arrow"></i>
                 </a>
             </li>
             <li>
-                <a href="#settings">
+                <a href="{{ route('seller.settings') }}">
                     <div class="list-left"><i class="fa-regular fa-user"></i> <span>Profile Settings</span></div>
                     <i class="fa-solid fa-chevron-right list-arrow"></i>
                 </a>
             </li>
             <li class="logout-item">
-                <a href="#logout" class="logout-link">
+                <a href="/" class="logout-link">
                     <div class="list-left"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span></div>
                 </a>
             </li>
