@@ -352,7 +352,8 @@
                     <a href="{{ route('sign') }}{{ $redirectSuffix }}" class="auth-tab" style="text-decoration: none;">Create Account</a>
                 </div>
 
-                <form action="#" method="POST" autocomplete="off">
+                <form action="{{ route('login.post') }}{{ $redirectSuffix }}" method="POST" autocomplete="off">
+                    @csrf
                     <div class="form-group">
                         <label class="form-label">Email or Phone</label>
                         <div class="input-with-icon">
@@ -442,11 +443,7 @@
                     }
 
                     setTimeout(() => {
-                        if (redirectUrl) {
-                            window.location.href = decodeURIComponent(redirectUrl);
-                        } else {
-                            window.location.href = "{{ route('dashboard') }}";
-                        }
+                        loginForm.submit();
                     }, 800);
                 });
             }

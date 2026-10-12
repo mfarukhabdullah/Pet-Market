@@ -29,7 +29,7 @@
 .about-purpose-image img {
     width: 100%;
     height: 100%;
-    border-radius: 20px;
+    border-radius: 24px;
     object-fit: cover;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
@@ -130,7 +130,7 @@
 .about-marketplace-image img {
     width: 100%;
     height: 100%;
-    border-radius: 20px;
+    border-radius: 24px;
     object-fit: cover;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
@@ -184,6 +184,11 @@
     .about-marketplace-image {
         max-width: 100%;
     }
+    
+    .about-purpose-image img,
+    .about-marketplace-image img {
+        height: 300px;
+    }
 
     .about-marketplace-container {
         flex-direction: column-reverse;
@@ -200,6 +205,10 @@
 
     .about-sec-title {
         font-size: 24px;
+    }
+    
+    .about-sec-desc {
+        text-align: justify;
     }
 }
 
@@ -218,7 +227,7 @@
 .safer-left-box {
     background-color: #0C5E3A; /* Dark green from Figma */
     border-radius: 24px;
-    padding: 40px;
+    padding: 35px 25px;
     color: #FFFFFF;
     width: 628.97px;
     flex-shrink: 0;
@@ -325,5 +334,14 @@
     .safer-right-cards {
         width: 100%;
         max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .safer-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding-top: 16px;
     }
 }

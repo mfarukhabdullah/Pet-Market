@@ -2143,25 +2143,33 @@ button {
   }
 
   .sell-badge-text {
-    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 34px;
   }
 
   .sell-badge-icon {
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
   }
 
   .sell-banner-title {
-    font-size: 20px;
-    line-height: 1.25;
+    font-family: 'Manrope', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 30px;
     margin-bottom: 8px;
   }
 
   .sell-banner-desc {
     margin-left: 0;
     margin-right: 0;
-    font-size: 13px;
-    line-height: 1.5;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #202020;
     margin-bottom: 24px;
     max-width: 100%;
   }
@@ -3325,6 +3333,10 @@ button {
   display: inline-block;
 }
 
+.user-profile-dropdown {
+  position: relative;
+}
+
 .profile-toggle-btn {
   display: flex;
   align-items: center;
@@ -3338,7 +3350,7 @@ button {
 }
 
 .profile-toggle-btn:hover {
-  background: transparent;
+  /* Removed background on hover per user request */
 }
 
 .header-avatar {
@@ -3754,119 +3766,40 @@ button {
   color: #ff4b68 !important;
 }
 
-/* Notification Bell Dropdown */
-.notification-dropdown-container {
-    position: relative;
-    display: inline-block;
+/* Active Filter Chips */
+.active-filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
 }
-.notif-dropdown-menu {
-    position: absolute;
-    top: calc(100% + 12px);
-    right: 0;
-    width: 340px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    display: none;
-    flex-direction: column;
-    border: 1px solid #e5e7eb;
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #374151;
+  font-weight: 500;
 }
-.notif-dropdown-menu.show {
-    display: flex;
+
+.filter-chip span {
+  white-space: nowrap;
 }
-.notif-dropdown-arrow {
-    position: absolute;
-    top: -6px;
-    right: 18px;
-    width: 12px;
-    height: 12px;
-    background: white;
-    transform: rotate(45deg);
-    border-top: 1px solid #e5e7eb;
-    border-left: 1px solid #e5e7eb;
+
+.filter-chip-remove {
+  cursor: pointer;
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
 }
-.notif-dropdown-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    border-bottom: 1px solid #e5e7eb;
-    position: relative;
-    z-index: 2;
-    background: white;
-    border-radius: 12px 12px 0 0;
-}
-.notif-header-icon {
-    width: 40px;
-    height: 40px;
-    background-color: #eaf7f0;
-    color: #128c5a;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 18px;
-}
-.notif-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1f2937;
-}
-.notif-subtitle {
-    font-size: 13px;
-    color: #6b7280;
-    margin-top: 2px;
-}
-.notif-dropdown-body {
-    padding: 50px 24px;
-    text-align: center;
-    color: #9ca3af;
-    font-size: 14px;
-    background: white;
-}
-.notif-dropdown-footer {
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid #e5e7eb;
-    background: white;
-    border-radius: 0 0 12px 12px;
-}
-.notif-view-all {
-    color: #128c5a;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-.notif-view-all:hover {
-    text-decoration: underline;
-}
-.notif-view-all i {
-    font-size: 12px;
-}
-.notif-pagination {
-    display: flex;
-    gap: 8px;
-}
-.notif-page-btn {
-    width: 32px;
-    height: 32px;
-    border: 1px solid #e5e7eb;
-    background: white;
-    color: #6b7280;
-    border-radius: 6px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-size: 12px;
-}
-.notif-page-btn:hover {
-    background: #f3f4f6;
-    color: #1f2937;
+
+.filter-chip-remove:hover {
+  color: #EF4444;
 }
