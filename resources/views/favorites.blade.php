@@ -45,15 +45,22 @@
             padding: 24px 0; 
         }
 
+        /* =========================================================
+           [AI UPDATE - START]
+           User Prompt: "when we navigate to Favrouite Page its bell icon in welcome banner slightly moves to right set it as same other welcome banners of Other pages"
+           Description: Harmonized welcome-banner padding (24px 24px), added .welcome-actions flex wrapper,
+           and added flex alignment on .btn-notification so the bell icon aligns precisely with other pages.
+           ========================================================= */
         .welcome-banner {
             background-color: var(--primary-green);
             color: white;
             border-radius: 16px;
-            padding: 24px 32px;
+            padding: 24px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
+            flex-shrink: 0;
         }
 
         .welcome-text h1 {
@@ -69,12 +76,21 @@
             margin: 0;
         }
 
+        .welcome-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
         .btn-notification {
             background: none;
             border: none;
             color: white;
             cursor: pointer;
             padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: opacity 0.2s;
         }
 
@@ -86,6 +102,9 @@
             width: 32px;
             height: 32px;
         }
+        /* =========================================================
+           [AI UPDATE - END]
+           ========================================================= */
 
         .favorites-grid {
             display: grid;
@@ -199,6 +218,10 @@
         }
 
         @media (max-width: 768px) {
+            .welcome-banner {
+                padding: 24px 20px;
+            }
+
             .favorites-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 16px;

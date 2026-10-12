@@ -49,7 +49,8 @@
 
                 <!-- Action Buttons & Mobile Controls -->
                 <div class="header-action-btns">
-                    @if(request()->is('dashboard') || request()->is('seller/*'))
+                    {{-- [AI UPDATE] User Prompt: "when we navigate into notification page Profile logo remove and it shoew login/register option set notification icon there same as on other pages" (Preserve Profile dropdown on notifications page) --}}
+                    @if(request()->is('dashboard') || request()->is('seller/*') || request()->is('notifications'))
                         <div class="user-profile-dropdown">
                             <button class="profile-toggle-btn" id="profileDropdownBtn">
                                 <img src="{{ asset('images/seller-avatar.jpg') }}" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'" alt="Profile" class="header-avatar">
@@ -85,7 +86,7 @@
                             <a href="{{ $signUrl }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#147A4D'" onmouseout="this.style.color='inherit'">Register</a>
                         </div>
                     @endif
-                    @if(request()->is('dashboard') || request()->is('seller/*'))
+                    @if(request()->is('dashboard') || request()->is('seller/*') || request()->is('notifications'))
                         <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet">Sell a Pet</a>
                     @else
                         <a href="{{ route('login') }}?redirect={{ urlencode(route('seller.create-listing')) }}" class="btn-sell-pet">Sell a Pet</a>
@@ -119,7 +120,8 @@
         </ul>
     </div>
     <div style="margin-top:32px;">
-        @if(request()->is('dashboard') || request()->is('seller/*'))
+        {{-- [AI UPDATE] User Prompt: "when we navigate into notification page Profile logo remove and it shoew login/register option set notification icon there same as on other pages" (Preserve logged-in state on mobile for notifications page) --}}
+        @if(request()->is('dashboard') || request()->is('seller/*') || request()->is('notifications'))
             <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
             <a href="{{ route('dashboard') }}" class="btn-login-register" style="width:100%; justify-content:center; background-color:#eaf7f0; color:#147A4D; border:none;"><i class="fa-solid fa-user" style="margin-right:8px;"></i> My Account</a>
             <a href="{{ route('logout') }}" class="btn-login-register text-danger" style="width:100%; justify-content:center; margin-top:12px; border:none;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:8px;"></i> Log Out</a>

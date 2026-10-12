@@ -354,6 +354,10 @@
 
                 <form action="{{ route('login.post') }}{{ $redirectSuffix }}" method="POST" autocomplete="off">
                     @csrf
+                    {{-- [AI UPDATE] User Prompt: "reslove this issue" (Pass redirect destination to preserve redirect param upon login submit) --}}
+                    @if(request()->has('redirect'))
+                        <input type="hidden" name="redirect" value="{{ request('redirect') }}">
+                    @endif
                     <div class="form-group">
                         <label class="form-label">Email or Phone</label>
                         <div class="input-with-icon">

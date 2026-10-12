@@ -22,12 +22,32 @@
         body { background-color: var(--bg-color); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
         .main-content { width: 100%; flex-grow: 1; padding: 40px 0; }
         
+        /* =========================================================
+           [AI UPDATE - START]
+           User Prompt: "just remove welcome banner from Notificiation page"
+           Description: Removed welcome-banner styles and restored clean notifications-header layout.
+           ========================================================= */
         .notifications-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
         }
-        .notifications-header h1 { font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 4px; }
-        .notifications-header p { font-size: 15px; color: #6b7280; }
-        
+        .notifications-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+        .notifications-header p {
+            font-size: 15px;
+            color: #6b7280;
+            margin: 0;
+        }
+        /* =========================================================
+           [AI UPDATE - END]
+           ========================================================= */
+
         .btn-mark-read {
             background-color: var(--primary-green);
             color: white;
@@ -73,6 +93,7 @@
     <div class="shell-1440" style="margin: 0 auto; width: 100%; flex-grow: 1; display: flex; flex-direction: column;">
         <div class="container" style="flex-grow: 1; display: flex; flex-direction: column;">
             <main class="main-content">
+                {{-- [AI UPDATE] User Prompt: "just remove welcome banner from Notificiation page" (Removed welcome banner and restored notifications-header) --}}
                 <div class="notifications-header">
                     <div>
                         <h1>All Notifications</h1>

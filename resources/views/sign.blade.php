@@ -500,6 +500,10 @@
                 
                 <form action="{{ route('sign.post') }}{{ $redirectSuffix }}" method="POST" autocomplete="off">
                     @csrf
+                    {{-- [AI UPDATE] User Prompt: "reslove this issue" (Pass redirect destination to preserve redirect param upon register submit) --}}
+                    @if(request()->has('redirect'))
+                        <input type="hidden" name="redirect" value="{{ request('redirect') }}">
+                    @endif
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Full Name</label>

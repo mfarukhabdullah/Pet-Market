@@ -629,6 +629,7 @@
             </div>
             <a href="{{ route('seller.create-listing') }}" class="btn-sell-mobile">Sell a Pet</a>
             <div class="welcome-actions">
+                {{-- [AI UPDATE] User Prompt: "set this in my dashboard page in my welcome banner" (Display notification bell dropdown in welcome banner) --}}
                 <x-notification-bell />
             </div>
         </div>

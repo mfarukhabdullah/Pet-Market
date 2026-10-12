@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+// [AI UPDATE] Added Request for handling login/register redirect requests
+// User Prompt: "reslove this issue" (resolving Route [login.post] not defined error)
+use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PetController;
@@ -37,5 +40,37 @@ Route::get('/seller/settings/notifications', [SellerController::class, 'settings
 Route::get('/seller/settings/account', [SellerController::class, 'settingsAccount'])->name('seller.settings.account');
 Route::get('/seller/favorites', [SellerController::class, 'favorites'])->name('favorites');
 Route::view('/login', 'login')->name('login');
+
+/*
+ |--------------------------------------------------------------------------
+ | [AI UPDATE - START]
+ | User Prompt: "reslove this issue" (resolving Route [login.post] not defined error)
+ | Description: Added login.post, sign.post, and logout routes with redirect handling
+ | to prevent RouteNotFoundException when submitting auth forms or logging out.
+ |--------------------------------------------------------------------------
+ */
+Route::post('/login', function (Request $request) {
+    if ($request->filled('redirect')) {
+        return redirect()->to($request->input('redirect'));
+    }
+    return redirect()->route('dashboard');
+})->name('login.post');
+
 Route::view('/register', 'sign')->name('sign');
+Route::post('/register', function (Request $request) {
+    if ($request->filled('redirect')) {
+        return redirect()->to($request->input('redirect'));
+    }
+    return redirect()->route('dashboard');
+})->name('sign.post');
+
+Route::get('/logout', function () {
+    return redirect()->route('home');
+})->name('logout');
+/*
+ |--------------------------------------------------------------------------
+ | [AI UPDATE - END]
+ |--------------------------------------------------------------------------
+ */
+
 Route::view('/notifications', 'notifications')->name('notifications');

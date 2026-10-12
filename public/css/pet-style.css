@@ -3803,3 +3803,167 @@ button {
 .filter-chip-remove:hover {
   color: #EF4444;
 }
+
+/* =========================================================
+   [AI UPDATE - START]
+   User Prompt: "set this in my dashboard page in my welcome banner"
+   Description: Restored and styled notification bell dropdown menu in welcome banners
+   so that notifications display as a proper floating dropdown when clicking the bell icon.
+   ========================================================= */
+.notification-dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-notification {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+
+.btn-notification:hover {
+    opacity: 0.8;
+}
+
+.btn-notification svg {
+    width: 32px;
+    height: 32px;
+}
+
+.notif-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 340px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    border: 1px solid #e5e7eb;
+    color: var(--text-dark, #1f2937);
+    text-align: left;
+}
+
+.notif-dropdown-menu.show {
+    display: flex;
+}
+
+.notif-dropdown-arrow {
+    position: absolute;
+    top: -6px;
+    right: 18px;
+    width: 12px;
+    height: 12px;
+    background: white;
+    transform: rotate(45deg);
+    border-top: 1px solid #e5e7eb;
+    border-left: 1px solid #e5e7eb;
+}
+
+.notif-dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    position: relative;
+    z-index: 2;
+    background: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.notif-header-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #eaf7f0;
+    color: #128c5a;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.notif-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.notif-subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+.notif-dropdown-body {
+    padding: 50px 24px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 14px;
+    background: white;
+}
+
+.notif-dropdown-footer {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 0 0 12px 12px;
+}
+
+.notif-view-all {
+    color: #128c5a;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.notif-view-all:hover {
+    text-decoration: underline;
+}
+
+.notif-view-all i {
+    font-size: 12px;
+}
+
+.notif-pagination {
+    display: flex;
+    gap: 8px;
+}
+
+.notif-page-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #6b7280;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.notif-page-btn:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+/* =========================================================
+   [AI UPDATE - END]
+   ========================================================= */
