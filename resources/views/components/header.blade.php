@@ -51,6 +51,53 @@
                 <!-- Action Buttons & Mobile Controls -->
                 <div class="header-action-btns">
                     @if(request()->is('dashboard') || request()->is('seller/*') || request()->is('notifications') || request()->is('account'))
+                        <style>
+                            .user-profile-dropdown .dd-icon {
+                                width: 20px;
+                                height: 20px;
+                                min-width: 20px;
+                                min-height: 20px;
+                                display: inline-block;
+                                flex-shrink: 0;
+                                background-color: var(--text-dark, #17211C);
+                                -webkit-mask-size: contain;
+                                mask-size: contain;
+                                -webkit-mask-repeat: no-repeat;
+                                mask-repeat: no-repeat;
+                                -webkit-mask-position: center;
+                                mask-position: center;
+                                vertical-align: middle;
+                                transition: background-color 0.2s ease;
+                            }
+                            .user-profile-dropdown .dropdown-item:hover .dd-icon,
+                            .user-profile-dropdown .dropdown-item.active .dd-icon {
+                                background-color: var(--primary-green, #147A4D);
+                            }
+                            .user-profile-dropdown .icon-dash-dd {
+                                -webkit-mask-image: url('{{ asset('images/dash-icon.svg') }}');
+                                mask-image: url('{{ asset('images/dash-icon.svg') }}');
+                            }
+                            .user-profile-dropdown .icon-list-dd {
+                                -webkit-mask-image: url('{{ asset('images/list-icon.svg') }}');
+                                mask-image: url('{{ asset('images/list-icon.svg') }}');
+                            }
+                            .user-profile-dropdown .icon-msg-dd {
+                                -webkit-mask-image: url('{{ asset('images/messages-icon.svg') }}');
+                                mask-image: url('{{ asset('images/messages-icon.svg') }}');
+                            }
+                            .user-profile-dropdown .icon-fav-dd {
+                                -webkit-mask-image: url('{{ asset('images/heart-icon.svg') }}');
+                                mask-image: url('{{ asset('images/heart-icon.svg') }}');
+                            }
+                            .user-profile-dropdown .icon-notif-dd {
+                                -webkit-mask-image: url('{{ asset('images/ps-bell.svg') }}');
+                                mask-image: url('{{ asset('images/ps-bell.svg') }}');
+                            }
+                            .user-profile-dropdown .icon-ps-dd {
+                                -webkit-mask-image: url('{{ asset('images/profile-setting-user-icon.svg') }}');
+                                mask-image: url('{{ asset('images/profile-setting-user-icon.svg') }}');
+                            }
+                        </style>
                         <div class="user-profile-dropdown">
                             <button class="profile-toggle-btn" id="profileDropdownBtn">
                                 <img src="{{ asset('images/seller-avatar.jpg') }}" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'" alt="Profile" class="header-avatar">

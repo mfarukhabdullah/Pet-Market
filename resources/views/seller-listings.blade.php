@@ -636,175 +636,78 @@
         @endphp
         <!-- Status Tabs -->
         <div class="status-tabs">
-            <button class="tab-btn {{ $currentTab === 'all' ? 'active' : '' }}">All</button>
-            <button class="tab-btn {{ $currentTab === 'live' ? 'active' : '' }}">Live</button>
-            <button class="tab-btn {{ $currentTab === 'pending' ? 'active' : '' }}">Pending Review</button>
-            <button class="tab-btn {{ $currentTab === 'draft' ? 'active' : '' }}">Draft</button>
-            <button class="tab-btn {{ $currentTab === 'sold' ? 'active' : '' }}">Sold / Rehomed</button>
+            <a href="{{ route('seller.listings', ['tab' => 'all']) }}" data-tab="all" class="tab-btn {{ $currentTab === 'all' ? 'active' : '' }}" style="text-decoration:none;">All ({{ $counts['all'] ?? 0 }})</a>
+            <a href="{{ route('seller.listings', ['tab' => 'live']) }}" data-tab="live" class="tab-btn {{ $currentTab === 'live' ? 'active' : '' }}" style="text-decoration:none;">Live ({{ $counts['live'] ?? 0 }})</a>
+            <a href="{{ route('seller.listings', ['tab' => 'pending']) }}" data-tab="pending" class="tab-btn {{ $currentTab === 'pending' ? 'active' : '' }}" style="text-decoration:none;">Pending ({{ $counts['pending'] ?? 0 }})</a>
+            <a href="{{ route('seller.listings', ['tab' => 'draft']) }}" data-tab="draft" class="tab-btn {{ $currentTab === 'draft' ? 'active' : '' }}" style="text-decoration:none;">Draft ({{ $counts['draft'] ?? 0 }})</a>
+            <a href="{{ route('seller.listings', ['tab' => 'sold']) }}" data-tab="sold" class="tab-btn {{ $currentTab === 'sold' ? 'active' : '' }}" style="text-decoration:none;">Sold ({{ $counts['sold'] ?? 0 }})</a>
         </div>
 
         <!-- Listings Container -->
         <div class="listings-container">
-            <!-- Listing Item 1 -->
-            <div class="listing-card" style="{{ $currentTab != 'all' && $currentTab != 'live' ? 'display: none;' : '' }}">
-                <div class="listing-menu-wrapper">
-                    <button type="button" class="btn-dots" aria-label="Listing Options">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                    <div class="listing-dropdown">
-                        <button type="button" class="dropdown-menu-item btn-delete-option">
-                            <i class="fa-regular fa-trash-can"></i>
-                            <span>Delete Listing</span>
+            @forelse($filteredListings as $listing)
+                <div class="listing-card" data-status="{{ $listing->status }}" data-id="{{ $listing->id }}">
+                    <div class="listing-menu-wrapper">
+                        <button type="button" class="btn-dots" aria-label="Listing Options">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
                         </button>
+                        <div class="listing-dropdown">
+                            <form action="{{ route('listings.delete', ['id' => $listing->id]) }}" method="POST" onsubmit="return confirm('Delete this listing?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="dropdown-menu-item btn-delete-option" style="background:none; border:none; width:100%; text-align:left; cursor:pointer;">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                    <span>Delete Listing</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="listing-img-wrapper">
+                        <img src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                    </a>
+                    <div class="listing-info">
+                        <div class="status-badge status-{{ $listing->status }}">
+                            {{ $listing->status === 'live' ? 'Live' : ($listing->status === 'pending' ? 'Pending Review' : ($listing->status === 'draft' ? 'Draft' : ($listing->status === 'sold' ? 'Sold / Rehomed' : ucfirst($listing->status)))) }}
+                        </div>
+                        <div class="listing-title"><a href="{{ route('pet.details', ['id' => $listing->id]) }}" style="color:inherit; text-decoration:none;">{{ $listing->title }}</a></div>
+                        <div class="listing-breed">{{ $listing->breed_name ?: ($listing->breed ? $listing->breed->name : 'Pet') }}</div>
+                        <div class="listing-price">{{ $listing->formatted_price }}</div>
+                        <div class="listing-meta">
+                            <span>• {{ $listing->city }}</span>
+                            <span>• {{ $listing->created_at->diffForHumans() }}</span>
+                            <span>• {{ $listing->views_count }} views</span>
+                        </div>
+                        @if($listing->status === 'rejected' && $listing->moderation_feedback)
+                            <div class="listing-reason" style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                                <i class="fa-solid fa-circle-exclamation"></i> Feedback: {{ $listing->moderation_feedback }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="listing-actions">
+                        @if($listing->status === 'live')
+                            <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="btn-action btn-solid">View Listing</a>
+                            <form action="{{ route('listings.mark-sold', ['id' => $listing->id]) }}" method="POST" style="display:inline;">
+                                @csrf
+                                <button type="submit" class="btn-action btn-outline mark-sold-btn">Mark Sold</button>
+                            </form>
+                        @elseif($listing->status === 'pending')
+                            <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="btn-action btn-solid">Preview</a>
+                        @elseif($listing->status === 'draft')
+                            <a href="{{ route('seller.create-listing') }}?edit={{ $listing->id }}" class="btn-action btn-solid">Continue Draft</a>
+                        @elseif($listing->status === 'sold')
+                            <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="btn-action btn-solid">View Listing</a>
+                        @elseif($listing->status === 'rejected')
+                            <a href="{{ route('seller.create-listing') }}?edit={{ $listing->id }}" class="btn-action btn-solid">Edit & Fix</a>
+                        @endif
                     </div>
                 </div>
-                <a href="{{ route('pet.details') }}" class="listing-img-wrapper">
-                    <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" onerror="this.src='https://images.unsplash.com/photo-1600804340584-c7db2eacf0bf?auto=format&fit=crop&w=200&q=80'">
-                </a>
-                <div class="listing-info">
-                    <div class="status-badge status-live">Live</div>
-                    <div class="listing-title"><a href="{{ route('pet.details') }}" style="color:inherit; text-decoration:none;">Golden Retriever Puppy</a></div>
-                    <div class="listing-breed">Golden Retriever</div>
-                    <div class="listing-price">Rs. 85,000</div>
-                    <div class="listing-meta">
-                        <span>• Lahore</span>
-                        <span>• Posted 2 days ago</span>
-                    </div>
+            @empty
+                <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 12px; border: 1px solid var(--border-color); color: #64748b;">
+                    <i class="fa-solid fa-box-open" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+                    <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">No {{ $currentTab !== 'all' ? $currentTab : '' }} listings found</p>
+                    <a href="{{ route('seller.create-listing') }}" class="btn-action btn-solid" style="display: inline-block; width: auto; padding: 10px 24px; text-decoration: none;">Create New Listing</a>
                 </div>
-                <div class="listing-actions">
-                    <a href="{{ route('pet.details') }}" class="btn-action btn-solid">View Listing</a>
-                    <a href="{{ route('seller.create-listing') }}?step=1" class="btn-action btn-outline">Edit</a>
-                    <button type="button" class="btn-action btn-outline mark-sold-btn">Mark Sold</button>
-                </div>
-            </div>
-
-            <!-- Listing Item 2 -->
-            <div class="listing-card" style="{{ $currentTab != 'all' && $currentTab != 'pending' ? 'display: none;' : '' }}">
-                <div class="listing-menu-wrapper">
-                    <button type="button" class="btn-dots" aria-label="Listing Options">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                    <div class="listing-dropdown">
-                        <button type="button" class="dropdown-menu-item btn-delete-option">
-                            <i class="fa-regular fa-trash-can"></i>
-                            <span>Delete Listing</span>
-                        </button>
-                    </div>
-                </div>
-                <a href="{{ route('seller.create-listing') }}?step=5&pet=german-shepherd" class="listing-img-wrapper">
-                    <img src="{{ asset('images/card_gsd.jpg') }}" alt="German Shepherd" onerror="this.src='https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=200&q=80'">
-                </a>
-                <div class="listing-info">
-                    <div class="status-badge status-pending">Pending Review</div>
-                    <div class="listing-title"><a href="{{ route('seller.create-listing') }}?step=5&pet=german-shepherd" style="color:inherit; text-decoration:none;">German Shepherd</a></div>
-                    <div class="listing-breed">German Shepherd</div>
-                    <div class="listing-price">Rs. 70,000</div>
-                    <div class="listing-meta">
-                        <span>• Lahore</span>
-                        <span>• Submitted today</span>
-                    </div>
-                </div>
-                <div class="listing-actions">
-                    <a href="{{ route('seller.create-listing') }}?step=5&pet=german-shepherd" class="btn-action btn-solid">Preview</a>
-                    <a href="{{ route('seller.create-listing') }}?step=1" class="btn-action btn-outline">Edit</a>
-                </div>
-            </div>
-
-            <!-- Listing Item 3 -->
-            <div class="listing-card" style="{{ $currentTab != 'all' && $currentTab != 'draft' ? 'display: none;' : '' }}">
-                <div class="listing-menu-wrapper">
-                    <button type="button" class="btn-dots" aria-label="Listing Options">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                    <div class="listing-dropdown">
-                        <button type="button" class="dropdown-menu-item btn-delete-option">
-                            <i class="fa-regular fa-trash-can"></i>
-                            <span>Delete Listing</span>
-                        </button>
-                    </div>
-                </div>
-                <a href="{{ route('seller.create-listing') }}?step=1" class="listing-img-wrapper">
-                    <img src="{{ asset('images/card_shihtzu.jpg') }}" alt="Shih Tzu Puppy" onerror="this.src='https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=200&q=80'">
-                </a>
-                <div class="listing-info">
-                    <div class="status-badge status-draft">Draft</div>
-                    <div class="listing-title"><a href="{{ route('seller.create-listing') }}?step=1" style="color:inherit; text-decoration:none;">Shih Tzu Puppy</a></div>
-                    <div class="listing-breed">Shih Tzu</div>
-                    <div class="listing-price">Rs. 48,000</div>
-                    <div class="listing-meta">
-                        <span>• Lahore</span>
-                        <span>• Updated yesterday</span>
-                    </div>
-                </div>
-                <div class="listing-actions">
-                    <a href="{{ route('seller.create-listing') }}?step=1" class="btn-action btn-solid">Continue Editing</a>
-                    <button type="button" class="btn-action btn-outline text-red btn-delete-option">Delete Draft</button>
-                </div>
-            </div>
-
-            <!-- Listing Item 4 (Rejected) -->
-            <div class="listing-card" style="{{ $currentTab != 'all' ? 'display: none;' : '' }}">
-                <div class="listing-menu-wrapper">
-                    <button type="button" class="btn-dots" aria-label="Listing Options">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                    <div class="listing-dropdown">
-                        <button type="button" class="dropdown-menu-item btn-delete-option">
-                            <i class="fa-regular fa-trash-can"></i>
-                            <span>Delete Listing</span>
-                        </button>
-                    </div>
-                </div>
-                <a href="{{ route('seller.create-listing') }}?step=1" class="listing-img-wrapper">
-                    <img src="{{ asset('images/card_persian.jpg') }}" alt="Persian Cat" onerror="this.src='https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=200&q=80'">
-                </a>
-                <div class="listing-info">
-                    <div class="status-badge status-rejected">Rejected</div>
-                    <div class="listing-title"><a href="{{ route('seller.create-listing') }}?step=1" style="color:inherit; text-decoration:none;">Persian Cat</a></div>
-                    <div class="listing-breed">Persian</div>
-                    <div class="listing-price">Rs. 42,000</div>
-                    <div class="listing-meta">
-                        <span>• Lahore</span>
-                        <span>• Reviewed 1 day ago</span>
-                    </div>
-                    <div class="listing-reason"><strong>Reason:</strong> Missing health details</div>
-                </div>
-                <div class="listing-actions">
-                    <a href="{{ route('seller.create-listing') }}?step=1" class="btn-action btn-solid">Edit & Resubmit</a>
-                </div>
-            </div>
-
-            <!-- Listing Item 5 -->
-            <div class="listing-card" style="{{ $currentTab != 'all' && $currentTab != 'sold' ? 'display: none;' : '' }}">
-                <div class="listing-menu-wrapper">
-                    <button type="button" class="btn-dots" aria-label="Listing Options">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                    <div class="listing-dropdown">
-                        <button type="button" class="dropdown-menu-item btn-delete-option">
-                            <i class="fa-regular fa-trash-can"></i>
-                            <span>Delete Listing</span>
-                        </button>
-                    </div>
-                </div>
-                <a href="{{ route('pet.details') }}" class="listing-img-wrapper">
-                    <img src="{{ asset('images/card_pug.jpg') }}" alt="Pug Puppy" onerror="this.src='https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=200&q=80'">
-                </a>
-                <div class="listing-info">
-                    <div class="status-badge status-sold">Sold / Rehomed</div>
-                    <div class="listing-title"><a href="{{ route('pet.details') }}" style="color:inherit; text-decoration:none;">Pug Puppy</a></div>
-                    <div class="listing-breed">Pug</div>
-                    <div class="listing-price">Rs. 35,000</div>
-                    <div class="listing-meta">
-                        <span>• Lahore</span>
-                        <span>• Completed 5 days ago</span>
-                    </div>
-                </div>
-                <div class="listing-actions">
-                    <a href="{{ route('pet.details') }}" class="btn-action btn-solid">View Listing</a>
-                </div>
-            </div>
-
+            @endforelse
         </div>
     </main></div></div>
 
@@ -826,46 +729,35 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Clear obsolete localStorage mockup keys so real database listings are never hidden
+        try {
+            localStorage.removeItem('deleted_pets');
+            localStorage.removeItem('sold_pets');
+        } catch(e) {}
+
         const tabs = document.querySelectorAll('.tab-btn');
         const cards = document.querySelectorAll('.listing-card');
 
-        // Retrieve sold and deleted pets state from localStorage
-        const soldPets = JSON.parse(localStorage.getItem('sold_pets') || '{}');
-        const deletedPets = JSON.parse(localStorage.getItem('deleted_pets') || '{}');
-
-        cards.forEach(card => {
-            const titleEl = card.querySelector('.listing-title');
-            if (!titleEl) return;
-            const petKey = titleEl.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
-            card.setAttribute('data-pet-key', petKey);
-
-            if (deletedPets[petKey]) {
-                card.remove();
-            } else if (soldPets[petKey]) {
-                applySoldState(card);
-            }
-        });
+        function getActiveFilter() {
+            const activeTab = document.querySelector('.tab-btn.active');
+            if (!activeTab) return 'all';
+            if (activeTab.dataset.tab) return activeTab.dataset.tab.toLowerCase();
+            const text = activeTab.textContent.toLowerCase();
+            if (text.includes('all')) return 'all';
+            if (text.includes('live')) return 'live';
+            if (text.includes('pending')) return 'pending';
+            if (text.includes('draft')) return 'draft';
+            if (text.includes('sold')) return 'sold';
+            return 'all';
+        }
 
         function filterListings() {
-            const activeTab = document.querySelector('.tab-btn.active');
-            if (!activeTab) return;
-            const filter = activeTab.textContent.trim().toLowerCase();
+            const filter = getActiveFilter();
 
             document.querySelectorAll('.listing-card').forEach(card => {
-                const badge = card.querySelector('.status-badge');
-                if (!badge) return;
+                const status = (card.dataset.status || '').toLowerCase();
                 
-                const status = badge.textContent.trim().toLowerCase();
-                
-                if (filter === 'all') {
-                    card.style.display = '';
-                } else if (filter === 'live' && status === 'live') {
-                    card.style.display = '';
-                } else if (filter === 'pending review' && status.includes('pending')) {
-                    card.style.display = '';
-                } else if (filter === 'draft' && status === 'draft') {
-                    card.style.display = '';
-                } else if ((filter.includes('sold') || filter.includes('rehomed')) && (status.includes('sold') || status.includes('rehomed'))) {
+                if (filter === 'all' || filter === '' || status === filter) {
                     card.style.display = '';
                 } else {
                     card.style.display = 'none';
@@ -888,7 +780,8 @@
         }
 
         tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
+            tab.addEventListener('click', (e) => {
+                // If clicked, update active class and filter
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 filterListings();
@@ -903,7 +796,7 @@
         // Card Click Navigation for Mobile/Desktop
         document.querySelectorAll('.listing-card').forEach(card => {
             card.addEventListener('click', (e) => {
-                if (e.target.closest('a, button, .btn-dots, .listing-dropdown')) return;
+                if (e.target.closest('a, button, .btn-dots, .listing-dropdown, form')) return;
                 const solidBtn = card.querySelector('.btn-action.btn-solid');
                 if (solidBtn && solidBtn.href) {
                     window.location.href = solidBtn.href;
@@ -917,13 +810,13 @@
             if (dotsBtn) {
                 e.stopPropagation();
                 const wrapper = dotsBtn.closest('.listing-menu-wrapper');
-                const dropdown = wrapper.querySelector('.listing-dropdown');
+                const dropdown = wrapper ? wrapper.querySelector('.listing-dropdown') : null;
                 
                 document.querySelectorAll('.listing-dropdown.show').forEach(d => {
                     if (d !== dropdown) d.classList.remove('show');
                 });
 
-                dropdown.classList.toggle('show');
+                if (dropdown) dropdown.classList.toggle('show');
                 return;
             }
 
@@ -939,6 +832,7 @@
             const deleteOption = e.target.closest('.btn-delete-option');
             if (deleteOption) {
                 e.stopPropagation();
+                e.preventDefault();
                 const dropdown = deleteOption.closest('.listing-dropdown');
                 if (dropdown) dropdown.classList.remove('show');
 
@@ -964,50 +858,17 @@
         if (confirmBtn) {
             confirmBtn.addEventListener('click', () => {
                 if (targetCardToDelete) {
-                    const petKey = targetCardToDelete.getAttribute('data-pet-key');
-                    if (petKey) {
-                        const deletedPets = JSON.parse(localStorage.getItem('deleted_pets') || '{}');
-                        deletedPets[petKey] = true;
-                        localStorage.setItem('deleted_pets', JSON.stringify(deletedPets));
+                    const form = targetCardToDelete.querySelector('form');
+                    if (form) {
+                        form.submit();
+                    } else {
+                        targetCardToDelete.remove();
+                        closeDeleteModal();
+                        filterListings();
                     }
-                    targetCardToDelete.remove();
-                    closeDeleteModal();
-                    filterListings();
                 }
             });
         }
-
-        // Delegate Mark Sold button clicks
-        document.addEventListener('click', (e) => {
-            const markBtn = e.target.closest('.mark-sold-btn');
-            if (markBtn) {
-                e.preventDefault();
-                const card = markBtn.closest('.listing-card');
-                if (!card) return;
-                const petKey = card.getAttribute('data-pet-key') || 'golden-retriever-puppy';
-
-                const soldPets = JSON.parse(localStorage.getItem('sold_pets') || '{}');
-                soldPets[petKey] = true;
-                localStorage.setItem('sold_pets', JSON.stringify(soldPets));
-
-                applySoldState(card);
-                filterListings();
-            }
-        });
-
-        function applySoldState(card) {
-            const badge = card.querySelector('.status-badge');
-            if (badge) {
-                badge.className = 'status-badge status-sold';
-                badge.textContent = 'Sold / Rehomed';
-            }
-            const actions = card.querySelector('.listing-actions');
-            if (actions) {
-                actions.innerHTML = `<a href="{{ route('pet.details') }}" class="btn-action btn-solid">View Listing</a>`;
-            }
-        }
-
-        filterListings();
     });
     </script>
     <x-footer />

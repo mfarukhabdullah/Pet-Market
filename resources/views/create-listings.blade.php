@@ -17,6 +17,14 @@
     <link rel="stylesheet" href="{{ asset('css/pet-style.css') }}">
 
     <style>
+        :root {
+            --primary-green: #147A4D;
+            --light-green: #e8f3ee;
+            --text-dark: #17211C;
+            --text-gray: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
         .create-listings-body {
             background-color: #FAFAF8;
             font-family: 'DM Sans', sans-serif;
@@ -1149,7 +1157,7 @@
                     <button type="button" class="btn-outline">Save Draft</button>
                     <div class="right-actions">
                         <button type="button" class="btn-outline" onclick="goToStep(4)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                        <button type="button" class="btn-primary" onclick="goToStep('success')"><i class="fa-solid fa-paper-plane" style="margin-right: 8px;"></i> Submit for Review</button>
+                        <button type="button" class="btn-primary" onclick="submitListing()"><i class="fa-solid fa-paper-plane" style="margin-right: 8px;"></i> Submit for Review</button>
                     </div>
                 </div>
             </div>
@@ -1241,6 +1249,53 @@
             if (stepNumber === 5) {
                 updateReviewData();
             }
+        }
+
+        function submitListing() {
+            const title = document.getElementById('input-title')?.value || 'New Pet Listing';
+            const price = parseFloat(document.getElementById('input-price')?.value) || 50000;
+            const city = document.getElementById('city-select')?.value || document.getElementById('country-input')?.value || 'Lahore';
+            const area = document.getElementById('input-area')?.value || '';
+            const desc = document.getElementById('input-description')?.value || 'Healthy and well-trained pet looking for a home.';
+            const breed = document.getElementById('input-breed')?.value || 'Pet';
+            const categorySelect = document.getElementById('input-category');
+            const categoryVal = categorySelect ? categorySelect.value : 'Dog';
+            const ageVal = parseInt(document.getElementById('input-age-value')?.value) || 6;
+            const ageUnit = document.getElementById('input-age-unit')?.value || 'Month';
+            const ageMonths = ageUnit === 'Year' ? ageVal * 12 : ageVal;
+            const gender = (document.getElementById('input-gender')?.value || 'male').toLowerCase();
+            const vaccinated = document.querySelector('input[name="vaccination"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase().includes('vac') ?? true;
+            const dewormed = document.querySelector('input[name="deworming"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase() === 'yes';
+
+            fetch('{{ route('listings.publish') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    title: title,
+                    price: price,
+                    city: city,
+                    area: area,
+                    description: desc,
+                    breed_name: breed,
+                    category: categoryVal,
+                    category_id: (categoryVal === 'Cat' || categoryVal == 2) ? 2 : 1,
+                    age_months: ageMonths,
+                    gender: (gender === 'male' || gender === 'female') ? gender : 'unknown',
+                    vaccinated: vaccinated,
+                    dewormed: dewormed
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                goToStep('success');
+            })
+            .catch(() => {
+                goToStep('success');
+            });
         }
 
         function updateReviewData() {

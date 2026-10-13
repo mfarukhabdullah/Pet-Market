@@ -636,28 +636,28 @@
         <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-number">04</div>
+                <div class="stat-number">{{ sprintf('%02d', $stats['live_count'] ?? 0) }}</div>
                 <div class="stat-label">
                     <div class="stat-icon icon-list"></div>
                     Active Listings
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">04</div>
+            <a href="{{ route('seller.messages') }}" class="stat-card" style="text-decoration:none; color:inherit;">
+                <div class="stat-number">{{ sprintf('%02d', $stats['inquiries_count'] ?? 0) }}</div>
                 <div class="stat-label">
                     <div class="stat-icon icon-messages"></div>
-                    New Messages
+                    Inquiries
                 </div>
-            </div>
-            <a href="{{ route('favorites') }}" class="stat-card" style="text-decoration:none;">
-                <div class="stat-number">04</div>
+            </a>
+            <a href="{{ route('favorites') }}" class="stat-card" style="text-decoration:none; color:inherit;">
+                <div class="stat-number">{{ sprintf('%02d', $stats['favorites_count'] ?? 0) }}</div>
                 <div class="stat-label">
                     <div class="stat-icon icon-favourites"></div>
                     Favourites
                 </div>
             </a>
             <div class="stat-card">
-                <div class="stat-number">04</div>
+                <div class="stat-number">{{ sprintf('%02d', $stats['sold_count'] ?? 0) }}</div>
                 <div class="stat-label">
                     <div class="stat-icon icon-sold"></div>
                     Sold / Rehomed
@@ -675,32 +675,18 @@
                 </div>
                 
                 <div class="card-body">
-                    <a href="{{ route('pet.details') }}" class="listing-item">
-                        <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever" class="listing-img" onerror="this.src='https://images.unsplash.com/photo-1600804340584-c7db2eacf0bf?auto=format&fit=crop&w=150&q=80'">
-                        <div class="listing-info">
-                            <div class="listing-name">Golden Retriever Puppy</div>
-                            <div class="listing-details"><strong>Rs. 85,000</strong> · Lahore</div>
-                        </div>
-                        <span class="status-badge status-live">Live</span>
-                    </a>
-
-                    <a href="{{ route('seller.listings') }}?tab=pending" class="listing-item">
-                        <img src="{{ asset('images/card_gsd.jpg') }}" alt="German Shepherd" class="listing-img" onerror="this.src='https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=150&q=80'">
-                        <div class="listing-info">
-                            <div class="listing-name">German Shepherd</div>
-                            <div class="listing-details"><strong>Rs. 70,000</strong> · Lahore</div>
-                        </div>
-                        <span class="status-badge status-pending">Pending Review</span>
-                    </a>
-
-                    <a href="{{ route('seller.listings') }}?tab=draft" class="listing-item">
-                        <img src="{{ asset('images/card_shihtzu.jpg') }}" alt="Shih Tzu Puppy" class="listing-img" onerror="this.src='https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=150&q=80'">
-                        <div class="listing-info">
-                            <div class="listing-name">Shih Tzu Puppy</div>
-                            <div class="listing-details"><strong>Rs. 48,000</strong> · Lahore</div>
-                        </div>
-                        <span class="status-badge status-draft">Draft</span>
-                    </a>
+                    @forelse($recentListings as $listing)
+                        <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="listing-item">
+                            <img src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" class="listing-img" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                            <div class="listing-info">
+                                <div class="listing-name">{{ $listing->title }}</div>
+                                <div class="listing-details"><strong>{{ $listing->formatted_price }}</strong> · {{ $listing->city }}</div>
+                            </div>
+                            <span class="status-badge status-{{ $listing->status }}">{{ ucfirst($listing->status) }}</span>
+                        </a>
+                    @empty
+                        <div style="padding: 24px; text-align: center; color: #64748b;">No listings created yet.</div>
+                    @endforelse
                 </div>
             </div>
 
@@ -712,27 +698,23 @@
                 </div>
                 
                 <div class="card-body">
-                    <a href="{{ route('seller.messages') }}?chat=1" class="message-item">
-                        <img src="https://ui-avatars.com/api/?name=Ali+Raza&background=random" alt="Ali Raza" class="msg-avatar">
-                        <div class="msg-content">
-                            <div class="msg-header">
-                                <span class="msg-name">Ali Raza</span>
-                                <span class="msg-time">10m</span>
+                    @forelse($recentConversations as $conv)
+                        @php
+                            $other = $conv->otherParticipant($user->id);
+                        @endphp
+                        <a href="{{ route('seller.messages', ['conversation_id' => $conv->id]) }}" class="message-item">
+                            <img src="{{ $other->avatar_url }}" alt="{{ $other->name }}" class="msg-avatar" onerror="this.src='https://ui-avatars.com/api/?name=' . urlencode($other->name) . '&background=random'">
+                            <div class="msg-content">
+                                <div class="msg-header">
+                                    <span class="msg-name">{{ $other->name }}</span>
+                                    <span class="msg-time">{{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}</span>
+                                </div>
+                                <div class="msg-text">{{ $conv->latestMessage ? Str::limit($conv->latestMessage->message, 40) : 'No messages' }}</div>
                             </div>
-                            <div class="msg-text">Is the Golden Retriever still available?</div>
-                        </div>
-                    </a>
-
-                    <a href="{{ route('seller.messages') }}?chat=4" class="message-item">
-                        <img src="https://ui-avatars.com/api/?name=Sarah&background=random" alt="Sarah" class="msg-avatar">
-                        <div class="msg-content">
-                            <div class="msg-header">
-                                <span class="msg-name">Sarah</span>
-                                <span class="msg-time">1h</span>
-                            </div>
-                            <div class="msg-text">Can you share vaccination details?</div>
-                        </div>
-                    </a>
+                        </a>
+                    @empty
+                        <div style="padding: 24px; text-align: center; color: #64748b;">No messages received yet.</div>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -745,68 +727,32 @@
             </div>
             
             <div class="card-body favorites-grid-mobile">
-                <a href="{{ route('pet.details') }}" class="favorite-item">
-                    <span class="fav-badge">FEATURED</span>
-                    <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
-                    <div class="fav-info">
-                        <div class="fav-title">Golden Retriever Puppy</div>
-                        <div class="fav-subtitle">Golden Retriever</div>
-                        <div class="fav-price-mobile">Rs. 85,000</div>
-                        <div class="fav-meta">
-                            <span><i class="fa-solid fa-location-dot"></i> Lahore</span>
-                            <span><i class="fa-solid fa-clock"></i> 3 Months</span>
-                            <span><i class="fa-solid fa-mars"></i> Male</span>
+                @forelse($recentFavorites as $fav)
+                    <a href="{{ route('pet.details', ['id' => $fav->id]) }}" class="favorite-item">
+                        @if($fav->is_featured)
+                            <span class="fav-badge">FEATURED</span>
+                        @endif
+                        <img src="{{ $fav->primary_image_url }}" alt="{{ $fav->title }}" class="fav-img" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                        <div class="fav-info">
+                            <div class="fav-title">{{ $fav->title }}</div>
+                            <div class="fav-subtitle">{{ $fav->breed_name ?: ($fav->breed ? $fav->breed->name : 'Pet') }}</div>
+                            <div class="fav-price-mobile">{{ $fav->formatted_price }}</div>
+                            <div class="fav-meta">
+                                <span><i class="fa-solid fa-location-dot"></i> {{ $fav->city }}</span>
+                                <span><i class="fa-solid fa-clock"></i> {{ $fav->age_text }}</span>
+                                <span><i class="fa-solid fa-{{ $fav->gender === 'female' ? 'venus' : 'mars' }}"></i> {{ ucfirst($fav->gender) }}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="fav-actions">
-                        <div class="fav-heart">
-                            <i class="fa-solid fa-heart"></i>
+                        <div class="fav-actions">
+                            <div class="fav-heart" style="color: #e11d48;">
+                                <i class="fa-solid fa-heart"></i>
+                            </div>
+                            <div class="fav-price">{{ $fav->formatted_price }}</div>
                         </div>
-                        <div class="fav-price">Rs. 85,000</div>
-                    </div>
-                </a>
-
-                <a href="{{ route('pet.details') }}" class="favorite-item">
-                    <span class="fav-badge">FEATURED</span>
-                    <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
-                    <div class="fav-info">
-                        <div class="fav-title">Golden Retriever Puppy</div>
-                        <div class="fav-subtitle">Golden Retriever</div>
-                        <div class="fav-price-mobile">Rs. 85,000</div>
-                        <div class="fav-meta">
-                            <span><i class="fa-solid fa-location-dot"></i> Lahore</span>
-                            <span><i class="fa-solid fa-clock"></i> 3 Months</span>
-                            <span><i class="fa-solid fa-mars"></i> Male</span>
-                        </div>
-                    </div>
-                    <div class="fav-actions">
-                        <div class="fav-heart">
-                            <i class="fa-solid fa-heart"></i>
-                        </div>
-                        <div class="fav-price">Rs. 85,000</div>
-                    </div>
-                </a>
-
-                <a href="{{ route('pet.details') }}" class="favorite-item">
-                    <span class="fav-badge">FEATURED</span>
-                    <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="fav-img">
-                    <div class="fav-info">
-                        <div class="fav-title">Golden Retriever Puppy</div>
-                        <div class="fav-subtitle">Golden Retriever</div>
-                        <div class="fav-price-mobile">Rs. 85,000</div>
-                        <div class="fav-meta">
-                            <span><i class="fa-solid fa-location-dot"></i> Lahore</span>
-                            <span><i class="fa-solid fa-clock"></i> 3 Months</span>
-                            <span><i class="fa-solid fa-mars"></i> Male</span>
-                        </div>
-                    </div>
-                    <div class="fav-actions">
-                        <div class="fav-heart">
-                            <i class="fa-solid fa-heart"></i>
-                        </div>
-                        <div class="fav-price">Rs. 85,000</div>
-                    </div>
-                </a>
+                    </a>
+                @empty
+                    <div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: #64748b;">No favorite pets saved yet.</div>
+                @endforelse
             </div>
         </div>
     </main></div></div>

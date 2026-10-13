@@ -251,6 +251,97 @@
                 gap: 4px;
             }
         }
+
+        /* Empty State */
+        .empty-favorites {
+            background: white;
+            border-radius: 16px;
+            border: 1px dashed var(--border-color);
+            padding: 56px 24px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .empty-fav-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(18, 140, 90, 0.08);
+            color: var(--primary-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .empty-favorites h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .empty-favorites p {
+            font-size: 14px;
+            color: var(--text-gray);
+            max-width: 440px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .empty-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-browse-pets {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.15s;
+        }
+
+        .btn-browse-pets:hover {
+            background: #0e7048;
+            transform: translateY(-1px);
+            color: white;
+        }
+
+        .btn-reset-favs {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: var(--text-gray);
+            border: 1px solid var(--border-color);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-reset-favs:hover {
+            background: #f9fafb;
+            color: var(--text-dark);
+            border-color: #cbd5e1;
+        }
     </style>
 </head>
 <body>
@@ -274,95 +365,49 @@
                 </div>
 
                 <!-- Favorites Grid -->
-                <div class="favorites-grid">
-                    <!-- Card 1 -->
-                    <a href="{{ url('/pet-details') }}" class="fav-card">
-                        <div class="fav-card-img-wrapper">
-                            <img src="{{ asset('images/card_gsd.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=500&q=80'" alt="German Shepherd" class="fav-card-img">
-                            <button type="button" class="fav-heart-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this, event)">
-                                <i class="fa-solid fa-heart"></i>
-                            </button>
+                @if($favorites->isNotEmpty())
+                    <div class="favorites-grid">
+                        @foreach($favorites as $fav)
+                            <a href="{{ route('pet.details', ['id' => $fav->id]) }}" class="fav-card" data-fav-id="{{ $fav->id }}">
+                                <div class="fav-card-img-wrapper">
+                                    <img src="{{ $fav->primary_image_url }}" onerror="this.src='{{ asset('images/card_golden.jpg') }}'" alt="{{ $fav->title }}" class="fav-card-img">
+                                    <form action="{{ route('favorites.toggle', ['listingId' => $fav->id]) }}" method="POST" onclick="event.stopPropagation();" style="display:inline;">
+                                        @csrf
+                                        <button type="submit" class="fav-heart-btn" title="Remove from Favorites">
+                                            <i class="fa-solid fa-heart"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="fav-card-content">
+                                    <div class="fav-card-title">{{ $fav->title }}</div>
+                                    <div class="fav-card-subtitle">{{ $fav->breed_name ?: ($fav->breed ? $fav->breed->name : 'Pet') }}</div>
+                                    <div class="fav-card-price">{{ $fav->formatted_price }}</div>
+                                    <div class="fav-card-meta">
+                                        <span><i class="fa-regular fa-clock"></i> {{ $fav->age_text }}</span>
+                                        <span><i class="fa-solid fa-{{ $fav->gender === 'female' ? 'venus' : 'mars' }}"></i> {{ ucfirst($fav->gender) }}</span>
+                                    </div>
+                                    <div class="fav-card-location">
+                                        <i class="fa-solid fa-location-dot"></i> {{ $fav->city }}
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                @else
+                    <!-- Empty State -->
+                    <div id="emptyFavoritesState" class="empty-favorites">
+                        <div class="empty-fav-icon">
+                            <i class="fa-regular fa-heart"></i>
                         </div>
-                        <div class="fav-card-content">
-                            <div class="fav-card-title">German Shepherd</div>
-                            <div class="fav-card-subtitle">German Shepherd</div>
-                            <div class="fav-card-price">Rs. 85,000</div>
-                            <div class="fav-card-meta">
-                                <span><i class="fa-regular fa-clock"></i> 3 Months</span>
-                                <span><i class="fa-solid fa-mars"></i> Male</span>
-                            </div>
-                            <div class="fav-card-location">
-                                <i class="fa-solid fa-location-dot"></i> Lahore
-                            </div>
+                        <h2>No favorites yet</h2>
+                        <p>You haven't saved any pets to your favorites. Browse listings and find your companion!</p>
+                        <div class="empty-actions">
+                            <a href="{{ route('category') }}" class="btn-browse-pets">
+                                <i class="fa-solid fa-compass"></i> Explore Pets
+                            </a>
                         </div>
-                    </a>
-
-                    <!-- Card 2 -->
-                    <a href="{{ url('/pet-details') }}" class="fav-card">
-                        <div class="fav-card-img-wrapper">
-                            <img src="{{ asset('images/card_gsd.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=500&q=80'" alt="German Shepherd" class="fav-card-img">
-                            <button type="button" class="fav-heart-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this, event)">
-                                <i class="fa-solid fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="fav-card-content">
-                            <div class="fav-card-title">German Shepherd</div>
-                            <div class="fav-card-subtitle">German Shepherd</div>
-                            <div class="fav-card-price">Rs. 85,000</div>
-                            <div class="fav-card-meta">
-                                <span><i class="fa-regular fa-clock"></i> 3 Months</span>
-                                <span><i class="fa-solid fa-mars"></i> Male</span>
-                            </div>
-                            <div class="fav-card-location">
-                                <i class="fa-solid fa-location-dot"></i> Lahore
-                            </div>
-                        </div>
-                    </a>
-
-                    <!-- Card 3 -->
-                    <a href="{{ url('/pet-details') }}" class="fav-card">
-                        <div class="fav-card-img-wrapper">
-                            <img src="{{ asset('images/card_persian.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=500&q=80'" alt="British Shorthair" class="fav-card-img">
-                            <button type="button" class="fav-heart-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this, event)">
-                                <i class="fa-solid fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="fav-card-content">
-                            <div class="fav-card-title">British Shorthair</div>
-                            <div class="fav-card-subtitle">British Shorthair</div>
-                            <div class="fav-card-price">Rs. 42,000</div>
-                            <div class="fav-card-meta">
-                                <span><i class="fa-regular fa-clock"></i> 7 Months</span>
-                                <span><i class="fa-solid fa-venus"></i> Female</span>
-                            </div>
-                            <div class="fav-card-location">
-                                <i class="fa-solid fa-location-dot"></i> Islamabad
-                            </div>
-                        </div>
-                    </a>
-
-                    <!-- Card 4 -->
-                    <a href="{{ url('/pet-details') }}" class="fav-card">
-                        <div class="fav-card-img-wrapper">
-                            <img src="{{ asset('images/card_bird.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1452570053594-1b985d6ea890?auto=format&fit=crop&w=500&q=80'" alt="Shih Tzu Puppy" class="fav-card-img">
-                            <button type="button" class="fav-heart-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this, event)">
-                                <i class="fa-solid fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="fav-card-content">
-                            <div class="fav-card-title">Shih Tzu Puppy</div>
-                            <div class="fav-card-subtitle">Shih Tzu</div>
-                            <div class="fav-card-price">Rs. 65,000</div>
-                            <div class="fav-card-meta">
-                                <span><i class="fa-regular fa-clock"></i> 1 Year</span>
-                                <span><i class="fa-solid fa-mars"></i> Male</span>
-                            </div>
-                            <div class="fav-card-location">
-                                <i class="fa-solid fa-location-dot"></i> Karachi
-                            </div>
-                        </div>
-                    </a>
-                </div>
+                    </div>
+                @endif
 
             </main>
         </div>
@@ -376,17 +421,78 @@
                 event.preventDefault();
                 event.stopPropagation();
             }
+
+            const card = btn.closest('.fav-card');
+            if (!card) return;
+
             const icon = btn.querySelector('i');
-            if (icon.classList.contains('fa-solid')) {
+            if (icon) {
                 icon.classList.remove('fa-solid');
                 icon.classList.add('fa-regular');
                 btn.style.color = '#9ca3af';
+            }
+
+            // Animate card removal smoothly
+            card.style.pointerEvents = 'none';
+            card.style.transition = 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.88)';
+
+            setTimeout(() => {
+                const cardId = card.getAttribute('data-fav-id');
+                if (cardId) {
+                    const removed = JSON.parse(localStorage.getItem('removed_favorites') || '{}');
+                    removed[cardId] = true;
+                    localStorage.setItem('removed_favorites', JSON.stringify(removed));
+                }
+                card.remove();
+                checkEmptyFavorites();
+            }, 300);
+        }
+
+        function checkEmptyFavorites() {
+            const grid = document.querySelector('.favorites-grid');
+            const emptyState = document.getElementById('emptyFavoritesState');
+            if (!grid) return;
+
+            const remainingCards = grid.querySelectorAll('.fav-card');
+            if (remainingCards.length === 0) {
+                grid.style.display = 'none';
+                if (emptyState) {
+                    emptyState.style.display = 'flex';
+                }
             } else {
-                icon.classList.remove('fa-regular');
-                icon.classList.add('fa-solid');
-                btn.style.color = '#ff4757';
+                grid.style.display = 'grid';
+                if (emptyState) {
+                    emptyState.style.display = 'none';
+                }
             }
         }
+
+        function resetDemoFavorites() {
+            localStorage.removeItem('removed_favorites');
+            window.location.reload();
+        }
+
+        window.toggleFavorite = toggleFavorite;
+        window.checkEmptyFavorites = checkEmptyFavorites;
+        window.resetDemoFavorites = resetDemoFavorites;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const removed = JSON.parse(localStorage.getItem('removed_favorites') || '{}');
+            const deletedPets = JSON.parse(localStorage.getItem('deleted_pets') || '{}');
+
+            document.querySelectorAll('.favorites-grid .fav-card').forEach(card => {
+                const cardId = card.getAttribute('data-fav-id');
+                const titleEl = card.querySelector('.fav-card-title');
+                const titleKey = titleEl ? titleEl.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') : '';
+
+                if ((cardId && removed[cardId]) || (titleKey && deletedPets[titleKey])) {
+                    card.remove();
+                }
+            });
+            checkEmptyFavorites();
+        });
     </script>
 </body>
 </html>

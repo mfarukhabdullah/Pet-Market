@@ -1169,175 +1169,31 @@
                 </div>
                 
                 <div class="chat-list">
-                    <!-- Chat Item 1 (Active) -->
-                    <div class="chat-item active" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Ali+Raza&background=random" alt="Ali Raza" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Ali Raza</span>
-                                <span class="chat-item-time">10m</span>
+                    @forelse($conversations as $conv)
+                        @php
+                            $otherUser = $conv->otherParticipant($user->id);
+                            $isActive = $activeConversation && $activeConversation->id === $conv->id;
+                            $unreadCount = $conv->messages()->where('sender_id', '!=', $user->id)->whereNull('read_at')->count();
+                        @endphp
+                        <a href="{{ route('seller.messages', ['conversation_id' => $conv->id]) }}" class="chat-item {{ $isActive ? 'active' : '' }}" style="text-decoration:none; color:inherit;">
+                            <img src="{{ $otherUser->avatar_url }}" alt="{{ $otherUser->name }}" class="chat-avatar" onerror="this.src='https://ui-avatars.com/api/?name=' . urlencode($otherUser->name) . '&background=random'">
+                            <div class="chat-item-info">
+                                <div class="chat-item-header">
+                                    <span class="chat-item-name">{{ $otherUser->name }}</span>
+                                    <span class="chat-item-time">{{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}</span>
+                                </div>
+                                <div class="chat-item-pet">{{ $conv->listing ? $conv->listing->title : 'Listing' }}</div>
+                                <div class="chat-item-preview">{{ $conv->latestMessage ? Str::limit($conv->latestMessage->message, 30) : 'No messages yet' }}</div>
                             </div>
-                            <div class="chat-item-pet">Golden Retriever Puppy</div>
-                            <div class="chat-item-preview">Is the Golden Retriever still...</div>
+                            @if($unreadCount > 0)
+                                <div class="unread-badge">{{ $unreadCount }}</div>
+                            @endif
+                        </a>
+                    @empty
+                        <div style="text-align: center; padding: 40px 16px; color: #64748b; font-size: 14px;">
+                            No conversations yet.
                         </div>
-                        <div class="unread-badge">2</div>
-                    </div>
-
-                    <!-- Chat Item 2 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Ali+Raza&background=random" alt="Ali Raza" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Ali Raza</span>
-                                <span class="chat-item-time">10m</span>
-                            </div>
-                            <div class="chat-item-pet">Golden Retriever Puppy</div>
-                            <div class="chat-item-preview">Is the Golden Retriever still...</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Item 3 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Ali+Raza&background=random" alt="Ali Raza" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Ali Raza</span>
-                                <span class="chat-item-time">1h</span>
-                            </div>
-                            <div class="chat-item-pet">Golden Retriever Puppy</div>
-                            <div class="chat-item-preview">Is the Golden Retriever still...</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Item 4 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Sarah+Khan&background=random" alt="Sarah Khan" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Sarah Khan</span>
-                                <span class="chat-item-time">2h</span>
-                            </div>
-                            <div class="chat-item-pet">Persian Cat</div>
-                            <div class="chat-item-preview">What is the final price?</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Item 5 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Usman+Ahmed&background=random" alt="Usman Ahmed" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Usman Ahmed</span>
-                                <span class="chat-item-time">3h</span>
-                            </div>
-                            <div class="chat-item-pet">German Shepherd</div>
-                            <div class="chat-item-preview">Where are you located?</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Item 6 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Aisha+Malik&background=random" alt="Aisha Malik" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Aisha Malik</span>
-                                <span class="chat-item-time">5h</span>
-                            </div>
-                            <div class="chat-item-pet">British Shorthair</div>
-                            <div class="chat-item-preview">Is this male or female?</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Item 7 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Zain+Ali&background=random" alt="Zain Ali" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Zain Ali</span>
-                                <span class="chat-item-time">1d</span>
-                            </div>
-                            <div class="chat-item-pet">Mini Lop Rabbit</div>
-                            <div class="chat-item-preview">Can you deliver it to Islamabad?</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Item 8 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Fatima+Tariq&background=random" alt="Fatima Tariq" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Fatima Tariq</span>
-                                <span class="chat-item-time">1d</span>
-                            </div>
-                            <div class="chat-item-pet">African Grey Parrot</div>
-                            <div class="chat-item-preview">How old is it?</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Item 9 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Bilal+Mustafa&background=random" alt="Bilal Mustafa" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Bilal Mustafa</span>
-                                <span class="chat-item-time">2d</span>
-                            </div>
-                            <div class="chat-item-pet">Shih Tzu Puppy</div>
-                            <div class="chat-item-preview">I am interested, please reply.</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Item 10 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Sana+Nadeem&background=random" alt="Sana Nadeem" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Sana Nadeem</span>
-                                <span class="chat-item-time">2d</span>
-                            </div>
-                            <div class="chat-item-pet">Lovebird Pair</div>
-                            <div class="chat-item-preview">Do they come with a cage?</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Item 11 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Kamran+Shah&background=random" alt="Kamran Shah" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Kamran Shah</span>
-                                <span class="chat-item-time">3d</span>
-                            </div>
-                            <div class="chat-item-pet">Beagle Puppy</div>
-                            <div class="chat-item-preview">Thanks!</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Item 12 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Nida+Hassan&background=random" alt="Nida Hassan" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Nida Hassan</span>
-                                <span class="chat-item-time">4d</span>
-                            </div>
-                            <div class="chat-item-pet">Siberian Husky</div>
-                            <div class="chat-item-preview">Are the vaccinations complete?</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Item 13 -->
-                    <div class="chat-item" onclick="document.body.classList.add('chat-active')">
-                        <img src="https://ui-avatars.com/api/?name=Fahad+Qureshi&background=random" alt="Fahad Qureshi" class="chat-avatar">
-                        <div class="chat-item-info">
-                            <div class="chat-item-header">
-                                <span class="chat-item-name">Fahad Qureshi</span>
-                                <span class="chat-item-time">5d</span>
-                            </div>
-                            <div class="chat-item-pet">Cockatiel</div>
-                            <div class="chat-item-preview">I will visit tomorrow morning.</div>
-                        </div>
-                    </div>
+                    @endforelse
                 </div>
             </div>
 
@@ -1346,16 +1202,20 @@
                 <!-- Chat Header -->
                 <div class="chat-header">
                     <div class="chat-header-info">
+                        @php
+                            $activeOtherUser = $activeConversation ? $activeConversation->otherParticipant($user->id) : null;
+                            $activeListing = $activeConversation ? $activeConversation->listing : null;
+                        @endphp
                         <button class="chat-back-btn" onclick="document.body.classList.remove('chat-active'); document.querySelector('.chat-container')?.classList.remove('chat-active'); document.querySelector('.chat-window')?.classList.remove('active');" style="display: none; background: none; border: none; cursor: pointer; padding-right: 12px;">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="19" y1="12" x2="5" y2="12"></line>
                                 <polyline points="12 19 5 12 12 5"></polyline>
                             </svg>
                         </button>
-                        <img src="https://ui-avatars.com/api/?name=Ali+Raza&background=random" alt="Ali Raza" class="chat-avatar">
+                        <img src="{{ $activeOtherUser ? $activeOtherUser->avatar_url : 'https://ui-avatars.com/api/?name=Chat&background=random' }}" alt="{{ $activeOtherUser ? $activeOtherUser->name : 'Chat' }}" class="chat-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Chat&background=random'">
                         <div class="chat-header-text">
-                            <h3>Ali Raza</h3>
-                            <p>Buyer inquiry</p>
+                            <h3>{{ $activeOtherUser ? $activeOtherUser->name : 'No conversation selected' }}</h3>
+                            <p>{{ $activeOtherUser ? ($activeOtherUser->role === 'seller' ? 'Verified Seller' : 'Buyer Inquiry') . ' • Trust ' . $activeOtherUser->trust_score . '%' : 'Select a conversation from the left' }}</p>
                         </div>
                     </div>
                     
@@ -1385,103 +1245,68 @@
                 </div>
 
                 <!-- Context Card -->
+                @if($activeListing)
                 <div class="chat-context-card">
-                    <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy" class="chat-context-img" onerror="this.src='https://images.unsplash.com/photo-1600804340584-c7db2eacf0bf?auto=format&fit=crop&w=100&q=80'">
+                    <img src="{{ $activeListing->primary_image_url }}" alt="{{ $activeListing->title }}" class="chat-context-img" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
                     <div class="chat-context-details" style="flex-grow: 1;">
-                        <h4>Golden Retriever Puppy</h4>
-                        <p>Lahore</p>
+                        <h4><a href="{{ route('pet.details', ['id' => $activeListing->id]) }}" style="color:inherit; text-decoration:none;">{{ $activeListing->title }}</a></h4>
+                        <p>{{ $activeListing->city }}</p>
                     </div>
                     <div class="chat-context-price" style="font-weight: 700; color: var(--primary-green); white-space: nowrap;">
-                        Rs. 85,000
+                        {{ $activeListing->formatted_price }}
                     </div>
                 </div>
+                @endif
 
                 <!-- Messages -->
                 <div class="chat-messages">
-                    <div class="date-divider">
-                        <span>Today</span>
-                    </div>
-
-                    <div class="msg-bubble-container received">
-                        <div class="msg-bubble">
-                            Hi, is the Golden Retriever still available?
-                            <span class="msg-time">10:22 AM</span>
+                    @forelse($messages as $msg)
+                        @php
+                            $isSent = $msg->sender_id === $user->id;
+                        @endphp
+                        <div class="msg-bubble-container {{ $isSent ? 'sent' : 'received' }}">
+                            <div class="msg-bubble">
+                                @if($msg->type === 'offer')
+                                    <div style="background: rgba(20, 122, 77, 0.08); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #147A4D;">
+                                        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #147A4D;">Price Offer Received</div>
+                                        <div style="font-size: 18px; font-weight: 800; color: #17211C; margin: 4px 0;">{{ $msg->formatted_offer_amount }}</div>
+                                        <div style="font-size: 12px; color: #64748b;">Status: <strong>{{ ucfirst($msg->offer_status) }}</strong></div>
+                                        @if(!$isSent && $msg->offer_status === 'pending')
+                                            <div style="margin-top: 8px; display: flex; gap: 8px;">
+                                                <form action="{{ route('chat.respond-offer', ['messageId' => $msg->id]) }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="status" value="accepted">
+                                                    <button type="submit" style="background:#147A4D; color:#fff; border:none; padding:4px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Accept</button>
+                                                </form>
+                                                <form action="{{ route('chat.respond-offer', ['messageId' => $msg->id]) }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="status" value="rejected">
+                                                    <button type="submit" style="background:#dc2626; color:#fff; border:none; padding:4px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Decline</button>
+                                                </form>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+                                {{ $msg->message }}
+                                @if($msg->is_flagged)
+                                    <div style="color: #dc2626; font-size: 11px; margin-top: 4px; font-weight: 600;">
+                                        <i class="fa-solid fa-triangle-exclamation"></i> Warning: Never send advance money via JazzCash or Easypaisa before meeting.
+                                    </div>
+                                @endif
+                                <span class="msg-time">{{ $msg->created_at->format('h:i A') }}</span>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="msg-bubble-container sent">
-                        <div class="msg-bubble">
-                            Yes, it is currently available.
-                            <span class="msg-time">10:25 AM</span>
+                    @empty
+                        <div style="text-align: center; color: #94a3b8; padding: 40px;">
+                            Start this conversation by sending a message below.
                         </div>
-                    </div>
-
-                    <div class="msg-bubble-container received">
-                        <div class="msg-bubble">
-                            Can you share vaccination details and when I can visit?
-                            <span class="msg-time">10:26 AM</span>
-                        </div>
-                    </div>
-
-                    <div class="msg-bubble-container sent">
-                        <div class="msg-bubble">
-                            Sure, all vaccinations are up to date. I will share the records.
-                            <span class="msg-time">10:28 AM</span>
-                        </div>
-                    </div>
-
-                    <div class="msg-bubble-container sent">
-                        <div class="msg-bubble">
-                            You can visit tomorrow evening between 5 PM and 8 PM. Does that work for you?
-                            <span class="msg-time">10:28 AM</span>
-                        </div>
-                    </div>
-
-                    <div class="msg-bubble-container received">
-                        <div class="msg-bubble">
-                            Tomorrow evening works perfectly for me.
-                            <span class="msg-time">10:35 AM</span>
-                        </div>
-                    </div>
-
-                    <div class="msg-bubble-container received">
-                        <div class="msg-bubble">
-                            Could you please share your exact address?
-                            <span class="msg-time">10:35 AM</span>
-                        </div>
-                    </div>
-
-                    <div class="msg-bubble-container sent">
-                        <div class="msg-bubble">
-                            Yes, it's House 123, Block C, Phase 1, DHA Lahore.
-                            <span class="msg-time">10:40 AM</span>
-                        </div>
-                    </div>
-
-                    <div class="msg-bubble-container received">
-                        <div class="msg-bubble">
-                            Got it. Is the price negotiable?
-                            <span class="msg-time">10:45 AM</span>
-                        </div>
-                    </div>
-
-                    <div class="msg-bubble-container sent">
-                        <div class="msg-bubble">
-                            We can discuss the price when you visit. I am open to slight negotiation.
-                            <span class="msg-time">10:50 AM</span>
-                        </div>
-                    </div>
-
-                    <div class="msg-bubble-container received">
-                        <div class="msg-bubble">
-                            Sounds good. See you tomorrow.
-                            <span class="msg-time">10:55 AM</span>
-                        </div>
-                    </div>
+                    @endforelse
                 </div>
 
                 <!-- Input Area -->
-                <div class="chat-input-wrapper" style="position: relative;">
+                <form action="{{ route('chat.send-message') }}" method="POST" class="chat-input-wrapper" style="position: relative;">
+                    @csrf
+                    <input type="hidden" name="conversation_id" value="{{ $activeConversation ? $activeConversation->id : '' }}">
                     <!-- Attachment Preview Container -->
                     <div id="attachmentPreviewWrapper" class="attachment-preview-wrapper">
                         <img id="attachmentThumb" src="" alt="Attachment" class="attachment-thumb">
@@ -1529,16 +1354,12 @@
                                 <line x1="15" y1="9" x2="15.01" y2="9"></line>
                             </svg>
                         </button>
-                        <input type="text" class="chat-input" placeholder="Write a reply...">
-                        <input type="file" id="chatFileInput" accept="image/*" style="display: none;">
-                        <button type="button" class="icon-btn" id="attachFileBtn" title="Attach Image">
-                            <img src="{{ asset('images/clip-icon.svg') }}" alt="Attach">
-                        </button>
-                        <button type="button" class="send-btn" id="sendMessageBtn" title="Send Message">
+                        <input type="text" name="message" class="chat-input" placeholder="Write a reply..." required autocomplete="off">
+                        <button type="submit" class="send-btn" id="sendMessageBtn" title="Send Message">
                             <img src="{{ asset('images/send-icon.svg') }}" alt="Send">
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </main></div></div>

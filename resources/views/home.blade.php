@@ -67,14 +67,20 @@
                     <div class="home-filter" style="position: relative;">
                         <select name="category" class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
                             <option value="" disabled selected>Any category</option>
-                            <option value="dogs">Dogs</option>
-                            <option value="cats">Cats</option>
-                            <option value="birds">Birds</option>
-                            <option value="rabbits">Rabbits</option>
-                            <option value="fish">Fish</option>
-                            <option value="reptiles">Reptiles</option>
-                            <option value="horses-farm">Horses & Farm</option>
-                            <option value="exotic">Exotic Pets</option>
+                            @if(isset($categories) && $categories->isNotEmpty())
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                                @endforeach
+                            @else
+                                <option value="dogs">Dogs</option>
+                                <option value="cats">Cats</option>
+                                <option value="birds">Birds</option>
+                                <option value="rabbits">Rabbits</option>
+                                <option value="fish">Fish</option>
+                                <option value="reptiles">Reptiles</option>
+                                <option value="horses-farm">Horses & Farm</option>
+                                <option value="exotic">Exotic Pets</option>
+                            @endif
                         </select>
                         <div class="home-filter-left">
                             <!-- Green Paw Icon -->
@@ -259,78 +265,47 @@
                     <button class="home-btn-outline home-btn-desktop" onclick="window.location='{{ route('category', ['featured' => 'true']) }}'">View All Pets</button>
                 </div>
                 <div class="home-pets-grid">
-                    <!-- Card 1 -->
-                    <div class="home-pet-card" onclick="window.location='{{ url('/pet-details') }}'">
-                        <div class="home-pet-media">
-                            <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever" class="home-pet-img">
-                            <span class="home-pet-badge">FEATURED</span>
-                            <div class="home-pet-fav"><i class="fa-regular fa-heart"></i></div>
-                        </div>
-                        <div class="home-pet-info">
-                            <h3 class="home-pet-title">Golden Retriever Puppy</h3>
-                            <p class="home-pet-breed">Golden Retriever</p>
-                            <div class="home-pet-price">Rs. 85,000</div>
-                            <div class="home-pet-meta">
-                                <span><i class="fa-regular fa-clock"></i> 3 Months</span>
-                                <span><i class="fa-solid fa-mars"></i> Male</span>
+                    @if(isset($featuredListings) && $featuredListings->isNotEmpty())
+                        @foreach($featuredListings as $pet)
+                            <div class="home-pet-card" onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" style="cursor: pointer;">
+                                <div class="home-pet-media">
+                                    <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="home-pet-img">
+                                    <span class="home-pet-badge">FEATURED</span>
+                                    <form action="{{ route('favorites.toggle', ['listingId' => $pet->id]) }}" method="POST" style="display:inline;" onclick="event.stopPropagation();">
+                                        @csrf
+                                        <button type="submit" class="home-pet-fav" style="border:none; cursor:pointer;" title="Add to favorites">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="home-pet-info">
+                                    <h3 class="home-pet-title">{{ $pet->title }}</h3>
+                                    <p class="home-pet-breed">{{ $pet->breed_name ?: ($pet->breed ? $pet->breed->name : 'Pet') }}</p>
+                                    <div class="home-pet-price">{{ $pet->formatted_price }}</div>
+                                    <div class="home-pet-meta">
+                                        <span><i class="fa-regular fa-clock"></i> {{ $pet->age_text }}</span>
+                                        <span><i class="fa-solid fa-{{ $pet->gender == 'female' ? 'venus' : 'mars' }}"></i> {{ ucfirst($pet->gender) }}</span>
+                                    </div>
+                                    <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> {{ $pet->city }}</span><span><i class="fa-regular fa-clock"></i> {{ $pet->created_at->diffForHumans() }}</span></div>
+                                </div>
                             </div>
-                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
-                        </div>
-                    </div>
-                    <!-- Card 2 -->
-                    <div class="home-pet-card" onclick="window.location='{{ url('/pet-details') }}'">
-                        <div class="home-pet-media">
-                            <img src="{{ asset('images/card_persian.jpg') }}" alt="Persian Cat" class="home-pet-img">
-                            <span class="home-pet-badge">FEATURED</span>
-                            <div class="home-pet-fav"><i class="fa-regular fa-heart"></i></div>
-                        </div>
-                        <div class="home-pet-info">
-                            <h3 class="home-pet-title">Persian Cat</h3>
-                            <p class="home-pet-breed">Persian</p>
-                            <div class="home-pet-price">Rs. 42,000</div>
-                            <div class="home-pet-meta">
-                                <span><i class="fa-regular fa-clock"></i> 7 Months</span>
-                                <span><i class="fa-solid fa-venus"></i> Female</span>
+                        @endforeach
+                    @else
+                        <!-- Fallback Card -->
+                        <div class="home-pet-card" onclick="window.location='{{ route('category') }}'">
+                            <div class="home-pet-media">
+                                <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever" class="home-pet-img">
+                                <span class="home-pet-badge">FEATURED</span>
                             </div>
-                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Islamabad</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
-                        </div>
-                    </div>
-                    <!-- Card 3 -->
-                    <div class="home-pet-card" onclick="window.location='{{ url('/pet-details') }}'">
-                        <div class="home-pet-media">
-                            <img src="{{ asset('images/card_parrot.jpg') }}" alt="African Grey Parrot" class="home-pet-img">
-                            <span class="home-pet-badge">FEATURED</span>
-                            <div class="home-pet-fav"><i class="fa-regular fa-heart"></i></div>
-                        </div>
-                        <div class="home-pet-info">
-                            <h3 class="home-pet-title">African Grey Parrot</h3>
-                            <p class="home-pet-breed">African Grey</p>
-                            <div class="home-pet-price">Rs. 65,000</div>
-                            <div class="home-pet-meta">
-                                <span><i class="fa-regular fa-clock"></i> 1 Year</span>
-                                <span><i class="fa-solid fa-mars"></i> Male</span>
+                            <div class="home-pet-info">
+                                <h3 class="home-pet-title">Golden Retriever Puppy</h3>
+                                <p class="home-pet-breed">Golden Retriever</p>
+                                <div class="home-pet-price">Rs. 75,000</div>
+                                <div class="home-pet-meta"><span><i class="fa-regular fa-clock"></i> 3 Months</span><span><i class="fa-solid fa-mars"></i> Male</span></div>
+                                <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span></div>
                             </div>
-                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Karachi</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
                         </div>
-                    </div>
-                    <!-- Card 4 -->
-                    <div class="home-pet-card" onclick="window.location='{{ url('/pet-details') }}'">
-                        <div class="home-pet-media">
-                            <img src="{{ asset('images/card_rabbit.jpg') }}" alt="Mini Lop Rabbit" class="home-pet-img">
-                            <span class="home-pet-badge">FEATURED</span>
-                            <div class="home-pet-fav"><i class="fa-regular fa-heart"></i></div>
-                        </div>
-                        <div class="home-pet-info">
-                            <h3 class="home-pet-title">Mini Lop Rabbit</h3>
-                            <p class="home-pet-breed">Mini Lop</p>
-                            <div class="home-pet-price">Rs. 12,500</div>
-                            <div class="home-pet-meta">
-                                <span><i class="fa-regular fa-clock"></i> 5 Months</span>
-                                <span><i class="fa-solid fa-venus"></i> Female</span>
-                            </div>
-                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
-                        </div>
-                    </div>
+                    @endif
                 </div>
                 <div class="home-mobile-btn-wrap home-mobile-btn-wrap--featured">
                     <a href="{{ route('category', ['featured' => 'true']) }}" class="home-btn-viewall" id="featured-view-all-mobile">View All Pets</a>
@@ -351,74 +326,48 @@
                     <button class="home-btn-outline home-btn-desktop" onclick="window.location='{{ route('category') }}'">View All</button>
                 </div>
                 <div class="home-pets-grid">
-                    <!-- Card 1 -->
-                    <div class="home-pet-card" onclick="window.location='{{ url('/pet-details') }}'">
-                        <div class="home-pet-media">
-                            <img src="{{ asset('images/card_gsd.jpg') }}" alt="German Shepherd" class="home-pet-img">
-                            <div class="home-pet-fav"><i class="fa-regular fa-heart"></i></div>
-                        </div>
-                        <div class="home-pet-info">
-                            <h3 class="home-pet-title">German Shepherd</h3>
-                            <p class="home-pet-breed">German Shepherd</p>
-                            <div class="home-pet-price">Rs. 85,000</div>
-                            <div class="home-pet-meta">
-                                <span><i class="fa-regular fa-clock"></i> 3 Months</span>
-                                <span><i class="fa-solid fa-mars"></i> Male</span>
+                    @if(isset($recentListings) && $recentListings->isNotEmpty())
+                        @foreach($recentListings as $pet)
+                            <div class="home-pet-card" onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" style="cursor: pointer;">
+                                <div class="home-pet-media">
+                                    <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="home-pet-img">
+                                    @if($pet->is_featured)
+                                        <span class="home-pet-badge">FEATURED</span>
+                                    @endif
+                                    <form action="{{ route('favorites.toggle', ['listingId' => $pet->id]) }}" method="POST" style="display:inline;" onclick="event.stopPropagation();">
+                                        @csrf
+                                        <button type="submit" class="home-pet-fav" style="border:none; cursor:pointer;" title="Add to favorites">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="home-pet-info">
+                                    <h3 class="home-pet-title">{{ $pet->title }}</h3>
+                                    <p class="home-pet-breed">{{ $pet->breed_name ?: ($pet->breed ? $pet->breed->name : 'Pet') }}</p>
+                                    <div class="home-pet-price">{{ $pet->formatted_price }}</div>
+                                    <div class="home-pet-meta">
+                                        <span><i class="fa-regular fa-clock"></i> {{ $pet->age_text }}</span>
+                                        <span><i class="fa-solid fa-{{ $pet->gender == 'female' ? 'venus' : 'mars' }}"></i> {{ ucfirst($pet->gender) }}</span>
+                                    </div>
+                                    <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> {{ $pet->city }}</span><span><i class="fa-regular fa-clock"></i> {{ $pet->created_at->diffForHumans() }}</span></div>
+                                </div>
                             </div>
-                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
-                        </div>
-                    </div>
-                    <!-- Card 2 -->
-                    <div class="home-pet-card" onclick="window.location='{{ url('/pet-details') }}'">
-                        <div class="home-pet-media">
-                            <img src="{{ asset('images/card_british.jpg') }}" alt="British Shorthair" class="home-pet-img">
-                            <div class="home-pet-fav"><i class="fa-regular fa-heart"></i></div>
-                        </div>
-                        <div class="home-pet-info">
-                            <h3 class="home-pet-title">British Shorthair</h3>
-                            <p class="home-pet-breed">British Shorthair</p>
-                            <div class="home-pet-price">Rs. 42,000</div>
-                            <div class="home-pet-meta">
-                                <span><i class="fa-regular fa-clock"></i> 7 Months</span>
-                                <span><i class="fa-solid fa-venus"></i> Female</span>
+                        @endforeach
+                    @else
+                        <!-- Fallback Card -->
+                        <div class="home-pet-card" onclick="window.location='{{ route('category') }}'">
+                            <div class="home-pet-media">
+                                <img src="{{ asset('images/card_gsd.jpg') }}" alt="German Shepherd" class="home-pet-img">
                             </div>
-                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Islamabad</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
-                        </div>
-                    </div>
-                    <!-- Card 3 -->
-                    <div class="home-pet-card" onclick="window.location='{{ url('/pet-details') }}'">
-                        <div class="home-pet-media">
-                            <img src="{{ asset('images/card_shihtzu.jpg') }}" alt="Shih Tzu Puppy" class="home-pet-img">
-                            <div class="home-pet-fav"><i class="fa-regular fa-heart"></i></div>
-                        </div>
-                        <div class="home-pet-info">
-                            <h3 class="home-pet-title">Shih Tzu Puppy</h3>
-                            <p class="home-pet-breed">Shih Tzu</p>
-                            <div class="home-pet-price">Rs. 65,000</div>
-                            <div class="home-pet-meta">
-                                <span><i class="fa-regular fa-clock"></i> 1 Year</span>
-                                <span><i class="fa-solid fa-mars"></i> Male</span>
+                            <div class="home-pet-info">
+                                <h3 class="home-pet-title">German Shepherd</h3>
+                                <p class="home-pet-breed">German Shepherd</p>
+                                <div class="home-pet-price">Rs. 55,000</div>
+                                <div class="home-pet-meta"><span><i class="fa-regular fa-clock"></i> 3 Months</span><span><i class="fa-solid fa-mars"></i> Male</span></div>
+                                <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span></div>
                             </div>
-                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Karachi</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
                         </div>
-                    </div>
-                    <!-- Card 4 -->
-                    <div class="home-pet-card" onclick="window.location='{{ url('/pet-details') }}'">
-                        <div class="home-pet-media">
-                            <img src="{{ asset('images/card_parrot.jpg') }}" alt="Lovebird Pair" class="home-pet-img">
-                            <div class="home-pet-fav"><i class="fa-regular fa-heart"></i></div>
-                        </div>
-                        <div class="home-pet-info">
-                            <h3 class="home-pet-title">Lovebird Pair</h3>
-                            <p class="home-pet-breed">Lovebird</p>
-                            <div class="home-pet-price">Rs. 12,500</div>
-                            <div class="home-pet-meta">
-                                <span><i class="fa-regular fa-clock"></i> 5 Months</span>
-                                <span><i class="fa-solid fa-venus"></i> Female</span>
-                            </div>
-                            <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span><span><i class="fa-regular fa-clock"></i> 3 days ago</span></div>
-                        </div>
-                    </div>
+                    @endif
                 </div>
                 <div class="home-mobile-btn-wrap home-mobile-btn-wrap--featured">
                     <a href="{{ route('category') }}" class="home-btn-viewall" id="latest-view-all-mobile">View All Pets</a>

@@ -147,16 +147,18 @@
         <div class="sp-header">
             <div class="sp-info-left">
                 <div class="sp-avatar-wrap">
-                    <img src="{{ asset('images/seller-avatar.jpg') }}" alt="Ahmed Khan" class="sp-avatar" onerror="this.src='https://placehold.co/120x120/ccc/fff?text=AK';">
+                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="sp-avatar" onerror="this.src='{{ asset('images/seller-avatar.jpg') }}'">
                 </div>
                 <div class="sp-details">
                     <div class="sp-name-row">
-                        <h1 class="sp-name">Ahmed Khan</h1>
-                        <span class="sp-badge"><i class="fa-solid fa-circle-check"></i> Verified</span>
+                        <h1 class="sp-name">{{ $user->name }}</h1>
+                        @if($user->is_verified)
+                            <span class="sp-badge"><i class="fa-solid fa-circle-check"></i> Verified</span>
+                        @endif
                     </div>
                     <div class="sp-type-loc">
-                        <span>Individual Seller</span>
-                        <span>&nbsp;<i class="fa-solid fa-location-dot"></i> Lahore</span>
+                        <span>{{ ucfirst($user->seller_type) }} Seller</span>
+                        <span>&nbsp;<i class="fa-solid fa-location-dot"></i> {{ $user->city }}</span>
                     </div>
                 </div>
             </div>
@@ -173,18 +175,20 @@
             
             <div class="sp-stats">
                 <div class="sp-stat sp-stat-green">
-                    <div class="sp-stat-val">Verified</div>
+                    <div class="sp-stat-val">{{ $user->is_verified ? 'Verified' : 'Active' }}</div>
                     <div class="sp-stat-label">Seller Status</div>
                 </div>
                 <div class="sp-stat sp-stat-beige">
-                    <div class="sp-stat-val">4</div>
+                    <div class="sp-stat-val">{{ $activeListings->count() }}</div>
                     <div class="sp-stat-label">Active Listings</div>
                 </div>
                 <div class="sp-stat sp-stat-beige">
-                    <div class="sp-stat-val">3</div>
+                    <div class="sp-stat-val">{{ $soldListings->count() }}</div>
                     <div class="sp-stat-label">Sold / Completed</div>
                 </div>
             </div>
+        </div>
+    </div>
         </div>
     </div>
     
@@ -199,77 +203,29 @@
         </div>
         
         <div class="my-pets-grid">
-            <!-- Card 1 -->
-            <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                <div style="position: relative;">
-                    <img src="{{ asset('images/card_gsd.jpg') }}" alt="German Shepherd" class="my-pet-img" onerror="this.src='https://placehold.co/400x300';">
-                    <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                </div>
-                <div class="my-pet-info">
-                    <h3 class="my-pet-title">German Shepherd</h3>
-                    <p class="my-pet-breed">German Shepherd</p>
-                    <div class="my-pet-price">Rs. 85,000</div>
-                    <div class="my-pet-meta">
-                        <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 3 Months</span>
-                        <span><i class="fa-solid fa-venus-mars" style="margin-right: 4px;"></i> Male</span>
+            @forelse($activeListings as $pet)
+                <a href="{{ route('pet.details', ['id' => $pet->id]) }}" class="my-pet-card">
+                    <div style="position: relative;">
+                        <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="my-pet-img" onerror="this.src='{{ asset('images/card_gsd.jpg') }}'">
+                        @if($pet->is_featured)
+                            <span class="my-badge" style="position: absolute; top: 12px; left: 12px; background: #FADFA7; color: #161616; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800;">FEATURED</span>
+                        @endif
+                        <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                     </div>
-                    <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Lahore</div>
-                </div>
-            </a>
-            
-            <!-- Card 2 -->
-            <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                <div style="position: relative;">
-                    <img src="{{ asset('images/card_british.jpg') }}" alt="British Shorthair" class="my-pet-img" onerror="this.src='https://placehold.co/400x300';">
-                    <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                </div>
-                <div class="my-pet-info">
-                    <h3 class="my-pet-title">British Shorthair</h3>
-                    <p class="my-pet-breed">British Shorthair</p>
-                    <div class="my-pet-price">Rs. 42,000</div>
-                    <div class="my-pet-meta">
-                        <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 7 Months</span>
-                        <span><i class="fa-solid fa-venus" style="margin-right: 4px;"></i> Female</span>
+                    <div class="my-pet-info">
+                        <h3 class="my-pet-title">{{ $pet->title }}</h3>
+                        <p class="my-pet-breed">{{ $pet->breed_name ?: ($pet->breed ? $pet->breed->name : 'Pet') }}</p>
+                        <div class="my-pet-price">{{ $pet->formatted_price }}</div>
+                        <div class="my-pet-meta">
+                            <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> {{ $pet->age_text }}</span>
+                            <span><i class="fa-solid fa-{{ $pet->gender === 'female' ? 'venus' : 'mars' }}" style="margin-right: 4px;"></i> {{ ucfirst($pet->gender) }}</span>
+                        </div>
+                        <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> {{ $pet->city }}</div>
                     </div>
-                    <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Islamabad</div>
-                </div>
-            </a>
-            
-            <!-- Card 3 -->
-            <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                <div style="position: relative;">
-                    <img src="{{ asset('images/card_shihtzu.jpg') }}" alt="Shih Tzu Puppy" class="my-pet-img" onerror="this.src='https://placehold.co/400x300';">
-                    <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                </div>
-                <div class="my-pet-info">
-                    <h3 class="my-pet-title">Shih Tzu Puppy</h3>
-                    <p class="my-pet-breed">Shih Tzu</p>
-                    <div class="my-pet-price">Rs. 65,000</div>
-                    <div class="my-pet-meta">
-                        <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 1 Year</span>
-                        <span><i class="fa-solid fa-venus-mars" style="margin-right: 4px;"></i> Male</span>
-                    </div>
-                    <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Karachi</div>
-                </div>
-            </a>
-            
-            <!-- Card 4 -->
-            <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                <div style="position: relative;">
-                    <img src="{{ asset('images/card_parrot.jpg') }}" alt="Lovebird Pair" class="my-pet-img" onerror="this.src='https://placehold.co/400x300';">
-                    <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                </div>
-                <div class="my-pet-info">
-                    <h3 class="my-pet-title">Lovebird Pair</h3>
-                    <p class="my-pet-breed">Lovebird</p>
-                    <div class="my-pet-price">Rs. 12,500</div>
-                    <div class="my-pet-meta">
-                        <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 5 Months</span>
-                        <span><i class="fa-solid fa-venus" style="margin-right: 4px;"></i> Female</span>
-                    </div>
-                    <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Lahore</div>
-                </div>
-            </a>
+                </a>
+            @empty
+                <div style="grid-column: 1 / -1; padding: 32px; text-align: center; color: #64748b;">No active listings from this seller yet.</div>
+            @endforelse
         </div>
     </div>
 </div>

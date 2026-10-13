@@ -287,39 +287,45 @@
             <section class="pd-top">
                 <!-- Gallery -->
                 <div class="pd-card pd-gallery">
-                    <img id="pdMainImg" class="pd-main-img" src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever Puppy">
+                    <img id="pdMainImg" class="pd-main-img" src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
                     <div class="pd-thumbs">
-                        <img class="pd-thumb active" src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever photo 1">
-                        <img class="pd-thumb" src="{{ asset('images/golden_retriever.jpg') }}" alt="Golden Retriever photo 2">
-                        <img class="pd-thumb" src="{{ asset('images/cat_dog.jpg') }}" alt="Golden Retriever photo 3">
-                        <img class="pd-thumb" src="{{ asset('images/card_gsd.jpg') }}" alt="Golden Retriever photo 4">
-                        <img class="pd-thumb" src="{{ asset('images/card_shihtzu.jpg') }}" alt="Golden Retriever photo 5">
+                        @if($listing->images && $listing->images->isNotEmpty())
+                            @foreach($listing->images as $img)
+                                <img class="pd-thumb {{ $loop->first ? 'active' : '' }}" src="{{ $img->image_url }}" alt="{{ $listing->title }} photo {{ $loop->iteration }}" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                            @endforeach
+                        @else
+                            <img class="pd-thumb active" src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                        @endif
                     </div>
                 </div>
 
                 <!-- Summary -->
                 <div class="pd-card pd-summary">
                     <div class="pd-sum-head">
-                        <h1 class="pd-title">Golden Retriever<br>Puppy</h1>
+                        <h1 class="pd-title">{{ $listing->title }}</h1>
                         <div class="pd-icon-btns">
-                            <button id="pdLikeBtn" class="pd-icon-btn" aria-label="Save to favourites"><i class="fa-solid fa-heart"></i></button>
+                            <form action="{{ route('favorites.toggle', ['listingId' => $listing->id]) }}" method="POST" style="display:inline;">
+                                @csrf
+                                <button type="submit" id="pdLikeBtn" class="pd-icon-btn {{ (auth()->check() && auth()->user()->hasFavorited($listing->id)) ? 'liked' : '' }}" aria-label="Save to favourites"><i class="fa-solid fa-heart"></i></button>
+                            </form>
                             <button id="pdShareBtn" class="pd-icon-btn" aria-label="Share listing"><i class="fa-solid fa-share-nodes"></i></button>
                         </div>
                     </div>
-                    <div class="pd-price">Rs. 85,000</div>
+                    <div class="pd-price">{{ $listing->formatted_price }}</div>
                     <div class="pd-sub-meta">
-                        <span><i class="fa-solid fa-location-dot"></i>Lahore</span>
-                        <span><i class="fa-regular fa-clock"></i>Posted 2 days ago</span>
+                        <span><i class="fa-solid fa-location-dot"></i>{{ $listing->city }}</span>
+                        <span><i class="fa-regular fa-clock"></i>Posted {{ $listing->created_at->diffForHumans() }}</span>
+                        <span><i class="fa-regular fa-eye"></i>{{ $listing->views_count }} views</span>
                     </div>
                     <div class="pd-attr-grid">
-                        <div class="pd-attr"><span>Breed</span><strong>Golden Retriever</strong></div>
-                        <div class="pd-attr"><span>Age</span><strong>2 Months</strong></div>
-                        <div class="pd-attr"><span>Gender</span><strong>Male</strong></div>
-                        <div class="pd-attr"><span>Color</span><strong>Golden</strong></div>
+                        <div class="pd-attr"><span>Breed</span><strong>{{ $listing->breed_name ?: ($listing->breed ? $listing->breed->name : 'N/A') }}</strong></div>
+                        <div class="pd-attr"><span>Age</span><strong>{{ $listing->age_text }}</strong></div>
+                        <div class="pd-attr"><span>Gender</span><strong>{{ ucfirst($listing->gender) }}</strong></div>
+                        <div class="pd-attr"><span>Color</span><strong>{{ $listing->color ?: 'Standard' }}</strong></div>
                     </div>
                     <div class="pd-btn-row">
-                        <a href="#" id="pdSendMsgBtn" class="pd-btn pd-btn-primary"><i class="fa-regular fa-message"></i> Send Message</a>
-                        <a href="#" id="pdContactBtn" class="pd-btn pd-btn-outline"><i class="fa-regular fa-user"></i> Contact Seller</a>
+                        <a href="{{ route('chat.start', ['listingId' => $listing->id]) }}" id="pdSendMsgBtn" class="pd-btn pd-btn-primary"><i class="fa-regular fa-message"></i> Send Message</a>
+                        <a href="tel:{{ $listing->masked_phone }}" id="pdContactBtn" class="pd-btn pd-btn-outline"><i class="fa-solid fa-phone"></i> {{ $listing->masked_phone }}</a>
                     </div>
                     <div class="pd-verify-note">
                         <i class="fa-solid fa-circle-check"></i>
@@ -334,12 +340,12 @@
                     <!-- Pet Details -->
                     <h2 class="pd-h3">Pet Details</h2>
                     <div class="pd-table">
-                        <div class="pd-row"><span>Category</span><strong>Dog</strong></div>
-                        <div class="pd-row"><span>Breed</span><strong>Golden Retriever</strong></div>
-                        <div class="pd-row"><span>Age</span><strong>2 Months</strong></div>
-                        <div class="pd-row"><span>Gender</span><strong>Male</strong></div>
-                        <div class="pd-row"><span>Color</span><strong>Golden</strong></div>
-                        <div class="pd-row"><span>Pedigree / Papers</span><strong>Yes</strong></div>
+                        <div class="pd-row"><span>Category</span><strong>{{ $listing->category ? $listing->category->name : 'General' }}</strong></div>
+                        <div class="pd-row"><span>Breed</span><strong>{{ $listing->breed_name ?: ($listing->breed ? $listing->breed->name : 'N/A') }}</strong></div>
+                        <div class="pd-row"><span>Age</span><strong>{{ $listing->age_text }}</strong></div>
+                        <div class="pd-row"><span>Gender</span><strong>{{ ucfirst($listing->gender) }}</strong></div>
+                        <div class="pd-row"><span>Color</span><strong>{{ $listing->color ?: 'Standard' }}</strong></div>
+                        <div class="pd-row"><span>Pedigree / Papers</span><strong>{{ $listing->has_papers ? 'Yes' : 'No' }}</strong></div>
                     </div>
 
                     <hr class="pd-divider">
@@ -349,19 +355,19 @@
                     <div class="pd-health-grid">
                         <div class="pd-health">
                             <div class="pd-health-icon"><i class="fa-solid fa-syringe"></i></div>
-                            <div><strong>Vaccination</strong><span>Vaccinated</span></div>
+                            <div><strong>Vaccination</strong><span>{{ $listing->vaccinated ? 'Vaccinated' : 'Not Vaccinated' }}</span></div>
                         </div>
                         <div class="pd-health">
                             <div class="pd-health-icon"><i class="fa-solid fa-shield-heart"></i></div>
-                            <div><strong>Deworming</strong><span>Completed</span></div>
+                            <div><strong>Deworming</strong><span>{{ $listing->dewormed ? 'Completed' : 'Pending' }}</span></div>
                         </div>
                         <div class="pd-health">
                             <div class="pd-health-icon"><i class="fa-solid fa-notes-medical"></i></div>
-                            <div><strong>Health Notes</strong><span>Health information provided by seller.</span></div>
+                            <div><strong>Health Status</strong><span>{{ $listing->vaccinated && $listing->dewormed ? 'Fully Checked' : 'Standard Health' }}</span></div>
                         </div>
                         <div class="pd-health">
                             <div class="pd-health-icon"><i class="fa-solid fa-file-lines"></i></div>
-                            <div><strong>Papers</strong><span>Available</span></div>
+                            <div><strong>Papers</strong><span>{{ $listing->has_papers ? 'Available' : 'Not Available' }}</span></div>
                         </div>
                     </div>
 
@@ -370,27 +376,28 @@
                     <!-- Description -->
                     <div class="pd-desc-box">
                         <h2 class="pd-h3">Description</h2>
-                        <p class="pd-desc">Friendly Golden Retriever puppy looking for a responsible home. The seller has provided the pet's age, health details and pedigree information above. Contact the seller through the marketplace for further information and arrange a visit before completing any transaction.</p>
+                        <p class="pd-desc">{{ $listing->description }}</p>
                     </div>
                 </div>
 
                 <!-- Sidebar -->
                 <aside class="pd-side">
                     <div class="pd-card pd-seller">
-                        <a href="{{ route('seller.profile') }}" class="pd-seller-head" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
-                            <img class="pd-avatar" src="{{ asset('images/seller-avatar.jpg') }}" alt="Ahmed Khan">
+                        <a href="{{ route('seller.profile', ['id' => $seller->id]) }}" class="pd-seller-head" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                            <img class="pd-avatar" src="{{ $seller->avatar_url }}" alt="{{ $seller->name }}" onerror="this.src='{{ asset('images/seller-avatar.jpg') }}'">
                             <div>
-                                <div class="pd-seller-name">Ahmed Khan <i class="fa-solid fa-circle-check"></i></div>
-                                <div class="pd-seller-type">Individual Seller</div>
+                                <div class="pd-seller-name">{{ $seller->name }} @if($seller->is_verified)<i class="fa-solid fa-circle-check"></i>@endif</div>
+                                <div class="pd-seller-type">{{ ucfirst($seller->seller_type) }} Seller</div>
                             </div>
                         </a>
                         <div class="pd-seller-meta">
-                            <span><i class="fa-solid fa-location-dot"></i>Lahore</span>
-                            <span><i class="fa-solid fa-shield-halved"></i>Verified Seller</span>
+                            <span><i class="fa-solid fa-location-dot"></i>{{ $seller->city ?: $listing->city }}</span>
+                            <span><i class="fa-solid fa-shield-halved"></i>Trust: {{ $seller->trust_score }}%</span>
+                            <span><i class="fa-solid fa-paw"></i>{{ $sellerActiveCount }} active ads</span>
                         </div>
-                        <a href="#" id="pdSellerMsgBtn" class="pd-btn pd-btn-primary"><i class="fa-regular fa-message"></i> Send Message</a>
-                        <a href="{{ route('seller.profile') }}" id="pdSellerProfileBtn" class="pd-btn pd-btn-outline"><i class="fa-regular fa-user"></i> View Seller Profile</a>
-                        <a href="#" id="pdReportBtn" class="pd-report"><i class="fa-regular fa-flag"></i> Report Seller</a>
+                        <a href="{{ route('chat.start', ['listingId' => $listing->id]) }}" id="pdSellerMsgBtn" class="pd-btn pd-btn-primary"><i class="fa-regular fa-message"></i> Send Message</a>
+                        <a href="{{ route('seller.profile', ['id' => $seller->id]) }}" id="pdSellerProfileBtn" class="pd-btn pd-btn-outline"><i class="fa-regular fa-user"></i> View Seller Profile</a>
+                        <a href="#" id="pdReportBtn" class="pd-report"><i class="fa-regular fa-flag"></i> Report Listing</a>
                     </div>
 
                     <div class="pd-safety">
@@ -491,78 +498,31 @@
                 <h2 class="my-sec-title">Similar Pets</h2>
                 <p class="my-sec-desc">Related listings that may also match your search.</p>
                 <div class="my-pets-grid" style="text-align: left;">
-                    <!-- Card 1 -->
-                    <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                        <div style="position: relative;">
-                            <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever" class="my-pet-img">
-                            <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                        </div>
-                        <div class="my-pet-info">
-                            <h3 class="my-pet-title">Golden Retriever Puppy</h3>
-                            <p class="my-pet-breed">Golden Retriever</p>
-                            <div class="my-pet-price">Rs. 95,000</div>
-                            <div class="my-pet-meta">
-                                <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 2 Months</span>
-                                <span><i class="fa-solid fa-mars" style="margin-right: 4px;"></i> Male</span>
+                    @forelse($similarListings as $similar)
+                        <a href="{{ route('pet.details', ['id' => $similar->id]) }}" class="my-pet-card">
+                            <div style="position: relative;">
+                                <img src="{{ $similar->primary_image_url }}" alt="{{ $similar->title }}" class="my-pet-img" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                                @if($similar->is_featured)
+                                    <span class="my-badge">FEATURED</span>
+                                @endif
+                                <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                             </div>
-                            <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Lahore</div>
-                        </div>
-                    </a>
-                    <!-- Card 2 -->
-                    <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                        <div style="position: relative;">
-                            <img src="{{ asset('images/card_persian.jpg') }}" alt="Persian Cat" class="my-pet-img">
-                            <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                        </div>
-                        <div class="my-pet-info">
-                            <h3 class="my-pet-title">Persian Cat</h3>
-                            <p class="my-pet-breed">Persian</p>
-                            <div class="my-pet-price">Rs. 42,000</div>
-                            <div class="my-pet-meta">
-                                <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 7 Months</span>
-                                <span><i class="fa-solid fa-venus" style="margin-right: 4px;"></i> Female</span>
+                            <div class="my-pet-info">
+                                <h3 class="my-pet-title">{{ $similar->title }}</h3>
+                                <p class="my-pet-breed">{{ $similar->breed_name ?: ($similar->breed ? $similar->breed->name : 'Pet') }}</p>
+                                <div class="my-pet-price">{{ $similar->formatted_price }}</div>
+                                <div class="my-pet-meta">
+                                    <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> {{ $similar->age_text }}</span>
+                                    <span><i class="fa-solid fa-{{ $similar->gender == 'female' ? 'venus' : 'mars' }}" style="margin-right: 4px;"></i> {{ ucfirst($similar->gender) }}</span>
+                                </div>
+                                <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> {{ $similar->city }}</div>
                             </div>
-                            <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Islamabad</div>
+                        </a>
+                    @empty
+                        <div style="grid-column: 1 / -1; text-align: center; color: #64748b; padding: 20px;">
+                            No other similar pets currently listed in this category.
                         </div>
-                    </a>
-                    <!-- Card 3 -->
-                    <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                        <div style="position: relative;">
-                            <img src="{{ asset('images/card_parrot.jpg') }}" alt="African Grey Parrot" class="my-pet-img">
-                            <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                        </div>
-                        <div class="my-pet-info">
-                            <h3 class="my-pet-title">African Grey Parrot</h3>
-                            <p class="my-pet-breed">African Grey</p>
-                            <div class="my-pet-price">Rs. 65,000</div>
-                            <div class="my-pet-meta">
-                                <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 1 Year</span>
-                                <span><i class="fa-solid fa-mars" style="margin-right: 4px;"></i> Male</span>
-                            </div>
-                            <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Karachi</div>
-                        </div>
-                    </a>
-                    <!-- Card 4 -->
-                    <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                        <div style="position: relative;">
-                            <img src="{{ asset('images/card_rabbit.jpg') }}" alt="Mini Lop Rabbit" class="my-pet-img">
-                            <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                        </div>
-                        <div class="my-pet-info">
-                            <h3 class="my-pet-title">Mini Lop Rabbit</h3>
-                            <p class="my-pet-breed">Mini Lop</p>
-                            <div class="my-pet-price">Rs. 12,500</div>
-                            <div class="my-pet-meta">
-                                <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 5 Months</span>
-                                <span><i class="fa-solid fa-venus" style="margin-right: 4px;"></i> Female</span>
-                            </div>
-                            <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Lahore</div>
-                        </div>
-                    </a>
+                    @endforelse
                 </div>
             </section>
 
@@ -644,6 +604,24 @@
 
         function handleReportSubmit(e) {
             if (e) e.preventDefault();
+            const reason = document.querySelector('input[name="report_reason"]:checked')?.value || 'Scam / Fraud';
+            const details = document.getElementById('reportDetailsInput')?.value || '';
+            
+            fetch('{{ route('reports.submit') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    listing_id: {{ $listing->id }},
+                    seller_id: {{ $seller->id }},
+                    reason: reason,
+                    details: details
+                })
+            }).catch(function(){});
+
             const detailsInput = document.getElementById('reportDetailsInput');
             if (detailsInput) detailsInput.value = '';
             closeReportModal();
@@ -686,6 +664,26 @@
                     const icon = like.querySelector('i');
                     icon.classList.toggle('fa-regular');
                     icon.classList.toggle('fa-solid');
+                });
+            }
+
+            // Reveal masked phone number (anti-scraper & lead tracking)
+            const contactBtn = document.getElementById('pdContactBtn');
+            if (contactBtn) {
+                contactBtn.addEventListener('click', function (e) {
+                    if (contactBtn.dataset.revealed !== 'true') {
+                        e.preventDefault();
+                        fetch('{{ route('listings.reveal-phone', ['id' => $listing->id]) }}')
+                            .then(r => r.json())
+                            .then(data => {
+                                if (data.success && data.phone) {
+                                    contactBtn.innerHTML = '<i class="fa-solid fa-phone"></i> ' + data.phone;
+                                    contactBtn.href = 'tel:' + data.phone;
+                                    contactBtn.dataset.revealed = 'true';
+                                }
+                            })
+                            .catch(function(){});
+                    }
                 });
             }
 
