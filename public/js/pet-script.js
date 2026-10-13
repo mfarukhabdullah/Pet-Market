@@ -816,18 +816,23 @@ function initFavorites() {
         // If inside a favorite list item, animate removal
         const favContainer = heartBtn.closest('.favorite-item, .fav-card, .fav-card-modern');
         if (favContainer) {
-          favContainer.style.transition = 'opacity 0.3s ease, height 0.3s ease, margin 0.3s ease, padding 0.3s ease';
+          favContainer.style.pointerEvents = 'none';
+          favContainer.style.transition = 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
           favContainer.style.opacity = '0';
+          favContainer.style.transform = 'scale(0.88)';
           setTimeout(() => {
-            favContainer.style.height = '0';
-            favContainer.style.margin = '0';
-            favContainer.style.padding = '0';
-            favContainer.style.overflow = 'hidden';
-            setTimeout(() => {
-              if (favContainer.parentNode) {
-                favContainer.remove();
-              }
-            }, 300);
+            const cardId = favContainer.getAttribute('data-fav-id');
+            if (cardId) {
+              const removed = JSON.parse(localStorage.getItem('removed_favorites') || '{}');
+              removed[cardId] = true;
+              localStorage.setItem('removed_favorites', JSON.stringify(removed));
+            }
+            if (favContainer.parentNode) {
+              favContainer.remove();
+            }
+            if (typeof window.checkEmptyFavorites === 'function') {
+              window.checkEmptyFavorites();
+            }
           }, 300);
         }
       } else {

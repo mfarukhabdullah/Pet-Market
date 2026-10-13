@@ -9,25 +9,27 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ListingActionController;
+use App\Http\Controllers\ChatActionController;
+use App\Http\Controllers\InteractionActionController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web Routes & High-Scale Architecture (Protected & Rate Limited)
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
+// Public Browsing & Search (with Bot-Scraping Rate Limiters)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', function () { return view('about'); })->name('about');
 Route::get('/account', function () { return view('account'); })->name('account');
 Route::get('/contact', function () { return view('contact'); })->name('contact');
-Route::get('/category', [CategoryController::class, 'index'])->name('category');
+Route::get('/category', [CategoryController::class, 'index'])->middleware('throttle:120,1')->name('category');
 Route::view('/breeds', 'breeds')->name('breeds');
 Route::get('/pet-details', [PetController::class, 'details'])->name('pet.details');
+Route::get('/listings/{id}/reveal-phone', [PetController::class, 'revealPhone'])->middleware('throttle:30,1')->name('listings.reveal-phone');
 Route::get('/seller-profile', [SellerController::class, 'profile'])->name('seller.profile');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/seller/listings', [SellerController::class, 'listings'])->name('seller.listings');

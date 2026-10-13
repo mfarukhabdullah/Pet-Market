@@ -19,6 +19,12 @@
   --pet-emerald: #10b981;
   --pet-teal: #14b8a6;
 
+  /* Global Brand / Theme Tokens */
+  --primary-green: #147A4D;
+  --light-green: #e8f3ee;
+  --text-dark: #17211C;
+  --text-gray: #6b7280;
+
   --bg-outer: #ffffff;
   --bg-shell: #ffffff;
   --bg-card: #f8fafc;
@@ -3405,31 +3411,43 @@ button {
   font-size: 15px;
   font-weight: 600;
   border-radius: 10px;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 
 .dropdown-item .dd-icon {
   width: 20px;
   height: 20px;
-  background-color: var(--text-dark);
+  min-width: 20px;
+  min-height: 20px;
+  display: inline-block;
+  flex-shrink: 0;
+  background-color: var(--text-dark, #17211C);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  vertical-align: middle;
+  transition: background-color 0.2s ease;
 }
 
 .dropdown-item:hover {
   background: #f3f4f6;
-  color: var(--text-dark);
+  color: var(--primary-green, #147A4D);
 }
 
 .dropdown-item:hover .dd-icon {
-  background-color: var(--text-dark);
+  background-color: var(--primary-green, #147A4D);
 }
 
 .dropdown-item.active {
-  background-color: var(--light-green);
-  color: var(--primary-green);
+  background-color: var(--light-green, #e8f3ee);
+  color: var(--primary-green, #147A4D);
 }
 
 .dropdown-item.active .dd-icon {
-  background-color: var(--primary-green);
+  background-color: var(--primary-green, #147A4D);
 }
 
 .dropdown-divider {
@@ -3506,38 +3524,80 @@ button {
 }
 
 .icon-dash-dd {
-  -webkit-mask: url('../images/dash-icon.svg') no-repeat center / contain;
-  mask: url('../images/dash-icon.svg') no-repeat center / contain;
+  -webkit-mask-image: url('../images/dash-icon.svg');
+  mask-image: url('../images/dash-icon.svg');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .icon-list-dd {
-  -webkit-mask: url('../images/list-icon.svg') no-repeat center / contain;
-  mask: url('../images/list-icon.svg') no-repeat center / contain;
+  -webkit-mask-image: url('../images/list-icon.svg');
+  mask-image: url('../images/list-icon.svg');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .icon-fav-dd {
-  -webkit-mask: url('../images/heart-icon.svg') no-repeat center / contain;
-  mask: url('../images/heart-icon.svg') no-repeat center / contain;
+  -webkit-mask-image: url('../images/heart-icon.svg');
+  mask-image: url('../images/heart-icon.svg');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .icon-msg-dd {
-  -webkit-mask: url('../images/messages-icon.svg') no-repeat center / contain;
-  mask: url('../images/messages-icon.svg') no-repeat center / contain;
+  -webkit-mask-image: url('../images/messages-icon.svg');
+  mask-image: url('../images/messages-icon.svg');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .icon-ps-dd {
-  -webkit-mask: url('../images/profile-setting-user-icon.svg') no-repeat center / contain;
-  mask: url('../images/profile-setting-user-icon.svg') no-repeat center / contain;
+  -webkit-mask-image: url('../images/profile-setting-user-icon.svg');
+  mask-image: url('../images/profile-setting-user-icon.svg');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .icon-notif-dd {
-  -webkit-mask: url('../images/ps-bell.svg') no-repeat center / contain;
-  mask: url('../images/ps-bell.svg') no-repeat center / contain;
+  -webkit-mask-image: url('../images/ps-bell.svg');
+  mask-image: url('../images/ps-bell.svg');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .icon-logout-dd {
-  -webkit-mask: url('../images/send-icon.svg') no-repeat center / contain;
-  mask: url('../images/send-icon.svg') no-repeat center / contain;
+  -webkit-mask-image: url('../images/send-icon.svg');
+  mask-image: url('../images/send-icon.svg');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 /* =========================================================

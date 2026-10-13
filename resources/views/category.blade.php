@@ -33,12 +33,12 @@
             <div class="shell-1440">
                 <div class="container">
                     <div class="category-search-card">
-                        <form action="#" method="GET" class="category-search-form" id="searchFilterForm">
+                        <form action="{{ route('category') }}" method="GET" class="category-search-form" id="searchFilterForm">
                             
                             <!-- Search Input Field -->
                             <div class="search-input-group">
                                 <i class="fas fa-search search-group-icon"></i>
-                                <input type="text" name="q" placeholder="Search pets or breed" class="search-form-input">
+                                <input type="text" name="q" value="{{ request('q', request('search')) }}" placeholder="Search pets or breed" class="search-form-input">
                             </div>
 
                             <!-- Category Dropdown Field -->
@@ -46,14 +46,9 @@
                                 <i class="fas fa-paw search-group-icon"></i>
                                 <select name="category" class="search-form-select">
                                     <option value="">Any category</option>
-                                    <option value="dogs">Dogs</option>
-                                    <option value="cats">Cats</option>
-                                    <option value="birds">Birds</option>
-                                    <option value="rabbits">Rabbits</option>
-                                    <option value="fish">Fish</option>
-                                    <option value="reptiles">Reptiles</option>
-                                    <option value="horses-farm">Horses & Farm</option>
-                                    <option value="exotic">Exotic Pets</option>
+                                    @foreach($categories as $cat)
+                                        <option value="{{ $cat->slug }}" {{ request('category') == $cat->slug ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                    @endforeach
                                 </select>
                                 <i class="fas fa-chevron-down select-arrow-icon"></i>
                             </div>
@@ -63,14 +58,14 @@
                                 <i class="fas fa-map-marker-alt search-group-icon"></i>
                                 <select name="location" class="search-form-select">
                                     <option value="">Any location</option>
-                                    <option value="islamabad">Islamabad</option>
-                                    <option value="karachi">Karachi</option>
-                                    <option value="lahore">Lahore</option>
-                                    <option value="rawalpindi">Rawalpindi</option>
-                                    <option value="faisalabad">Faisalabad</option>
-                                    <option value="multan">Multan</option>
-                                    <option value="sialkot">Sialkot</option>
-                                    <option value="peshawar">Peshawar</option>
+                                    <option value="islamabad" {{ request('location') == 'islamabad' ? 'selected' : '' }}>Islamabad</option>
+                                    <option value="karachi" {{ request('location') == 'karachi' ? 'selected' : '' }}>Karachi</option>
+                                    <option value="lahore" {{ request('location') == 'lahore' ? 'selected' : '' }}>Lahore</option>
+                                    <option value="rawalpindi" {{ request('location') == 'rawalpindi' ? 'selected' : '' }}>Rawalpindi</option>
+                                    <option value="faisalabad" {{ request('location') == 'faisalabad' ? 'selected' : '' }}>Faisalabad</option>
+                                    <option value="multan" {{ request('location') == 'multan' ? 'selected' : '' }}>Multan</option>
+                                    <option value="sialkot" {{ request('location') == 'sialkot' ? 'selected' : '' }}>Sialkot</option>
+                                    <option value="peshawar" {{ request('location') == 'peshawar' ? 'selected' : '' }}>Peshawar</option>
                                 </select>
                                 <i class="fas fa-chevron-down select-arrow-icon"></i>
                             </div>
@@ -111,14 +106,9 @@
                                     <div class="filter-select-wrapper">
                                         <select id="filterCategory" name="category" class="filter-select">
                                             <option value="">All Categories</option>
-                                            <option value="cats">Cats</option>
-                                            <option value="dogs">Dogs</option>
-                                            <option value="birds">Birds</option>
-                                            <option value="rabbits">Rabbits</option>
-                                            <option value="fish">Fish</option>
-                                            <option value="reptiles">Reptiles</option>
-                                            <option value="horses-farm">Horses & Farm</option>
-                                            <option value="exotic">Exotic Pets</option>
+                                            @foreach($categories as $cat)
+                                                <option value="{{ $cat->slug }}" {{ (request('category') == $cat->slug || (isset($selectedCategory) && $selectedCategory && $selectedCategory->id == $cat->id)) ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                            @endforeach
                                         </select>
                                         <i class="fas fa-chevron-down select-chevron"></i>
                                     </div>
@@ -130,13 +120,9 @@
                                     <div class="filter-select-wrapper">
                                         <select id="filterBreed" name="breed" class="filter-select">
                                             <option value="">All Breeds</option>
-                                            <option value="british-shorthair">British Shorthair</option>
-                                            <option value="shih-tzu">Shih Tzu</option>
-                                            <option value="lovebird">Lovebird</option>
-                                            <option value="golden-retriever">Golden Retriever</option>
-                                            <option value="persian">Persian</option>
-                                            <option value="african-grey">African Grey</option>
-                                            <option value="german-shepherd">German Shepherd</option>
+                                            @foreach($breeds as $b)
+                                                <option value="{{ $b->slug }}" {{ request('breed') == $b->slug ? 'selected' : '' }}>{{ $b->name }}</option>
+                                            @endforeach
                                         </select>
                                         <i class="fas fa-chevron-down select-chevron"></i>
                                     </div>
@@ -329,11 +315,11 @@
                                     <div class="sort-control-group">
                                         <span class="sort-label">Sort:</span>
                                         <div class="sort-select-wrapper">
-                                            <select class="sort-select-input">
-                                                <option value="relevant">Relevant</option>
-                                                <option value="newest">Newest First</option>
-                                                <option value="price_asc">Price: Low to High</option>
-                                                <option value="price_desc">Price: High to Low</option>
+                                            <select class="sort-select-input" onchange="const url = new URL(window.location); url.searchParams.set('sort', this.value); window.location = url.toString();">
+                                                <option value="newest" {{ (!request('sort') || request('sort') == 'newest') ? 'selected' : '' }}>Newest First</option>
+                                                <option value="price_asc" {{ (request('sort') == 'price_asc' || request('sort') == 'price_low') ? 'selected' : '' }}>Price: Low to High</option>
+                                                <option value="price_desc" {{ (request('sort') == 'price_desc' || request('sort') == 'price_high') ? 'selected' : '' }}>Price: High to Low</option>
+                                                <option value="views" {{ request('sort') == 'views' ? 'selected' : '' }}>Most Viewed</option>
                                             </select>
                                             <i class="fas fa-chevron-down sort-chevron"></i>
                                         </div>
@@ -349,169 +335,40 @@
 
                             <!-- PET CARDS GRID (2 Columns on Mobile, 3 Columns on Desktop) -->
                             <div class="pet-cards-grid" id="petCardsGrid">
-
-                                <!-- CARD 1: Golden Retriever Puppy (FEATURED) -->
-                                <article class="pet-card" data-breed="golden-retriever" data-gender="male" data-location="lahore">
-                                    <div class="pet-card-image-box">
-                                        <span class="featured-badge">FEATURED</span>
-                                        <img src="{{ asset('images/pets/golden-retriever.jpg') }}" alt="Golden Retriever Puppy" class="pet-card-img">
-                                        <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="pet-card-content">
-                                        <h3 class="pet-name">Golden Retriever Puppy</h3>
-                                        <span class="pet-breed-tag">Golden Retriever</span>
-                                        <div class="pet-price">Rs. 85,000</div>
-                                        <div class="pet-meta-row">
-                                            <span class="meta-item"><i class="far fa-clock"></i> 3 Months</span>
-                                            <span class="meta-item"><i class="fas fa-mars"></i> Male</span>
+                                @forelse($listings as $pet)
+                                    <article class="pet-card" data-breed="{{ Str::slug($pet->breed_name ?: ($pet->breed ? $pet->breed->name : '')) }}" data-gender="{{ strtolower($pet->gender) }}" data-location="{{ strtolower($pet->city) }}" onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" style="cursor: pointer;">
+                                        <div class="pet-card-image-box">
+                                            @if($pet->is_featured)
+                                                <span class="featured-badge">FEATURED</span>
+                                            @endif
+                                            <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="pet-card-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
+                                            <form action="{{ route('favorites.toggle', ['listingId' => $pet->id]) }}" method="POST" onclick="event.stopPropagation();" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn-wishlist-heart" aria-label="Add to Favorites">
+                                                    <i class="fas fa-heart"></i>
+                                                </button>
+                                            </form>
                                         </div>
-                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Lahore</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
-                                    </div>
-                                </article>
-
-                                <!-- CARD 2: Persian Cat -->
-                                <article class="pet-card" data-breed="persian" data-gender="female" data-location="islamabad">
-                                    <div class="pet-card-image-box">
-                                        <img src="{{ asset('images/pets/persian-cat.jpg') }}" alt="Persian Cat" class="pet-card-img">
-                                        <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="pet-card-content">
-                                        <h3 class="pet-name">Persian Cat</h3>
-                                        <span class="pet-breed-tag">Persian</span>
-                                        <div class="pet-price">Rs. 42,000</div>
-                                        <div class="pet-meta-row">
-                                            <span class="meta-item"><i class="far fa-clock"></i> 7 Months</span>
-                                            <span class="meta-item"><i class="fas fa-venus"></i> Female</span>
+                                        <div class="pet-card-content">
+                                            <h3 class="pet-name">{{ $pet->title }}</h3>
+                                            <span class="pet-breed-tag">{{ $pet->breed_name ?: ($pet->breed ? $pet->breed->name : 'Pet') }}</span>
+                                            <div class="pet-price">{{ $pet->formatted_price }}</div>
+                                            <div class="pet-meta-row">
+                                                <span class="meta-item"><i class="far fa-clock"></i> {{ $pet->age_text }}</span>
+                                                <span class="meta-item"><i class="fas fa-{{ $pet->gender == 'female' ? 'venus' : 'mars' }}"></i> {{ ucfirst($pet->gender) }}</span>
+                                            </div>
+                                            <div class="pet-meta-row location-row">
+                                                <span class="meta-item"><i class="fas fa-map-marker-alt"></i> {{ $pet->city }}</span>
+                                                <span class="meta-item"><i class="far fa-clock"></i> {{ $pet->created_at->diffForHumans() }}</span>
+                                            </div>
                                         </div>
-                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Islamabad</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
+                                    </article>
+                                @empty
+                                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #666; font-size: 1.2rem; background: #f9f9f9; border-radius: 16px;">
+                                        <i class="fas fa-search" style="font-size: 2.5rem; color: #ccc; margin-bottom: 16px; display: block;"></i>
+                                        No pets found matching your filters.
                                     </div>
-                                </article>
-
-                                <!-- CARD 3: African Grey Parrot -->
-                                <article class="pet-card" data-breed="african-grey" data-gender="male" data-location="karachi">
-                                    <div class="pet-card-image-box">
-                                        <img src="{{ asset('images/pets/african-grey.jpg') }}" alt="African Grey Parrot" class="pet-card-img">
-                                        <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="pet-card-content">
-                                        <h3 class="pet-name">African Grey Parrot</h3>
-                                        <span class="pet-breed-tag">African Grey</span>
-                                        <div class="pet-price">Rs. 65,000</div>
-                                        <div class="pet-meta-row">
-                                            <span class="meta-item"><i class="far fa-clock"></i> 1 Year</span>
-                                            <span class="meta-item"><i class="fas fa-mars"></i> Male</span>
-                                        </div>
-                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Karachi</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
-                                    </div>
-                                </article>
-
-                                <!-- CARD 4: Mini Lop Rabbit (FEATURED) -->
-                                <article class="pet-card" data-breed="mini-lop" data-gender="female" data-location="lahore">
-                                    <div class="pet-card-image-box">
-                                        <span class="featured-badge">FEATURED</span>
-                                        <img src="{{ asset('images/pets/mini-lop.jpg') }}" alt="Mini Lop Rabbit" class="pet-card-img">
-                                        <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="pet-card-content">
-                                        <h3 class="pet-name">Mini Lop Rabbit</h3>
-                                        <span class="pet-breed-tag">Mini Lop</span>
-                                        <div class="pet-price">Rs. 12,500</div>
-                                        <div class="pet-meta-row">
-                                            <span class="meta-item"><i class="far fa-clock"></i> 5 Months</span>
-                                            <span class="meta-item"><i class="fas fa-venus"></i> Female</span>
-                                        </div>
-                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Lahore</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
-                                    </div>
-                                </article>
-
-                                <!-- CARD 5: German Shepherd -->
-                                <article class="pet-card" data-breed="german-shepherd" data-gender="male" data-location="rawalpindi">
-                                    <div class="pet-card-image-box">
-                                        <img src="{{ asset('images/pets/german-shepherd.jpg') }}" alt="German Shepherd" class="pet-card-img">
-                                        <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="pet-card-content">
-                                        <h3 class="pet-name">German Shepherd</h3>
-                                        <span class="pet-breed-tag">German Shepherd</span>
-                                        <div class="pet-price">Rs. 70,000</div>
-                                        <div class="pet-meta-row">
-                                            <span class="meta-item"><i class="far fa-clock"></i> 4 Months</span>
-                                            <span class="meta-item"><i class="fas fa-mars"></i> Male</span>
-                                        </div>
-                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Rawalpindi</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
-                                    </div>
-                                </article>
-
-                                <!-- CARD 6: British Shorthair -->
-                                <article class="pet-card" data-breed="british-shorthair" data-gender="female" data-location="lahore">
-                                    <div class="pet-card-image-box">
-                                        <img src="{{ asset('images/pets/british-shorthair.jpg') }}" alt="British Shorthair" class="pet-card-img">
-                                        <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="pet-card-content">
-                                        <h3 class="pet-name">British Shorthair</h3>
-                                        <span class="pet-breed-tag">British Shorthair</span>
-                                        <div class="pet-price">Rs. 55,000</div>
-                                        <div class="pet-meta-row">
-                                            <span class="meta-item"><i class="far fa-clock"></i> 6 Months</span>
-                                            <span class="meta-item"><i class="fas fa-venus"></i> Female</span>
-                                        </div>
-                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Lahore</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
-                                    </div>
-                                </article>
-
-                                <!-- CARD 7: Shih Tzu Puppy -->
-                                <article class="pet-card" data-breed="shih-tzu" data-gender="female" data-location="faisalabad">
-                                    <div class="pet-card-image-box">
-                                        <img src="{{ asset('images/pets/shih-tzu.jpg') }}" alt="Shih Tzu Puppy" class="pet-card-img">
-                                        <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="pet-card-content">
-                                        <h3 class="pet-name">Shih Tzu Puppy</h3>
-                                        <span class="pet-breed-tag">Shih Tzu</span>
-                                        <div class="pet-price">Rs. 48,000</div>
-                                        <div class="pet-meta-row">
-                                            <span class="meta-item"><i class="far fa-clock"></i> 2 Months</span>
-                                            <span class="meta-item"><i class="fas fa-venus"></i> Female</span>
-                                        </div>
-                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Faisalabad</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
-                                    </div>
-                                </article>
-
-                                <!-- CARD 8: Lovebird Pair -->
-                                <article class="pet-card" data-breed="lovebird" data-gender="female" data-location="sialkot">
-                                    <div class="pet-card-image-box">
-                                        <img src="{{ asset('images/pets/lovebird.jpg') }}" alt="Lovebird Pair" class="pet-card-img">
-                                        <button type="button" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="pet-card-content">
-                                        <h3 class="pet-name">Lovebird Pair</h3>
-                                        <span class="pet-breed-tag">Lovebird</span>
-                                        <div class="pet-price">Rs. 18,000</div>
-                                        <div class="pet-meta-row">
-                                            <span class="meta-item"><i class="far fa-clock"></i> 8 Months</span>
-                                            <span class="meta-item"><i class="fas fa-venus"></i> Female</span>
-                                        </div>
-                                        <div class="pet-meta-row location-row"><span class="meta-item"><i class="fas fa-map-marker-alt"></i> Sialkot</span><span class="meta-item"><i class="far fa-clock"></i> 3 days ago</span></div>
-                                    </div>
-                                </article>
-
+                                @endforelse
                             </div>
                             
                             <!-- NO RESULTS MESSAGE -->
