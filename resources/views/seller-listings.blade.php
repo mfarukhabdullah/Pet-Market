@@ -670,7 +670,7 @@
                             {{ $listing->status === 'live' ? 'Live' : ($listing->status === 'pending' ? 'Pending Review' : ($listing->status === 'draft' ? 'Draft' : ($listing->status === 'sold' ? 'Sold / Rehomed' : ucfirst($listing->status)))) }}
                         </div>
                         <div class="listing-title"><a href="{{ route('pet.details', ['id' => $listing->id]) }}" style="color:inherit; text-decoration:none;">{{ $listing->title }}</a></div>
-                        <div class="listing-breed">{{ $listing->breed_name ?: ($listing->breed ? $listing->breed->name : 'Pet') }}</div>
+                        <div class="listing-breed">{{ $listing->breed_name ?: ($listing->breed ? $listing->breed->name : 'Pet') }}@if($listing->color) • <span style="font-weight: 600; color: #17211C;">{{ $listing->color }}</span>@endif</div>
                         <div class="listing-price">{{ $listing->formatted_price }}</div>
                         <div class="listing-meta">
                             <span>• {{ $listing->city }}</span>
