@@ -92,6 +92,13 @@ class ListingActionController extends Controller
         $user = $this->getActiveUser();
         $listingId = $request->input('listing_id');
 
+        $request->validate([
+            'title' => 'required|string|min:3|max:255',
+            'price' => 'required|numeric|min:1',
+            'city' => 'required|string|max:100',
+            'description' => 'required|string|min:10',
+        ]);
+
         $catInput = $request->input('category_id') ?: $request->input('category');
         $categoryId = 1;
         if (is_numeric($catInput)) {

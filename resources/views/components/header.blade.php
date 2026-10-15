@@ -53,19 +53,19 @@
                     @if(request()->is('dashboard') || request()->is('seller/*') || request()->is('notifications'))
                         <div class="user-profile-dropdown">
                             <button class="profile-toggle-btn" id="profileDropdownBtn">
-                                <img src="{{ asset('images/seller-avatar.jpg') }}" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'" alt="Profile" class="header-avatar">
+                                <img src="{{ auth()->user()->avatar_url }}" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=147A4D&color=fff'" alt="{{ auth()->user()->name ?? 'Profile' }}" class="header-avatar">
                                 <i class="fas fa-chevron-down"></i>
                             </button>
-                                                          <div class="profile-dropdown-menu" id="profileDropdownMenu">
-                                  <a href="{{ route('seller.profile') }}" class="dropdown-user-info">
-                                      <img src="{{ asset('images/seller-avatar.jpg') }}" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'" alt="Ahmed Khan" class="dropdown-user-avatar">
-                                      <div class="dropdown-user-details">
-                                          <div class="dropdown-user-name">Ahmed Khan</div>
-                                          <div class="dropdown-user-role">View Public Profile <i class="fa-solid fa-chevron-right" style="font-size: 10px; margin-left: 2px;"></i></div>
-                                      </div>
-                                  </a>
-                                  
-                                  <div class="dropdown-divider"></div>
+                            <div class="profile-dropdown-menu" id="profileDropdownMenu">
+                                <a href="{{ route('seller.profile') }}" class="dropdown-user-info">
+                                    <img src="{{ auth()->user()->avatar_url }}" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=147A4D&color=fff'" alt="{{ auth()->user()->name ?? 'User' }}" class="dropdown-user-avatar">
+                                    <div class="dropdown-user-details">
+                                        <div class="dropdown-user-name">{{ auth()->user()->name ?? 'My Profile' }}</div>
+                                        <div class="dropdown-user-role">View Public Profile <i class="fa-solid fa-chevron-right" style="font-size: 10px; margin-left: 2px;"></i></div>
+                                    </div>
+                                </a>
+                                
+                                <div class="dropdown-divider"></div>
 
                                   <a href="{{ route('dashboard') }}" class="dropdown-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"><span class="dd-icon icon-dash-dd"></span> Dashboard</a>
                                   <a href="{{ route('seller.listings') }}" class="dropdown-item {{ request()->routeIs('seller.listings') ? 'active' : '' }}"><span class="dd-icon icon-list-dd"></span> My Listings</a>
@@ -125,6 +125,7 @@
             <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
             <a href="{{ route('dashboard') }}" class="btn-login-register" style="width:100%; justify-content:center; background-color:#eaf7f0; color:#147A4D; border:none;"><i class="fa-solid fa-user" style="margin-right:8px;"></i> My Account</a>
             <a href="{{ route('logout') }}" class="btn-login-register text-danger" style="width:100%; justify-content:center; margin-top:12px; border:none;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:8px;"></i> Log Out</a>
+            <a href="{{ route('logout') }}" class="btn-login-register text-danger" style="width:100%; justify-content:center; margin-top:12px; border:none;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:8px;"></i> Log Out</a>
         @else
             <a href="{{ route('login') }}?redirect={{ urlencode(route('seller.create-listing')) }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
             <div class="btn-login-register" style="width:100%; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: default;">
@@ -170,14 +171,14 @@
 
 <!-- ACCOUNT SLIDE-OUT MENU -->
 <div id="accountNavDrawer" class="account-nav-drawer">
+    @if(auth()->check())
     <div class="account-nav-header">
         <div class="account-nav-user">
             <div class="account-nav-avatar">
-                <img src="{{ asset('images/avatar-placeholder.jpg') }}" alt="Ahmed Khan" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="account-avatar-fallback"><img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"></div>
+                <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=147A4D&color=fff'">
             </div>
             <div class="account-nav-info">
-                <h3 class="account-nav-name">Ahmed Khan</h3>
+                <h3 class="account-nav-name">{{ auth()->user()->name }}</h3>
                 <a href="{{ route('seller.profile') }}" class="account-nav-link">View Public Profile <i class="fa-solid fa-chevron-right"></i></a>
             </div>
         </div>
@@ -210,12 +211,38 @@
                 </a>
             </li>
             <li class="logout-item">
-                <a href="/" class="logout-link">
+                <a href="{{ route('logout') }}" class="logout-link">
                     <div class="list-left"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span></div>
                 </a>
             </li>
         </ul>
     </div>
+    @else
+    <div class="account-nav-header">
+        <div class="account-nav-user">
+            <div class="account-nav-info">
+                <h3 class="account-nav-name">Guest User</h3>
+                <p style="font-size: 13px; color: #64748B; margin: 4px 0 0 0;">Please login to access your account</p>
+            </div>
+        </div>
+    </div>
+    <div class="account-nav-body">
+        <ul class="account-nav-list">
+            <li>
+                <a href="{{ $loginUrl }}">
+                    <div class="list-left"><i class="fa-solid fa-right-to-bracket"></i> <span>Login</span></div>
+                    <i class="fa-solid fa-chevron-right list-arrow"></i>
+                </a>
+            </li>
+            <li>
+                <a href="{{ $signUrl }}">
+                    <div class="list-left"><i class="fa-solid fa-user-plus"></i> <span>Register</span></div>
+                    <i class="fa-solid fa-chevron-right list-arrow"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+    @endif
 </div>
 
 

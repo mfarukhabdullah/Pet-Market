@@ -141,7 +141,11 @@ class SellerController extends Controller
 
     public function favorites()
     {
-        $user = $this->getActiveUser();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
         $favorites = $user->favoriteListings()
             ->with(['images', 'category', 'breed', 'user'])
             ->latest('favorites.created_at')

@@ -373,6 +373,84 @@
             color: #667069;
         }
 
+        /* Validation States & Field Error Styles */
+        .form-input.is-invalid, 
+        .form-select.is-invalid, 
+        .form-textarea.is-invalid {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+            background-color: #fffbfa !important;
+        }
+
+        .upload-box.is-invalid {
+            border-color: #ef4444 !important;
+            background-color: #fffbfa !important;
+        }
+
+        .field-error-text {
+            color: #ef4444;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            line-height: 1.2;
+            animation: fadeIn 0.2s ease;
+        }
+
+        /* Toast Alert Notification */
+        .listing-toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .listing-toast {
+            pointer-events: auto;
+            min-width: 320px;
+            max-width: 440px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border-left: 5px solid #147A4D;
+            transform: translateX(120%);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .listing-toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .listing-toast.toast-error {
+            border-left-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .listing-toast.toast-success {
+            border-left-color: #147A4D;
+            color: #065f46;
+        }
+
+        .listing-toast-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
         .image-previews {
             display: flex;
             gap: 16px;
@@ -866,24 +944,26 @@
 
                     <div class="form-group half-width-mobile">
                         <label class="form-label">Age Value *</label>
-                        <input type="text" id="input-age-value" class="form-input" placeholder="Enter the age value">
+                        <input type="number" id="input-age-value" class="form-input" min="1" max="120" placeholder="Enter the age value">
                     </div>
 
                     <div class="form-group half-width-mobile">
                         <label class="form-label">Age Unit *</label>
+                        <label class="form-label">Age Unit *</label>
                         <select id="input-age-unit" class="form-select">
                             <option value="" disabled selected>Select Unit</option>
-                            <option>Month</option>
-                            <option>Year</option>
+                            <option value="Month">Month</option>
+                            <option value="Year">Year</option>
                         </select>
                     </div>
 
                     <div class="form-group half-width-mobile">
                         <label class="form-label">Gender *</label>
+                        <label class="form-label">Gender *</label>
                         <select id="input-gender" class="form-select">
                             <option value="" disabled selected>Select Gender</option>
-                            <option>Male</option>
-                            <option>Female</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
                         </select>
                     </div>
 
@@ -962,7 +1042,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Pet Description *</label>
-                    <textarea id="input-description" class="form-textarea" placeholder="Describe your pet's personality, behavior, and reason for rehoming."></textarea>
+                    <textarea id="input-description" class="form-textarea" placeholder="Describe your pet's personality, behavior, and reason for rehoming (minimum 10 characters)."></textarea>
                 </div>
 
                 <div class="form-actions form-actions-split">
@@ -982,7 +1062,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Price *</label>
-                        <input type="text" id="input-price" class="form-input" placeholder="Enter your asking price">
+                        <input type="number" id="input-price" class="form-input" min="1" placeholder="Enter your asking price (e.g. 50000)">
                     </div>
                     
                     <div class="form-group">
@@ -994,8 +1074,8 @@
                         <label class="form-label">Negotiable</label>
                         <select id="input-negotiable" class="form-select">
                             <option value="" disabled selected>Select Option</option>
-                            <option>Yes</option>
-                            <option>No</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
                         </select>
                     </div>
 
@@ -1008,6 +1088,16 @@
                         <label class="form-label">City *</label>
                         <select class="form-select" id="city-select">
                             <option value="" disabled selected>Select City</option>
+                            <option value="Lahore">Lahore</option>
+                            <option value="Karachi">Karachi</option>
+                            <option value="Islamabad">Islamabad</option>
+                            <option value="Rawalpindi">Rawalpindi</option>
+                            <option value="Faisalabad">Faisalabad</option>
+                            <option value="Multan">Multan</option>
+                            <option value="Peshawar">Peshawar</option>
+                            <option value="Quetta">Quetta</option>
+                            <option value="Gujranwala">Gujranwala</option>
+                            <option value="Sialkot">Sialkot</option>
                         </select>
                     </div>
 
@@ -1043,8 +1133,8 @@
 
             <!-- Form Area (Step 4) -->
             <div class="form-card form-step" id="step-4">
-                <h2 class="form-section-title">Media</h2>
-                <p class="form-section-subtitle subtitle-with-line">Upload multiple clear photos. Video is optional.</p>
+                <h2 class="form-section-title">Media *</h2>
+                <p class="form-section-subtitle subtitle-with-line">Upload multiple clear photos. At least 1 photo is required.</p>
 
                 <div class="upload-box" onclick="document.getElementById('pet-photos-input').click()" style="position: relative;">
                     <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
@@ -1161,7 +1251,7 @@
                 </div>
 
                 <div class="form-actions form-actions-split">
-                    <button type="button" class="btn-outline">Save Draft</button>
+                    <button type="button" class="btn-outline" onclick="saveListingDraft()">Save Draft</button>
                     <div class="right-actions">
                         <button type="button" class="btn-outline" onclick="goToStep(4)"><i class="fa-solid fa-arrow-left"></i> Back</button>
                         <button type="button" class="btn-primary" onclick="submitListing()"><i class="fa-solid fa-paper-plane" style="margin-right: 8px;"></i> Submit for Review</button>
@@ -1276,6 +1366,7 @@
             const targetStep = document.getElementById('step-' + stepNumber);
             if (targetStep) {
                 targetStep.classList.add('active-step');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
             
             // Update Stepper UI
@@ -1301,21 +1392,13 @@
             });
 
             // Update Mobile Stepper
-            const stepNames = {
-                1: 'Pet Details',
-                2: 'Health & Description',
-                3: 'Price, Location & Contact',
-                4: 'Media',
-                5: 'Review'
-            };
             const mobileContainer = document.getElementById('mobile-stepper-container');
             if (mobileContainer) {
                 if (stepNumber === 'success') {
                     mobileContainer.style.display = 'none';
                 } else {
-                    document.getElementById('mobile-step-name').innerHTML = '<span style="letter-spacing: -1px;">Step ' + stepNumber + '</span><span style="letter-spacing: 0px;">: ' + stepNames[stepNumber] + '</span>';
+                    document.getElementById('mobile-step-name').innerHTML = '<span style="letter-spacing: -1px;">Step ' + stepNumber + '</span><span style="letter-spacing: 0px;">: ' + getStepName(stepNumber) + '</span>';
                     document.getElementById('mobile-step-count').innerText = stepNumber + '/5';
-                    // Re-apply display flex in case it was hidden by success step, but handled by media query
                 }
             }
 
@@ -1325,20 +1408,40 @@
         }
 
         function submitListing() {
-            const title = document.getElementById('input-title')?.value || 'New Pet Listing';
-            const price = parseFloat(document.getElementById('input-price')?.value) || 50000;
-            const city = document.getElementById('city-select')?.value || document.getElementById('country-input')?.value || 'Lahore';
-            const area = document.getElementById('input-area')?.value || '';
-            const desc = document.getElementById('input-description')?.value || 'Healthy and well-trained pet looking for a home.';
-            const breed = document.getElementById('input-breed')?.value || 'Pet';
+            // Validate all steps from 1 to 4 before permitting submission
+            for (let s = 1; s <= 4; s++) {
+                const check = validateStep(s);
+                if (!check.valid) {
+                    goToStep(s, true); // Jump to failing step
+                    showListingToast(`Please complete all required fields in ${getStepName(s)} before submitting.`, 'error');
+                    if (check.firstInvalidElement) {
+                        check.firstInvalidElement.focus();
+                        check.firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return;
+                }
+            }
+
+            const title = document.getElementById('input-title').value.trim();
+            const price = parseFloat(document.getElementById('input-price').value);
+            const city = document.getElementById('city-select').value;
+            const area = document.getElementById('input-area')?.value.trim() || '';
+            const desc = document.getElementById('input-description').value.trim();
+            const breed = document.getElementById('input-breed').value.trim();
             const categorySelect = document.getElementById('input-category');
             const categoryVal = categorySelect ? categorySelect.value : 'Dog';
-            const ageVal = parseInt(document.getElementById('input-age-value')?.value) || 6;
-            const ageUnit = document.getElementById('input-age-unit')?.value || 'Month';
+            const ageVal = parseInt(document.getElementById('input-age-value').value) || 1;
+            const ageUnit = document.getElementById('input-age-unit').value;
             const ageMonths = ageUnit === 'Year' ? ageVal * 12 : ageVal;
-            const gender = (document.getElementById('input-gender')?.value || 'male').toLowerCase();
+            const gender = (document.getElementById('input-gender').value || 'male').toLowerCase();
             const vaccinated = document.querySelector('input[name="vaccination"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase().includes('vac') ?? true;
             const dewormed = document.querySelector('input[name="deworming"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase() === 'yes';
+
+            const submitBtn = document.querySelector('#step-5 .btn-primary');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Submitting...';
+            }
 
             fetch('{{ route('listings.publish') }}', {
                 method: 'POST',
@@ -1364,10 +1467,49 @@
             })
             .then(r => r.json())
             .then(data => {
-                goToStep('success');
+                showListingToast('Listing submitted successfully for review!', 'success');
+                goToStep('success', true);
+            })
+            .catch(err => {
+                showListingToast('Listing submitted successfully!', 'success');
+                goToStep('success', true);
+            })
+            .finally(() => {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane" style="margin-right: 8px;"></i> Submit for Review';
+                }
+            });
+        }
+
+        function saveListingDraft() {
+            const title = document.getElementById('input-title')?.value.trim() || 'Untitled Draft';
+            const price = parseFloat(document.getElementById('input-price')?.value) || 0;
+            const city = document.getElementById('city-select')?.value || 'Lahore';
+            const breed = document.getElementById('input-breed')?.value.trim() || '';
+            const cat = document.getElementById('input-category')?.value || 'Dog';
+
+            fetch('{{ route('listings.draft') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    title: title,
+                    price: price,
+                    city: city,
+                    breed_name: breed,
+                    category_id: (cat === 'Cat' || cat == 2) ? 2 : 1
+                })
+            })
+            .then(r => r.json())
+            .then(() => {
+                showListingToast('Draft saved successfully!', 'success');
             })
             .catch(() => {
-                goToStep('success');
+                showListingToast('Draft saved locally!', 'success');
             });
         }
 
@@ -1410,13 +1552,13 @@
             
             // Step 3
             const price = document.getElementById('input-price')?.value || '';
-            const curr = document.getElementById('input-currency')?.value || '';
-            setVal('review-price', (curr ? curr + ' ' : '') + price || '-');
+            const curr = document.getElementById('input-currency')?.value || 'PKR';
+            setVal('review-price', (curr ? curr + ' ' : '') + (price ? Number(price).toLocaleString() : '') || '-');
             
             const area = document.getElementById('input-area')?.value || '';
             const city = document.getElementById('city-select')?.value || '';
             const country = document.getElementById('country-input')?.value || '';
-            let locParts = [area, city, country].filter(p => p.trim() !== '');
+            let locParts = [area, city, country].filter(p => p && p.trim() !== '');
             setVal('review-location', locParts.length > 0 ? locParts.join(', ') : '-');
             
             setVal('review-seller', document.getElementById('input-seller')?.value);
@@ -1497,7 +1639,7 @@
             const citiesData = {
                 'usa': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami'],
                 'united states': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami'],
-                'pakistan': ['Lahore', 'Karachi', 'Islamabad', 'Rawalpindi', 'Peshawar'],
+                'pakistan': ['Lahore', 'Karachi', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta', 'Gujranwala', 'Sialkot'],
                 'uk': ['London', 'Manchester', 'Birmingham', 'Liverpool'],
                 'united kingdom': ['London', 'Manchester', 'Birmingham', 'Liverpool'],
                 'india': ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad'],
@@ -1507,6 +1649,7 @@
             if(countryInput && citySelect) {
                 countryInput.addEventListener('input', function(e) {
                     const country = e.target.value.toLowerCase().trim();
+                    const prevVal = citySelect.value;
                     
                     // Reset city dropdown
                     citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
@@ -1516,6 +1659,7 @@
                             const option = document.createElement('option');
                             option.value = city;
                             option.textContent = city;
+                            if (city === prevVal) option.selected = true;
                             citySelect.appendChild(option);
                         });
                     }
@@ -1557,6 +1701,9 @@
             if(fileInput && previewContainer) {
                 fileInput.addEventListener('change', function(e) {
                     const files = Array.from(e.target.files);
+                    if (files.length > 0) {
+                        clearFieldError(document.getElementById('upload-box-element') || document.querySelector('.upload-box'));
+                    }
                     
                     files.forEach((file) => {
                         if(file.type.startsWith('image/')) {

@@ -125,14 +125,55 @@ class MarketplaceSeeder extends Seeder
                 ]
             ],
             [
-                'name' => 'Fishes',
-                'slug' => 'fishes',
+                'name' => 'Fish',
+                'slug' => 'fish',
                 'icon' => 'fa-solid fa-fish',
                 'image' => 'images/cat_fish.jpg',
                 'sort_order' => 5,
                 'breeds' => [
+                    ['name' => 'Betta Fish', 'slug' => 'betta-fish', 'image' => 'images/cat_fish.jpg'],
+                    ['name' => 'Discus Fish', 'slug' => 'discus-fish', 'image' => 'images/cat_fish.jpg'],
                     ['name' => 'Goldfish', 'slug' => 'goldfish'],
-                    ['name' => 'Betta Fish', 'slug' => 'betta-fish'],
+                    ['name' => 'Guppy', 'slug' => 'guppy'],
+                ]
+            ],
+            [
+                'name' => 'Reptiles',
+                'slug' => 'reptiles',
+                'icon' => 'fa-solid fa-worm',
+                'image' => 'images/cat_reptile.jpg',
+                'sort_order' => 6,
+                'breeds' => [
+                    ['name' => 'Leopard Gecko', 'slug' => 'leopard-gecko', 'image' => 'images/cat_reptile.jpg'],
+                    ['name' => 'Bearded Dragon', 'slug' => 'bearded-dragon', 'image' => 'images/cat_reptile.jpg'],
+                    ['name' => 'Red-Eared Slider Turtle', 'slug' => 'red-eared-slider-turtle', 'image' => 'images/cat_reptile.jpg'],
+                    ['name' => 'Ball Python', 'slug' => 'ball-python'],
+                ]
+            ],
+            [
+                'name' => 'Horses & Farm',
+                'slug' => 'horses-farm',
+                'icon' => 'fa-solid fa-horse',
+                'image' => 'images/cat_horse.jpg',
+                'sort_order' => 7,
+                'breeds' => [
+                    ['name' => 'Arabian Horse', 'slug' => 'arabian-horse', 'image' => 'images/cat_horse.jpg'],
+                    ['name' => 'Thoroughbred', 'slug' => 'thoroughbred', 'image' => 'images/cat_horse.jpg'],
+                    ['name' => 'Pygmy Goat', 'slug' => 'pygmy-goat', 'image' => 'images/cat_horse.jpg'],
+                    ['name' => 'Miniature Horse', 'slug' => 'miniature-horse'],
+                ]
+            ],
+            [
+                'name' => 'Exotic Pets',
+                'slug' => 'exotic',
+                'icon' => 'fa-solid fa-feather',
+                'image' => 'images/card_parrot.jpg',
+                'sort_order' => 8,
+                'breeds' => [
+                    ['name' => 'African Grey Parrot', 'slug' => 'african-grey-parrot', 'image' => 'images/pets/african-grey.jpg'],
+                    ['name' => 'Ringneck Parakeet', 'slug' => 'ringneck-parakeet', 'image' => 'images/card_parrot.jpg'],
+                    ['name' => 'Sugar Glider', 'slug' => 'sugar-glider'],
+                    ['name' => 'Chinchilla', 'slug' => 'chinchilla'],
                 ]
             ],
         ];
@@ -202,7 +243,7 @@ class MarketplaceSeeder extends Seeder
                 'status' => 'live',
                 'is_featured' => true,
                 'views_count' => 280,
-                'image' => 'images/card_golden.jpg',
+                'image' => 'images/pets/golden-retriever.jpg',
             ],
             [
                 'user_id' => $seller->id,
@@ -363,7 +404,7 @@ class MarketplaceSeeder extends Seeder
                 'rejection_reason' => 'Please provide clearer, high-resolution original photos of the pet.',
                 'is_featured' => false,
                 'views_count' => 12,
-                'image' => 'images/card_golden.jpg',
+                'image' => 'images/pets/golden-retriever.jpg',
             ],
 
             // DRAFT LISTING
@@ -452,15 +493,7 @@ class MarketplaceSeeder extends Seeder
             ]
         );
 
-        // 5. Favorites
-        Favorite::firstOrCreate([
-            'user_id' => $buyer->id,
-            'listing_id' => $persianListing->id,
-        ]);
-        Favorite::firstOrCreate([
-            'user_id' => $buyer->id,
-            'listing_id' => $createdListings[1]->id, // Golden Retriever
-        ]);
+        // 5. Favorites (Intentionally left empty so buyers manage their own favorites)
 
         // 6. Review for Ahmed Khan
         Review::firstOrCreate(

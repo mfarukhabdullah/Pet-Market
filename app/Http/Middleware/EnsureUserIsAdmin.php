@@ -14,14 +14,6 @@ class EnsureUserIsAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        // In local development environment, if no user is logged in, auto-login seeded Admin for preview
-        if (!Auth::check() && app()->environment('local')) {
-            $adminUser = User::where('role', 'admin')->first();
-            if ($adminUser) {
-                Auth::login($adminUser);
-            }
-        }
-
         $user = Auth::user();
 
         if (!$user) {

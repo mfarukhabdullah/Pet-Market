@@ -33,6 +33,15 @@ class HomeController extends Controller
             ->take(8)
             ->get();
 
-        return view('index', compact('categories', 'featuredListings', 'recentListings'));
+        $user = auth()->user();
+        $favoritedListingIds = $user ? $user->favorites()->pluck('listing_id')->map(function ($id) {
+            return (int) $id;
+        })->toArray() : [];
+
+        return response()
+            ->view('index', compact('categories', 'featuredListings', 'recentListings', 'favoritedListingIds'))
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 }

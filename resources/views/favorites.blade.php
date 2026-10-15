@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Favorites - Pet Marketplace</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -393,13 +394,16 @@
                         @foreach($favorites as $fav)
                             <a href="{{ route('pet.details', ['id' => $fav->id]) }}" class="fav-card" data-fav-id="{{ $fav->id }}">
                                 <div class="fav-card-img-wrapper">
-                                    <img src="{{ $fav->primary_image_url }}" onerror="this.src='{{ asset('images/card_golden.jpg') }}'" alt="{{ $fav->title }}" class="fav-card-img">
-                                    <form action="{{ route('favorites.toggle', ['listingId' => $fav->id]) }}" method="POST" onclick="event.stopPropagation();" style="display:inline;">
-                                        @csrf
-                                        <button type="submit" class="fav-heart-btn" title="Remove from Favorites">
-                                            <i class="fa-solid fa-heart"></i>
-                                        </button>
-                                    </form>
+                                    <img src="{{ $fav->primary_image_url }}" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'" alt="{{ $fav->title }}" class="fav-card-img">
+                                    <button type="button" 
+                                            class="fav-heart-btn active favorited" 
+                                            data-url="{{ route('favorites.toggle', ['listingId' => $fav->id]) }}" 
+                                            data-id="{{ $fav->id }}"
+                                            onclick="removeFavoriteCard(this, event);" 
+                                            title="Remove from Favorites"
+                                            aria-label="Remove from Favorites">
+                                        <i class="fa-solid fa-heart" style="color: #ff4b68;"></i>
+                                    </button>
                                 </div>
                                 <div class="fav-card-content">
                                     <div class="fav-card-title">{{ $fav->title }}</div>
@@ -439,38 +443,49 @@
     <x-footer />
 
     <script>
-        function toggleFavorite(btn, event) {
+        function removeFavoriteCard(btn, event) {
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
             }
 
             const card = btn.closest('.fav-card');
+            const url = btn.getAttribute('data-url');
             if (!card) return;
 
+            // Visual feedback
             const icon = btn.querySelector('i');
             if (icon) {
-                icon.classList.remove('fa-solid');
-                icon.classList.add('fa-regular');
-                btn.style.color = '#9ca3af';
+                icon.className = 'fa-regular fa-heart';
+                icon.style.color = '#9ca3af';
             }
+            btn.classList.remove('active', 'favorited');
 
-            // Animate card removal smoothly
+            // Smooth card collapse animation
             card.style.pointerEvents = 'none';
-            card.style.transition = 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            card.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
             card.style.opacity = '0';
             card.style.transform = 'scale(0.88)';
 
+            // Call server to delete favorite from database
+            if (url) {
+                const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    }
+                })
+                .then(r => r.json())
+                .catch(err => console.warn('Remove favorite failed', err));
+            }
+
             setTimeout(() => {
-                const cardId = card.getAttribute('data-fav-id');
-                if (cardId) {
-                    const removed = JSON.parse(localStorage.getItem('removed_favorites') || '{}');
-                    removed[cardId] = true;
-                    localStorage.setItem('removed_favorites', JSON.stringify(removed));
-                }
                 card.remove();
                 checkEmptyFavorites();
-            }, 300);
+            }, 260);
         }
 
         function checkEmptyFavorites() {
@@ -492,28 +507,13 @@
             }
         }
 
-        function resetDemoFavorites() {
-            localStorage.removeItem('removed_favorites');
-            window.location.reload();
-        }
-
-        window.toggleFavorite = toggleFavorite;
+        window.removeFavoriteCard = removeFavoriteCard;
+        window.toggleFavorite = removeFavoriteCard;
         window.checkEmptyFavorites = checkEmptyFavorites;
-        window.resetDemoFavorites = resetDemoFavorites;
 
         document.addEventListener('DOMContentLoaded', () => {
-            const removed = JSON.parse(localStorage.getItem('removed_favorites') || '{}');
-            const deletedPets = JSON.parse(localStorage.getItem('deleted_pets') || '{}');
-
-            document.querySelectorAll('.favorites-grid .fav-card').forEach(card => {
-                const cardId = card.getAttribute('data-fav-id');
-                const titleEl = card.querySelector('.fav-card-title');
-                const titleKey = titleEl ? titleEl.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') : '';
-
-                if ((cardId && removed[cardId]) || (titleKey && deletedPets[titleKey])) {
-                    card.remove();
-                }
-            });
+            // Clear any stale mock removals from localStorage so real database items always show
+            localStorage.removeItem('removed_favorites');
             checkEmptyFavorites();
         });
     </script>

@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Browse All Pet Breeds - Pet Marketplace</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- SEO Meta Tags -->
     <meta name="description" content="Find pets by breed and explore available listings.">
@@ -303,7 +304,7 @@
             <div class="shell-1440">
                 <div class="container">
                     <div class="breed-search-card">
-                        <form action="#" method="GET" class="breed-search-form">
+                        <form action="{{ route('category') }}" method="GET" class="breed-search-form">
                             <!-- Search Input Field -->
                             <div class="breed-search-input-group">
                                 <i class="fas fa-search"></i>
@@ -327,12 +328,12 @@
                 
                 <!-- Breed Tags -->
                 <div class="breed-tags-container">
-                    <a href="#dogs-section" class="breed-tag">Dogs</a>
-                    <a href="#cats-section" class="breed-tag">Cats</a>
-                    <a href="#birds-section" class="breed-tag">Birds</a>
-                    <a href="#fish-section" class="breed-tag">Fish</a>
-                    <a href="#reptiles-section" class="breed-tag">Reptiles</a>
-                    <a href="#horses-section" class="breed-tag">Horses &amp; Farm</a>
+                    <a href="{{ route('category', ['category' => 'dogs']) }}" class="breed-tag">Dogs</a>
+                    <a href="{{ route('category', ['category' => 'cats']) }}" class="breed-tag">Cats</a>
+                    <a href="{{ route('category', ['category' => 'birds']) }}" class="breed-tag">Birds</a>
+                    <a href="{{ route('category', ['category' => 'fish']) }}" class="breed-tag">Fish</a>
+                    <a href="{{ route('category', ['category' => 'reptiles']) }}" class="breed-tag">Reptiles</a>
+                    <a href="{{ route('category', ['category' => 'horses-farm']) }}" class="breed-tag">Horses &amp; Farm</a>
                 </div>
 
                 <!-- Dog Breeds Section -->
@@ -344,21 +345,21 @@
 
                     <div class="breeds-grid">
                         <!-- Dog Breed 1 -->
-                        <a href="#" class="breed-card">
+                        <a href="{{ route('category', ['breed' => 'golden-retriever']) }}" class="breed-card">
                             <div class="breed-img-wrapper">
                                 <img src="{{ asset('images/golden_retriever.jpg') }}" alt="Golden Retriever">
                             </div>
                             <h3 class="breed-name">Golden Retriever</h3>
-                            <span class="breed-count">320 available</span>
+                            <span class="breed-count">Available in listings</span>
                         </a>
 
                         <!-- Dog Breed 2 -->
-                        <a href="#" class="breed-card">
+                        <a href="{{ route('category', ['breed' => 'german-shepherd']) }}" class="breed-card">
                             <div class="breed-img-wrapper">
                                 <img src="{{ asset('images/german_shepherd.jpg') }}" alt="German Shepherd">
                             </div>
                             <h3 class="breed-name">German Shepherd</h3>
-                            <span class="breed-count">320 available</span>
+                            <span class="breed-count">Available in listings</span>
                         </a>
                     </div>
                 </div>
@@ -372,21 +373,21 @@
 
                     <div class="breeds-grid">
                         <!-- Cat Breed 1 -->
-                        <a href="#" class="breed-card">
+                        <a href="{{ route('category', ['breed' => 'persian']) }}" class="breed-card">
                             <div class="breed-img-wrapper">
                                 <img src="{{ asset('images/persian.jpg') }}" alt="Persian">
                             </div>
                             <h3 class="breed-name">Persian</h3>
-                            <span class="breed-count">320 available</span>
+                            <span class="breed-count">Available in listings</span>
                         </a>
 
                         <!-- Cat Breed 2 -->
-                        <a href="#" class="breed-card">
+                        <a href="{{ route('category', ['breed' => 'british-shorthair']) }}" class="breed-card">
                             <div class="breed-img-wrapper">
                                 <img src="{{ asset('images/british_shorthair.jpg') }}" alt="British Shorthair">
                             </div>
                             <h3 class="breed-name">British Shorthair</h3>
-                            <span class="breed-count">320 available</span>
+                            <span class="breed-count">Available in listings</span>
                         </a>
                     </div>
                 </div>
@@ -399,5 +400,7 @@
     <!-- FOOTER -->
     <x-footer />
 
+    <!-- Custom JavaScript -->
+    <script src="{{ asset('js/pet-script.js') }}"></script>
 </body>
 </html>

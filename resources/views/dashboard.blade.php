@@ -678,7 +678,7 @@
                 <div class="card-body">
                     @forelse($recentListings as $listing)
                         <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="listing-item">
-                            <img src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" class="listing-img" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                            <img src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" class="listing-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                             <div class="listing-info">
                                 <div class="listing-name">{{ $listing->title }}</div>
                                 <div class="listing-details"><strong>{{ $listing->formatted_price }}</strong> · {{ $listing->city }}</div>
@@ -733,7 +733,7 @@
                         @if($fav->is_featured)
                             <span class="fav-badge">FEATURED</span>
                         @endif
-                        <img src="{{ $fav->primary_image_url }}" alt="{{ $fav->title }}" class="fav-img" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                        <img src="{{ $fav->primary_image_url }}" alt="{{ $fav->title }}" class="fav-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                         <div class="fav-info">
                             <div class="fav-title">{{ $fav->title }}</div>
                             <div class="fav-subtitle">{{ $fav->breed_name ?: ($fav->breed ? $fav->breed->name : 'Pet') }}</div>

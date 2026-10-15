@@ -73,6 +73,12 @@ class User extends Authenticatable
         return $this->belongsToMany(Listing::class, 'favorites');
     }
 
+    public function hasFavorited($listing): bool
+    {
+        $id = is_object($listing) ? $listing->id : $listing;
+        return $this->favorites()->where('listing_id', $id)->exists();
+    }
+
     public function buyerConversations()
     {
         return $this->hasMany(Conversation::class, 'buyer_id');

@@ -3755,7 +3755,6 @@ button {
 .favorite-btn,
 .home-pet-fav,
 .my-pet-fav,
-.pd-icon-btn,
 #pdLikeBtn,
 .pet-card-fav {
   cursor: pointer !important;
@@ -3772,7 +3771,7 @@ button {
 .favorite-btn:hover,
 .home-pet-fav:hover,
 .my-pet-fav:hover,
-.pd-icon-btn:hover,
+#pdLikeBtn:hover,
 .pet-card-fav:hover {
   transform: scale(1.12);
 }
@@ -3783,7 +3782,7 @@ button {
 .favorite-btn:active,
 .home-pet-fav:active,
 .my-pet-fav:active,
-.pd-icon-btn:active,
+#pdLikeBtn:active,
 .pet-card-fav:active {
   transform: scale(0.92);
 }
@@ -3795,7 +3794,8 @@ button {
 .favorite-btn.active,
 .home-pet-fav.active,
 .my-pet-fav.active,
-.pd-icon-btn.active {
+#pdLikeBtn.liked,
+#pdLikeBtn.active {
   color: #ff4b68 !important;
 }
 
@@ -3805,22 +3805,25 @@ button {
 .favorite-btn.active i,
 .home-pet-fav.active i,
 .my-pet-fav.active i,
-.pd-icon-btn.active i,
+#pdLikeBtn.liked i,
+#pdLikeBtn.active i,
 .pet-card-fav.active i,
 .fav-heart i.fa-solid,
 .fav-heart i.fas,
 .fav-heart-btn i.fa-solid,
 .fav-heart-btn i.fas,
-.btn-wishlist-heart i.fa-solid,
-.btn-wishlist-heart i.fas,
+.btn-wishlist-heart.active i.fa-solid,
+.btn-wishlist-heart.active i.fas,
+.btn-wishlist-heart.favorited i.fa-solid,
+.btn-wishlist-heart.favorited i.fas,
 .favorite-btn i.fa-solid,
 .favorite-btn i.fas,
 .home-pet-fav i.fa-solid,
 .home-pet-fav i.fas,
 .my-pet-fav i.fa-solid,
 .my-pet-fav i.fas,
-.pd-icon-btn i.fa-solid,
-.pd-icon-btn i.fas,
+#pdLikeBtn.liked i.fa-solid,
+#pdLikeBtn.active i.fa-solid,
 .pet-card-fav i.fa-solid,
 .pet-card-fav i.fas {
   color: #ff4b68 !important;
@@ -3871,159 +3874,160 @@ button {
    so that notifications display as a proper floating dropdown when clicking the bell icon.
    ========================================================= */
 .notification-dropdown-container {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .btn-notification {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.2s;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
 }
 
 .btn-notification:hover {
-    opacity: 0.8;
+  opacity: 0.8;
 }
 
 .btn-notification svg {
-    width: 32px;
-    height: 32px;
+  width: 32px;
+  height: 32px;
 }
 
 .notif-dropdown-menu {
-    position: absolute;
-    top: calc(100% + 12px);
-    right: 0;
-    width: 340px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    display: none;
-    flex-direction: column;
-    border: 1px solid #e5e7eb;
-    color: var(--text-dark, #1f2937);
-    text-align: left;
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 340px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  border: 1px solid #e5e7eb;
+  color: var(--text-dark, #1f2937);
+  text-align: left;
 }
 
 .notif-dropdown-menu.show {
-    display: flex;
+  display: flex;
 }
 
 .notif-dropdown-arrow {
-    position: absolute;
-    top: -6px;
-    right: 18px;
-    width: 12px;
-    height: 12px;
-    background: white;
-    transform: rotate(45deg);
-    border-top: 1px solid #e5e7eb;
-    border-left: 1px solid #e5e7eb;
+  position: absolute;
+  top: -6px;
+  right: 18px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  transform: rotate(45deg);
+  border-top: 1px solid #e5e7eb;
+  border-left: 1px solid #e5e7eb;
 }
 
 .notif-dropdown-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    border-bottom: 1px solid #e5e7eb;
-    position: relative;
-    z-index: 2;
-    background: white;
-    border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+  z-index: 2;
+  background: white;
+  border-radius: 12px 12px 0 0;
 }
 
 .notif-header-icon {
-    width: 40px;
-    height: 40px;
-    background-color: #eaf7f0;
-    color: #128c5a;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 18px;
-    flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background-color: #eaf7f0;
+  color: #128c5a;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 .notif-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1f2937;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
 }
 
 .notif-subtitle {
-    font-size: 13px;
-    color: #6b7280;
-    margin-top: 2px;
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 2px;
 }
 
 .notif-dropdown-body {
-    padding: 50px 24px;
-    text-align: center;
-    color: #9ca3af;
-    font-size: 14px;
-    background: white;
+  padding: 50px 24px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  background: white;
 }
 
 .notif-dropdown-footer {
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid #e5e7eb;
-    background: white;
-    border-radius: 0 0 12px 12px;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 0 0 12px 12px;
 }
 
 .notif-view-all {
-    color: #128c5a;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+  color: #128c5a;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .notif-view-all:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .notif-view-all i {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 .notif-pagination {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 .notif-page-btn {
-    width: 32px;
-    height: 32px;
-    border: 1px solid #e5e7eb;
-    background: white;
-    color: #6b7280;
-    border-radius: 6px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-size: 12px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 12px;
 }
 
 .notif-page-btn:hover {
-    background: #f3f4f6;
-    color: #1f2937;
+  background: #f3f4f6;
+  color: #1f2937;
 }
+
 /* =========================================================
    [AI UPDATE - END]
    ========================================================= */

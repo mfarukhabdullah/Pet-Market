@@ -497,19 +497,130 @@ function initSidebarFilter() {
   const locationSelect = document.getElementById('filterLocation');
   const petCards = document.querySelectorAll('.pet-card');
 
+  // Helper: Normalize category names/slugs
+  function normalizeCat(c) {
+    if (!c || c === 'all') return '';
+    c = c.toLowerCase().trim();
+    if (c === 'fishes' || c === 'fish') return 'fish';
+    if (c === 'reptile' || c === 'reptiles') return 'reptiles';
+    if (c === 'horse' || c === 'horses' || c === 'horses-farm' || c === 'horse-farm' || c === 'farm') return 'horses-farm';
+    if (c === 'exotic' || c === 'exotic-pets' || c === 'exotic-pet' || c === 'exotics') return 'exotic';
+    if (c === 'dog' || c === 'dogs') return 'dogs';
+    if (c === 'cat' || c === 'cats') return 'cats';
+    if (c === 'bird' || c === 'birds') return 'birds';
+    if (c === 'rabbit' || c === 'rabbits') return 'rabbits';
+    return c.replace(/s$/, '');
+  }
+
+  // Dynamic Breed Cascading based on selected Category
+  function updateBreedDropdown() {
+    if (!categorySelect || !breedSelect) return;
+    const catVal = (categorySelect.value || '').toLowerCase().trim();
+    const targetNormCat = normalizeCat(catVal);
+
+    const breedOptions = Array.from(breedSelect.querySelectorAll('option'));
+    let currentlySelectedAvailable = false;
+    const currentBreedVal = (breedSelect.value || '').toLowerCase().trim();
+
+    breedOptions.forEach(opt => {
+      if (!opt.value) {
+        opt.hidden = false;
+        opt.style.display = '';
+        return;
+      }
+      const optCat = (opt.dataset.categorySlug || '').toLowerCase().trim();
+      const normOptCat = normalizeCat(optCat);
+
+      if (!targetNormCat || normOptCat === targetNormCat || optCat === catVal) {
+        opt.hidden = false;
+        opt.style.display = '';
+        if (opt.value.toLowerCase().trim() === currentBreedVal) {
+          currentlySelectedAvailable = true;
+        }
+      } else {
+        opt.hidden = true;
+        opt.style.display = 'none';
+      }
+    });
+
+    if (currentBreedVal && !currentlySelectedAvailable) {
+      breedSelect.value = '';
+    }
+  }
+
+  if (categorySelect) {
+    categorySelect.addEventListener('change', () => {
+      updateBreedDropdown();
+      applySidebarFilters();
+    });
+  }
+  // Initialize dropdown state on page load
+  updateBreedDropdown();
+
+  // Helper function to parse user-entered price into a clean integer PKR
+  function parsePriceValue(val) {
+    if (val === null || val === undefined) return NaN;
+    let s = String(val).toLowerCase().trim();
+    if (!s) return NaN;
+    // Strip PKR / Rs / Rs. / /- and commas
+    s = s.replace(/pkr|rs\.?|\/\-/g, '').replace(/,/g, '').trim();
+    if (!s) return NaN;
+    // Support 'k' (thousands) and 'm' (millions)
+    if (/^(\d+(\.\d+)?)\s*k$/i.test(s)) {
+      const match = s.match(/^(\d+(\.\d+)?)\s*k$/i);
+      return Math.round(parseFloat(match[1]) * 1000);
+    }
+    if (/^(\d+(\.\d+)?)\s*m$/i.test(s)) {
+      const match = s.match(/^(\d+(\.\d+)?)\s*m$/i);
+      return Math.round(parseFloat(match[1]) * 1000000);
+    }
+    const num = parseFloat(s);
+    if (isNaN(num)) return NaN;
+    // Auto-scale compact thousands (e.g. 50 or 60 means 50k / 60k, since minimum pet price is 4,500 PKR)
+    if (num > 0 && num < 1000) {
+      return Math.round(num * 1000);
+    }
+    return Math.round(num);
+  }
+
   function applySidebarFilters() {
     const categoryVal = categorySelect ? categorySelect.value.toLowerCase() : '';
     const breedVal = breedSelect ? breedSelect.value.toLowerCase() : '';
     const locationVal = locationSelect ? locationSelect.value.toLowerCase() : '';
 
     // Get checked genders
-    const checkedGenders = Array.from(sidebarForm.querySelectorAll('input[name="gender"]:checked')).map(cb => cb.value.toLowerCase());
+    const checkedGenders = Array.from(sidebarForm.querySelectorAll('input[name="gender[]"]:checked, input[name="gender"]:checked')).map(cb => cb.value.toLowerCase());
 
-    // Parse Price Range Filters
+    // Parse Price Range Filters with smart typing detection & range swapping
     const priceMinEl = document.getElementById('priceMin');
-    const priceMin = priceMinEl ? parseInt(priceMinEl.value) : NaN;
     const priceMaxEl = document.getElementById('priceMax');
-    const priceMax = priceMaxEl ? parseInt(priceMaxEl.value) : NaN;
+    const rawMinStr = priceMinEl ? priceMinEl.value.trim() : '';
+    const rawMaxStr = priceMaxEl ? priceMaxEl.value.trim() : '';
+    const priceMin = parsePriceValue(rawMinStr);
+    const priceMax = parsePriceValue(rawMaxStr);
+
+    let effectiveMin = priceMin;
+    let effectiveMax = priceMax;
+
+    if (!isNaN(priceMin) && !isNaN(priceMax)) {
+      if (priceMin > priceMax) {
+        // Check if user is actively typing in the Max input field (e.g. Min is '50000' and user has only typed '6')
+        const isTypingMax = (document.activeElement === priceMaxEl) && (rawMaxStr.length < rawMinStr.length);
+        const isTypingMin = (document.activeElement === priceMinEl) && (rawMinStr.length < rawMaxStr.length);
+
+        if (isTypingMax) {
+          // Temporarily ignore incomplete Max value while user is typing it out
+          effectiveMax = NaN;
+        } else if (isTypingMin) {
+          // Temporarily ignore incomplete Min value while user is typing it out
+          effectiveMin = NaN;
+        } else {
+          // Both numbers are completely typed but inverted (e.g. min 60000, max 50000): swap them
+          effectiveMin = Math.min(priceMin, priceMax);
+          effectiveMax = Math.max(priceMin, priceMax);
+        }
+      }
+    }
 
     // Parse Age Range Filters
     const ageMinEl = document.getElementById('ageMin');
@@ -537,11 +648,15 @@ function initSidebarFilter() {
     let visibleCount = 0;
 
     petCards.forEach(card => {
-      const breed = (card.dataset.breed || '').toLowerCase();
+      const cardCat = (card.dataset.category || '').toLowerCase();
+      const cardBreedSlug = (card.dataset.breed || '').toLowerCase();
+      const cardBreedName = (card.dataset.breedName || '').toLowerCase();
       const location = (card.dataset.location || '').toLowerCase();
       const gender = (card.dataset.gender || '').toLowerCase();
       const titleEl = card.querySelector('.pet-name');
       const title = titleEl ? titleEl.innerText.toLowerCase() : '';
+      const breedTagEl = card.querySelector('.pet-breed-tag');
+      const breedTag = breedTagEl ? breedTagEl.innerText.toLowerCase() : '';
 
       // Check category
       let matchesCategory = true;
@@ -554,8 +669,27 @@ function initSidebarFilter() {
         else matchesCategory = false;
       }
 
-      // Check breed
-      const matchesBreed = !breedVal || breed === breedVal;
+      // Check breed (handles slug, clean spaced text, title, and breed tag)
+      let matchesBreed = true;
+      if (breedVal) {
+        const cleanVal = breedVal.replace(/[^a-z0-9]/g, '');
+        const spacedVal = breedVal.replace(/[-_]+/g, ' ').trim();
+        const cleanCardBreed = cardBreedSlug.replace(/[^a-z0-9]/g, '');
+        const cleanCardBreedName = cardBreedName.replace(/[^a-z0-9]/g, '');
+        const cleanBreedTag = breedTag.replace(/[^a-z0-9]/g, '');
+        const cleanTitle = title.replace(/[^a-z0-9]/g, '');
+
+        matchesBreed =
+          cardBreedSlug === breedVal ||
+          cardBreedName === spacedVal ||
+          cleanCardBreed === cleanVal ||
+          cleanCardBreedName === cleanVal ||
+          cardBreedName.includes(spacedVal) ||
+          breedTag.includes(spacedVal) ||
+          title.includes(spacedVal) ||
+          cleanBreedTag.includes(cleanVal) ||
+          cleanTitle.includes(cleanVal);
+      }
 
       // Check location
       const matchesLocation = !locationVal || location === locationVal;
@@ -597,7 +731,7 @@ function initSidebarFilter() {
 
       // Check Featured
       const urlParams = new URLSearchParams(window.location.search);
-      const isFeaturedOnly = urlParams.get('featured') === 'true';
+      const isFeaturedOnly = urlParams.get('featured') === 'true' || urlParams.get('featured') === '1';
       let matchesFeatured = true;
       if (isFeaturedOnly) {
         const featuredBadge = card.querySelector('.featured-badge');
@@ -705,7 +839,7 @@ function initSidebarFilter() {
     }
 
     // Handle Reset Button and Pagination Visibility
-    const hasActiveFilters = categoryVal || breedVal || locationVal || checkedGenders.length > 0 || minDays !== null || maxDays !== null || !isNaN(priceMin) || !isNaN(priceMax);
+    const hasActiveFilters = categoryVal || breedVal || locationVal || checkedGenders.length > 0 || minDays !== null || maxDays !== null || !isNaN(effectiveMin) || !isNaN(effectiveMax);
     const resetBtn = document.getElementById('resetFiltersBtn');
     const paginationRow = document.querySelector('.category-pagination-row');
 
@@ -718,20 +852,73 @@ function initSidebarFilter() {
     }
   }
 
+  let filterDebounceTimer = null;
+  function debouncedSidebarFilters() {
+    if (filterDebounceTimer) clearTimeout(filterDebounceTimer);
+    filterDebounceTimer = setTimeout(() => {
+      applySidebarFilters();
+    }, 250);
+  }
+
+  // Handle Form Submission: submit cleanly to server for full database filtering
   sidebarForm.addEventListener('submit', (e) => {
-    e.preventDefault(); // Prevent page refresh
-    applySidebarFilters();
+    // Normalize compact/formatted price values before submission
+    const priceMinEl = document.getElementById('priceMin');
+    const priceMaxEl = document.getElementById('priceMax');
+    if (priceMinEl && priceMinEl.value.trim()) {
+      const parsed = parsePriceValue(priceMinEl.value.trim());
+      if (!isNaN(parsed)) priceMinEl.value = parsed;
+    }
+    if (priceMaxEl && priceMaxEl.value.trim()) {
+      const parsed = parsePriceValue(priceMaxEl.value.trim());
+      if (!isNaN(parsed)) priceMaxEl.value = parsed;
+    }
+    if (priceMinEl && priceMaxEl && priceMinEl.value && priceMaxEl.value) {
+      const v1 = parseFloat(priceMinEl.value);
+      const v2 = parseFloat(priceMaxEl.value);
+      if (!isNaN(v1) && !isNaN(v2) && v1 > v2) {
+        priceMinEl.value = v2;
+        priceMaxEl.value = v1;
+      }
+    }
+
+    // Disable empty inputs so the URL parameters remain clean and readable
+    const elements = Array.from(sidebarForm.elements);
+    elements.forEach(el => {
+      if ((el.tagName === 'INPUT' || el.tagName === 'SELECT') && !el.value && el.name) {
+        el.disabled = true;
+      }
+    });
   });
 
-  // Live filter on any change or input
-  sidebarForm.addEventListener('change', applySidebarFilters);
-  sidebarForm.addEventListener('input', applySidebarFilters);
+  // Live filter on change (immediate) or input (debounced)
+  sidebarForm.addEventListener('change', () => {
+    if (filterDebounceTimer) clearTimeout(filterDebounceTimer);
+    applySidebarFilters();
+  });
+  sidebarForm.addEventListener('input', debouncedSidebarFilters);
+
+  // When user finishes typing in price fields (blur), re-evaluate immediately
+  const priceMinInputEl = document.getElementById('priceMin');
+  const priceMaxInputEl = document.getElementById('priceMax');
+  if (priceMinInputEl) {
+    priceMinInputEl.addEventListener('blur', () => {
+      if (filterDebounceTimer) clearTimeout(filterDebounceTimer);
+      applySidebarFilters();
+    });
+  }
+  if (priceMaxInputEl) {
+    priceMaxInputEl.addEventListener('blur', () => {
+      if (filterDebounceTimer) clearTimeout(filterDebounceTimer);
+      applySidebarFilters();
+    });
+  }
 
   const resetBtn = document.getElementById('resetFiltersBtn');
   if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      sidebarForm.reset();
-      applySidebarFilters();
+    resetBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.href = window.location.pathname;
     });
   }
 
@@ -787,13 +974,57 @@ function initSidebarFilter() {
 /* ==========================================
    8. Favorites Toggle (Mobile & Desktop)
    ========================================== */
+function syncAllFavoriteButtons(favoriteIds) {
+  const favSet = new Set((favoriteIds || []).map(String));
+  document.querySelectorAll('.home-pet-fav, .fav-heart-btn, .btn-wishlist-heart, .favorite-btn, .my-pet-fav, .pet-card-fav, #pdLikeBtn').forEach(btn => {
+    if (btn.classList.contains('fav-heart-btn') && btn.closest('.fav-card')) return;
+    const id = btn.getAttribute('data-id') || (btn.getAttribute('data-url') || '').match(/\/favorites\/toggle\/(\d+)/)?.[1];
+    if (!id) return;
+    const isFav = favSet.has(String(id));
+    const icon = btn.querySelector('i') || (btn.tagName === 'I' ? btn : null);
+    if (isFav) {
+      btn.classList.add('active', 'favorited', 'liked');
+      btn.setAttribute('title', 'Remove from favorites');
+      if (icon) {
+        icon.className = 'fa-solid fa-heart';
+        icon.style.color = btn.id === 'pdLikeBtn' ? '#E11D48' : '#ff4b68';
+      }
+    } else {
+      btn.classList.remove('active', 'favorited', 'liked');
+      btn.setAttribute('title', 'Save to favorites');
+      if (icon) {
+        icon.className = 'fa-regular fa-heart';
+        icon.style.color = '';
+      }
+    }
+  });
+}
+
+function fetchAndSyncFavorites() {
+  fetch('/favorites/ids', { headers: { 'Accept': 'application/json' }, cache: 'no-store' })
+    .then(r => r.json())
+    .then(data => {
+      if (data && Array.isArray(data.favorite_ids)) {
+        syncAllFavoriteButtons(data.favorite_ids);
+      }
+    })
+    .catch(() => { });
+}
+
+window.addEventListener('pageshow', fetchAndSyncFavorites);
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'visible') {
+    fetchAndSyncFavorites();
+  }
+});
+
 function initFavorites() {
   if (window._favoritesInitialized) return;
   window._favoritesInitialized = true;
 
   document.addEventListener('click', function (e) {
     const heartBtn = e.target.closest(
-      '.fav-heart, .fav-heart-btn, .btn-wishlist-heart, .favorite-btn, .home-pet-fav, .my-pet-fav, #pdLikeBtn, .pd-icon-btn, .pet-card-fav'
+      '.fav-heart, .fav-heart-btn, .favorite-btn, .my-pet-fav, .pet-card-fav'
     );
 
     if (!heartBtn) return;
@@ -852,6 +1083,57 @@ function initFavorites() {
     setTimeout(() => {
       heartBtn.style.transform = 'scale(1)';
     }, 150);
+
+    // Sync with backend if URL provided
+    const toggleUrl = heartBtn.getAttribute('data-url') || (heartBtn.dataset ? heartBtn.dataset.url : null) || (heartBtn.closest('form') ? heartBtn.closest('form').action : null);
+    if (toggleUrl) {
+      const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      const token = csrfMeta ? csrfMeta.getAttribute('content') : '';
+      fetch(toggleUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': token
+        }
+      })
+        .then(r => {
+          if (r.status === 401) {
+            return r.json().then(data => {
+              if (data && data.redirect) {
+                window.location.href = data.redirect;
+              } else {
+                const match = toggleUrl.match(/\/favorites\/toggle\/(\d+)/);
+                const lid = match ? match[1] : '';
+                window.location.href = '/login' + (lid ? '?favorite_listing=' + lid + '&redirect=' + encodeURIComponent('/seller/favorites') : '');
+              }
+            }).catch(() => {
+              const match = toggleUrl.match(/\/favorites\/toggle\/(\d+)/);
+              const lid = match ? match[1] : '';
+              window.location.href = '/login' + (lid ? '?favorite_listing=' + lid + '&redirect=' + encodeURIComponent('/seller/favorites') : '');
+            });
+          }
+          return r.json();
+        })
+        .then(data => {
+          if (data && typeof data.is_favorited !== 'undefined' && icon) {
+            if (data.is_favorited) {
+              icon.classList.remove('fa-regular', 'far');
+              icon.classList.add('fa-solid', 'fas');
+              icon.style.color = '#ff4b68';
+              heartBtn.classList.add('active', 'favorited');
+            } else {
+              icon.classList.remove('fa-solid', 'fas');
+              icon.classList.add('fa-regular', 'far');
+              icon.style.color = '#9ca3af';
+              heartBtn.classList.remove('active', 'favorited');
+            }
+          }
+        })
+        .catch(err => {
+          console.warn('Favorite sync error:', err);
+        });
+    }
   });
 }
 

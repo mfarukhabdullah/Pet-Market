@@ -48,9 +48,14 @@
         .pd-sum-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
         .pd-title { font-family: 'Manrope', sans-serif; font-size: 34px; font-weight: 700; color: #17211C; line-height: 42px; margin: 0; }
         .pd-icon-btns { display: flex; gap: 4px; }
-        .pd-icon-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid #E5E7EB; background: #fff; color: #374151; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .pd-icon-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid #E5E7EB; background: #fff; color: #4B5563; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; transition: 0.2s; }
         .pd-icon-btn:hover { border-color: #147A4D; color: #147A4D; }
         .pd-icon-btn.liked { color: #E11D48; border-color: #FBCFE8; background: #FFF1F2; }
+        .pd-icon-btn.liked i { color: #E11D48; }
+        #pdShareBtn { color: #4B5563; }
+        #pdShareBtn i { color: #4B5563; }
+        #pdShareBtn:hover { border-color: #147A4D; color: #147A4D; }
+        #pdShareBtn:hover i { color: #147A4D; }
         .pd-price { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; color: #147A4D; margin: 8px 0 8px; }
         .pd-sub-meta { display: flex; gap: 18px; font-size: 13px; color: #6B7280; margin-bottom: 16px; }
         .pd-sub-meta i { margin-right: 5px; }
@@ -287,14 +292,14 @@
             <section class="pd-top">
                 <!-- Gallery -->
                 <div class="pd-card pd-gallery">
-                    <img id="pdMainImg" class="pd-main-img" src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                    <img id="pdMainImg" class="pd-main-img" src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                     <div class="pd-thumbs">
                         @if($listing->images && $listing->images->isNotEmpty())
                             @foreach($listing->images as $img)
-                                <img class="pd-thumb {{ $loop->first ? 'active' : '' }}" src="{{ $img->image_url }}" alt="{{ $listing->title }} photo {{ $loop->iteration }}" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                                <img class="pd-thumb {{ $loop->first ? 'active' : '' }}" src="{{ $img->image_url }}" alt="{{ $listing->title }} photo {{ $loop->iteration }}" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                             @endforeach
                         @else
-                            <img class="pd-thumb active" src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                            <img class="pd-thumb active" src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                         @endif
                     </div>
                 </div>
@@ -304,11 +309,26 @@
                     <div class="pd-sum-head">
                         <h1 class="pd-title">{{ $listing->title }}</h1>
                         <div class="pd-icon-btns">
-                            <form action="{{ route('favorites.toggle', ['listingId' => $listing->id]) }}" method="POST" style="display:inline;">
-                                @csrf
-                                <button type="submit" id="pdLikeBtn" class="pd-icon-btn {{ (auth()->check() && auth()->user()->hasFavorited($listing->id)) ? 'liked' : '' }}" aria-label="Save to favourites"><i class="fa-solid fa-heart"></i></button>
-                            </form>
-                            <button id="pdShareBtn" class="pd-icon-btn" aria-label="Share listing"><i class="fa-solid fa-share-nodes"></i></button>
+                            @php
+                                $currentUser = auth()->user();
+                                $isFavorited = $currentUser ? $currentUser->hasFavorited($listing->id) : false;
+                            @endphp
+                            <button type="button" 
+                                    id="pdLikeBtn" 
+                                    class="pd-icon-btn {{ $isFavorited ? 'liked active favorited' : '' }}" 
+                                    data-url="{{ route('favorites.toggle', ['listingId' => $listing->id]) }}" 
+                                    data-id="{{ $listing->id }}"
+                                    aria-label="Save to favourites"
+                                    title="{{ $isFavorited ? 'Remove from favorites' : 'Save to favorites' }}">
+                                <i class="{{ $isFavorited ? 'fa-solid fa-heart' : 'fa-regular fa-heart' }}" style="{{ $isFavorited ? 'color: #E11D48;' : '' }}"></i>
+                            </button>
+                            <button type="button" 
+                                    id="pdShareBtn" 
+                                    class="pd-icon-btn" 
+                                    aria-label="Share listing"
+                                    title="Share listing">
+                                <i class="fa-solid fa-share-nodes"></i>
+                            </button>
                         </div>
                     </div>
                     <div class="pd-price">{{ $listing->formatted_price }}</div>
@@ -324,7 +344,11 @@
                         <div class="pd-attr"><span>Color</span><strong>{{ $listing->color ?: 'Standard' }}</strong></div>
                     </div>
                     <div class="pd-btn-row">
-                        <a href="{{ route('chat.start', ['listingId' => $listing->id]) }}" id="pdSendMsgBtn" class="pd-btn pd-btn-primary"><i class="fa-regular fa-message"></i> Send Message</a>
+                        @if(auth()->check())
+                            <a href="{{ route('chat.start', ['listingId' => $listing->id]) }}" id="pdSendMsgBtn" class="pd-btn pd-btn-primary"><i class="fa-regular fa-message"></i> Send Message</a>
+                        @else
+                            <a href="{{ route('sign') }}?redirect={{ urlencode(route('chat.start', ['listingId' => $listing->id])) }}" id="pdSendMsgBtn" class="pd-btn pd-btn-primary"><i class="fa-regular fa-message"></i> Send Message</a>
+                        @endif
                         <a href="tel:{{ $listing->masked_phone }}" id="pdContactBtn" class="pd-btn pd-btn-outline"><i class="fa-solid fa-phone"></i> {{ $listing->masked_phone }}</a>
                     </div>
                     <div class="pd-verify-note">
@@ -395,7 +419,11 @@
                             <span><i class="fa-solid fa-shield-halved"></i>Trust: {{ $seller->trust_score }}%</span>
                             <span><i class="fa-solid fa-paw"></i>{{ $sellerActiveCount }} active ads</span>
                         </div>
-                        <a href="{{ route('chat.start', ['listingId' => $listing->id]) }}" id="pdSellerMsgBtn" class="pd-btn pd-btn-primary"><i class="fa-regular fa-message"></i> Send Message</a>
+                        @if(auth()->check())
+                            <a href="{{ route('chat.start', ['listingId' => $listing->id]) }}" id="pdSellerMsgBtn" class="pd-btn pd-btn-primary"><i class="fa-regular fa-message"></i> Send Message</a>
+                        @else
+                            <a href="{{ route('sign') }}?redirect={{ urlencode(route('chat.start', ['listingId' => $listing->id])) }}" id="pdSellerMsgBtn" class="pd-btn pd-btn-primary"><i class="fa-regular fa-message"></i> Send Message</a>
+                        @endif
                         <a href="{{ route('seller.profile', ['id' => $seller->id]) }}" id="pdSellerProfileBtn" class="pd-btn pd-btn-outline"><i class="fa-regular fa-user"></i> View Seller Profile</a>
                         <a href="#" id="pdReportBtn" class="pd-report"><i class="fa-regular fa-flag"></i> Report Listing</a>
                     </div>
@@ -421,7 +449,7 @@
                     <!-- Card 1 -->
                     <a href="{{ url('/pet-details') }}" class="my-pet-card">
                         <div style="position: relative;">
-                            <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever" class="my-pet-img">
+                            <img src="{{ asset('images/pets/golden-retriever.jpg') }}" alt="Golden Retriever" class="my-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                             <span class="my-badge">FEATURED</span>
                             <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
                         </div>
@@ -499,13 +527,18 @@
                 <p class="my-sec-desc">Related listings that may also match your search.</p>
                 <div class="my-pets-grid" style="text-align: left;">
                     @forelse($similarListings as $similar)
-                        <a href="{{ route('pet.details', ['id' => $similar->id]) }}" class="my-pet-card">
+                        <a href="{{ route('pet.details', ['id' => $similar->id]) }}" class="my-pet-card" id="listing-{{ $similar->id }}" style="scroll-margin-top: 100px;">
                             <div style="position: relative;">
-                                <img src="{{ $similar->primary_image_url }}" alt="{{ $similar->title }}" class="my-pet-img" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                                <img src="{{ $similar->primary_image_url }}" alt="{{ $similar->title }}" class="my-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                                 @if($similar->is_featured)
                                     <span class="my-badge">FEATURED</span>
                                 @endif
-                                <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
+                                @php
+                                    $isSimFav = auth()->user() ? auth()->user()->hasFavorited($similar->id) : false;
+                                @endphp
+                                <div class="my-pet-fav {{ $isSimFav ? 'active favorited' : '' }}" data-id="{{ $similar->id }}" data-url="{{ route('favorites.toggle', ['listingId' => $similar->id]) }}">
+                                    <i class="{{ $isSimFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart' }}" style="{{ $isSimFav ? 'color: #ff4b68;' : '' }}"></i>
+                                </div>
                             </div>
                             <div class="my-pet-info">
                                 <h3 class="my-pet-title">{{ $similar->title }}</h3>
@@ -659,12 +692,181 @@
             // Favourite toggle
             const like = document.getElementById('pdLikeBtn');
             if (like) {
-                like.addEventListener('click', function () {
-                    like.classList.toggle('liked');
+                like.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
                     const icon = like.querySelector('i');
-                    icon.classList.toggle('fa-regular');
-                    icon.classList.toggle('fa-solid');
+                    const isLiked = like.classList.contains('liked');
+                    const url = like.getAttribute('data-url');
+
+                    if (isLiked) {
+                        like.classList.remove('liked', 'active', 'favorited');
+                        if (icon) {
+                            icon.className = 'fa-regular fa-heart';
+                            icon.style.color = '';
+                        }
+                        like.setAttribute('title', 'Save to favorites');
+                    } else {
+                        like.classList.add('liked', 'active', 'favorited');
+                        if (icon) {
+                            icon.className = 'fa-solid fa-heart';
+                            icon.style.color = '#E11D48';
+                        }
+                        like.setAttribute('title', 'Remove from favorites');
+                    }
+
+                    // Micro-animation feedback
+                    like.style.transition = 'transform 0.15s ease-in-out';
+                    like.style.transform = 'scale(1.25)';
+                    setTimeout(() => { like.style.transform = 'scale(1)'; }, 150);
+
+                    if (url) {
+                        const token = '{{ csrf_token() }}';
+                        const returnUrl = window.location.pathname + window.location.search + '#pdLikeBtn';
+                        const fullUrl = url + (url.includes('?') ? '&' : '?') + 'redirect=' + encodeURIComponent(returnUrl);
+                        fetch(fullUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': token
+                            },
+                            body: JSON.stringify({ redirect: returnUrl })
+                        })
+                        .then(r => {
+                            if (r.status === 401) {
+                                return r.json().then(data => {
+                                    window.location.href = (data && data.redirect) ? data.redirect : ('{{ route('login') }}?favorite_listing={{ $listing->id }}&redirect=' + encodeURIComponent(returnUrl));
+                                }).catch(() => {
+                                    window.location.href = '{{ route('login') }}?favorite_listing={{ $listing->id }}&redirect=' + encodeURIComponent(returnUrl);
+                                });
+                            }
+                            return r.json();
+                        })
+                        .then(data => {
+                            if (data && typeof data.is_favorited !== 'undefined') {
+                                if (data.is_favorited) {
+                                    like.classList.add('liked', 'active', 'favorited');
+                                    if (icon) {
+                                        icon.className = 'fa-solid fa-heart';
+                                        icon.style.color = '#E11D48';
+                                    }
+                                    like.setAttribute('title', 'Remove from favorites');
+                                } else {
+                                    like.classList.remove('liked', 'active', 'favorited');
+                                    if (icon) {
+                                        icon.className = 'fa-regular fa-heart';
+                                        icon.style.color = '';
+                                    }
+                                    like.setAttribute('title', 'Save to favorites');
+                                }
+                            }
+                        })
+                        .catch(err => console.warn('Favorite toggle error:', err));
+                    }
                 });
+
+                // Real-time synchronization with server state
+                window.syncPdFavorite = function() {
+                    fetch('{{ route('favorites.ids') }}', {
+                        headers: { 'Accept': 'application/json' },
+                        cache: 'no-store'
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data && Array.isArray(data.favorite_ids)) {
+                            const isFav = data.favorite_ids.map(String).includes('{{ $listing->id }}');
+                            const icon = like.querySelector('i');
+                            if (isFav) {
+                                like.classList.add('liked', 'active', 'favorited');
+                                like.setAttribute('title', 'Remove from favorites');
+                                if (icon) {
+                                    icon.className = 'fa-solid fa-heart';
+                                    icon.style.color = '#E11D48';
+                                }
+                            } else {
+                                like.classList.remove('liked', 'active', 'favorited');
+                                like.setAttribute('title', 'Save to favorites');
+                                if (icon) {
+                                    icon.className = 'fa-regular fa-heart';
+                                    icon.style.color = '';
+                                }
+                            }
+                        }
+                    })
+                    .catch(err => console.warn('Favorite sync error:', err));
+                };
+
+                window.addEventListener('pageshow', function() {
+                    window.syncPdFavorite();
+                });
+
+                document.addEventListener('visibilitychange', function() {
+                    if (document.visibilityState === 'visible') {
+                        window.syncPdFavorite();
+                    }
+                });
+
+                // Similar pets favorite buttons
+                document.querySelectorAll('.my-pet-fav').forEach(favBtn => {
+                    favBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const sId = this.getAttribute('data-id');
+                        const sUrl = this.getAttribute('data-url');
+                        if (sUrl) {
+                            const returnUrl = window.location.pathname + window.location.search + '#listing-' + sId;
+                            const fullUrl = sUrl + (sUrl.includes('?') ? '&' : '?') + 'redirect=' + encodeURIComponent(returnUrl);
+                            fetch(fullUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({ redirect: returnUrl })
+                            })
+                            .then(r => {
+                                if (r.status === 401) {
+                                    return r.json().then(data => {
+                                        window.location.href = (data && data.redirect) ? data.redirect : ('{{ route('login') }}?favorite_listing=' + sId + '&redirect=' + encodeURIComponent(returnUrl));
+                                    }).catch(() => {
+                                        window.location.href = '{{ route('login') }}?favorite_listing=' + sId + '&redirect=' + encodeURIComponent(returnUrl);
+                                    });
+                                }
+                                return r.json();
+                            })
+                            .then(data => {
+                                if (data && typeof data.is_favorited !== 'undefined') {
+                                    const icon = this.querySelector('i');
+                                    if (data.is_favorited) {
+                                        this.classList.add('active', 'favorited');
+                                        if (icon) { icon.className = 'fa-solid fa-heart'; icon.style.color = '#ff4b68'; }
+                                    } else {
+                                        this.classList.remove('active', 'favorited');
+                                        if (icon) { icon.className = 'fa-regular fa-heart'; icon.style.color = ''; }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
+
+                // Auto-scroll to card or favorite button if returning from auth
+                if (window.location.hash) {
+                    const targetEl = document.querySelector(window.location.hash);
+                    if (targetEl) {
+                        setTimeout(() => {
+                            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            setTimeout(() => {
+                                if (window.location.hash) {
+                                    history.replaceState(null, document.title, window.location.pathname + window.location.search);
+                                }
+                            }, 1500);
+                        }, 300);
+                    }
+                }
             }
 
             // Reveal masked phone number (anti-scraper & lead tracking)
@@ -690,23 +892,32 @@
             // Share: copy link
             const shareBtn = document.getElementById('pdShareBtn');
             if (shareBtn) {
-                shareBtn.addEventListener('click', function () {
+                shareBtn.addEventListener('click', function (e) {
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+
                     var copyToClipboard = function() {
                         navigator.clipboard.writeText(location.href).catch(function(){});
                     };
                     
                     // Show toast
                     var toast = document.getElementById("toast");
-                    toast.textContent = "Copied to clipboard";
-                    toast.style.visibility = "visible";
-                    toast.style.opacity = "1";
+                    if (toast) {
+                        toast.textContent = "Copied to clipboard";
+                        toast.style.visibility = "visible";
+                        toast.style.opacity = "1";
+                    }
                     
                     // Try to copy to clipboard
                     if (navigator.clipboard) { copyToClipboard(); }
                     
                     setTimeout(function(){ 
-                        toast.style.opacity = "0"; 
-                        setTimeout(function(){ toast.style.visibility = "hidden"; }, 300);
+                        if (toast) {
+                            toast.style.opacity = "0"; 
+                            setTimeout(function(){ toast.style.visibility = "hidden"; toast.textContent = "Copied to clipboard"; }, 300);
+                        }
                     }, 3000);
                 });
             }

@@ -27,4 +27,15 @@ class ListingImage extends Model
     {
         return $this->belongsTo(Listing::class);
     }
+
+    public function getImageUrlAttribute(): string
+    {
+        if ($this->image_path && file_exists(public_path($this->image_path))) {
+            return asset($this->image_path);
+        }
+        if ($this->thumb_path && file_exists(public_path($this->thumb_path))) {
+            return asset($this->thumb_path);
+        }
+        return asset('images/pets/golden-retriever.jpg');
+    }
 }

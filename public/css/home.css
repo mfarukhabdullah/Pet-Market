@@ -593,6 +593,14 @@
   color: #ff4757;
 }
 
+.home-pet-fav.active,
+.home-pet-fav.favorited,
+.home-pet-fav.active i,
+.home-pet-fav.favorited i,
+.home-pet-fav i.fa-solid {
+  color: #ff4757 !important;
+}
+
 .home-pet-info {
   padding: 16px;
 }
