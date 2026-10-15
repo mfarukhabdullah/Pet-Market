@@ -504,12 +504,30 @@
                     <a href="{{ route('login') }}{{ $redirectSuffix }}" class="auth-tab" style="text-decoration: none;">Login</a>
                     <a href="{{ route('sign') }}{{ $redirectSuffix }}" class="auth-tab active" style="text-decoration: none;">Create Account</a>
                 </div>
+
+                @if($errors->any())
+                    <div style="background-color: #FEE2E2; border: 1px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px;">
+                        <ul style="margin: 0; padding-left: 20px;">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if(session('info'))
+                    <div style="background-color: #EAF7F0; border: 1px solid #147A4D; color: #0E5E39; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-circle-info"></i> {{ session('info') }}
+                    </div>
+                @endif
                 
-                <form action="{{ route('sign.post') }}{{ $redirectSuffix }}" method="POST" autocomplete="off">
+                <form action="{{ route('sign') }}" method="POST" autocomplete="off">
                     @csrf
-                    {{-- [AI UPDATE] User Prompt: "reslove this issue" (Pass redirect destination to preserve redirect param upon register submit) --}}
                     @if(request()->has('redirect'))
-                        <input type="hidden" name="redirect" value="{{ request('redirect') }}">
+                        <input type="hidden" name="redirect" value="{{ request()->get('redirect') }}">
+                    @endif
+                    @if(request()->has('favorite_listing'))
+                        <input type="hidden" name="favorite_listing" value="{{ request()->get('favorite_listing') }}">
                     @endif
                     <div class="form-row">
                         <div class="form-group">
@@ -695,10 +713,7 @@
                         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating Account...';
                         btn.style.opacity = '0.8';
                     }
-
-                    setTimeout(() => {
-                        registerForm.submit();
-                    }, 800);
+                    // Form submits naturally to backend
                 });
             }
 

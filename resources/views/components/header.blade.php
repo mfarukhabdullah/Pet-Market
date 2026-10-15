@@ -44,13 +44,60 @@
                     <a href="{{ route('category', ['featured' => 'true']) }}" class="header-nav-item">Featured Pets</a>
                     <a href="{{ route('category') }}" class="header-nav-item">Categories</a>
                     <a href="{{ route('breeds') }}" class="header-nav-item">Breeds</a>
+                    <a href="{{ route('category') }}" class="header-nav-item">Locations</a>
                     <a href="{{ route('about') }}" class="header-nav-item">About Us</a>
                 </nav>
 
                 <!-- Action Buttons & Mobile Controls -->
                 <div class="header-action-btns">
-                    {{-- [AI UPDATE] User Prompt: "when we navigate into notification page Profile logo remove and it shoew login/register option set notification icon there same as on other pages" (Preserve Profile dropdown on notifications page) --}}
-                    @if(request()->is('dashboard') || request()->is('seller/*') || request()->is('notifications'))
+                    @if(auth()->check())
+                        <style>
+                            .user-profile-dropdown .dd-icon {
+                                width: 20px;
+                                height: 20px;
+                                min-width: 20px;
+                                min-height: 20px;
+                                display: inline-block;
+                                flex-shrink: 0;
+                                background-color: var(--text-dark, #17211C);
+                                -webkit-mask-size: contain;
+                                mask-size: contain;
+                                -webkit-mask-repeat: no-repeat;
+                                mask-repeat: no-repeat;
+                                -webkit-mask-position: center;
+                                mask-position: center;
+                                vertical-align: middle;
+                                transition: background-color 0.2s ease;
+                            }
+                            .user-profile-dropdown .dropdown-item:hover .dd-icon,
+                            .user-profile-dropdown .dropdown-item.active .dd-icon {
+                                background-color: var(--primary-green, #147A4D);
+                            }
+                            .user-profile-dropdown .icon-dash-dd {
+                                -webkit-mask-image: url('{{ asset('images/dash-icon.svg') }}');
+                                mask-image: url('{{ asset('images/dash-icon.svg') }}');
+                            }
+                            .user-profile-dropdown .icon-list-dd {
+                                -webkit-mask-image: url('{{ asset('images/list-icon.svg') }}');
+                                mask-image: url('{{ asset('images/list-icon.svg') }}');
+                            }
+                            .user-profile-dropdown .icon-msg-dd {
+                                -webkit-mask-image: url('{{ asset('images/messages-icon.svg') }}');
+                                mask-image: url('{{ asset('images/messages-icon.svg') }}');
+                            }
+                            .user-profile-dropdown .icon-fav-dd {
+                                -webkit-mask-image: url('{{ asset('images/heart-icon.svg') }}');
+                                mask-image: url('{{ asset('images/heart-icon.svg') }}');
+                            }
+                            .user-profile-dropdown .icon-notif-dd {
+                                -webkit-mask-image: url('{{ asset('images/ps-bell.svg') }}');
+                                mask-image: url('{{ asset('images/ps-bell.svg') }}');
+                            }
+                            .user-profile-dropdown .icon-ps-dd {
+                                -webkit-mask-image: url('{{ asset('images/profile-setting-user-icon.svg') }}');
+                                mask-image: url('{{ asset('images/profile-setting-user-icon.svg') }}');
+                            }
+                        </style>
                         <div class="user-profile-dropdown">
                             <button class="profile-toggle-btn" id="profileDropdownBtn">
                                 <img src="{{ auth()->user()->avatar_url }}" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=147A4D&color=fff'" alt="{{ auth()->user()->name ?? 'Profile' }}" class="header-avatar">
@@ -67,26 +114,26 @@
                                 
                                 <div class="dropdown-divider"></div>
 
-                                  <a href="{{ route('dashboard') }}" class="dropdown-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"><span class="dd-icon icon-dash-dd"></span> Dashboard</a>
-                                  <a href="{{ route('seller.listings') }}" class="dropdown-item {{ request()->routeIs('seller.listings') ? 'active' : '' }}"><span class="dd-icon icon-list-dd"></span> My Listings</a>
-                                  <a href="{{ route('seller.messages') }}" class="dropdown-item {{ request()->routeIs('seller.messages') ? 'active' : '' }}"><span class="dd-icon icon-msg-dd"></span> Messages</a>
-                                  <a href="{{ route('favorites') }}" class="dropdown-item {{ request()->routeIs('favorites') ? 'active' : '' }}"><span class="dd-icon icon-fav-dd"></span> Favorites</a>
-                                  <a href="{{ route('notifications') }}" class="dropdown-item {{ request()->routeIs('notifications') ? 'active' : '' }}"><span class="dd-icon icon-notif-dd"></span> Notifications</a>
-                                  <a href="{{ route('seller.settings') }}" class="dropdown-item {{ request()->routeIs('seller.settings*') ? 'active' : '' }}"><span class="dd-icon icon-ps-dd"></span> Profile Settings</a>
-                                  
-                                  <a href="{{ route('logout') }}" class="dropdown-item">
-                                      <i class="fa-solid fa-arrow-right-from-bracket" style="width:20px; font-size:18px; text-align:center;"></i> Log Out
-                                  </a>
-                              </div>
-                          </div>
-                      @else
+                                <a href="{{ route('dashboard') }}" class="dropdown-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"><span class="dd-icon icon-dash-dd"></span> Dashboard</a>
+                                <a href="{{ route('seller.listings') }}" class="dropdown-item {{ request()->routeIs('seller.listings') ? 'active' : '' }}"><span class="dd-icon icon-list-dd"></span> My Listings</a>
+                                <a href="{{ route('seller.messages') }}" class="dropdown-item {{ request()->routeIs('seller.messages') ? 'active' : '' }}"><span class="dd-icon icon-msg-dd"></span> Messages</a>
+                                <a href="{{ route('favorites') }}" class="dropdown-item {{ request()->routeIs('favorites') ? 'active' : '' }}"><span class="dd-icon icon-fav-dd"></span> Favorites</a>
+                                <a href="{{ route('notifications') }}" class="dropdown-item {{ request()->routeIs('notifications') ? 'active' : '' }}"><span class="dd-icon icon-notif-dd"></span> Notifications</a>
+                                <a href="{{ route('seller.settings') }}" class="dropdown-item {{ request()->routeIs('seller.settings*') ? 'active' : '' }}"><span class="dd-icon icon-ps-dd"></span> Profile Settings</a>
+                                
+                                <a href="{{ route('logout') }}" class="dropdown-item">
+                                    <i class="fa-solid fa-arrow-right-from-bracket" style="width:20px; font-size:18px; text-align:center;"></i> Log Out
+                                </a>
+                            </div>
+                        </div>
+                    @else
                         <div class="btn-login-register" style="display: flex; align-items: center; justify-content: center; gap: 4px; cursor: default;">
                             <a href="{{ $loginUrl }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#147A4D'" onmouseout="this.style.color='inherit'">Login</a>
                             <span>/</span>
                             <a href="{{ $signUrl }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#147A4D'" onmouseout="this.style.color='inherit'">Register</a>
                         </div>
                     @endif
-                    @if(request()->is('dashboard') || request()->is('seller/*') || request()->is('notifications'))
+                    @if(auth()->check())
                         <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet">Sell a Pet</a>
                     @else
                         <a href="{{ route('login') }}?redirect={{ urlencode(route('seller.create-listing')) }}" class="btn-sell-pet">Sell a Pet</a>
@@ -116,15 +163,14 @@
             <li><a href="{{ route('category', ['featured' => 'true']) }}">Featured Pets</a></li>
             <li><a href="{{ route('category') }}">Categories</a></li>
             <li><a href="{{ route('breeds') }}">Breeds</a></li>
+            <li><a href="{{ route('category') }}">Locations</a></li>
             <li><a href="{{ route('about') }}">About Us</a></li>
         </ul>
     </div>
     <div style="margin-top:32px;">
-        {{-- [AI UPDATE] User Prompt: "when we navigate into notification page Profile logo remove and it shoew login/register option set notification icon there same as on other pages" (Preserve logged-in state on mobile for notifications page) --}}
-        @if(request()->is('dashboard') || request()->is('seller/*') || request()->is('notifications'))
+        @if(auth()->check())
             <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
             <a href="{{ route('dashboard') }}" class="btn-login-register" style="width:100%; justify-content:center; background-color:#eaf7f0; color:#147A4D; border:none;"><i class="fa-solid fa-user" style="margin-right:8px;"></i> My Account</a>
-            <a href="{{ route('logout') }}" class="btn-login-register text-danger" style="width:100%; justify-content:center; margin-top:12px; border:none;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:8px;"></i> Log Out</a>
             <a href="{{ route('logout') }}" class="btn-login-register text-danger" style="width:100%; justify-content:center; margin-top:12px; border:none;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:8px;"></i> Log Out</a>
         @else
             <a href="{{ route('login') }}?redirect={{ urlencode(route('seller.create-listing')) }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
@@ -148,7 +194,7 @@
         <span>Chat</span>
     </a>
     <div class="nav-fab-wrapper">
-        <a href="{{ route('category') }}" class="nav-fab">
+        <a href="{{ route('seller.create-listing') }}" class="nav-fab">
             <i class="fa-solid fa-plus"></i>
         </a>
     </div>

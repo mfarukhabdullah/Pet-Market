@@ -1,8 +1,3 @@
-{{-- 
-    [AI UPDATE]
-    User Prompt: "set this in my dashboard page in my welcome banner"
-    Description: Notification bell toggle button and floating dropdown menu component for welcome banners
---}}
 <div class="notification-dropdown-container">
     <button class="btn-notification" id="bannerNotifBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

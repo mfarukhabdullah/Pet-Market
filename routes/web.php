@@ -1,9 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// [AI UPDATE] Added Request for handling login/register redirect requests
-// User Prompt: "reslove this issue" (resolving Route [login.post] not defined error)
-use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PetController;
