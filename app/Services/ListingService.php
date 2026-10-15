@@ -82,54 +82,9 @@ class ListingService
         ]);
 
         // Dispatch background queue job for async perceptual hash computation
-        try {
-            \App\Jobs\ProcessListingImageHash::dispatch($listingImage->id);
-        } catch (\Throwable $e) {
-            \Log::warning("Could not dispatch image hash job: " . $e->getMessage());
-        }
+        \App\Jobs\ProcessListingImageHash::dispatch($listingImage->id);
 
         return $listingImage;
-    }
-
-    /**
-     * Attach a base64 encoded image to listing.
-     */
-    public function attachBase64Image(Listing $listing, string $base64Data, bool $isPrimary = false): ?ListingImage
-    {
-        if (empty($base64Data)) return null;
-
-        // Extract mime type and base64 string
-        $extension = 'jpg';
-        if (preg_match('/^data:image\/(\w+);base64,/', $base64Data, $type)) {
-            $base64Data = substr($base64Data, strpos($base64Data, ',') + 1);
-            $extension = strtolower($type[1]);
-            if ($extension === 'jpeg') $extension = 'jpg';
-        }
-
-        $decodedData = base64_decode($base64Data);
-        if ($decodedData === false) return null;
-
-        $filename = 'pet_' . time() . '_' . Str::random(8) . '.' . $extension;
-        $destinationPath = public_path('images/pets');
-
-        if (!file_exists($destinationPath)) {
-            mkdir($destinationPath, 0777, true);
-        }
-
-        file_put_contents($destinationPath . DIRECTORY_SEPARATOR . $filename, $decodedData);
-        $relativePath = 'images/pets/' . $filename;
-
-        if ($isPrimary) {
-            $listing->images()->update(['is_primary' => false]);
-        }
-
-        return ListingImage::create([
-            'listing_id' => $listing->id,
-            'image_path' => $relativePath,
-            'thumb_path' => $relativePath,
-            'is_primary' => $isPrimary,
-            'sort_order' => $listing->images()->count() + 1,
-        ]);
     }
 
     /**

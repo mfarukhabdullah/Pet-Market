@@ -35,8 +35,7 @@ class ProcessListingImageHash implements ShouldQueue
         }
 
         // Generate MD5 or Perceptual hash for fraud comparison
-        $cleanPath = ltrim((string)$image->image_path, '/\\');
-        $filePath = public_path($cleanPath);
+        $filePath = public_path($image->image_url);
         if (file_exists($filePath)) {
             $hash = md5_file($filePath);
             $image->update(['phash' => $hash]);

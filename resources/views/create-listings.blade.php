@@ -1290,7 +1290,6 @@
     <script src="{{ asset('js/pet-script.js') }}"></script>
     <script>
         let currentActiveStep = 1;
-        let uploadedFilesList = [];
 
         function getStepName(stepNum) {
             const names = {
@@ -1449,9 +1448,7 @@
                 // Media (at least 1 photo)
                 const previewContainer = document.getElementById('image-preview-container');
                 const uploadBox = document.getElementById('upload-box-element') || document.querySelector('.upload-box');
-                const photoCount = (uploadedFilesList && uploadedFilesList.length > 0)
-                    ? uploadedFilesList.length 
-                    : (previewContainer ? previewContainer.querySelectorAll('.image-preview-item').length : 0);
+                const photoCount = previewContainer ? previewContainer.querySelectorAll('.image-preview-item').length : 0;
                 if (photoCount === 0) {
                     setFieldError(uploadBox, 'Please upload at least 1 photo of your pet');
                     valid = false;
@@ -1575,9 +1572,6 @@
             const ageUnit = document.getElementById('input-age-unit').value;
             const ageMonths = ageUnit === 'Year' ? ageVal * 12 : ageVal;
             const gender = (document.getElementById('input-gender').value || 'male').toLowerCase();
-            const color = document.getElementById('input-color')?.value.trim() || '';
-            const pedigreeSelect = document.getElementById('input-pedigree');
-            const hasPapers = pedigreeSelect ? (pedigreeSelect.value === 'Yes') : false;
             const vaccinated = document.querySelector('input[name="vaccination"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase().includes('vac') ?? true;
             const dewormed = document.querySelector('input[name="deworming"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase() === 'yes';
 
@@ -1587,39 +1581,27 @@
                 submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Submitting...';
             }
 
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('price', price);
-            formData.append('city', city);
-            formData.append('area', area);
-            formData.append('description', desc);
-            formData.append('breed_name', breed);
-            formData.append('category', categoryVal);
-            formData.append('category_id', (categoryVal === 'Cat' || categoryVal == 2) ? 2 : 1);
-            formData.append('age_months', ageMonths);
-            formData.append('gender', (gender === 'male' || gender === 'female') ? gender : 'unknown');
-            formData.append('color', color);
-            formData.append('has_papers', hasPapers ? '1' : '0');
-            formData.append('vaccinated', vaccinated ? '1' : '0');
-            formData.append('dewormed', dewormed ? '1' : '0');
-
-            // Attach actual uploaded files
-            if (uploadedFilesList && uploadedFilesList.length > 0) {
-                uploadedFilesList.forEach(item => {
-                    formData.append('images[]', item.file);
-                    if (item.base64) {
-                        formData.append('images_base64[]', item.base64);
-                    }
-                });
-            }
-
             fetch('{{ route('listings.publish') }}', {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: formData
+                body: JSON.stringify({
+                    title: title,
+                    price: price,
+                    city: city,
+                    area: area,
+                    description: desc,
+                    breed_name: breed,
+                    category: categoryVal,
+                    category_id: (categoryVal === 'Cat' || categoryVal == 2) ? 2 : 1,
+                    age_months: ageMonths,
+                    gender: (gender === 'male' || gender === 'female') ? gender : 'unknown',
+                    vaccinated: vaccinated,
+                    dewormed: dewormed
+                })
             })
             .then(r => r.json())
             .then(data => {
@@ -1644,9 +1626,6 @@
             const city = document.getElementById('city-select')?.value || 'Lahore';
             const breed = document.getElementById('input-breed')?.value.trim() || '';
             const cat = document.getElementById('input-category')?.value || 'Dog';
-            const color = document.getElementById('input-color')?.value.trim() || '';
-            const pedigreeSelect = document.getElementById('input-pedigree');
-            const hasPapers = pedigreeSelect ? (pedigreeSelect.value === 'Yes') : false;
 
             fetch('{{ route('listings.draft') }}', {
                 method: 'POST',
@@ -1660,8 +1639,6 @@
                     price: price,
                     city: city,
                     breed_name: breed,
-                    color: color,
-                    has_papers: hasPapers,
                     category_id: (cat === 'Cat' || cat == 2) ? 2 : 1
                 })
             })
@@ -1818,17 +1795,11 @@
                     
                     files.forEach((file) => {
                         if(file.type.startsWith('image/')) {
-                            const fileId = 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                            const fileRecord = { id: fileId, file: file, base64: null };
-                            uploadedFilesList.push(fileRecord);
-
                             const reader = new FileReader();
+                            
                             reader.onload = function(event) {
-                                fileRecord.base64 = event.target.result;
-
                                 const previewItem = document.createElement('div');
                                 previewItem.className = 'image-preview-item';
-                                previewItem.dataset.fileId = fileId;
                                 
                                 const img = document.createElement('img');
                                 img.src = event.target.result;
@@ -1847,20 +1818,19 @@
                                 removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
                                 
                                 removeBtn.addEventListener('click', function() {
-                                    uploadedFilesList = uploadedFilesList.filter(item => item.id !== fileId);
                                     previewItem.remove();
                                 });
                                 
                                 previewItem.appendChild(img);
                                 previewItem.appendChild(removeBtn);
                                 previewContainer.appendChild(previewItem);
-                            };
+                            }
                             
                             reader.readAsDataURL(file);
                         }
                     });
                     
-                    // Reset input so users can select additional files or re-select
+                    // Reset input so users can select the same file again if they remove and re-add it
                     fileInput.value = ''; 
                 });
             }
