@@ -44,9 +44,27 @@ class PetController extends Controller
         $sellerActiveCount = Listing::where('user_id', $seller->id)->where('status', 'live')->count();
         $sellerSoldCount = Listing::where('user_id', $seller->id)->where('status', 'sold')->count();
 
+        // Seller's other listings
+        $sellerOtherListings = Listing::live()
+            ->where('user_id', $seller->id)
+            ->where('id', '!=', $listing->id)
+            ->with(['images', 'breed', 'user'])
+            ->take(4)
+            ->get();
+
+        if ($sellerOtherListings->isEmpty()) {
+            // Fallback to other live marketplace listings if this seller only has 1 listing
+            $sellerOtherListings = Listing::live()
+                ->where('id', '!=', $listing->id)
+                ->with(['images', 'breed', 'user'])
+                ->take(4)
+                ->get();
+        }
+
         return view('pet-details', compact(
             'listing',
             'similarListings',
+            'sellerOtherListings',
             'seller',
             'sellerActiveCount',
             'sellerSoldCount'

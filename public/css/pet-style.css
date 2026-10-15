@@ -3775,45 +3775,60 @@ button {
   transform: scale(0.92);
 }
 
+.fav-heart i,
+.fav-heart-btn i,
+.btn-wishlist-heart i,
+.favorite-btn i,
+.home-pet-fav i,
+.my-pet-fav i,
+.pet-card-fav i {
+  color: #94a3b8;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.fav-heart:hover i,
+.fav-heart-btn:hover i,
+.btn-wishlist-heart:hover i,
+.favorite-btn:hover i,
+.home-pet-fav:hover i,
+.my-pet-fav:hover i,
+.pet-card-fav:hover i {
+  color: #ff4b68;
+}
+
 .fav-heart.active,
 .fav-heart.favorited,
 .fav-heart-btn.active,
+.fav-heart-btn.favorited,
 .btn-wishlist-heart.active,
+.btn-wishlist-heart.favorited,
 .favorite-btn.active,
+.favorite-btn.favorited,
 .home-pet-fav.active,
+.home-pet-fav.favorited,
 .my-pet-fav.active,
+.my-pet-fav.favorited,
 #pdLikeBtn.liked,
 #pdLikeBtn.active {
   color: #ff4b68 !important;
 }
 
 .fav-heart.active i,
+.fav-heart.favorited i,
 .fav-heart-btn.active i,
+.fav-heart-btn.favorited i,
 .btn-wishlist-heart.active i,
+.btn-wishlist-heart.favorited i,
 .favorite-btn.active i,
+.favorite-btn.favorited i,
 .home-pet-fav.active i,
+.home-pet-fav.favorited i,
 .my-pet-fav.active i,
+.my-pet-fav.favorited i,
 #pdLikeBtn.liked i,
 #pdLikeBtn.active i,
 .pet-card-fav.active i,
-.fav-heart i.fa-solid,
-.fav-heart i.fas,
-.fav-heart-btn i.fa-solid,
-.fav-heart-btn i.fas,
-.btn-wishlist-heart.active i.fa-solid,
-.btn-wishlist-heart.active i.fas,
-.btn-wishlist-heart.favorited i.fa-solid,
-.btn-wishlist-heart.favorited i.fas,
-.favorite-btn i.fa-solid,
-.favorite-btn i.fas,
-.home-pet-fav i.fa-solid,
-.home-pet-fav i.fas,
-.my-pet-fav i.fa-solid,
-.my-pet-fav i.fas,
-#pdLikeBtn.liked i.fa-solid,
-#pdLikeBtn.active i.fa-solid,
-.pet-card-fav i.fa-solid,
-.pet-card-fav i.fas {
+.pet-card-fav.favorited i {
   color: #ff4b68 !important;
 }
 

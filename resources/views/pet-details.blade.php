@@ -21,9 +21,10 @@
         .my-pet-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: none; transition: 0.3s; cursor: pointer; position: relative; text-decoration: none; color: inherit; display: block; }
         .my-pet-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.18); }
         .my-pet-img { width: 100%; height: 236px; object-fit: cover; display: block; border-radius: 12px 12px 0 0; }
-        .my-badge { position: absolute; top: 12px; left: 12px; background: #FADFA7; color: #161616; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-        .my-pet-fav { position: absolute; top: 12px; right: 12px; background: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 12px; }
-        .my-pet-info { padding: 16px; }
+        .my-pet-fav { position: absolute; top: 12px; right: 12px; background: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 12px; cursor: pointer; transition: 0.2s ease; z-index: 10; border: none; }
+        .my-pet-fav i { color: #94a3b8; transition: color 0.2s ease, transform 0.2s ease; }
+        .my-pet-fav:hover i { color: #ff4b68; transform: scale(1.15); }
+        .my-pet-fav.active i, .my-pet-fav.favorited i { color: #ff4b68 !important; }
         .my-pet-title { font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 4px; }
         .my-pet-breed { font-size: 12px; color: #94a3b8; margin: 0 0 12px; }
         .my-pet-price { font-size: 16px; font-weight: 800; color: #147A4D; margin-bottom: 12px; }
@@ -446,78 +447,40 @@
                 <h2 class="my-sec-title">Seller's Other Listings</h2>
                 <p class="my-sec-desc">More active listings from this seller.</p>
                 <div class="my-pets-grid">
-                    <!-- Card 1 -->
-                    <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                        <div style="position: relative;">
-                            <img src="{{ asset('images/pets/golden-retriever.jpg') }}" alt="Golden Retriever" class="my-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
-                            <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                        </div>
-                        <div class="my-pet-info">
-                            <h3 class="my-pet-title">Golden Retriever Puppy</h3>
-                            <p class="my-pet-breed">Golden Retriever</p>
-                            <div class="my-pet-price">Rs. 85,000</div>
-                            <div class="my-pet-meta">
-                                <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 3 Months</span>
-                                <span><i class="fa-solid fa-mars" style="margin-right: 4px;"></i> Male</span>
+                    @forelse($sellerOtherListings as $sellerPet)
+                        @php
+                            $isSellerPetFav = auth()->user() ? auth()->user()->hasFavorited($sellerPet->id) : false;
+                        @endphp
+                        <a href="{{ route('pet.details', ['id' => $sellerPet->id]) }}" class="my-pet-card" id="listing-{{ $sellerPet->id }}" style="scroll-margin-top: 100px;">
+                            <div style="position: relative;">
+                                <img src="{{ $sellerPet->primary_image_url }}" alt="{{ $sellerPet->title }}" class="my-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
+                                @if($sellerPet->is_featured)
+                                    <span class="my-badge">FEATURED</span>
+                                @endif
+                                <div class="my-pet-fav {{ $isSellerPetFav ? 'active favorited' : '' }}" 
+                                     data-id="{{ $sellerPet->id }}" 
+                                     data-url="{{ route('favorites.toggle', ['listingId' => $sellerPet->id]) }}"
+                                     title="{{ $isSellerPetFav ? 'Remove from favorites' : 'Add to favorites' }}"
+                                     aria-label="Add to favorites">
+                                    <i class="{{ $isSellerPetFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart' }}" style="{{ $isSellerPetFav ? 'color: #ff4b68;' : '' }}"></i>
+                                </div>
                             </div>
-                            <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Lahore</div>
-                        </div>
-                    </a>
-                    <!-- Card 2 -->
-                    <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                        <div style="position: relative;">
-                            <img src="{{ asset('images/card_persian.jpg') }}" alt="Persian Cat" class="my-pet-img">
-                            <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                        </div>
-                        <div class="my-pet-info">
-                            <h3 class="my-pet-title">Persian Cat</h3>
-                            <p class="my-pet-breed">Persian</p>
-                            <div class="my-pet-price">Rs. 42,000</div>
-                            <div class="my-pet-meta">
-                                <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 7 Months</span>
-                                <span><i class="fa-solid fa-venus" style="margin-right: 4px;"></i> Female</span>
+                            <div class="my-pet-info">
+                                <h3 class="my-pet-title">{{ $sellerPet->title }}</h3>
+                                <p class="my-pet-breed">{{ $sellerPet->breed_name ?: ($sellerPet->breed ? $sellerPet->breed->name : 'Pet') }}</p>
+                                <div class="my-pet-price">{{ $sellerPet->formatted_price }}</div>
+                                <div class="my-pet-meta">
+                                    <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> {{ $sellerPet->age_text }}</span>
+                                    <span><i class="fa-solid fa-{{ $sellerPet->gender === 'female' ? 'venus' : 'mars' }}" style="margin-right: 4px;"></i> {{ ucfirst($sellerPet->gender) }}</span>
+                                </div>
+                                <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> {{ $sellerPet->city }}</div>
                             </div>
-                            <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Islamabad</div>
+                        </a>
+                    @empty
+                        <div style="grid-column: 1 / -1; text-align: center; color: #64748b; padding: 20px;">
+                            No other active listings from this seller currently.
                         </div>
-                    </a>
-                    <!-- Card 3 -->
-                    <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                        <div style="position: relative;">
-                            <img src="{{ asset('images/card_parrot.jpg') }}" alt="African Grey Parrot" class="my-pet-img">
-                            <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                        </div>
-                        <div class="my-pet-info">
-                            <h3 class="my-pet-title">African Grey Parrot</h3>
-                            <p class="my-pet-breed">African Grey</p>
-                            <div class="my-pet-price">Rs. 65,000</div>
-                            <div class="my-pet-meta">
-                                <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 1 Year</span>
-                                <span><i class="fa-solid fa-mars" style="margin-right: 4px;"></i> Male</span>
-                            </div>
-                            <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Karachi</div>
-                        </div>
-                    </a>
-                    <!-- Card 4 -->
-                    <a href="{{ url('/pet-details') }}" class="my-pet-card">
-                        <div style="position: relative;">
-                            <img src="{{ asset('images/card_rabbit.jpg') }}" alt="Mini Lop Rabbit" class="my-pet-img">
-                            <span class="my-badge">FEATURED</span>
-                            <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
-                        </div>
-                        <div class="my-pet-info">
-                            <h3 class="my-pet-title">Mini Lop Rabbit</h3>
-                            <p class="my-pet-breed">Mini Lop</p>
-                            <div class="my-pet-price">Rs. 12,500</div>
-                            <div class="my-pet-meta">
-                                <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> 5 Months</span>
-                                <span><i class="fa-solid fa-venus" style="margin-right: 4px;"></i> Female</span>
-                            </div>
-                            <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> Lahore</div>
-                        </div>
-                    </a>
+                    @endforelse
                 </div>
             </section>
 
@@ -776,7 +739,8 @@
                     .then(r => r.json())
                     .then(data => {
                         if (data && Array.isArray(data.favorite_ids)) {
-                            const isFav = data.favorite_ids.map(String).includes('{{ $listing->id }}');
+                            const favSet = new Set(data.favorite_ids.map(String));
+                            const isFav = favSet.has('{{ $listing->id }}');
                             const icon = like.querySelector('i');
                             if (isFav) {
                                 like.classList.add('liked', 'active', 'favorited');
@@ -793,6 +757,29 @@
                                     icon.style.color = '';
                                 }
                             }
+
+                            // Sync all .my-pet-fav buttons (Seller other listings & similar pets)
+                            document.querySelectorAll('.my-pet-fav').forEach(btn => {
+                                const id = btn.getAttribute('data-id');
+                                if (!id) return;
+                                const isItemFav = favSet.has(String(id));
+                                const bIcon = btn.querySelector('i');
+                                if (isItemFav) {
+                                    btn.classList.add('active', 'favorited');
+                                    btn.setAttribute('title', 'Remove from favorites');
+                                    if (bIcon) {
+                                        bIcon.className = 'fa-solid fa-heart';
+                                        bIcon.style.color = '#ff4b68';
+                                    }
+                                } else {
+                                    btn.classList.remove('active', 'favorited');
+                                    btn.setAttribute('title', 'Add to favorites');
+                                    if (bIcon) {
+                                        bIcon.className = 'fa-regular fa-heart';
+                                        bIcon.style.color = '';
+                                    }
+                                }
+                            });
                         }
                     })
                     .catch(err => console.warn('Favorite sync error:', err));
