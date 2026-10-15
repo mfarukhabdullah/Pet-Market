@@ -40,8 +40,6 @@ class ListingActionController extends Controller
             'is_negotiable' => 'nullable|boolean',
             'age_months' => 'nullable|integer|min:0|max:240',
             'gender' => 'nullable|in:male,female,pair,unknown',
-            'color' => 'nullable|string|max:100',
-            'has_papers' => 'nullable|boolean',
             'vaccinated' => 'nullable|boolean',
             'dewormed' => 'nullable|boolean',
             'health_certificate' => 'nullable|boolean',
@@ -99,10 +97,6 @@ class ListingActionController extends Controller
             'price' => 'required|numeric|min:1',
             'city' => 'required|string|max:100',
             'description' => 'required|string|min:10',
-            'color' => 'nullable|string|max:100',
-            'images' => 'nullable|array',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
 
         $catInput = $request->input('category_id') ?: $request->input('category');
@@ -112,19 +106,6 @@ class ListingActionController extends Controller
         } elseif (is_string($catInput)) {
             $cat = Category::where('name', 'like', "%{$catInput}%")->first();
             if ($cat) $categoryId = $cat->id;
-        }
-
-        $color = $request->input('color');
-        if ($color && trim($color) !== '') {
-            $color = trim($color);
-        } else {
-            $color = null;
-        }
-
-        $hasPapers = false;
-        $pedigreeInput = $request->input('has_papers') ?: $request->input('pedigree');
-        if ($pedigreeInput === true || $pedigreeInput === '1' || $pedigreeInput === 1 || strtolower((string)$pedigreeInput) === 'yes') {
-            $hasPapers = true;
         }
 
         $listing = $this->listingService->publishListing($user, $listingId, [
@@ -137,14 +118,9 @@ class ListingActionController extends Controller
             'area' => $request->input('area'),
             'age_months' => $request->input('age_months'),
             'gender' => $request->input('gender', 'unknown'),
-            'color' => $color,
-            'has_papers' => $hasPapers,
             'vaccinated' => (bool) $request->input('vaccinated', false),
             'dewormed' => (bool) $request->input('dewormed', false),
         ]);
-
-        // Process uploaded images directly from request
-        $this->processUploadedImages($request, $listing);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -152,50 +128,12 @@ class ListingActionController extends Controller
                 'message' => $listing->status === 'live' 
                     ? 'Your listing is now live!' 
                     : 'Your listing has been submitted for admin moderation.',
-                'listing' => $listing->load('images'),
+                'listing' => $listing,
                 'redirect_url' => route('seller.listings'),
             ]);
         }
 
         return redirect()->route('seller.listings')->with('success', 'Listing submitted successfully!');
-    }
-
-    /**
-     * Helper to process image uploads (files and base64).
-     */
-    protected function processUploadedImages(Request $request, Listing $listing)
-    {
-        $hasExistingImages = $listing->images()->exists();
-
-        // 1. Array of uploaded files
-        if ($request->hasFile('images')) {
-            $isFirst = !$hasExistingImages;
-            foreach ($request->file('images') as $file) {
-                if ($file && $file->isValid()) {
-                    $this->listingService->attachImage($listing, $file, $isFirst);
-                    $isFirst = false;
-                }
-            }
-        }
-
-        // 2. Single uploaded file
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            if ($file && $file->isValid()) {
-                $this->listingService->attachImage($listing, $file, !$hasExistingImages);
-            }
-        }
-
-        // 3. Base64 images array fallback
-        if ($request->filled('images_base64') && is_array($request->input('images_base64'))) {
-            $isFirst = !$listing->images()->exists();
-            foreach ($request->input('images_base64') as $b64) {
-                if (!empty($b64)) {
-                    $this->listingService->attachBase64Image($listing, $b64, $isFirst);
-                    $isFirst = false;
-                }
-            }
-        }
     }
 
     /**

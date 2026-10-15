@@ -23,8 +23,6 @@ class Listing extends Model
         'is_negotiable',
         'age_months',
         'gender',
-        'color',
-        'has_papers',
         'vaccinated',
         'dewormed',
         'health_certificate',
@@ -40,7 +38,6 @@ class Listing extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'is_negotiable' => 'boolean',
-        'has_papers' => 'boolean',
         'vaccinated' => 'boolean',
         'dewormed' => 'boolean',
         'health_certificate' => 'boolean',
@@ -224,18 +221,11 @@ class Listing extends Model
             }
         });
 
-        $query->when($filters['color'] ?? null, function ($q, $color) {
-            if ($color !== 'all' && !empty($color)) {
-                $q->where('color', 'like', "%{$color}%");
-            }
-        });
-
         $query->when($filters['search'] ?? null, function ($q, $term) {
             $q->where(function ($sub) use ($term) {
                 $sub->where('title', 'like', "%{$term}%")
                     ->orWhere('description', 'like', "%{$term}%")
-                    ->orWhere('breed_name', 'like', "%{$term}%")
-                    ->orWhere('color', 'like', "%{$term}%");
+                    ->orWhere('breed_name', 'like', "%{$term}%");
             });
         });
 
@@ -250,19 +240,12 @@ class Listing extends Model
 
     public function getPrimaryImageUrlAttribute(): string
     {
-        $img = $this->primaryImage ?: $this->images->first();
-        if ($img) {
-            $thumb = ltrim((string) $img->thumb_path, '/\\');
-            if ($thumb && file_exists(public_path($thumb))) {
-                return asset($thumb);
-            }
-            $orig = ltrim((string) $img->image_path, '/\\');
-            if ($orig && file_exists(public_path($orig))) {
-                return asset($orig);
-            }
-            if ($img->image_path) {
-                return asset(ltrim((string) $img->image_path, '/\\'));
-            }
+        $img = $this->images->first();
+        if ($img && $img->thumb_path && file_exists(public_path($img->thumb_path))) {
+            return asset($img->thumb_path);
+        }
+        if ($img && $img->image_path && file_exists(public_path($img->image_path))) {
+            return asset($img->image_path);
         }
         return asset('images/pets/golden-retriever.jpg');
     }

@@ -30,16 +30,11 @@ class ListingImage extends Model
 
     public function getImageUrlAttribute(): string
     {
-        $orig = ltrim((string) $this->image_path, '/\\');
-        if ($orig && file_exists(public_path($orig))) {
-            return asset($orig);
+        if ($this->image_path && file_exists(public_path($this->image_path))) {
+            return asset($this->image_path);
         }
-        $thumb = ltrim((string) $this->thumb_path, '/\\');
-        if ($thumb && file_exists(public_path($thumb))) {
-            return asset($thumb);
-        }
-        if ($this->image_path) {
-            return asset(ltrim((string) $this->image_path, '/\\'));
+        if ($this->thumb_path && file_exists(public_path($this->thumb_path))) {
+            return asset($this->thumb_path);
         }
         return asset('images/pets/golden-retriever.jpg');
     }
