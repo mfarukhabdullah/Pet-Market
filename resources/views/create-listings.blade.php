@@ -1290,63 +1290,203 @@
 
     <script src="{{ asset('js/pet-script.js') }}"></script>
     <script>
-        function validateAndGo(current, target) {
-            if (target > current) {
-                const showError = (el) => {
-                    if (el) {
-                        el.setCustomValidity('Please fill out this field.');
-                        el.reportValidity();
-                        el.addEventListener('input', function() {
-                            el.setCustomValidity('');
-                        }, { once: true });
-                        el.addEventListener('change', function() {
-                            el.setCustomValidity('');
-                        }, { once: true });
-                    }
-                };
+        let currentActiveStep = 1;
+        let uploadedFilesList = [];
 
-                if (current === 1) {
-                    const req = ['input-category', 'input-breed', 'input-title', 'input-age-value', 'input-age-unit', 'input-gender'];
-                    for(let i=0; i<req.length; i++) {
-                        const el = document.getElementById(req[i]);
-                        if(!el || !el.value) {
-                            showError(el);
-                            return;
+        function getStepName(stepNum) {
+            const names = {
+                1: 'Pet Details',
+                2: 'Health & Description',
+                3: 'Price, Location & Contact',
+                4: 'Media',
+                5: 'Review'
+            };
+            return names[stepNum] || 'Step ' + stepNum;
+        }
+
+        function clearFieldError(inputElement) {
+            if (!inputElement) return;
+            inputElement.classList.remove('is-invalid');
+            const parent = inputElement.closest('.form-group') || inputElement.closest('.upload-box-wrapper') || inputElement.parentElement;
+            if (parent) {
+                const errorMsg = parent.querySelector('.field-error-text');
+                if (errorMsg) errorMsg.remove();
+            }
+        }
+
+        function setFieldError(inputElement, message) {
+            if (!inputElement) return;
+            inputElement.classList.add('is-invalid');
+            const parent = inputElement.closest('.form-group') || inputElement.closest('.upload-box-wrapper') || inputElement.parentElement;
+            if (parent) {
+                let errorMsg = parent.querySelector('.field-error-text');
+                if (!errorMsg) {
+                    errorMsg = document.createElement('div');
+                    errorMsg.className = 'field-error-text';
+                    parent.appendChild(errorMsg);
+                }
+                errorMsg.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> <span>${message}</span>`;
+            }
+        }
+
+        function showListingToast(message, type = 'error') {
+            let container = document.getElementById('listingToastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'listingToastContainer';
+                container.className = 'listing-toast-container';
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement('div');
+            toast.className = `listing-toast ${type === 'error' ? 'toast-error' : 'toast-success'}`;
+            const icon = type === 'error' ? 'fa-solid fa-circle-exclamation' : 'fa-solid fa-circle-check';
+            toast.innerHTML = `<i class="${icon} listing-toast-icon"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 350);
+            }, 4500);
+        }
+
+        function validateStep(stepNum) {
+            let valid = true;
+            let firstInvalidElement = null;
+
+            if (stepNum === 1) {
+                // 1. Pet Category
+                const cat = document.getElementById('input-category');
+                if (!cat || !cat.value) {
+                    setFieldError(cat, 'Please select a pet category');
+                    valid = false;
+                    if (!firstInvalidElement) firstInvalidElement = cat;
+                } else {
+                    clearFieldError(cat);
+                }
+
+                // 2. Breed
+                const breed = document.getElementById('input-breed');
+                if (!breed || !breed.value.trim()) {
+                    setFieldError(breed, 'Please enter the pet breed');
+                    valid = false;
+                    if (!firstInvalidElement) firstInvalidElement = breed;
+                } else {
+                    clearFieldError(breed);
+                }
+
+                // 3. Listing Title
+                const title = document.getElementById('input-title');
+                if (!title || !title.value.trim() || title.value.trim().length < 3) {
+                    setFieldError(title, 'Please provide a title (at least 3 characters)');
+                    valid = false;
+                    if (!firstInvalidElement) firstInvalidElement = title;
+                } else {
+                    clearFieldError(title);
+                }
+
+                // 4. Age Value
+                const ageVal = document.getElementById('input-age-value');
+                const ageNum = ageVal ? parseFloat(ageVal.value) : NaN;
+                if (!ageVal || !ageVal.value.trim() || isNaN(ageNum) || ageNum <= 0) {
+                    setFieldError(ageVal, 'Please enter a valid age (greater than 0)');
+                    valid = false;
+                    if (!firstInvalidElement) firstInvalidElement = ageVal;
+                } else {
+                    clearFieldError(ageVal);
+                }
+
+                // 5. Age Unit
+                const ageUnit = document.getElementById('input-age-unit');
+                if (!ageUnit || !ageUnit.value) {
+                    setFieldError(ageUnit, 'Please select Month or Year');
+                    valid = false;
+                    if (!firstInvalidElement) firstInvalidElement = ageUnit;
+                } else {
+                    clearFieldError(ageUnit);
+                }
+
+                // 6. Gender
+                const gender = document.getElementById('input-gender');
+                if (!gender || !gender.value) {
+                    setFieldError(gender, 'Please select pet gender');
+                    valid = false;
+                    if (!firstInvalidElement) firstInvalidElement = gender;
+                } else {
+                    clearFieldError(gender);
+                }
+            } else if (stepNum === 2) {
+                // Description
+                const desc = document.getElementById('input-description');
+                if (!desc || !desc.value.trim() || desc.value.trim().length < 10) {
+                    setFieldError(desc, 'Please provide a pet description (at least 10 characters)');
+                    valid = false;
+                    if (!firstInvalidElement) firstInvalidElement = desc;
+                } else {
+                    clearFieldError(desc);
+                }
+            } else if (stepNum === 3) {
+                // Price
+                const price = document.getElementById('input-price');
+                const priceNum = price ? parseFloat(price.value) : NaN;
+                if (!price || !price.value.trim() || isNaN(priceNum) || priceNum <= 0) {
+                    setFieldError(price, 'Please enter a valid asking price (greater than 0)');
+                    valid = false;
+                    if (!firstInvalidElement) firstInvalidElement = price;
+                } else {
+                    clearFieldError(price);
+                }
+
+                // City
+                const city = document.getElementById('city-select');
+                if (!city || !city.value) {
+                    setFieldError(city, 'Please select a city');
+                    valid = false;
+                    if (!firstInvalidElement) firstInvalidElement = city;
+                } else {
+                    clearFieldError(city);
+                }
+            } else if (stepNum === 4) {
+                // Media (at least 1 photo)
+                const previewContainer = document.getElementById('image-preview-container');
+                const uploadBox = document.getElementById('upload-box-element') || document.querySelector('.upload-box');
+                const photoCount = (uploadedFilesList && uploadedFilesList.length > 0)
+                    ? uploadedFilesList.length 
+                    : (previewContainer ? previewContainer.querySelectorAll('.image-preview-item').length : 0);
+                if (photoCount === 0) {
+                    setFieldError(uploadBox, 'Please upload at least 1 photo of your pet');
+                    valid = false;
+                    if (!firstInvalidElement) firstInvalidElement = uploadBox;
+                } else {
+                    clearFieldError(uploadBox);
+                }
+            }
+
+            return { valid, firstInvalidElement };
+        }
+
+        function goToStep(targetStep, force = false) {
+            if (targetStep === 'success') {
+                renderStepUI('success');
+                return true;
+            }
+
+            const nextStepNum = parseInt(targetStep);
+            if (isNaN(nextStepNum) || nextStepNum < 1 || nextStepNum > 5) return false;
+
+            // If navigating forward without force, validate current and all preceding steps
+            if (!force && nextStepNum > currentActiveStep) {
+                for (let s = currentActiveStep; s < nextStepNum; s++) {
+                    const check = validateStep(s);
+                    if (!check.valid) {
+                        showListingToast(`Please complete all mandatory fields in ${getStepName(s)} before continuing.`, 'error');
+                        if (currentActiveStep !== s) {
+                            renderStepUI(s);
+                            currentActiveStep = s;
                         }
-                    }
-                }
-                if (current === 2) {
-                    const desc = document.getElementById('input-description');
-                    if (!desc || !desc.value.trim()) {
-                        showError(desc);
-                        return;
-                    }
-                }
-                if (current === 3) {
-                    const req3 = ['input-price', 'input-currency', 'country-input', 'city-select'];
-                    for(let i=0; i<req3.length; i++) {
-                        const el = document.getElementById(req3[i]);
-                        if(!el || !el.value) {
-                            showError(el);
-                            return;
-                        }
-                    }
-                }
-                if (current === 4) {
-                    const previewContainer = document.getElementById('image-preview-container');
-                    if (!previewContainer || previewContainer.children.length === 0) {
-                        const fakeInput = document.getElementById('fake-image-validation');
-                        if (fakeInput) {
-                            fakeInput.setCustomValidity('Please upload at least one pet photo.');
-                            fakeInput.reportValidity();
-                            
-                            // Clear validation error when a file is selected
-                            const fileInput = document.getElementById('pet-photos-input');
-                            if (fileInput) {
-                                fileInput.addEventListener('change', function() {
-                                    fakeInput.setCustomValidity('');
-                                }, { once: true });
-                            }
+                        if (check.firstInvalidElement) {
+                            check.firstInvalidElement.focus();
+                            check.firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
                         return;
                     }
@@ -1434,6 +1574,9 @@
             const ageUnit = document.getElementById('input-age-unit').value;
             const ageMonths = ageUnit === 'Year' ? ageVal * 12 : ageVal;
             const gender = (document.getElementById('input-gender').value || 'male').toLowerCase();
+            const color = document.getElementById('input-color')?.value.trim() || '';
+            const pedigreeSelect = document.getElementById('input-pedigree');
+            const hasPapers = pedigreeSelect ? (pedigreeSelect.value === 'Yes') : false;
             const vaccinated = document.querySelector('input[name="vaccination"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase().includes('vac') ?? true;
             const dewormed = document.querySelector('input[name="deworming"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase() === 'yes';
 
@@ -1443,27 +1586,39 @@
                 submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Submitting...';
             }
 
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('price', price);
+            formData.append('city', city);
+            formData.append('area', area);
+            formData.append('description', desc);
+            formData.append('breed_name', breed);
+            formData.append('category', categoryVal);
+            formData.append('category_id', (categoryVal === 'Cat' || categoryVal == 2) ? 2 : 1);
+            formData.append('age_months', ageMonths);
+            formData.append('gender', (gender === 'male' || gender === 'female') ? gender : 'unknown');
+            formData.append('color', color);
+            formData.append('has_papers', hasPapers ? '1' : '0');
+            formData.append('vaccinated', vaccinated ? '1' : '0');
+            formData.append('dewormed', dewormed ? '1' : '0');
+
+            // Attach actual uploaded files
+            if (uploadedFilesList && uploadedFilesList.length > 0) {
+                uploadedFilesList.forEach(item => {
+                    formData.append('images[]', item.file);
+                    if (item.base64) {
+                        formData.append('images_base64[]', item.base64);
+                    }
+                });
+            }
+
             fetch('{{ route('listings.publish') }}', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({
-                    title: title,
-                    price: price,
-                    city: city,
-                    area: area,
-                    description: desc,
-                    breed_name: breed,
-                    category: categoryVal,
-                    category_id: (categoryVal === 'Cat' || categoryVal == 2) ? 2 : 1,
-                    age_months: ageMonths,
-                    gender: (gender === 'male' || gender === 'female') ? gender : 'unknown',
-                    vaccinated: vaccinated,
-                    dewormed: dewormed
-                })
+                body: formData
             })
             .then(r => r.json())
             .then(data => {
@@ -1488,6 +1643,9 @@
             const city = document.getElementById('city-select')?.value || 'Lahore';
             const breed = document.getElementById('input-breed')?.value.trim() || '';
             const cat = document.getElementById('input-category')?.value || 'Dog';
+            const color = document.getElementById('input-color')?.value.trim() || '';
+            const pedigreeSelect = document.getElementById('input-pedigree');
+            const hasPapers = pedigreeSelect ? (pedigreeSelect.value === 'Yes') : false;
 
             fetch('{{ route('listings.draft') }}', {
                 method: 'POST',
@@ -1501,6 +1659,8 @@
                     price: price,
                     city: city,
                     breed_name: breed,
+                    color: color,
+                    has_papers: hasPapers,
                     category_id: (cat === 'Cat' || cat == 2) ? 2 : 1
                 })
             })
@@ -1707,11 +1867,17 @@
                     
                     files.forEach((file) => {
                         if(file.type.startsWith('image/')) {
+                            const fileId = 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                            const fileRecord = { id: fileId, file: file, base64: null };
+                            uploadedFilesList.push(fileRecord);
+
                             const reader = new FileReader();
-                            
                             reader.onload = function(event) {
+                                fileRecord.base64 = event.target.result;
+
                                 const previewItem = document.createElement('div');
                                 previewItem.className = 'image-preview-item';
+                                previewItem.dataset.fileId = fileId;
                                 
                                 const img = document.createElement('img');
                                 img.src = event.target.result;
@@ -1730,19 +1896,20 @@
                                 removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
                                 
                                 removeBtn.addEventListener('click', function() {
+                                    uploadedFilesList = uploadedFilesList.filter(item => item.id !== fileId);
                                     previewItem.remove();
                                 });
                                 
                                 previewItem.appendChild(img);
                                 previewItem.appendChild(removeBtn);
                                 previewContainer.appendChild(previewItem);
-                            }
+                            };
                             
                             reader.readAsDataURL(file);
                         }
                     });
                     
-                    // Reset input so users can select the same file again if they remove and re-add it
+                    // Reset input so users can select additional files or re-select
                     fileInput.value = ''; 
                 });
             }
