@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Browse Pet Listings - Pet Marketplace</title>
+    <title>{{ (request('featured') === 'true' || request('featured') === '1') ? 'Featured Pet Listings' : 'Browse Pet Listings' }} - Pet Marketplace</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- SEO Meta Tags -->
     <meta name="description" content="Search and filter pet listings by category, breed, location, price, age, gender and other relevant details.">
@@ -28,7 +29,7 @@
     <main class="site-wrapper">
 
         <!-- HERO BANNER SECTION (#FAF7F2 / Cream background, 1440px shell -> 1250px container) -->
-        <x-hero title="Browse Pet Listings" description="Search and filter pet listings by category, breed, location, price, age, gender and other relevant details.">
+        <x-hero :title="(request('featured') === 'true' || request('featured') === '1') ? 'Featured Pet Listings' : 'Browse Pet Listings'" :description="(request('featured') === 'true' || request('featured') === '1') ? 'Discover premium and featured pet listings from top verified sellers.' : 'Search and filter pet listings by category, breed, location, price, age, gender and other relevant details.'">
             <!-- Floating Search Card Container -->
             <div class="shell-1440">
                 <div class="container">
@@ -47,7 +48,7 @@
                                 <select name="category" class="search-form-select">
                                     <option value="">Any category</option>
                                     @foreach($categories as $cat)
-                                        <option value="{{ $cat->slug }}" {{ request('category') == $cat->slug ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                        <option value="{{ $cat->slug }}" {{ (request('category') == $cat->slug || (isset($selectedCategory) && $selectedCategory && $selectedCategory->id == $cat->id)) ? 'selected' : '' }}>{{ $cat->name }}</option>
                                     @endforeach
                                 </select>
                                 <i class="fas fa-chevron-down select-arrow-icon"></i>
@@ -93,7 +94,7 @@
                             <div class="filters-sidebar-header">
                                 <h3 class="filters-title">Filters</h3>
                                 <div class="filters-header-actions">
-                                    <button type="button" class="btn-reset-filters" id="resetFiltersBtn" style="display: none;">Reset all</button>
+                                    <a href="{{ route('category') }}" class="btn-reset-filters" id="resetFiltersBtn" style="{{ request()->hasAny(['category', 'breed', 'location', 'city', 'price_min', 'price_max', 'min_price', 'max_price', 'age_min', 'age_max', 'gender', 'health', 'date', 'featured', 'search', 'q']) ? 'display: inline-block;' : 'display: none;' }} text-decoration: none;">Reset all</a>
                                     <button type="button" class="close-sidebar-btn" id="closeFiltersBtn" aria-label="Close Filters"><i class="fas fa-times"></i></button>
                                 </div>
                             </div>
@@ -120,8 +121,16 @@
                                     <div class="filter-select-wrapper">
                                         <select id="filterBreed" name="breed" class="filter-select">
                                             <option value="">All Breeds</option>
-                                            @foreach($breeds as $b)
-                                                <option value="{{ $b->slug }}" {{ request('breed') == $b->slug ? 'selected' : '' }}>{{ $b->name }}</option>
+                                            @php
+                                                $selectedBreedVal = strtolower(trim(request('breed', '')));
+                                            @endphp
+                                            @foreach($allBreeds as $b)
+                                                <option value="{{ $b->slug }}" 
+                                                        data-category-slug="{{ $b->category ? $b->category->slug : '' }}"
+                                                        data-category-id="{{ $b->category_id }}"
+                                                        {{ ($selectedBreedVal === strtolower($b->slug) || $selectedBreedVal === strtolower($b->name)) ? 'selected' : '' }}>
+                                                    {{ $b->name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                         <i class="fas fa-chevron-down select-chevron"></i>
@@ -134,14 +143,15 @@
                                     <div class="filter-select-wrapper">
                                         <select id="filterLocation" name="location" class="filter-select">
                                             <option value="">All Locations</option>
-                                            <option value="islamabad">Islamabad</option>
-                                            <option value="karachi">Karachi</option>
-                                            <option value="lahore">Lahore</option>
-                                            <option value="rawalpindi">Rawalpindi</option>
-                                            <option value="faisalabad">Faisalabad</option>
-                                            <option value="multan">Multan</option>
-                                            <option value="sialkot">Sialkot</option>
-                                            <option value="peshawar">Peshawar</option>
+                                            @php $currLoc = strtolower(request('location', request('city', ''))); @endphp
+                                            <option value="islamabad" {{ $currLoc == 'islamabad' ? 'selected' : '' }}>Islamabad</option>
+                                            <option value="karachi" {{ $currLoc == 'karachi' ? 'selected' : '' }}>Karachi</option>
+                                            <option value="lahore" {{ $currLoc == 'lahore' ? 'selected' : '' }}>Lahore</option>
+                                            <option value="rawalpindi" {{ $currLoc == 'rawalpindi' ? 'selected' : '' }}>Rawalpindi</option>
+                                            <option value="faisalabad" {{ $currLoc == 'faisalabad' ? 'selected' : '' }}>Faisalabad</option>
+                                            <option value="multan" {{ $currLoc == 'multan' ? 'selected' : '' }}>Multan</option>
+                                            <option value="sialkot" {{ $currLoc == 'sialkot' ? 'selected' : '' }}>Sialkot</option>
+                                            <option value="peshawar" {{ $currLoc == 'peshawar' ? 'selected' : '' }}>Peshawar</option>
                                         </select>
                                         <i class="fas fa-chevron-down select-chevron"></i>
                                     </div>
@@ -149,10 +159,10 @@
 
                                 <!-- 4. Price Range -->
                                 <div class="filter-group">
-                                    <label class="filter-label">Price Range</label>
+                                    <label class="filter-label">Price Range (PKR)</label>
                                     <div class="min-max-inputs-row">
-                                        <input type="number" name="price_min" placeholder="Min" class="filter-number-input" id="priceMin" autocomplete="off">
-                                        <input type="number" name="price_max" placeholder="Max" class="filter-number-input" id="priceMax" autocomplete="off">
+                                        <input type="text" inputmode="numeric" name="price_min" placeholder="Min (e.g. 5,000)" class="filter-number-input" id="priceMin" value="{{ isset($minPrice) && $minPrice !== null ? number_format($minPrice, 0, '', '') : request('price_min', request('min_price')) }}" autocomplete="off">
+                                        <input type="text" inputmode="numeric" name="price_max" placeholder="Max (e.g. 60,000)" class="filter-number-input" id="priceMax" value="{{ isset($maxPrice) && $maxPrice !== null ? number_format($maxPrice, 0, '', '') : request('price_max', request('max_price')) }}" autocomplete="off">
                                     </div>
                                 </div>
 
@@ -161,19 +171,19 @@
                                     <label class="filter-label">Age Range</label>
                                     <div class="age-inputs-container" style="display: flex; flex-direction: column; gap: 8px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <input type="number" name="age_min" placeholder="Min" class="filter-number-input" id="ageMin" autocomplete="off" style="flex: 1; min-width: 0;">
+                                            <input type="number" name="age_min" placeholder="Min" class="filter-number-input" id="ageMin" value="{{ request('age_min') }}" autocomplete="off" style="flex: 1; min-width: 0;">
                                             <select name="age_min_unit" id="ageMinUnit" class="filter-select" style="width: 100px; padding: 0 10px; min-height: 44px; border-radius: 8px; border: 1px solid #E5E7EB; background-color: #fff;">
-                                                <option value="days">Days</option>
-                                                <option value="months" selected>Months</option>
-                                                <option value="years">Years</option>
+                                                <option value="days" {{ request('age_min_unit') == 'days' ? 'selected' : '' }}>Days</option>
+                                                <option value="months" {{ (!request('age_min_unit') || request('age_min_unit') == 'months') ? 'selected' : '' }}>Months</option>
+                                                <option value="years" {{ request('age_min_unit') == 'years' ? 'selected' : '' }}>Years</option>
                                             </select>
                                         </div>
                                         <div style="display: flex; gap: 8px;">
-                                            <input type="number" name="age_max" placeholder="Max" class="filter-number-input" id="ageMax" autocomplete="off" style="flex: 1; min-width: 0;">
+                                            <input type="number" name="age_max" placeholder="Max" class="filter-number-input" id="ageMax" value="{{ request('age_max') }}" autocomplete="off" style="flex: 1; min-width: 0;">
                                             <select name="age_max_unit" id="ageMaxUnit" class="filter-select" style="width: 100px; padding: 0 10px; min-height: 44px; border-radius: 8px; border: 1px solid #E5E7EB; background-color: #fff;">
-                                                <option value="days">Days</option>
-                                                <option value="months" selected>Months</option>
-                                                <option value="years">Years</option>
+                                                <option value="days" {{ request('age_max_unit') == 'days' ? 'selected' : '' }}>Days</option>
+                                                <option value="months" {{ (!request('age_max_unit') || request('age_max_unit') == 'months') ? 'selected' : '' }}>Months</option>
+                                                <option value="years" {{ request('age_max_unit') == 'years' ? 'selected' : '' }}>Years</option>
                                             </select>
                                         </div>
                                     </div>
@@ -184,11 +194,11 @@
                                     <label class="filter-label">Gender</label>
                                     <div class="checkbox-options-list">
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="gender" value="male">
+                                            <input type="checkbox" name="gender[]" value="male" {{ (is_array(request('gender')) ? in_array('male', request('gender')) : request('gender') == 'male') ? 'checked' : '' }}>
                                             <span class="label-text">Male</span>
                                         </label>
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="gender" value="female">
+                                            <input type="checkbox" name="gender[]" value="female" {{ (is_array(request('gender')) ? in_array('female', request('gender')) : request('gender') == 'female') ? 'checked' : '' }}>
                                             <span class="label-text">Female</span>
                                         </label>
                                     </div>
@@ -199,11 +209,11 @@
                                     <label class="filter-label">Health</label>
                                     <div class="checkbox-options-list">
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="health" value="vaccinated">
+                                            <input type="checkbox" name="health" value="vaccinated" {{ (request('health') == 'vaccinated' || request('vaccinated')) ? 'checked' : '' }}>
                                             <span class="label-text">Vaccinated</span>
                                         </label>
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="health" value="health_info">
+                                            <input type="checkbox" name="health_info" value="1" {{ request('health_info') ? 'checked' : '' }}>
                                             <span class="label-text">Health information available</span>
                                         </label>
                                     </div>
@@ -214,15 +224,15 @@
                                     <label class="filter-label">Pedigree / Papers</label>
                                     <div class="checkbox-options-list">
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="pedigree" value="yes">
+                                            <input type="checkbox" name="pedigree" value="yes" {{ request('pedigree') == 'yes' ? 'checked' : '' }}>
                                             <span class="label-text">Yes</span>
                                         </label>
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="pedigree" value="no">
+                                            <input type="checkbox" name="pedigree" value="no" {{ request('pedigree') == 'no' ? 'checked' : '' }}>
                                             <span class="label-text">No</span>
                                         </label>
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="pedigree" value="na">
+                                            <input type="checkbox" name="pedigree" value="na" {{ request('pedigree') == 'na' ? 'checked' : '' }}>
                                             <span class="label-text">Not applicable</span>
                                         </label>
                                     </div>
@@ -233,15 +243,15 @@
                                     <label class="filter-label">Seller Type</label>
                                     <div class="checkbox-options-list">
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="seller_type" value="individual">
+                                            <input type="checkbox" name="seller_type" value="individual" {{ request('seller_type') == 'individual' ? 'checked' : '' }}>
                                             <span class="label-text">Individual Seller</span>
                                         </label>
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="seller_type" value="breeder">
+                                            <input type="checkbox" name="seller_type" value="breeder" {{ request('seller_type') == 'breeder' ? 'checked' : '' }}>
                                             <span class="label-text">Breeder / Business</span>
                                         </label>
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="seller_type" value="verified">
+                                            <input type="checkbox" name="seller_type" value="verified" {{ request('seller_type') == 'verified' ? 'checked' : '' }}>
                                             <span class="label-text">Verified Seller</span>
                                         </label>
                                     </div>
@@ -253,9 +263,9 @@
                                     <div class="filter-select-wrapper">
                                         <select id="filterDate" name="date" class="filter-select">
                                             <option value="">Any Time</option>
-                                            <option value="24h">Past 24 Hours</option>
-                                            <option value="week">Past Week</option>
-                                            <option value="month">Past Month</option>
+                                            <option value="24h" {{ request('date') == '24h' ? 'selected' : '' }}>Past 24 Hours</option>
+                                            <option value="week" {{ request('date') == 'week' ? 'selected' : '' }}>Past Week</option>
+                                            <option value="month" {{ request('date') == 'month' ? 'selected' : '' }}>Past Month</option>
                                         </select>
                                         <i class="fas fa-chevron-down select-chevron"></i>
                                     </div>
@@ -274,7 +284,7 @@
                                 <!-- Section Title -->
                                 <div class="listings-title-block">
                                     <h2 class="listings-section-title">Pet Listings</h2>
-                                    <p class="listings-subtitle">Showing matching pet listings</p>
+                                    <p class="listings-subtitle">Showing {{ $listings->total() }} matching pet listings</p>
                                 </div>
     
                                 <!-- Header Controls Row (Mobile Filter Button + View & Sort Controls) -->
@@ -329,20 +339,37 @@
                             </div>
 
                             <!-- PET CARDS GRID (2 Columns on Mobile, 3 Columns on Desktop) -->
-                            <div class="pet-cards-grid" id="petCardsGrid">
+                            <div class="pet-cards-grid" id="petCardsGrid" style="scroll-margin-top: 100px;">
                                 @forelse($listings as $pet)
-                                    <article class="pet-card" data-breed="{{ Str::slug($pet->breed_name ?: ($pet->breed ? $pet->breed->name : '')) }}" data-gender="{{ strtolower($pet->gender) }}" data-location="{{ strtolower($pet->city) }}" onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" style="cursor: pointer;">
+                                    <article class="pet-card" 
+                                             id="listing-{{ $pet->id }}" 
+                                             data-category="{{ $pet->category ? $pet->category->slug : '' }}" 
+                                             data-breed="{{ Str::slug($pet->breed_name ?: ($pet->breed ? $pet->breed->name : '')) }}" 
+                                             data-breed-name="{{ strtolower($pet->breed_name ?: ($pet->breed ? $pet->breed->name : '')) }}" 
+                                             data-gender="{{ strtolower($pet->gender) }}" 
+                                             data-location="{{ strtolower($pet->city) }}" 
+                                             data-price="{{ (int) $pet->price }}" 
+                                             data-age-months="{{ (int) $pet->age_months }}" 
+                                             onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" 
+                                             style="scroll-margin-top: 110px; cursor: pointer;">
                                         <div class="pet-card-image-box">
                                             @if($pet->is_featured)
                                                 <span class="featured-badge">FEATURED</span>
                                             @endif
                                             <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="pet-card-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
-                                            <form action="{{ route('favorites.toggle', ['listingId' => $pet->id]) }}" method="POST" onclick="event.stopPropagation();" style="display:inline;">
-                                                @csrf
-                                                <button type="submit" class="btn-wishlist-heart" aria-label="Add to Favorites">
-                                                    <i class="fas fa-heart"></i>
-                                                </button>
-                                            </form>
+                                            @php
+                                                $isFav = in_array($pet->id, $favoritedListingIds ?? []);
+                                            @endphp
+                                            <button type="button" 
+                                                    class="btn-wishlist-heart {{ $isFav ? 'active favorited' : '' }}" 
+                                                    data-url="{{ route('favorites.toggle', ['listingId' => $pet->id]) }}" 
+                                                    data-id="{{ $pet->id }}" 
+                                                    onclick="toggleCategoryFavorite(this, event);"
+                                                    style="border:none; cursor:pointer;"
+                                                    title="{{ $isFav ? 'Remove from favorites' : 'Add to favorites' }}" 
+                                                    aria-label="Add to favorites">
+                                                <i class="{{ $isFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart' }}" style="{{ $isFav ? 'color: #ff4b68;' : '' }}"></i>
+                                            </button>
                                         </div>
                                         <div class="pet-card-content">
                                             <h3 class="pet-name">{{ $pet->title }}</h3>
@@ -373,21 +400,32 @@
                             </div>
 
                             <!-- PAGINATION COMPONENT -->
-                            <div class="category-pagination-row">
-                                <button type="button" class="page-nav-arrow" aria-label="Previous Page">
-                                    <i class="fas fa-arrow-left"></i>
-                                </button>
-                                <button type="button" class="page-num-btn active">1</button>
-                                <button type="button" class="page-num-btn">2</button>
-                                <button type="button" class="page-num-btn">3</button>
-                                <button type="button" class="page-num-btn">4</button>
-                                <button type="button" class="page-num-btn">5</button>
-                                <span class="page-dots">...</span>
-                                <button type="button" class="page-num-btn">28</button>
-                                <button type="button" class="page-nav-arrow" aria-label="Next Page">
-                                    <i class="fas fa-arrow-right"></i>
-                                </button>
-                            </div>
+                            @if($listings->hasPages())
+                                <div class="category-pagination-row">
+                                    {{-- Previous Page Link --}}
+                                    @if ($listings->onFirstPage())
+                                        <span class="page-nav-arrow" style="opacity: 0.4; cursor: default;"><i class="fas fa-arrow-left"></i></span>
+                                    @else
+                                        <a href="{{ $listings->previousPageUrl() }}" class="page-nav-arrow" aria-label="Previous Page"><i class="fas fa-arrow-left"></i></a>
+                                    @endif
+
+                                    {{-- Pagination Elements --}}
+                                    @foreach ($listings->getUrlRange(1, $listings->lastPage()) as $page => $url)
+                                        @if ($page == $listings->currentPage())
+                                            <span class="page-num-btn active">{{ $page }}</span>
+                                        @else
+                                            <a href="{{ $url }}" class="page-num-btn" style="text-decoration: none;">{{ $page }}</a>
+                                        @endif
+                                    @endforeach
+
+                                    {{-- Next Page Link --}}
+                                    @if ($listings->hasMorePages())
+                                        <a href="{{ $listings->nextPageUrl() }}" class="page-nav-arrow" aria-label="Next Page"><i class="fas fa-arrow-right"></i></a>
+                                    @else
+                                        <span class="page-nav-arrow" style="opacity: 0.4; cursor: default;"><i class="fas fa-arrow-right"></i></span>
+                                    @endif
+                                </div>
+                            @endif
 
                         </div>
 
@@ -405,6 +443,129 @@
     <!-- Custom JavaScript -->
     <script src="{{ asset('js/pet-script.js') }}"></script>
     <script>
+    function updateHeartUI(btn, isFav) {
+        if (!btn) return;
+        const icon = btn.querySelector('i');
+        if (isFav) {
+            btn.classList.add('active', 'favorited');
+            btn.setAttribute('title', 'Remove from favorites');
+            if (icon) {
+                icon.classList.remove('fa-regular', 'far');
+                icon.classList.add('fa-solid', 'fas');
+                icon.style.color = '#ff4b68';
+            }
+        } else {
+            btn.classList.remove('active', 'favorited');
+            btn.setAttribute('title', 'Add to favorites');
+            if (icon) {
+                icon.classList.remove('fa-solid', 'fas');
+                icon.classList.add('fa-regular', 'far');
+                icon.style.color = '';
+            }
+        }
+    }
+
+    function setListingFavoriteState(listingId, isFav) {
+        if (!listingId) return;
+        document.querySelectorAll('.btn-wishlist-heart[data-id="' + listingId + '"]').forEach(b => {
+            updateHeartUI(b, isFav);
+        });
+    }
+
+    window.toggleCategoryFavorite = function(btn, e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (!btn) return;
+        if (btn._isToggling) return;
+        btn._isToggling = true;
+        setTimeout(() => { btn._isToggling = false; }, 300);
+
+        const icon = btn.querySelector('i');
+        const isSolid = icon && (icon.classList.contains('fa-solid') || icon.classList.contains('fas'));
+        const url = btn.getAttribute('data-url');
+        const listingId = btn.getAttribute('data-id');
+        const willBeFav = !isSolid;
+
+        // Instant optimistic visual update
+        setListingFavoriteState(listingId, willBeFav);
+
+        // Bounce micro-animation
+        btn.style.transition = 'transform 0.15s ease-in-out';
+        btn.style.transform = 'scale(1.25)';
+        setTimeout(() => { btn.style.transform = 'scale(1)'; }, 150);
+
+        if (url) {
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+            const token = (csrfMeta ? csrfMeta.getAttribute('content') : '') || '{{ csrf_token() }}';
+            const returnUrl = window.location.pathname + window.location.search + '#listing-' + listingId;
+            const fullUrl = url + (url.includes('?') ? '&' : '?') + 'redirect=' + encodeURIComponent(returnUrl);
+            fetch(fullUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': token
+                },
+                body: JSON.stringify({ redirect: returnUrl })
+            })
+            .then(r => {
+                if (r.status === 401) {
+                    return r.json().then(data => {
+                        window.location.href = (data && data.redirect) ? data.redirect : ('{{ route('login') }}?favorite_listing=' + listingId + '&redirect=' + encodeURIComponent(returnUrl));
+                    }).catch(() => {
+                        window.location.href = '{{ route('login') }}?favorite_listing=' + listingId + '&redirect=' + encodeURIComponent(returnUrl);
+                    });
+                }
+                return r.json();
+            })
+            .then(data => {
+                if (data && typeof data.is_favorited !== 'undefined') {
+                    setListingFavoriteState(listingId, data.is_favorited);
+                }
+            })
+            .catch(err => {
+                console.warn('Favorite toggle error:', err);
+                window.syncCategoryFavorites();
+            });
+        }
+    };
+
+    window.syncCategoryFavorites = function() {
+        fetch('{{ route('favorites.ids') }}', {
+            headers: { 'Accept': 'application/json' },
+            cache: 'no-store'
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data && Array.isArray(data.favorite_ids)) {
+                const favSet = new Set(data.favorite_ids.map(String));
+                document.querySelectorAll('.btn-wishlist-heart').forEach(btn => {
+                    const id = btn.getAttribute('data-id');
+                    const isFav = id && favSet.has(String(id));
+                    updateHeartUI(btn, isFav);
+                });
+            }
+        })
+        .catch(err => console.warn('Category fav sync error:', err));
+    };
+
+    // Always sync on page load
+    window.syncCategoryFavorites();
+
+    // Always sync on pageshow (e.g. browser back/forward from /seller/favorites)
+    window.addEventListener('pageshow', function() {
+        window.syncCategoryFavorites();
+    });
+
+    // Sync on visibility change
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            window.syncCategoryFavorites();
+        }
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
         const soldPets = JSON.parse(localStorage.getItem('sold_pets') || '{}');
         const deletedPets = JSON.parse(localStorage.getItem('deleted_pets') || '{}');
@@ -417,6 +578,46 @@
                 }
             }
         });
+
+        // Direct event listener attachment
+        document.querySelectorAll('.btn-wishlist-heart').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                window.toggleCategoryFavorite(this, e);
+            });
+        });
+
+        // Auto-scroll directly to pets cards if arriving with #petCardsGrid anchor
+        if (window.location.hash === '#petCardsGrid') {
+            const target = document.getElementById('petCardsGrid');
+            if (target) {
+                setTimeout(() => {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setTimeout(() => {
+                        if (window.location.hash === '#petCardsGrid') {
+                            history.replaceState(null, document.title, window.location.pathname + window.location.search);
+                        }
+                    }, 1000);
+                }, 100);
+            }
+        }
+
+        // Scroll to card if returning from login/register with anchor
+        if (window.location.hash && window.location.hash.startsWith('#listing-')) {
+            const targetCard = document.querySelector(window.location.hash);
+            if (targetCard) {
+                setTimeout(() => {
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetCard.style.transition = 'box-shadow 0.4s ease';
+                    targetCard.style.boxShadow = '0 0 0 3px #147A4D';
+                    setTimeout(() => {
+                        targetCard.style.boxShadow = '';
+                        if (window.location.hash && window.location.hash.startsWith('#listing-')) {
+                            history.replaceState(null, document.title, window.location.pathname + window.location.search);
+                        }
+                    }, 1500);
+                }, 300);
+            }
+        }
     });
     </script>
 </body>

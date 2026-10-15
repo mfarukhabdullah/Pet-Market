@@ -176,12 +176,15 @@
             <div class="account-nav-header">
                 <div class="account-nav-user">
                     <div class="account-nav-avatar">
-                        <img src="{{ asset('images/avatar-placeholder.jpg') }}" alt="Ahmed Khan" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="account-avatar-fallback"><img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"></div>
+                        <img src="{{ auth()->check() ? auth()->user()->avatar_url : asset('images/avatar-placeholder.jpg') }}" alt="{{ auth()->check() ? auth()->user()->name : 'User' }}" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->check() ? auth()->user()->name : 'User') }}&background=147A4D&color=fff'">
                     </div>
                     <div class="account-nav-info">
-                        <h3 class="account-nav-name">Ahmed Khan</h3>
-                        <a href="{{ route('seller.profile') }}" class="account-nav-link">View Public Profile <i class="fa-solid fa-chevron-right"></i></a>
+                        <h3 class="account-nav-name">{{ auth()->check() ? auth()->user()->name : 'Guest User' }}</h3>
+                        @if(auth()->check())
+                            <a href="{{ route('seller.profile') }}" class="account-nav-link">View Public Profile <i class="fa-solid fa-chevron-right"></i></a>
+                        @else
+                            <a href="{{ route('login') }}" class="account-nav-link">Sign In <i class="fa-solid fa-chevron-right"></i></a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -213,9 +216,15 @@
                         </a>
                     </li>
                     <li class="logout-item">
-                        <a href="/" class="logout-link">
-                            <div class="list-left"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span></div>
-                        </a>
+                        @if(auth()->check())
+                            <a href="{{ route('logout') }}" class="logout-link">
+                                <div class="list-left"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span></div>
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="logout-link">
+                                <div class="list-left"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Login</span></div>
+                            </a>
+                        @endif
                     </li>
                 </ul>
             </div>

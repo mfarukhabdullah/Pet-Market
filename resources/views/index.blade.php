@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pet Marketplace</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- SEO Meta Tags -->
     <meta name="description" content="Trusted pet marketplace connecting responsible buyers, sellers, breeders, and pet businesses.">
     <!-- Google Fonts -->
@@ -15,6 +16,34 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/pet-style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        // Force hero section (top: 0) on page refresh / reload
+        try {
+            const nav = window.performance.getEntriesByType('navigation');
+            const isReload = (nav && nav.length > 0 && nav[0].type === 'reload') || (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
+            if (isReload) {
+                if (window.location.hash) {
+                    history.replaceState(null, document.title, window.location.pathname + window.location.search);
+                }
+                window.scrollTo(0, 0);
+            }
+        } catch(e) {}
+
+        window.addEventListener('beforeunload', function() {
+            window.scrollTo(0, 0);
+        });
+
+        window.addEventListener('pageshow', function(e) {
+            const nav = window.performance.getEntriesByType('navigation');
+            const isReload = (nav && nav.length > 0 && nav[0].type === 'reload') || (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
+            if (isReload || !window.location.hash) {
+                window.scrollTo(0, 0);
+            }
+        });
+    </script>
 </head>
 <body>
 

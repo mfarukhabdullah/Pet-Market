@@ -14,19 +14,51 @@ class EnsureSellerAuthenticated
      */
     public function handle(Request $request, Closure $next)
     {
-        // In local development environment, if no user is logged in, auto-login seeded Seller for preview
-        if (!Auth::check() && app()->environment('local')) {
-            $sellerUser = User::where('email', 'seller@petmarket.pk')->first() ?: User::first();
-            if ($sellerUser) {
-                Auth::login($sellerUser);
-            }
-        }
-
         if (!Auth::check()) {
+            // Check if it's a favorite toggle request
+            if ($request->is('favorites/toggle/*') || $request->routeIs('favorites.toggle')) {
+                $listingId = $request->route('listingId');
+                if ($listingId) {
+                    session(['pending_favorite_listing_id' => $listingId]);
+                }
+
+                $returnUrl = $request->input('redirect')
+                    ?: $request->header('referer')
+                    ?: route('home');
+
+                if ($listingId && strpos($returnUrl, '#') === false) {
+                    $returnUrl .= '#listing-' . $listingId;
+                }
+
+                $loginUrl = route('login', [
+                    'favorite_listing' => $listingId,
+                    'redirect' => $returnUrl
+                ]);
+
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json([
+                        'error' => 'Unauthenticated.',
+                        'redirect' => $loginUrl,
+                        'favorite_listing' => $listingId,
+                    ], 401);
+                }
+
+                return redirect()->to($loginUrl)
+                    ->with('info', 'Please log in to add this pet to your favorites.');
+            }
+
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'Unauthenticated.'], 401);
             }
-            return redirect()->route('login')->with('info', 'Please log in to access your seller portal.');
+
+            // If a buyer clicks to chat/message a seller, redirect them to register first
+            if ($request->is('chat/*') || $request->routeIs('chat.*')) {
+                return redirect()->route('sign', ['redirect' => $request->fullUrl()])
+                    ->with('info', 'Please create an account to message the seller.');
+            }
+
+            return redirect()->route('login', ['redirect' => $request->fullUrl()])
+                ->with('info', 'Please log in to continue.');
         }
 
         return $next($request);

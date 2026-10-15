@@ -12,7 +12,7 @@ class InteractionActionController extends Controller
 {
     protected function getActiveUser()
     {
-        return auth()->user() ?: User::where('email', 'buyer@petmarket.pk')->first() ?: User::first();
+        return auth()->user() ?: User::where('email', 'seller@petmarket.pk')->first() ?: User::first();
     }
 
     /**
@@ -20,7 +20,33 @@ class InteractionActionController extends Controller
      */
     public function toggleFavorite($listingId)
     {
-        $user = $this->getActiveUser();
+        $user = auth()->user();
+        if (!$user) {
+            $returnUrl = request()->input('redirect')
+                ?: request()->header('referer')
+                ?: route('home');
+
+            if ($listingId && strpos($returnUrl, '#') === false) {
+                $returnUrl .= '#listing-' . $listingId;
+            }
+
+            $redirectUrl = route('login', [
+                'favorite_listing' => $listingId,
+                'redirect' => $returnUrl
+            ]);
+
+            if (request()->wantsJson() || request()->ajax() || request()->expectsJson()) {
+                return response()->json([
+                    'error' => 'Unauthenticated.',
+                    'redirect' => $redirectUrl,
+                    'favorite_listing' => $listingId,
+                ], 401);
+            }
+
+            return redirect()->to($redirectUrl)
+                ->with('info', 'Please log in to add this pet to your favorites.');
+        }
+
         $listing = Listing::findOrFail($listingId);
 
         $existing = Favorite::where('user_id', $user->id)->where('listing_id', $listing->id)->first();
@@ -36,7 +62,7 @@ class InteractionActionController extends Controller
             $isFavorited = true;
         }
 
-        if (request()->wantsJson()) {
+        if (request()->wantsJson() || request()->ajax() || request()->expectsJson()) {
             return response()->json([
                 'success' => true,
                 'is_favorited' => $isFavorited,
@@ -74,5 +100,23 @@ class InteractionActionController extends Controller
         }
 
         return redirect()->back()->with('success', 'Thank you for reporting. Our moderation team has been notified.');
+    }
+
+    /**
+     * Get list of favorite listing IDs for the currently authenticated user.
+     */
+    public function getFavoriteIds()
+    {
+        $user = auth()->user();
+        $ids = $user ? $user->favorites()->pluck('listing_id')->map(function ($id) {
+            return (int) $id;
+        })->toArray() : [];
+
+        return response()->json([
+            'authenticated' => (bool) $user,
+            'favorite_ids' => $ids,
+        ])->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
+          ->header('Pragma', 'no-cache')
+          ->header('Expires', '0');
     }
 }

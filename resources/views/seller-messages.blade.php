@@ -1247,7 +1247,7 @@
                 <!-- Context Card -->
                 @if($activeListing)
                 <div class="chat-context-card">
-                    <img src="{{ $activeListing->primary_image_url }}" alt="{{ $activeListing->title }}" class="chat-context-img" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                    <img src="{{ $activeListing->primary_image_url }}" alt="{{ $activeListing->title }}" class="chat-context-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                     <div class="chat-context-details" style="flex-grow: 1;">
                         <h4><a href="{{ route('pet.details', ['id' => $activeListing->id]) }}" style="color:inherit; text-decoration:none;">{{ $activeListing->title }}</a></h4>
                         <p>{{ $activeListing->city }}</p>
@@ -1304,7 +1304,7 @@
                 </div>
 
                 <!-- Input Area -->
-                <form action="{{ route('chat.send-message') }}" method="POST" class="chat-input-wrapper" style="position: relative;">
+                <form action="{{ route('chat.send-message') }}" method="POST" class="chat-input-wrapper" id="chatInputForm" novalidate onsubmit="event.preventDefault(); return false;" style="position: relative;">
                     @csrf
                     <input type="hidden" name="conversation_id" value="{{ $activeConversation ? $activeConversation->id : '' }}">
                     <!-- Attachment Preview Container -->
@@ -1354,8 +1354,8 @@
                                 <line x1="15" y1="9" x2="15.01" y2="9"></line>
                             </svg>
                         </button>
-                        <input type="text" name="message" class="chat-input" placeholder="Write a reply..." required autocomplete="off">
-                        <button type="submit" class="send-btn" id="sendMessageBtn" title="Send Message">
+                        <input type="text" name="message" class="chat-input" placeholder="Write a reply..." autocomplete="off">
+                        <button type="button" class="send-btn" id="sendMessageBtn" title="Send Message">
                             <img src="{{ asset('images/send-icon.svg') }}" alt="Send">
                         </button>
                     </div>
@@ -2048,6 +2048,7 @@
             // Action: Send Message
             const sendBtn = document.getElementById('sendMessageBtn');
             const chatInput = document.querySelector('.chat-input');
+            const chatForm = document.getElementById('chatInputForm');
 
             const sendMessage = () => {
                 const text = chatInput ? chatInput.value.trim() : '';
@@ -2065,7 +2066,30 @@
                 localStorage.setItem('cleared_chats', JSON.stringify(clearedChats));
                 localStorage.setItem('chat_messages_data', JSON.stringify(chatMessagesData));
 
-                if (chatInput) chatInput.value = '';
+                // Send via AJAX to backend if activeConversation exists
+                const conversationIdInput = chatForm ? chatForm.querySelector('input[name="conversation_id"]') : null;
+                const conversationId = conversationIdInput ? conversationIdInput.value : '';
+
+                if (conversationId && text) {
+                    fetch("{{ route('chat.send-message') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            conversation_id: conversationId,
+                            body: text,
+                            message: text
+                        })
+                    }).catch(err => console.log('Message sync:', err));
+                }
+
+                if (chatInput) {
+                    chatInput.value = '';
+                    chatInput.focus();
+                }
                 removeAttachment();
                 hideEmojiPicker();
 
@@ -2082,10 +2106,30 @@
                 triggerSimulatedBuyerReply(activeChatId);
             };
 
-            if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+            if (chatForm) {
+                chatForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    sendMessage();
+                    return false;
+                });
+            }
+
+            if (sendBtn) {
+                sendBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    sendMessage();
+                });
+            }
+
             if (chatInput) {
-                chatInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') sendMessage();
+                chatInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        sendMessage();
+                    }
                 });
             }
 

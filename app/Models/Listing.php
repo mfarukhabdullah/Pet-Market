@@ -92,6 +92,13 @@ class Listing extends Model
         return $this->hasMany(Favorite::class);
     }
 
+    public function isFavoritedBy($user = null): bool
+    {
+        $user = $user ?: auth()->user();
+        if (!$user) return false;
+        return $this->favorites()->where('user_id', $user->id)->exists();
+    }
+
     public function reports()
     {
         return $this->hasMany(Report::class);
@@ -115,17 +122,49 @@ class Listing extends Model
 
     public function scopeFilter($query, array $filters)
     {
+        $query->when($filters['featured'] ?? null, function ($q) {
+            $q->where('is_featured', true);
+        });
+
         $query->when($filters['category'] ?? null, function ($q, $cat) {
-            $q->whereHas('category', function ($sub) use ($cat) {
-                $sub->where('slug', $cat)->orWhere('id', $cat);
+            if ($cat === 'all' || empty($cat)) return;
+            $categoryAliases = [
+                'fish' => 'fish',
+                'fishes' => 'fish',
+                'reptile' => 'reptiles',
+                'reptiles' => 'reptiles',
+                'horse' => 'horses-farm',
+                'horses' => 'horses-farm',
+                'horses-farm' => 'horses-farm',
+                'exotic' => 'exotic',
+                'exotic-pets' => 'exotic',
+            ];
+            $slugs = is_string($cat) ? [$cat] : [];
+            if (is_string($cat) && isset($categoryAliases[strtolower($cat)])) {
+                $slugs[] = $categoryAliases[strtolower($cat)];
+            }
+            $q->whereHas('category', function ($sub) use ($cat, $slugs) {
+                if (!empty($slugs)) {
+                    $sub->whereIn('slug', $slugs)->orWhere('id', $cat);
+                } else {
+                    $sub->where('id', $cat);
+                }
             });
         });
 
         $query->when($filters['breed'] ?? null, function ($q, $brd) {
-            $q->where(function ($sub) use ($brd) {
-                $sub->whereHas('breed', function ($b) use ($brd) {
-                    $b->where('slug', $brd)->orWhere('name', 'like', "%{$brd}%");
-                })->orWhere('breed_name', 'like', "%{$brd}%");
+            if ($brd === 'all' || trim($brd) === '') return;
+            $brd = trim($brd);
+            $brdClean = str_replace(['-', '_'], ' ', $brd);
+            $q->where(function ($sub) use ($brd, $brdClean) {
+                $sub->whereHas('breed', function ($b) use ($brd, $brdClean) {
+                    $b->where('slug', $brd)
+                      ->orWhere('name', 'like', "%{$brd}%")
+                      ->orWhere('name', 'like', "%{$brdClean}%");
+                })
+                ->orWhere('breed_name', 'like', "%{$brd}%")
+                ->orWhere('breed_name', 'like', "%{$brdClean}%")
+                ->orWhere('title', 'like', "%{$brdClean}%");
             });
         });
 
@@ -135,12 +174,20 @@ class Listing extends Model
             }
         });
 
-        $query->when($filters['min_price'] ?? null, function ($q, $min) {
-            $q->where('price', '>=', (float) $min);
+        $query->when(isset($filters['min_price']) && $filters['min_price'] !== null && $filters['min_price'] !== '', function ($q) use ($filters) {
+            $q->where('price', '>=', (float) $filters['min_price']);
         });
 
-        $query->when($filters['max_price'] ?? null, function ($q, $max) {
-            $q->where('price', '<=', (float) $max);
+        $query->when(isset($filters['max_price']) && $filters['max_price'] !== null && $filters['max_price'] !== '', function ($q) use ($filters) {
+            $q->where('price', '<=', (float) $filters['max_price']);
+        });
+
+        $query->when(isset($filters['min_age_months']) && $filters['min_age_months'] !== null && $filters['min_age_months'] !== '', function ($q) use ($filters) {
+            $q->where('age_months', '>=', (int) $filters['min_age_months']);
+        });
+
+        $query->when(isset($filters['max_age_months']) && $filters['max_age_months'] !== null && $filters['max_age_months'] !== '', function ($q) use ($filters) {
+            $q->where('age_months', '<=', (int) $filters['max_age_months']);
         });
 
         $query->when($filters['vaccinated'] ?? null, function ($q) {
@@ -152,8 +199,25 @@ class Listing extends Model
         });
 
         $query->when($filters['gender'] ?? null, function ($q, $gender) {
-            if ($gender !== 'all') {
+            if (is_array($gender)) {
+                $validGenders = array_filter($gender, function ($g) {
+                    return $g !== 'all' && !empty($g);
+                });
+                if (!empty($validGenders)) {
+                    $q->whereIn('gender', $validGenders);
+                }
+            } elseif ($gender !== 'all' && !empty($gender)) {
                 $q->where('gender', $gender);
+            }
+        });
+
+        $query->when($filters['date'] ?? null, function ($q, $date) {
+            if ($date === '24h') {
+                $q->where('created_at', '>=', now()->subDay());
+            } elseif ($date === 'week') {
+                $q->where('created_at', '>=', now()->subDays(7));
+            } elseif ($date === 'month') {
+                $q->where('created_at', '>=', now()->subDays(30));
             }
         });
 
@@ -177,13 +241,13 @@ class Listing extends Model
     public function getPrimaryImageUrlAttribute(): string
     {
         $img = $this->images->first();
-        if ($img && $img->thumb_path) {
+        if ($img && $img->thumb_path && file_exists(public_path($img->thumb_path))) {
             return asset($img->thumb_path);
         }
-        if ($img && $img->image_path) {
+        if ($img && $img->image_path && file_exists(public_path($img->image_path))) {
             return asset($img->image_path);
         }
-        return asset('images/sample-pet.jpg');
+        return asset('images/pets/golden-retriever.jpg');
     }
 
     public function getAgeTextAttribute(): string

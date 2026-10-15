@@ -663,7 +663,7 @@
                         </div>
                     </div>
                     <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="listing-img-wrapper">
-                        <img src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" onerror="this.src='{{ asset('images/card_golden.jpg') }}'">
+                        <img src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                     </a>
                     <div class="listing-info">
                         <div class="status-badge status-{{ $listing->status }}">

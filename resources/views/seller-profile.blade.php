@@ -164,8 +164,18 @@
             </div>
             
             <div class="sp-actions">
-                <a href="#" class="sp-btn sp-btn-primary"><i class="fa-regular fa-message"></i> Contact Seller</a>
-                <a href="#" class="sp-btn sp-btn-outline"><i class="fa-regular fa-flag"></i> Report Seller</a>
+                @php
+                    $firstAd = $activeListings->first();
+                    if ($firstAd) {
+                        $contactHref = auth()->check() 
+                            ? route('chat.start', ['listingId' => $firstAd->id])
+                            : route('sign', ['redirect' => route('chat.start', ['listingId' => $firstAd->id])]);
+                    } else {
+                        $contactHref = '#seller-listings';
+                    }
+                @endphp
+                <a href="{{ $contactHref }}" class="sp-btn sp-btn-primary"><i class="fa-regular fa-message"></i> Contact Seller</a>
+                <a href="#report" class="sp-btn sp-btn-outline"><i class="fa-regular fa-flag"></i> Report Seller</a>
             </div>
         </div>
         
@@ -204,13 +214,18 @@
         
         <div class="my-pets-grid">
             @forelse($activeListings as $pet)
-                <a href="{{ route('pet.details', ['id' => $pet->id]) }}" class="my-pet-card">
+                <a href="{{ route('pet.details', ['id' => $pet->id]) }}" class="my-pet-card" id="listing-{{ $pet->id }}" style="scroll-margin-top: 100px;">
                     <div style="position: relative;">
-                        <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="my-pet-img" onerror="this.src='{{ asset('images/card_gsd.jpg') }}'">
+                        <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="my-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                         @if($pet->is_featured)
                             <span class="my-badge" style="position: absolute; top: 12px; left: 12px; background: #FADFA7; color: #161616; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800;">FEATURED</span>
                         @endif
-                        <div class="my-pet-fav"><i class="fa-solid fa-heart"></i></div>
+                        @php
+                            $isProfilePetFav = auth()->user() ? auth()->user()->hasFavorited($pet->id) : false;
+                        @endphp
+                        <div class="my-pet-fav {{ $isProfilePetFav ? 'active favorited' : '' }}" data-id="{{ $pet->id }}" data-url="{{ route('favorites.toggle', ['listingId' => $pet->id]) }}">
+                            <i class="{{ $isProfilePetFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart' }}" style="{{ $isProfilePetFav ? 'color: #ff4b68;' : '' }}"></i>
+                        </div>
                     </div>
                     <div class="my-pet-info">
                         <h3 class="my-pet-title">{{ $pet->title }}</h3>
@@ -254,6 +269,66 @@
         if (savedAvatar) {
             const avatarImg = document.querySelector('.sp-avatar');
             if (avatarImg) avatarImg.src = savedAvatar;
+        }
+
+        // Favorites toggle for seller profile pet cards
+        document.querySelectorAll('.my-pet-fav').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const listingId = this.getAttribute('data-id');
+                const url = this.getAttribute('data-url');
+                if (url) {
+                    const returnUrl = window.location.pathname + window.location.search + '#listing-' + listingId;
+                    const fullUrl = url + (url.includes('?') ? '&' : '?') + 'redirect=' + encodeURIComponent(returnUrl);
+                    fetch(fullUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ redirect: returnUrl })
+                    })
+                    .then(r => {
+                        if (r.status === 401) {
+                            return r.json().then(data => {
+                                window.location.href = (data && data.redirect) ? data.redirect : ('{{ route('login') }}?favorite_listing=' + listingId + '&redirect=' + encodeURIComponent(returnUrl));
+                            }).catch(() => {
+                                window.location.href = '{{ route('login') }}?favorite_listing=' + listingId + '&redirect=' + encodeURIComponent(returnUrl);
+                            });
+                        }
+                        return r.json();
+                    })
+                    .then(data => {
+                        if (data && typeof data.is_favorited !== 'undefined') {
+                            const icon = this.querySelector('i');
+                            if (data.is_favorited) {
+                                this.classList.add('active', 'favorited');
+                                if (icon) { icon.className = 'fa-solid fa-heart'; icon.style.color = '#ff4b68'; }
+                            } else {
+                                this.classList.remove('active', 'favorited');
+                                if (icon) { icon.className = 'fa-regular fa-heart'; icon.style.color = ''; }
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // Auto-scroll to card if returning from login
+        if (window.location.hash && window.location.hash.startsWith('#listing-')) {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                setTimeout(() => {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => {
+                        if (window.location.hash && window.location.hash.startsWith('#listing-')) {
+                            history.replaceState(null, document.title, window.location.pathname + window.location.search);
+                        }
+                    }, 1500);
+                }, 300);
+            }
         }
     });
 </script>

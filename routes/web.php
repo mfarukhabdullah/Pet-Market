@@ -29,14 +29,15 @@ Route::get('/pet-details', [PetController::class, 'details'])->name('pet.details
 Route::get('/listings/{id}/reveal-phone', [PetController::class, 'revealPhone'])->middleware('throttle:30,1')->name('listings.reveal-phone');
 Route::get('/seller-profile', [SellerController::class, 'profile'])->name('seller.profile');
 Route::view('/notifications', 'notifications')->name('notifications');
+Route::get('/favorites/ids', [InteractionActionController::class, 'getFavoriteIds'])->name('favorites.ids');
 
 // Authentication Routes (with Brute-Force Rate Limiting)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('sign');
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:6,1');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/demo-login/{role?}', [AuthController::class, 'switchDemoUser'])->name('demo.login');
+Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/demo-login/{role?}', [AuthController::class, 'switchDemoUser'])->where('role', '.*')->name('demo.login');
 
 // Protected User & Seller Portal (Secured with seller.auth & not_banned Middlewares)
 Route::middleware(['seller.auth', 'not_banned'])->group(function () {

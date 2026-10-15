@@ -492,13 +492,43 @@
 
                 <div class="auth-tabs">
                     @php
-                        $redirectSuffix = request()->has('redirect') ? '?redirect=' . urlencode(request()->get('redirect')) : '';
+                        $redirectParams = [];
+                        if (request()->has('redirect')) {
+                            $redirectParams['redirect'] = request()->get('redirect');
+                        }
+                        if (request()->has('favorite_listing')) {
+                            $redirectParams['favorite_listing'] = request()->get('favorite_listing');
+                        }
+                        $redirectSuffix = !empty($redirectParams) ? '?' . http_build_query($redirectParams) : '';
                     @endphp
                     <a href="{{ route('login') }}{{ $redirectSuffix }}" class="auth-tab" style="text-decoration: none;">Login</a>
                     <a href="{{ route('sign') }}{{ $redirectSuffix }}" class="auth-tab active" style="text-decoration: none;">Create Account</a>
                 </div>
+
+                @if($errors->any())
+                    <div style="background-color: #FEE2E2; border: 1px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px;">
+                        <ul style="margin: 0; padding-left: 20px;">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if(session('info'))
+                    <div style="background-color: #EAF7F0; border: 1px solid #147A4D; color: #0E5E39; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-circle-info"></i> {{ session('info') }}
+                    </div>
+                @endif
                 
-                <form action="#" method="POST" autocomplete="off">
+                <form action="{{ route('sign') }}" method="POST" autocomplete="off">
+                    @csrf
+                    @if(request()->has('redirect'))
+                        <input type="hidden" name="redirect" value="{{ request()->get('redirect') }}">
+                    @endif
+                    @if(request()->has('favorite_listing'))
+                        <input type="hidden" name="favorite_listing" value="{{ request()->get('favorite_listing') }}">
+                    @endif
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Full Name</label>
@@ -668,33 +698,22 @@
             const registerForm = document.querySelector('.login-form-side form');
             if (registerForm) {
                 registerForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const redirectUrl = urlParams.get('redirect');
-                    
                     const pass = document.getElementById('reg-password-input').value;
                     const confirmPass = document.getElementById('reg-password-confirm').value;
                     
                     if (pass !== confirmPass) {
+                        e.preventDefault();
                         alert("Passwords do not match!");
                         return;
                     }
                     
-                    // Simulate registration delay
                     const btn = registerForm.querySelector('.btn-login');
                     if (btn) {
                         if (!btn.dataset.originalText) btn.dataset.originalText = btn.innerHTML;
                         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating Account...';
                         btn.style.opacity = '0.8';
                     }
-
-                    setTimeout(() => {
-                        if (redirectUrl) {
-                            window.location.href = decodeURIComponent(redirectUrl);
-                        } else {
-                            window.location.href = "{{ route('dashboard') }}";
-                        }
-                    }, 800);
+                    // Form submits naturally to backend
                 });
             }
 
@@ -702,35 +721,18 @@
             if (googleBtn) {
                 googleBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
-                    const termsCheckbox = document.querySelector('.form-options input[type="checkbox"]');
-                    if (termsCheckbox && !termsCheckbox.checked) {
-                        alert("Please agree to the Terms and Privacy Policy before continuing with Google.");
-                        return;
-                    }
-                    
-                    // Simulate Google Account Selection
-                    const userEmail = prompt("Simulating Google Login...\n\nPlease choose an account to continue to Pet Marketplace:", "user@gmail.com");
-                    
-                    if (!userEmail) {
-                        // User cancelled
-                        return;
-                    }
-                    
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirectUrl = urlParams.get('redirect');
+                    const favListing = urlParams.get('favorite_listing');
+                    const role = (redirectUrl && (redirectUrl.includes('seller') || redirectUrl.includes('create-listing'))) ? 'seller' : 'buyer';
                     
-                    if (!this.dataset.originalText) this.dataset.originalText = this.innerHTML;
-                    this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting...';
-                    this.style.opacity = '0.8';
-
-                    setTimeout(() => {
-                        if (redirectUrl) {
-                            window.location.href = decodeURIComponent(redirectUrl);
-                        } else {
-                            window.location.href = "{{ route('dashboard') }}";
-                        }
-                    }, 800);
+                    const params = new URLSearchParams();
+                    if (redirectUrl) params.set('redirect', redirectUrl);
+                    if (favListing) params.set('favorite_listing', favListing);
+                    const qs = params.toString();
+                    
+                    const target = "{{ url('/demo-login') }}/" + role + (qs ? '?' + qs : '');
+                    window.location.href = target;
                 });
             }
         });

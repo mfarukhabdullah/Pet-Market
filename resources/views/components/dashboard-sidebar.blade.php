@@ -166,19 +166,19 @@
     <div class="user-profile">
         <a href="{{ route('seller.profile') }}" class="user-profile-left" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; cursor: pointer;">
             <div class="avatar">
-                <img src="{{ asset('images/seller-avatar.jpg') }}" alt="Ahmed Khan" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Khan&background=random'">
+                <img src="{{ auth()->check() ? auth()->user()->avatar_url : asset('images/seller-avatar.jpg') }}" alt="{{ auth()->check() ? auth()->user()->name : 'User' }}" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->check() ? auth()->user()->name : 'User') }}&background=147A4D&color=fff'">
             </div>
             <div class="user-info">
-                <span class="user-name">Ahmed Khan</span>
-                <span class="user-role">Individual Seller</span>
+                <span class="user-name">{{ auth()->check() ? auth()->user()->name : 'Ahmed Khan' }}</span>
+                <span class="user-role">{{ auth()->check() && auth()->user()->role ? ucfirst(auth()->user()->role) . ' Seller' : 'Individual Seller' }}</span>
             </div>
         </a>
-        <button class="logout-btn" title="Logout">
+        <a href="{{ route('logout') }}" class="logout-btn" title="Logout" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                 <polyline points="16 17 21 12 16 7"></polyline>
                 <line x1="21" y1="12" x2="9" y2="12"></line>
             </svg>
-        </button>
+        </a>
     </div>
 </div>

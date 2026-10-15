@@ -3743,7 +3743,6 @@ button {
 .favorite-btn,
 .home-pet-fav,
 .my-pet-fav,
-.pd-icon-btn,
 #pdLikeBtn,
 .pet-card-fav {
   cursor: pointer !important;
@@ -3760,7 +3759,7 @@ button {
 .favorite-btn:hover,
 .home-pet-fav:hover,
 .my-pet-fav:hover,
-.pd-icon-btn:hover,
+#pdLikeBtn:hover,
 .pet-card-fav:hover {
   transform: scale(1.12);
 }
@@ -3771,7 +3770,7 @@ button {
 .favorite-btn:active,
 .home-pet-fav:active,
 .my-pet-fav:active,
-.pd-icon-btn:active,
+#pdLikeBtn:active,
 .pet-card-fav:active {
   transform: scale(0.92);
 }
@@ -3783,7 +3782,8 @@ button {
 .favorite-btn.active,
 .home-pet-fav.active,
 .my-pet-fav.active,
-.pd-icon-btn.active {
+#pdLikeBtn.liked,
+#pdLikeBtn.active {
   color: #ff4b68 !important;
 }
 
@@ -3793,25 +3793,45 @@ button {
 .favorite-btn.active i,
 .home-pet-fav.active i,
 .my-pet-fav.active i,
-.pd-icon-btn.active i,
+#pdLikeBtn.liked i,
+#pdLikeBtn.active i,
 .pet-card-fav.active i,
 .fav-heart i.fa-solid,
 .fav-heart i.fas,
 .fav-heart-btn i.fa-solid,
 .fav-heart-btn i.fas,
-.btn-wishlist-heart i.fa-solid,
-.btn-wishlist-heart i.fas,
+.btn-wishlist-heart.active i.fa-solid,
+.btn-wishlist-heart.active i.fas,
+.btn-wishlist-heart.favorited i.fa-solid,
+.btn-wishlist-heart.favorited i.fas,
 .favorite-btn i.fa-solid,
 .favorite-btn i.fas,
 .home-pet-fav i.fa-solid,
 .home-pet-fav i.fas,
 .my-pet-fav i.fa-solid,
 .my-pet-fav i.fas,
-.pd-icon-btn i.fa-solid,
-.pd-icon-btn i.fas,
+#pdLikeBtn.liked i.fa-solid,
+#pdLikeBtn.active i.fa-solid,
 .pet-card-fav i.fa-solid,
 .pet-card-fav i.fas {
   color: #ff4b68 !important;
+}
+
+#pdShareBtn {
+  color: #4b5563 !important;
+}
+
+#pdShareBtn i {
+  color: #4b5563 !important;
+}
+
+#pdShareBtn:hover {
+  border-color: #147a4d !important;
+  color: #147a4d !important;
+}
+
+#pdShareBtn:hover i {
+  color: #147a4d !important;
 }
 
 /* Notification Bell Dropdown */

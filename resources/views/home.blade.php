@@ -216,35 +216,35 @@
             <div class="home-categories-wrapper">
                 <div class="home-categories-track">
                     <div class="home-categories" style="display: flex; gap: 30px; flex-wrap: nowrap;">
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'dogs']) }}'" style="cursor: pointer;">
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'dogs']) }}#petCardsGrid'" style="cursor: pointer;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_dog.jpg') }}" alt="Dogs"></div>
                             <div class="home-cat-name">Dogs</div>
                         </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'cats']) }}'" style="cursor: pointer;">
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'cats']) }}#petCardsGrid'" style="cursor: pointer;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_cat.jpg') }}" alt="Cats"></div>
                             <div class="home-cat-name">Cats</div>
                         </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'birds']) }}'" style="cursor: pointer;">
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'birds']) }}#petCardsGrid'" style="cursor: pointer;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_bird.jpg') }}" alt="Birds"></div>
                             <div class="home-cat-name">Birds</div>
                         </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'fish']) }}'" style="cursor: pointer;">
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'fish']) }}#petCardsGrid'" style="cursor: pointer;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_fish.jpg') }}" alt="Fish"></div>
                             <div class="home-cat-name">Fish</div>
                         </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'reptiles']) }}'" style="cursor: pointer;">
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'reptiles']) }}#petCardsGrid'" style="cursor: pointer;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_reptile.jpg') }}" alt="Reptiles"></div>
                             <div class="home-cat-name">Reptiles</div>
                         </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'rabbits']) }}'" style="cursor: pointer;">
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'rabbits']) }}#petCardsGrid'" style="cursor: pointer;">
                             <div class="home-cat-img"><img src="{{ asset('images/card_rabbit.jpg') }}" alt="Rabbits"></div>
                             <div class="home-cat-name">Rabbits</div>
                         </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'horses-farm']) }}'" style="cursor: pointer;">
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'horses-farm']) }}#petCardsGrid'" style="cursor: pointer;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_horse.jpg') }}" alt="Horses & Farm"></div>
                             <div class="home-cat-name">Horses & Farm</div>
                         </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'exotic']) }}'" style="cursor: pointer;">
+                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'exotic']) }}#petCardsGrid'" style="cursor: pointer;">
                             <div class="home-cat-img"><img src="{{ asset('images/card_parrot.jpg') }}" alt="Exotic Pets"></div>
                             <div class="home-cat-name">Exotic Pets</div>
                         </div>
@@ -267,16 +267,22 @@
                 <div class="home-pets-grid">
                     @if(isset($featuredListings) && $featuredListings->isNotEmpty())
                         @foreach($featuredListings as $pet)
-                            <div class="home-pet-card" onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" style="cursor: pointer;">
+                            <div class="home-pet-card" id="listing-{{ $pet->id }}" onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" style="scroll-margin-top: 100px; cursor: pointer;">
                                 <div class="home-pet-media">
-                                    <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="home-pet-img">
+                                    <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="home-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                                     <span class="home-pet-badge">FEATURED</span>
-                                    <form action="{{ route('favorites.toggle', ['listingId' => $pet->id]) }}" method="POST" style="display:inline;" onclick="event.stopPropagation();">
-                                        @csrf
-                                        <button type="submit" class="home-pet-fav" style="border:none; cursor:pointer;" title="Add to favorites">
-                                            <i class="fa-regular fa-heart"></i>
-                                        </button>
-                                    </form>
+                                    @php
+                                        $isFav = in_array($pet->id, $favoritedListingIds ?? []);
+                                    @endphp
+                                    <button type="button" 
+                                            class="home-pet-fav {{ $isFav ? 'active favorited' : '' }}" 
+                                            data-url="{{ route('favorites.toggle', ['listingId' => $pet->id]) }}" 
+                                            data-id="{{ $pet->id }}" 
+                                            style="border:none; cursor:pointer;" 
+                                            title="{{ $isFav ? 'Remove from favorites' : 'Add to favorites' }}" 
+                                            aria-label="Add to favorites">
+                                        <i class="{{ $isFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart' }}" style="{{ $isFav ? 'color: #ff4b68;' : '' }}"></i>
+                                    </button>
                                 </div>
                                 <div class="home-pet-info">
                                     <h3 class="home-pet-title">{{ $pet->title }}</h3>
@@ -294,7 +300,7 @@
                         <!-- Fallback Card -->
                         <div class="home-pet-card" onclick="window.location='{{ route('category') }}'">
                             <div class="home-pet-media">
-                                <img src="{{ asset('images/card_golden.jpg') }}" alt="Golden Retriever" class="home-pet-img">
+                                <img src="{{ asset('images/pets/golden-retriever.jpg') }}" alt="Golden Retriever" class="home-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                                 <span class="home-pet-badge">FEATURED</span>
                             </div>
                             <div class="home-pet-info">
@@ -328,18 +334,24 @@
                 <div class="home-pets-grid">
                     @if(isset($recentListings) && $recentListings->isNotEmpty())
                         @foreach($recentListings as $pet)
-                            <div class="home-pet-card" onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" style="cursor: pointer;">
+                            <div class="home-pet-card" id="listing-recent-{{ $pet->id }}" onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" style="scroll-margin-top: 100px; cursor: pointer;">
                                 <div class="home-pet-media">
-                                    <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="home-pet-img">
+                                    <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="home-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                                     @if($pet->is_featured)
                                         <span class="home-pet-badge">FEATURED</span>
                                     @endif
-                                    <form action="{{ route('favorites.toggle', ['listingId' => $pet->id]) }}" method="POST" style="display:inline;" onclick="event.stopPropagation();">
-                                        @csrf
-                                        <button type="submit" class="home-pet-fav" style="border:none; cursor:pointer;" title="Add to favorites">
-                                            <i class="fa-regular fa-heart"></i>
-                                        </button>
-                                    </form>
+                                    @php
+                                        $isFav = in_array($pet->id, $favoritedListingIds ?? []);
+                                    @endphp
+                                    <button type="button" 
+                                            class="home-pet-fav {{ $isFav ? 'active favorited' : '' }}" 
+                                            data-url="{{ route('favorites.toggle', ['listingId' => $pet->id]) }}" 
+                                            data-id="{{ $pet->id }}" 
+                                            style="border:none; cursor:pointer;" 
+                                            title="{{ $isFav ? 'Remove from favorites' : 'Add to favorites' }}" 
+                                            aria-label="Add to favorites">
+                                        <i class="{{ $isFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart' }}" style="{{ $isFav ? 'color: #ff4b68;' : '' }}"></i>
+                                    </button>
                                 </div>
                                 <div class="home-pet-info">
                                     <h3 class="home-pet-title">{{ $pet->title }}</h3>
@@ -407,8 +419,8 @@
 
                 <!-- Buttons Wrapper -->
                 <div class="home-cta-buttons">
-                    <a href="{{ route('category', ['category' => 'dogs']) }}" class="home-cta-btn home-cta-btn--solid">Browse Dogs</a>
-                    <a href="{{ route('category', ['category' => 'cats']) }}" class="home-cta-btn home-cta-btn--outline">Browse Cats</a>
+                    <a href="{{ route('category', ['category' => 'dogs']) }}#petCardsGrid" class="home-cta-btn home-cta-btn--solid">Browse Dogs</a>
+                    <a href="{{ route('category', ['category' => 'cats']) }}#petCardsGrid" class="home-cta-btn home-cta-btn--outline">Browse Cats</a>
                 </div>
 
             </div>
@@ -514,6 +526,153 @@
                 }
             }
         });
+
+        function updateHeartUI(btn, isFav) {
+            const icon = btn.querySelector('i');
+            if (isFav) {
+                btn.classList.add('active', 'favorited');
+                btn.setAttribute('title', 'Remove from favorites');
+                if (icon) {
+                    icon.className = 'fa-solid fa-heart';
+                    icon.style.color = '#ff4b68';
+                }
+            } else {
+                btn.classList.remove('active', 'favorited');
+                btn.setAttribute('title', 'Add to favorites');
+                if (icon) {
+                    icon.className = 'fa-regular fa-heart';
+                    icon.style.color = '';
+                }
+            }
+        }
+
+        function setListingFavoriteState(listingId, isFav) {
+            if (!listingId) return;
+            document.querySelectorAll('.home-pet-fav[data-id="' + listingId + '"]').forEach(b => {
+                updateHeartUI(b, isFav);
+            });
+        }
+
+        // Real-time synchronization of all heart icons with database
+        window.syncHomeFavorites = function() {
+            fetch('{{ route('favorites.ids') }}', {
+                headers: { 'Accept': 'application/json' },
+                cache: 'no-store'
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data && Array.isArray(data.favorite_ids)) {
+                    const favSet = new Set(data.favorite_ids.map(String));
+                    document.querySelectorAll('.home-pet-fav').forEach(btn => {
+                        const id = btn.getAttribute('data-id');
+                        const isFav = id && favSet.has(String(id));
+                        updateHeartUI(btn, isFav);
+                    });
+                }
+            })
+            .catch(err => console.warn('Fav sync error:', err));
+        };
+
+        // Always sync on page load
+        window.syncHomeFavorites();
+
+        // Always sync whenever returning to page (Browser Back/Forward navigation)
+        window.addEventListener('pageshow', function() {
+            window.syncHomeFavorites();
+        });
+
+        // Sync when returning from another tab or window
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                window.syncHomeFavorites();
+            }
+        });
+
+        // AJAX Heart Favorite Toggle on Home Page
+        document.querySelectorAll('.home-pet-fav').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const icon = this.querySelector('i');
+                const isSolid = icon && (icon.classList.contains('fa-solid') || icon.classList.contains('fas'));
+                const url = this.getAttribute('data-url');
+                const listingId = this.getAttribute('data-id');
+                const willBeFav = !isSolid;
+
+                // Instantly update all cards on the page for this pet (Featured & Recent)
+                setListingFavoriteState(listingId, willBeFav);
+
+                // Bounce animation
+                this.style.transition = 'transform 0.15s ease-in-out';
+                this.style.transform = 'scale(1.25)';
+                setTimeout(() => { this.style.transform = 'scale(1)'; }, 150);
+
+                if (url) {
+                    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                    const token = csrfMeta ? csrfMeta.getAttribute('content') : '';
+                    const returnUrl = window.location.pathname + window.location.search + '#listing-' + listingId;
+                    const fullUrl = url + (url.includes('?') ? '&' : '?') + 'redirect=' + encodeURIComponent(returnUrl);
+                    fetch(fullUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': token
+                        },
+                        body: JSON.stringify({ redirect: returnUrl })
+                    })
+                    .then(r => {
+                        if (r.status === 401) {
+                            return r.json().then(data => {
+                                window.location.href = (data && data.redirect) ? data.redirect : ('{{ route('login') }}?favorite_listing=' + listingId + '&redirect=' + encodeURIComponent(returnUrl));
+                            }).catch(() => {
+                                window.location.href = '{{ route('login') }}?favorite_listing=' + listingId + '&redirect=' + encodeURIComponent(returnUrl);
+                            });
+                        }
+                        return r.json();
+                    })
+                    .then(data => {
+                        if (data && typeof data.is_favorited !== 'undefined') {
+                            setListingFavoriteState(listingId, data.is_favorited);
+                        }
+                    })
+                    .catch(err => {
+                        console.warn('Favorite toggle error:', err);
+                        // Re-sync with server state on failure
+                        window.syncHomeFavorites();
+                    });
+                }
+            });
+        });
+
+        // Detect page reload/refresh
+        const isReload = (window.performance && window.performance.getEntriesByType && window.performance.getEntriesByType('navigation')[0] && window.performance.getEntriesByType('navigation')[0].type === 'reload') || (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
+
+        if (isReload) {
+            // Keep user on the Hero section (top of page) on refresh
+            if (window.location.hash) {
+                history.replaceState(null, document.title, window.location.pathname + window.location.search);
+            }
+            window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        } else if (window.location.hash && window.location.hash.startsWith('#listing-')) {
+            // Only scroll to card when returning directly from an auth redirect with anchor
+            const targetCard = document.querySelector(window.location.hash) || document.querySelector('#listing-recent-' + window.location.hash.replace('#listing-', ''));
+            if (targetCard) {
+                setTimeout(() => {
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetCard.style.transition = 'box-shadow 0.4s ease';
+                    targetCard.style.boxShadow = '0 0 0 3px #147A4D';
+                    setTimeout(() => {
+                        targetCard.style.boxShadow = '';
+                        // Remove hash from URL so subsequent refreshes stay on Hero section
+                        if (window.location.hash && window.location.hash.startsWith('#listing-')) {
+                            history.replaceState(null, document.title, window.location.pathname + window.location.search);
+                        }
+                    }, 1500);
+                }, 300);
+            }
+        }
     });
     </script>
 

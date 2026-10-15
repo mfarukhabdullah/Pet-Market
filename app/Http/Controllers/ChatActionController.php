@@ -20,7 +20,7 @@ class ChatActionController extends Controller
 
     protected function getActiveUser()
     {
-        return auth()->user() ?: User::where('email', 'buyer@petmarket.pk')->first() ?: User::first();
+        return auth()->user();
     }
 
     /**
@@ -28,8 +28,38 @@ class ChatActionController extends Controller
      */
     public function startChat($listingId)
     {
-        $buyer = $this->getActiveUser();
+        if (!auth()->check()) {
+            return redirect()->route('sign', [
+                'redirect' => route('chat.start', ['listingId' => $listingId])
+            ])->with('info', 'Please create an account to message the seller.');
+        }
+
+        $buyer = auth()->user();
         $listing = Listing::findOrFail($listingId);
+
+        if ($listing->user_id === $buyer->id) {
+            $conversation = Conversation::where('listing_id', $listing->id)->latest('last_message_at')->first();
+            if ($conversation) {
+                return redirect()->route('seller.messages', ['conversation_id' => $conversation->id]);
+            }
+
+            $otherUser = User::where('id', '!=', $buyer->id)->first();
+            if ($otherUser) {
+                $conversation = Conversation::firstOrCreate(
+                    [
+                        'listing_id' => $listing->id,
+                        'buyer_id' => $otherUser->id,
+                    ],
+                    [
+                        'seller_id' => $listing->user_id,
+                        'last_message_at' => now(),
+                    ]
+                );
+                return redirect()->route('seller.messages', ['conversation_id' => $conversation->id]);
+            }
+
+            return redirect()->route('seller.messages');
+        }
 
         $conversation = $this->chatService->getOrCreateConversation($listing, $buyer);
 
@@ -42,6 +72,10 @@ class ChatActionController extends Controller
     public function sendMessage(Request $request)
     {
         $sender = $this->getActiveUser();
+
+        if (!$request->has('body') && $request->has('message')) {
+            $request->merge(['body' => $request->input('message')]);
+        }
 
         $request->validate([
             'conversation_id' => 'required|exists:conversations,id',
