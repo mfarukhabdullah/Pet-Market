@@ -10,11 +10,119 @@ use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $category = null, $city = null)
     {
-        $categoryParam = $request->query('category', 'all');
+        // 1. Featured query parameter redirect on /category route
+        if ($request->query('featured') === 'true' && !$request->ajax() && !$request->wantsJson() && optional($request->route())->getName() === 'category') {
+            return redirect()->route('featured.pets', $request->except('featured'));
+        }
+
+        // Known category slugs and aliases
+        $knownCategories = [
+            'birds', 'cats', 'dogs', 'exotic', 'exotic-pets', 'fish', 'fishes',
+            'horses-farm', 'horse', 'horses', 'rabbits', 'reptiles', 'reptile'
+        ];
+        $knownCities = ['islamabad', 'karachi', 'lahore', 'rawalpindi', 'faisalabad', 'multan', 'sialkot', 'peshawar'];
+
+        // If only 1 route parameter was passed, check if it's a city (e.g. /category/karachi)
+        if (!empty($category) && empty($city)) {
+            $catLower = strtolower(trim($category));
+            if (in_array($catLower, $knownCities) || (!in_array($catLower, $knownCategories) && Listing::where('city', 'like', "%{$catLower}%")->exists())) {
+                $city = $category;
+                $category = null;
+            }
+        }
+
+        // 2. Clean up query parameters & redirect query string to clean route paths (/category/{category}/{city} or /category/{city})
+        if (!$request->ajax() && !$request->wantsJson()) {
+            $rawQuery = $request->query();
+            $needsRedirect = false;
+            $cleanQuery = [];
+
+            // Target category for route path
+            $targetCategory = $category;
+            if (isset($rawQuery['category'])) {
+                $cVal = trim((string) $rawQuery['category']);
+                if (!empty($cVal) && $cVal !== 'all' && empty($targetCategory)) {
+                    $targetCategory = $cVal;
+                }
+                $needsRedirect = true;
+            }
+
+            // Target city for route path
+            $targetCity = $city;
+            if (isset($rawQuery['location']) || isset($rawQuery['city'])) {
+                $lVal = trim((string) ($rawQuery['location'] ?? $rawQuery['city']));
+                if (!empty($lVal) && $lVal !== 'all' && empty($targetCity)) {
+                    $targetCity = $lVal;
+                }
+                $needsRedirect = true;
+            }
+
+            foreach ($rawQuery as $key => $val) {
+                if ($key === 'category' || $key === 'location' || $key === 'city') continue;
+
+                // Handle gender[] or gender array
+                if ($key === 'gender') {
+                    if (is_array($val)) {
+                        $cleanGenders = array_filter(array_map('trim', $val), fn($g) => !empty($g) && $g !== 'all');
+                        if (!empty($cleanGenders)) {
+                            $cleanQuery['gender'] = implode(',', $cleanGenders);
+                        }
+                        $needsRedirect = true;
+                        continue;
+                    } elseif (empty($val) || $val === 'all') {
+                        $needsRedirect = true;
+                        continue;
+                    }
+                }
+
+                // Handle age units: remove if corresponding age value is missing or if unit is default 'months'
+                if ($key === 'age_min_unit') {
+                    $hasAgeMin = isset($rawQuery['age_min']) && $rawQuery['age_min'] !== '';
+                    if (!$hasAgeMin || $val === 'months') {
+                        $needsRedirect = true;
+                        continue;
+                    }
+                }
+                if ($key === 'age_max_unit') {
+                    $hasAgeMax = isset($rawQuery['age_max']) && $rawQuery['age_max'] !== '';
+                    if (!$hasAgeMax || $val === 'months') {
+                        $needsRedirect = true;
+                        continue;
+                    }
+                }
+
+                // Remove empty strings or null values
+                if ($val === '' || $val === null) {
+                    $needsRedirect = true;
+                    continue;
+                }
+
+                $cleanQuery[$key] = $val;
+            }
+
+            if ($needsRedirect) {
+                if (optional($request->route())->getName() === 'featured.pets') {
+                    return redirect()->route('featured.pets', $cleanQuery);
+                }
+
+                $routeParams = [];
+                if ($targetCategory && $targetCategory !== 'all' && $targetCity && $targetCity !== 'all') {
+                    $routeParams = ['category' => $targetCategory, 'city' => $targetCity];
+                } elseif ($targetCategory && $targetCategory !== 'all') {
+                    $routeParams = ['category' => $targetCategory];
+                } elseif ($targetCity && $targetCity !== 'all') {
+                    $routeParams = ['category' => $targetCity];
+                }
+
+                return redirect()->route('category', array_merge($routeParams, $cleanQuery));
+            }
+        }
+
+        $categoryParam = $category ?: 'all';
+        $cityParam = $city ?: $request->query('city', $request->query('location', 'all'));
         $breedParam = $request->query('breed');
-        $cityParam = $request->query('city', $request->query('location', 'all'));
         $sortParam = $request->query('sort', 'newest');
         $searchParam = $request->query('search', $request->query('q'));
         // Robust Price Range Parsing
@@ -146,6 +254,9 @@ class CategoryController extends Controller
         }
 
         $genderParam = $request->query('gender');
+        if (is_string($genderParam) && str_contains($genderParam, ',')) {
+            $genderParam = array_filter(array_map('trim', explode(',', $genderParam)));
+        }
 
         $filters = [
             'category' => $categoryFilterId,
@@ -218,5 +329,11 @@ class CategoryController extends Controller
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
             ->header('Pragma', 'no-cache')
             ->header('Expires', '0');
+    }
+
+    public function featured(Request $request)
+    {
+        $request->merge(['featured' => 'true']);
+        return $this->index($request);
     }
 }

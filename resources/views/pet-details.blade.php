@@ -451,7 +451,7 @@
                         @php
                             $isSellerPetFav = auth()->user() ? auth()->user()->hasFavorited($sellerPet->id) : false;
                         @endphp
-                        <a href="{{ route('pet.details', ['id' => $sellerPet->id]) }}" class="my-pet-card" id="listing-{{ $sellerPet->id }}" style="scroll-margin-top: 100px;">
+                        <a href="{{ route('pet.details', ['slug' => $sellerPet->slug ?: $sellerPet->id]) }}" class="my-pet-card" id="listing-{{ $sellerPet->id }}" style="scroll-margin-top: 100px;">
                             <div style="position: relative;">
                                 <img src="{{ $sellerPet->primary_image_url }}" alt="{{ $sellerPet->title }}" class="my-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                                 @if($sellerPet->is_featured)
@@ -490,7 +490,7 @@
                 <p class="my-sec-desc">Related listings that may also match your search.</p>
                 <div class="my-pets-grid" style="text-align: left;">
                     @forelse($similarListings as $similar)
-                        <a href="{{ route('pet.details', ['id' => $similar->id]) }}" class="my-pet-card" id="listing-{{ $similar->id }}" style="scroll-margin-top: 100px;">
+                        <a href="{{ route('pet.details', ['slug' => $similar->slug ?: $similar->id]) }}" class="my-pet-card" id="listing-{{ $similar->id }}" style="scroll-margin-top: 100px;">
                             <div style="position: relative;">
                                 <img src="{{ $similar->primary_image_url }}" alt="{{ $similar->title }}" class="my-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                                 @if($similar->is_featured)

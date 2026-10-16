@@ -41,10 +41,9 @@
 
                 <!-- Navigation Links -->
                 <nav class="header-nav-menu">
-                    <a href="{{ route('category', ['featured' => 'true']) }}" class="header-nav-item">Featured Pets</a>
+                    <a href="{{ route('featured.pets') }}" class="header-nav-item">Featured Pets</a>
                     <a href="{{ route('category') }}" class="header-nav-item">Categories</a>
                     <a href="{{ route('breeds') }}" class="header-nav-item">Breeds</a>
-                    <a href="{{ route('category') }}" class="header-nav-item">Locations</a>
                     <a href="{{ route('about') }}" class="header-nav-item">About Us</a>
                 </nav>
 
@@ -160,10 +159,9 @@
             <button id="closeDrawerBtn" class="close-drawer-btn"><i class="fas fa-times"></i></button>
         </div>
         <ul class="mobile-nav-list">
-            <li><a href="{{ route('category', ['featured' => 'true']) }}">Featured Pets</a></li>
+            <li><a href="{{ route('featured.pets') }}">Featured Pets</a></li>
             <li><a href="{{ route('category') }}">Categories</a></li>
             <li><a href="{{ route('breeds') }}">Breeds</a></li>
-            <li><a href="{{ route('category') }}">Locations</a></li>
             <li><a href="{{ route('about') }}">About Us</a></li>
         </ul>
     </div>

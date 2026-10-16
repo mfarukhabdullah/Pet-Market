@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ (request('featured') === 'true' || request('featured') === '1') ? 'Featured Pet Listings' : 'Browse Pet Listings' }} - Pet Marketplace</title>
+    <title>{{ (request()->routeIs('featured.pets') || request('featured') === 'true' || request('featured') === '1') ? 'Featured Pet Listings' : 'Browse Pet Listings' }} - Pet Marketplace</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- SEO Meta Tags -->
@@ -29,12 +29,12 @@
     <main class="site-wrapper">
 
         <!-- HERO BANNER SECTION (#FAF7F2 / Cream background, 1440px shell -> 1250px container) -->
-        <x-hero :title="(request('featured') === 'true' || request('featured') === '1') ? 'Featured Pet Listings' : 'Browse Pet Listings'" :description="(request('featured') === 'true' || request('featured') === '1') ? 'Discover premium and featured pet listings from top verified sellers.' : 'Search and filter pet listings by category, breed, location, price, age, gender and other relevant details.'">
+        <x-hero :title="(request()->routeIs('featured.pets') || request('featured') === 'true' || request('featured') === '1') ? 'Featured Pet Listings' : 'Browse Pet Listings'" :description="(request()->routeIs('featured.pets') || request('featured') === 'true' || request('featured') === '1') ? 'Discover premium and featured pet listings from top verified sellers.' : 'Search and filter pet listings by category, breed, location, price, age, gender and other relevant details.'">
             <!-- Floating Search Card Container -->
             <div class="shell-1440">
                 <div class="container">
                     <div class="category-search-card">
-                        <form action="{{ route('category') }}" method="GET" class="category-search-form" id="searchFilterForm">
+                        <form action="{{ request()->routeIs('featured.pets') ? route('featured.pets') : route('category') }}" method="GET" class="category-search-form" id="searchFilterForm">
                             
                             <!-- Search Input Field -->
                             <div class="search-input-group">
@@ -57,16 +57,17 @@
                             <!-- Location Dropdown Field -->
                             <div class="search-input-group">
                                 <i class="fas fa-map-marker-alt search-group-icon"></i>
+                                @php $currLocTop = strtolower($cityParam ?? request('location', request('city', ''))); @endphp
                                 <select name="location" class="search-form-select">
                                     <option value="">Any location</option>
-                                    <option value="islamabad" {{ request('location') == 'islamabad' ? 'selected' : '' }}>Islamabad</option>
-                                    <option value="karachi" {{ request('location') == 'karachi' ? 'selected' : '' }}>Karachi</option>
-                                    <option value="lahore" {{ request('location') == 'lahore' ? 'selected' : '' }}>Lahore</option>
-                                    <option value="rawalpindi" {{ request('location') == 'rawalpindi' ? 'selected' : '' }}>Rawalpindi</option>
-                                    <option value="faisalabad" {{ request('location') == 'faisalabad' ? 'selected' : '' }}>Faisalabad</option>
-                                    <option value="multan" {{ request('location') == 'multan' ? 'selected' : '' }}>Multan</option>
-                                    <option value="sialkot" {{ request('location') == 'sialkot' ? 'selected' : '' }}>Sialkot</option>
-                                    <option value="peshawar" {{ request('location') == 'peshawar' ? 'selected' : '' }}>Peshawar</option>
+                                    <option value="islamabad" {{ $currLocTop == 'islamabad' ? 'selected' : '' }}>Islamabad</option>
+                                    <option value="karachi" {{ $currLocTop == 'karachi' ? 'selected' : '' }}>Karachi</option>
+                                    <option value="lahore" {{ $currLocTop == 'lahore' ? 'selected' : '' }}>Lahore</option>
+                                    <option value="rawalpindi" {{ $currLocTop == 'rawalpindi' ? 'selected' : '' }}>Rawalpindi</option>
+                                    <option value="faisalabad" {{ $currLocTop == 'faisalabad' ? 'selected' : '' }}>Faisalabad</option>
+                                    <option value="multan" {{ $currLocTop == 'multan' ? 'selected' : '' }}>Multan</option>
+                                    <option value="sialkot" {{ $currLocTop == 'sialkot' ? 'selected' : '' }}>Sialkot</option>
+                                    <option value="peshawar" {{ $currLocTop == 'peshawar' ? 'selected' : '' }}>Peshawar</option>
                                 </select>
                                 <i class="fas fa-chevron-down select-arrow-icon"></i>
                             </div>
@@ -94,12 +95,12 @@
                             <div class="filters-sidebar-header">
                                 <h3 class="filters-title">Filters</h3>
                                 <div class="filters-header-actions">
-                                    <a href="{{ route('category') }}" class="btn-reset-filters" id="resetFiltersBtn" style="{{ request()->hasAny(['category', 'breed', 'location', 'city', 'price_min', 'price_max', 'min_price', 'max_price', 'age_min', 'age_max', 'gender', 'health', 'date', 'featured', 'search', 'q']) ? 'display: inline-block;' : 'display: none;' }} text-decoration: none;">Reset all</a>
+                                    <a href="{{ request()->routeIs('featured.pets') ? route('featured.pets') : route('category') }}" class="btn-reset-filters" id="resetFiltersBtn" style="{{ request()->hasAny(['category', 'breed', 'location', 'city', 'price_min', 'price_max', 'min_price', 'max_price', 'age_min', 'age_max', 'gender', 'health', 'date', 'featured', 'search', 'q']) ? 'display: inline-block;' : 'display: none;' }} text-decoration: none;">Reset all</a>
                                     <button type="button" class="close-sidebar-btn" id="closeFiltersBtn" aria-label="Close Filters"><i class="fas fa-times"></i></button>
                                 </div>
                             </div>
 
-                            <form id="sidebarFiltersForm" action="{{ route('category') }}" method="GET" autocomplete="off">
+                            <form id="sidebarFiltersForm" action="{{ request()->routeIs('featured.pets') ? route('featured.pets') : (isset($selectedCategory) && $selectedCategory ? route('category', ['category' => $selectedCategory->slug]) : route('category')) }}" method="GET" autocomplete="off">
                                 
                                 <!-- 1. Pet Category -->
                                 <div class="filter-group">
@@ -143,7 +144,7 @@
                                     <div class="filter-select-wrapper">
                                         <select id="filterLocation" name="location" class="filter-select">
                                             <option value="">All Locations</option>
-                                            @php $currLoc = strtolower(request('location', request('city', ''))); @endphp
+                                            @php $currLoc = strtolower($cityParam ?: request('location', request('city', ''))); @endphp
                                             <option value="islamabad" {{ $currLoc == 'islamabad' ? 'selected' : '' }}>Islamabad</option>
                                             <option value="karachi" {{ $currLoc == 'karachi' ? 'selected' : '' }}>Karachi</option>
                                             <option value="lahore" {{ $currLoc == 'lahore' ? 'selected' : '' }}>Lahore</option>
@@ -192,13 +193,22 @@
                                 <!-- 6. Gender -->
                                 <div class="filter-group">
                                     <label class="filter-label">Gender</label>
+                                    @php
+                                        $reqGender = request('gender');
+                                        $selectedGenders = [];
+                                        if (is_array($reqGender)) {
+                                            $selectedGenders = $reqGender;
+                                        } elseif (is_string($reqGender) && trim($reqGender) !== '') {
+                                            $selectedGenders = array_filter(array_map('trim', explode(',', strtolower($reqGender))));
+                                        }
+                                    @endphp
                                     <div class="checkbox-options-list">
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="gender[]" value="male" {{ (is_array(request('gender')) ? in_array('male', request('gender')) : request('gender') == 'male') ? 'checked' : '' }}>
+                                            <input type="checkbox" name="gender" value="male" {{ in_array('male', $selectedGenders) ? 'checked' : '' }}>
                                             <span class="label-text">Male</span>
                                         </label>
                                         <label class="checkbox-option">
-                                            <input type="checkbox" name="gender[]" value="female" {{ (is_array(request('gender')) ? in_array('female', request('gender')) : request('gender') == 'female') ? 'checked' : '' }}>
+                                            <input type="checkbox" name="gender" value="female" {{ in_array('female', $selectedGenders) ? 'checked' : '' }}>
                                             <span class="label-text">Female</span>
                                         </label>
                                     </div>
@@ -350,7 +360,7 @@
                                              data-location="{{ strtolower($pet->city) }}" 
                                              data-price="{{ (int) $pet->price }}" 
                                              data-age-months="{{ (int) $pet->age_months }}" 
-                                             onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" 
+                                             onclick="window.location='{{ route('pet.details', ['slug' => $pet->slug ?: $pet->id]) }}'" 
                                              style="scroll-margin-top: 110px; cursor: pointer;">
                                         <div class="pet-card-image-box">
                                             @if($pet->is_featured)

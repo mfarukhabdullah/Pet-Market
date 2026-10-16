@@ -295,7 +295,7 @@
                                     <div class="item-preview">
                                         <img src="{{ $listing->primary_image_url }}" class="item-thumb" alt="">
                                         <div class="item-info">
-                                            <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="title" target="_blank">{{ $listing->title }}</a>
+                                            <a href="{{ route('pet.details', ['slug' => $listing->slug ?: $listing->id]) }}" class="title" target="_blank">{{ $listing->title }}</a>
                                             <div class="meta">{{ $listing->category ? $listing->category->name : 'General' }} • {{ $listing->breed_name ?: ($listing->breed ? $listing->breed->name : 'N/A') }}</div>
                                         </div>
                                     </div>

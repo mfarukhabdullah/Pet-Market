@@ -1249,7 +1249,7 @@
                 <div class="chat-context-card">
                     <img src="{{ $activeListing->primary_image_url }}" alt="{{ $activeListing->title }}" class="chat-context-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                     <div class="chat-context-details" style="flex-grow: 1;">
-                        <h4><a href="{{ route('pet.details', ['id' => $activeListing->id]) }}" style="color:inherit; text-decoration:none;">{{ $activeListing->title }}</a></h4>
+                        <h4><a href="{{ route('pet.details', ['slug' => $activeListing->slug ?: $activeListing->id]) }}" style="color:inherit; text-decoration:none;">{{ $activeListing->title }}</a></h4>
                         <p>{{ $activeListing->city }}</p>
                     </div>
                     <div class="chat-context-price" style="font-weight: 700; color: var(--primary-green); white-space: nowrap;">
