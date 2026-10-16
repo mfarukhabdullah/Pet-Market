@@ -1570,15 +1570,17 @@ button {
 }
 
 .footer-link-list a {
+  display: inline-block;
   color: #cbd5e1;
   font-size: 0.92rem;
-  text-decoration: none;
-  transition: color 0.2s ease;
+  text-decoration: none !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .footer-link-list a:hover {
-  color: #ffffff;
-  text-decoration: underline;
+  color: #52D18F;
+  text-decoration: none !important;
+  transform: translateX(6px);
 }
 
 .footer-contact-items {
@@ -1589,16 +1591,32 @@ button {
 }
 
 .contact-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 10px;
   color: #cbd5e1;
   font-size: 0.92rem;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  width: fit-content;
 }
 
 .contact-icon {
   color: #cbd5e1;
   font-size: 0.95rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contact-item:hover {
+  color: #52D18F;
+  text-decoration: none !important;
+  transform: translateX(6px);
+}
+
+.contact-item:hover .contact-icon {
+  color: #52D18F;
+  transform: scale(1.15);
 }
 
 .footer-social-wrapper {

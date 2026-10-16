@@ -50,12 +50,24 @@ class Listing extends Model
         'age_months' => 'integer',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     protected static function boot()
     {
         parent::boot();
         static::creating(function ($listing) {
             if (empty($listing->slug)) {
-                $listing->slug = Str::slug($listing->title) . '-' . Str::random(6);
+                $baseSlug = Str::slug($listing->title) ?: 'pet';
+                $slug = $baseSlug;
+                $counter = 2;
+                while (static::where('slug', $slug)->exists()) {
+                    $slug = "{$baseSlug}-{$counter}";
+                    $counter++;
+                }
+                $listing->slug = $slug;
             }
         });
     }
@@ -210,7 +222,16 @@ class Listing extends Model
                     $q->whereIn('gender', $validGenders);
                 }
             } elseif ($gender !== 'all' && !empty($gender)) {
-                $q->where('gender', $gender);
+                if (is_string($gender) && str_contains($gender, ',')) {
+                    $validGenders = array_filter(array_map('trim', explode(',', $gender)), function ($g) {
+                        return $g !== 'all' && !empty($g);
+                    });
+                    if (!empty($validGenders)) {
+                        $q->whereIn('gender', $validGenders);
+                    }
+                } else {
+                    $q->where('gender', $gender);
+                }
             }
         });
 

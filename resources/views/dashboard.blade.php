@@ -676,7 +676,7 @@
                 
                 <div class="card-body">
                     @forelse($recentListings as $listing)
-                        <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="listing-item">
+                        <a href="{{ route('pet.details', ['slug' => $listing->slug ?: $listing->id]) }}" class="listing-item">
                             <img src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" class="listing-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                             <div class="listing-info">
                                 <div class="listing-name">{{ $listing->title }}</div>
@@ -728,7 +728,7 @@
             
             <div class="card-body favorites-grid-mobile">
                 @forelse($recentFavorites as $fav)
-                    <a href="{{ route('pet.details', ['id' => $fav->id]) }}" class="favorite-item">
+                    <a href="{{ route('pet.details', ['slug' => $fav->slug ?: $fav->id]) }}" class="favorite-item">
                         @if($fav->is_featured)
                             <span class="fav-badge">FEATURED</span>
                         @endif

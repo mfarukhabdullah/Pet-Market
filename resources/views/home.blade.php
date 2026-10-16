@@ -64,24 +64,8 @@
                 <div class="home-search-bar">
 
                     <!-- Filter 1: PET CATEGORY -->
-                    <div class="home-filter" style="position: relative;">
-                        <select name="category" class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
-                            <option value="" disabled selected>Any category</option>
-                            @if(isset($categories) && $categories->isNotEmpty())
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
-                                @endforeach
-                            @else
-                                <option value="dogs">Dogs</option>
-                                <option value="cats">Cats</option>
-                                <option value="birds">Birds</option>
-                                <option value="rabbits">Rabbits</option>
-                                <option value="fish">Fish</option>
-                                <option value="reptiles">Reptiles</option>
-                                <option value="horses-farm">Horses & Farm</option>
-                                <option value="exotic">Exotic Pets</option>
-                            @endif
-                        </select>
+                    <div class="home-filter custom-dropdown-wrap" data-filter="category" tabindex="0">
+                        <input type="hidden" name="category" value="">
                         <div class="home-filter-left">
                             <!-- Green Paw Icon -->
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="#14794A">
@@ -97,18 +81,33 @@
                             </div>
                         </div>
                         <!-- Dropdown Arrow -->
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+
+                        <!-- Custom Dropdown Menu -->
+                        <div class="custom-dropdown-menu">
+                            @if(isset($categories) && $categories->isNotEmpty())
+                                @foreach($categories as $cat)
+                                    <div class="custom-dropdown-item" data-value="{{ $cat->slug }}">
+                                        <span>{{ $cat->name }}</span>
+                                        <i class="fa-solid fa-check opt-check"></i>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="custom-dropdown-item" data-value="dogs"><span>Dogs</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="cats"><span>Cats</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="birds"><span>Birds</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="rabbits"><span>Rabbits</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="fish"><span>Fish</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="reptiles"><span>Reptiles</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="horses-farm"><span>Horses & Farm</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="exotic"><span>Exotic Pets</span><i class="fa-solid fa-check opt-check"></i></div>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Filter 2: BREED -->
-                    <div class="home-filter" style="position: relative;">
-                        <select name="breed" class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
-                            <option value="" disabled selected>Any breed</option>
-                            <option value="golden-retriever">Golden Retriever</option>
-                            <option value="german-shepherd">German Shepherd</option>
-                            <option value="persian">Persian Cat</option>
-                            <option value="british-shorthair">British Shorthair</option>
-                        </select>
+                    <div class="home-filter custom-dropdown-wrap" data-filter="breed" tabindex="0">
+                        <input type="hidden" name="breed" value="">
                         <div class="home-filter-left">
                             <!-- Green Breed Icon (DNA) -->
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14794A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -123,22 +122,29 @@
                                 <span class="home-filter-value">Any breed</span>
                             </div>
                         </div>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+
+                        <!-- Custom Dropdown Menu -->
+                        <div class="custom-dropdown-menu" id="homeBreedDropdown">
+                            @if(isset($breeds) && $breeds->isNotEmpty())
+                                @foreach($breeds as $b)
+                                    <div class="custom-dropdown-item" data-value="{{ $b->slug }}" data-category="{{ $b->category ? $b->category->slug : '' }}">
+                                        <span>{{ $b->name }}</span>
+                                        <i class="fa-solid fa-check opt-check"></i>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="custom-dropdown-item" data-value="golden-retriever" data-category="dogs"><span>Golden Retriever</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="german-shepherd" data-category="dogs"><span>German Shepherd</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="persian" data-category="cats"><span>Persian Cat</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="british-shorthair" data-category="cats"><span>British Shorthair</span><i class="fa-solid fa-check opt-check"></i></div>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Filter 3: LOCATION -->
-                    <div class="home-filter" style="position: relative;">
-                        <select name="location" class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
-                            <option value="" disabled selected>Any location</option>
-                            <option value="islamabad">Islamabad</option>
-                            <option value="karachi">Karachi</option>
-                            <option value="lahore">Lahore</option>
-                            <option value="rawalpindi">Rawalpindi</option>
-                            <option value="faisalabad">Faisalabad</option>
-                            <option value="multan">Multan</option>
-                            <option value="sialkot">Sialkot</option>
-                            <option value="peshawar">Peshawar</option>
-                        </select>
+                    <div class="home-filter custom-dropdown-wrap" data-filter="location" tabindex="0">
+                        <input type="hidden" name="location" value="">
                         <div class="home-filter-left">
                             <!-- Green Location Pin Icon -->
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="#14794A">
@@ -149,18 +155,24 @@
                                 <span class="home-filter-value">Any location</span>
                             </div>
                         </div>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+
+                        <!-- Custom Dropdown Menu -->
+                        <div class="custom-dropdown-menu">
+                            <div class="custom-dropdown-item" data-value="islamabad"><span>Islamabad</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="karachi"><span>Karachi</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="lahore"><span>Lahore</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="rawalpindi"><span>Rawalpindi</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="faisalabad"><span>Faisalabad</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="multan"><span>Multan</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="sialkot"><span>Sialkot</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="peshawar"><span>Peshawar</span><i class="fa-solid fa-check opt-check"></i></div>
+                        </div>
                     </div>
 
                     <!-- Filter 4: PRICE -->
-                    <div class="home-filter" style="position: relative;">
-                        <select name="price" class="hidden-filter-select" onchange="this.parentElement.querySelector('.home-filter-value').innerText = this.options[this.selectedIndex].text;">
-                            <option value="" disabled selected>Any price</option>
-                            <option value="0-20000">Under Rs. 20k</option>
-                            <option value="20000-50000">Rs. 20k - 50k</option>
-                            <option value="50000-100000">Rs. 50k - 100k</option>
-                            <option value="100000+">Rs. 100k+</option>
-                        </select>
+                    <div class="home-filter custom-dropdown-wrap" data-filter="price" tabindex="0">
+                        <input type="hidden" name="price" value="">
                         <div class="home-filter-left">
                             <!-- Green Price Tag Icon -->
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="#14794A">
@@ -171,7 +183,15 @@
                                 <span class="home-filter-value">Any price</span>
                             </div>
                         </div>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+
+                        <!-- Custom Dropdown Menu -->
+                        <div class="custom-dropdown-menu">
+                            <div class="custom-dropdown-item" data-value="0-20000"><span>Under Rs. 20k</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="20000-50000"><span>Rs. 20k - 50k</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="50000-100000"><span>Rs. 50k - 100k</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="100000+"><span>Rs. 100k+</span><i class="fa-solid fa-check opt-check"></i></div>
+                        </div>
                     </div>
 
                     <!-- CTA Button: Find a Pet -->
@@ -259,17 +279,17 @@
             <div class="home-container">
                 <div class="home-header">
                     <div>
-                        <a href="{{ route('category', ['featured' => 'true']) }}" style="text-decoration: none; color: inherit;">
+                        <a href="{{ route('featured.pets') }}" style="text-decoration: none; color: inherit;">
                             <h2 class="home-sec-title home-sec-title--md" style="cursor: pointer;">Featured Pets</h2>
                         </a>
                         <p class="home-sec-desc home-sec-desc--flush">Highlighted pet listings from sellers on the marketplace.</p>
                     </div>
-                    <button class="home-btn-outline home-btn-desktop" onclick="window.location='{{ route('category', ['featured' => 'true']) }}'">View All Pets</button>
+                    <button class="home-btn-outline home-btn-desktop" onclick="window.location='{{ route('featured.pets') }}'">View All Pets</button>
                 </div>
                 <div class="home-pets-grid">
                     @if(isset($featuredListings) && $featuredListings->isNotEmpty())
                         @foreach($featuredListings as $pet)
-                            <div class="home-pet-card" id="listing-{{ $pet->id }}" onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" style="scroll-margin-top: 100px; cursor: pointer;">
+                            <div class="home-pet-card" id="listing-{{ $pet->id }}" onclick="window.location='{{ route('pet.details', ['slug' => $pet->slug ?: $pet->id]) }}'" style="scroll-margin-top: 100px; cursor: pointer;">
                                 <div class="home-pet-media">
                                     <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="home-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                                     <span class="home-pet-badge">FEATURED</span>
@@ -324,7 +344,7 @@
                     @endif
                 </div>
                 <div class="home-mobile-btn-wrap home-mobile-btn-wrap--featured">
-                    <a href="{{ route('category', ['featured' => 'true']) }}" class="home-btn-viewall" id="featured-view-all-mobile">View All Pets</a>
+                    <a href="{{ route('featured.pets') }}" class="home-btn-viewall" id="featured-view-all-mobile">View All Pets</a>
                 </div>
             </div>
         </div>
@@ -344,7 +364,7 @@
                 <div class="home-pets-grid">
                     @if(isset($recentListings) && $recentListings->isNotEmpty())
                         @foreach($recentListings as $pet)
-                            <div class="home-pet-card" id="listing-recent-{{ $pet->id }}" onclick="window.location='{{ route('pet.details', ['id' => $pet->id]) }}'" style="scroll-margin-top: 100px; cursor: pointer;">
+                            <div class="home-pet-card" id="listing-recent-{{ $pet->id }}" onclick="window.location='{{ route('pet.details', ['slug' => $pet->slug ?: $pet->id]) }}'" style="scroll-margin-top: 100px; cursor: pointer;">
                                 <div class="home-pet-media">
                                     <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="home-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                                     @if($pet->is_featured)
@@ -691,6 +711,105 @@
                     }, 1500);
                 }, 300);
             }
+        }
+
+        // Custom Dropdowns in Hero Search Bar
+        const dropdownWraps = document.querySelectorAll('.custom-dropdown-wrap');
+        dropdownWraps.forEach(wrap => {
+            const input = wrap.querySelector('input[type="hidden"]');
+            const displayVal = wrap.querySelector('.home-filter-value');
+            const items = wrap.querySelectorAll('.custom-dropdown-item');
+
+            wrap.addEventListener('click', function (e) {
+                if (e.target.closest('.custom-dropdown-item')) return;
+                const isOpen = wrap.classList.contains('is-open');
+                dropdownWraps.forEach(w => w.classList.remove('is-open'));
+                if (!isOpen) {
+                    wrap.classList.add('is-open');
+                }
+            });
+
+            items.forEach(item => {
+                item.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const val = item.getAttribute('data-value') || '';
+                    const text = item.querySelector('span').innerText.trim();
+
+                    if (input) input.value = val;
+                    if (displayVal) displayVal.innerText = text;
+
+                    items.forEach(it => it.classList.remove('is-selected'));
+                    item.classList.add('is-selected');
+
+                    wrap.classList.remove('is-open');
+
+                    // If Category was changed, filter the Breed dropdown options
+                    if (wrap.dataset.filter === 'category') {
+                        const breedWrap = document.querySelector('.custom-dropdown-wrap[data-filter="breed"]');
+                        if (breedWrap) {
+                            const breedItems = breedWrap.querySelectorAll('.custom-dropdown-item');
+                            const breedInput = breedWrap.querySelector('input[type="hidden"]');
+                            const breedDisplay = breedWrap.querySelector('.home-filter-value');
+
+                            breedItems.forEach(bItem => {
+                                const bCat = bItem.getAttribute('data-category');
+                                if (!val || !bCat || bCat === val) {
+                                    bItem.style.display = 'flex';
+                                } else {
+                                    bItem.style.display = 'none';
+                                }
+                            });
+
+                            if (breedInput) breedInput.value = '';
+                            if (breedDisplay) breedDisplay.innerText = 'Any breed';
+                            breedItems.forEach(bi => bi.classList.remove('is-selected'));
+                        }
+                    }
+                });
+            });
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.custom-dropdown-wrap')) {
+                dropdownWraps.forEach(w => w.classList.remove('is-open'));
+            }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                dropdownWraps.forEach(w => w.classList.remove('is-open'));
+            }
+        });
+        const homeSearchForm = document.querySelector('.home-search-wrap');
+        if (homeSearchForm) {
+            homeSearchForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const catInput = homeSearchForm.querySelector('input[name="category"]');
+                const locInput = homeSearchForm.querySelector('input[name="location"]');
+                const breedInput = homeSearchForm.querySelector('input[name="breed"]');
+                const priceInput = homeSearchForm.querySelector('input[name="price"]');
+
+                const catVal = catInput ? (catInput.value || '').trim() : '';
+                const locVal = locInput ? (locInput.value || '').trim() : '';
+                const breedVal = breedInput ? (breedInput.value || '').trim() : '';
+                const priceVal = priceInput ? (priceInput.value || '').trim() : '';
+
+                let basePath = '/category';
+                if (catVal && catVal !== 'all' && locVal && locVal !== 'all') {
+                    basePath = '/category/' + encodeURIComponent(catVal) + '/' + encodeURIComponent(locVal);
+                } else if (catVal && catVal !== 'all') {
+                    basePath = '/category/' + encodeURIComponent(catVal);
+                } else if (locVal && locVal !== 'all') {
+                    basePath = '/category/' + encodeURIComponent(locVal);
+                }
+
+                const params = new URLSearchParams();
+                if (breedVal && breedVal !== 'all') params.set('breed', breedVal);
+                if (priceVal && priceVal !== 'all') params.set('price', priceVal);
+
+                const qStr = params.toString();
+                window.location.href = basePath + (qStr ? '?' + qStr : '');
+            });
         }
     });
     </script>

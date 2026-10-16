@@ -662,14 +662,14 @@
                             </form>
                         </div>
                     </div>
-                    <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="listing-img-wrapper">
+                    <a href="{{ route('pet.details', ['slug' => $listing->slug ?: $listing->id]) }}" class="listing-img-wrapper">
                         <img src="{{ $listing->primary_image_url }}" alt="{{ $listing->title }}" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                     </a>
                     <div class="listing-info">
                         <div class="status-badge status-{{ $listing->status }}">
                             {{ $listing->status === 'live' ? 'Live' : ($listing->status === 'pending' ? 'Pending Review' : ($listing->status === 'draft' ? 'Draft' : ($listing->status === 'sold' ? 'Sold / Rehomed' : ucfirst($listing->status)))) }}
                         </div>
-                        <div class="listing-title"><a href="{{ route('pet.details', ['id' => $listing->id]) }}" style="color:inherit; text-decoration:none;">{{ $listing->title }}</a></div>
+                        <div class="listing-title"><a href="{{ route('pet.details', ['slug' => $listing->slug ?: $listing->id]) }}" style="color:inherit; text-decoration:none;">{{ $listing->title }}</a></div>
                         <div class="listing-breed">{{ $listing->breed_name ?: ($listing->breed ? $listing->breed->name : 'Pet') }}@if($listing->color) • <span style="font-weight: 600; color: #17211C;">{{ $listing->color }}</span>@endif</div>
                         <div class="listing-price">{{ $listing->formatted_price }}</div>
                         <div class="listing-meta">
@@ -685,17 +685,17 @@
                     </div>
                     <div class="listing-actions">
                         @if($listing->status === 'live')
-                            <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="btn-action btn-solid">View Listing</a>
+                            <a href="{{ route('pet.details', ['slug' => $listing->slug ?: $listing->id]) }}" class="btn-action btn-solid">View Listing</a>
                             <form action="{{ route('listings.mark-sold', ['id' => $listing->id]) }}" method="POST" style="display:inline;">
                                 @csrf
                                 <button type="submit" class="btn-action btn-outline mark-sold-btn">Mark Sold</button>
                             </form>
                         @elseif($listing->status === 'pending')
-                            <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="btn-action btn-solid">Preview</a>
+                            <a href="{{ route('pet.details', ['slug' => $listing->slug ?: $listing->id]) }}" class="btn-action btn-solid">Preview</a>
                         @elseif($listing->status === 'draft')
                             <a href="{{ route('seller.create-listing') }}?edit={{ $listing->id }}" class="btn-action btn-solid">Continue Draft</a>
                         @elseif($listing->status === 'sold')
-                            <a href="{{ route('pet.details', ['id' => $listing->id]) }}" class="btn-action btn-solid">View Listing</a>
+                            <a href="{{ route('pet.details', ['slug' => $listing->slug ?: $listing->id]) }}" class="btn-action btn-solid">View Listing</a>
                         @elseif($listing->status === 'rejected')
                             <a href="{{ route('seller.create-listing') }}?edit={{ $listing->id }}" class="btn-action btn-solid">Edit & Fix</a>
                         @endif

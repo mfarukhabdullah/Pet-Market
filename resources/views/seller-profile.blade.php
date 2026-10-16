@@ -246,7 +246,7 @@
         
         <div class="my-pets-grid">
             @forelse($activeListings as $pet)
-                <a href="{{ route('pet.details', ['id' => $pet->id]) }}" class="my-pet-card" id="listing-{{ $pet->id }}" style="scroll-margin-top: 100px;">
+                <a href="{{ route('pet.details', ['slug' => $pet->slug ?: $pet->id]) }}" class="my-pet-card" id="listing-{{ $pet->id }}" style="scroll-margin-top: 100px;">
                     <div style="position: relative;">
                         <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="my-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                         @if($pet->is_featured)

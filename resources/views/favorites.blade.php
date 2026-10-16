@@ -369,7 +369,7 @@
                 @if($favorites->isNotEmpty())
                     <div class="favorites-grid">
                         @foreach($favorites as $fav)
-                            <a href="{{ route('pet.details', ['id' => $fav->id]) }}" class="fav-card" data-fav-id="{{ $fav->id }}">
+                            <a href="{{ route('pet.details', ['slug' => $fav->slug ?: $fav->id]) }}" class="fav-card" data-fav-id="{{ $fav->id }}">
                                 <div class="fav-card-img-wrapper">
                                     <img src="{{ $fav->primary_image_url }}" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'" alt="{{ $fav->title }}" class="fav-card-img">
                                     <button type="button" 

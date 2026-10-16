@@ -8,17 +8,28 @@ use Illuminate\Support\Facades\Cache;
 
 class PetController extends Controller
 {
-    public function details(Request $request)
+    public function details(Request $request, $slug = null)
     {
-        $id = $request->query('id');
-        $slug = $request->query('slug');
+        $identifier = $slug ?: $request->query('slug', $request->query('id'));
+
+        // If numeric ID was passed in query or URL, redirect to clean slug URL (e.g. /pet-details/29 -> /pet-details/labrodor-dog)
+        if ($identifier && is_numeric($identifier) && !$request->ajax() && optional($request->route())->getName() === 'pet.details') {
+            $found = Listing::find($identifier);
+            if ($found && !empty($found->slug)) {
+                return redirect()->route('pet.details', ['slug' => $found->slug]);
+            }
+        }
+
+        // If accessed via query param /pet-details?slug=..., redirect to clean URL /pet-details/{slug}
+        if ($request->query('slug') && !$slug && !$request->ajax() && optional($request->route())->getName() === 'pet.details') {
+            return redirect()->route('pet.details', array_merge(['slug' => $request->query('slug')], $request->except(['slug', 'id'])));
+        }
 
         $query = Listing::with(['images', 'category', 'breed', 'user.reviewsReceived']);
 
-        if ($slug) {
-            $listing = $query->where('slug', $slug)->first();
-        } elseif ($id) {
-            $listing = $query->where('id', $id)->first();
+        if ($identifier) {
+            $listing = $query->where('slug', $identifier)->first()
+                ?: (is_numeric($identifier) ? $query->where('id', $identifier)->first() : null);
         } else {
             // Default to first live featured or recent listing for demo preview
             $listing = $query->live()->first();

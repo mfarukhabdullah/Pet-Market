@@ -425,10 +425,25 @@ function initSearchFilter() {
   if (categorySelect) categorySelect.addEventListener('change', filterPets);
   if (locationSelect) locationSelect.addEventListener('change', filterPets);
   
-  // Prevent form submission refresh
   searchForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    filterPets();
+    const catVal = categorySelect ? (categorySelect.value || '').trim() : '';
+    const locVal = locationSelect ? (locationSelect.value || '').trim() : '';
+    const qVal = searchInput ? (searchInput.value || '').trim() : '';
+
+    let basePath = '/category';
+    if (catVal && catVal !== 'all' && locVal && locVal !== 'all') {
+      basePath = '/category/' + encodeURIComponent(catVal) + '/' + encodeURIComponent(locVal);
+    } else if (catVal && catVal !== 'all') {
+      basePath = '/category/' + encodeURIComponent(catVal);
+    } else if (locVal && locVal !== 'all') {
+      basePath = '/category/' + encodeURIComponent(locVal);
+    }
+
+    const params = new URLSearchParams();
+    if (qVal) params.set('q', qVal);
+    const qStr = params.toString();
+    window.location.href = basePath + (qStr ? '?' + qStr : '');
   });
 }
 
@@ -756,33 +771,120 @@ function initSidebarFilter() {
 
   // Handle Form Submission: submit cleanly to server for full database filtering
   sidebarForm.addEventListener('submit', (e) => {
-    // Normalize compact/formatted price values before submission
-    const priceMinEl = document.getElementById('priceMin');
-    const priceMaxEl = document.getElementById('priceMax');
-    if (priceMinEl && priceMinEl.value.trim()) {
-      const parsed = parsePriceValue(priceMinEl.value.trim());
-      if (!isNaN(parsed)) priceMinEl.value = parsed;
-    }
-    if (priceMaxEl && priceMaxEl.value.trim()) {
-      const parsed = parsePriceValue(priceMaxEl.value.trim());
-      if (!isNaN(parsed)) priceMaxEl.value = parsed;
-    }
-    if (priceMinEl && priceMaxEl && priceMinEl.value && priceMaxEl.value) {
-      const v1 = parseFloat(priceMinEl.value);
-      const v2 = parseFloat(priceMaxEl.value);
-      if (!isNaN(v1) && !isNaN(v2) && v1 > v2) {
-        priceMinEl.value = v2;
-        priceMaxEl.value = v1;
+    e.preventDefault();
+
+    // 1. Determine clean base URL path
+    const isFeaturedPage = window.location.pathname.includes('/featured-pets');
+    let basePath = isFeaturedPage ? '/featured-pets' : '/category';
+    
+    const catVal = categorySelect ? (categorySelect.value || '').trim() : '';
+    const locVal = locationSelect ? (locationSelect.value || '').trim() : '';
+
+    if (!isFeaturedPage) {
+      if (catVal && catVal !== 'all' && locVal && locVal !== 'all') {
+        basePath = '/category/' + encodeURIComponent(catVal) + '/' + encodeURIComponent(locVal);
+      } else if (catVal && catVal !== 'all') {
+        basePath = '/category/' + encodeURIComponent(catVal);
+      } else if (locVal && locVal !== 'all') {
+        basePath = '/category/' + encodeURIComponent(locVal);
       }
     }
 
-    // Disable empty inputs so the URL parameters remain clean and readable
-    const elements = Array.from(sidebarForm.elements);
-    elements.forEach(el => {
-      if ((el.tagName === 'INPUT' || el.tagName === 'SELECT') && !el.value && el.name) {
-        el.disabled = true;
+    const params = new URLSearchParams();
+
+    // Breed
+    const breedVal = breedSelect ? (breedSelect.value || '').trim() : '';
+    if (breedVal && breedVal !== 'all') {
+      params.set('breed', breedVal);
+    }
+
+    // Price Range (smart swapped if inverted)
+    const priceMinEl = document.getElementById('priceMin');
+    const priceMaxEl = document.getElementById('priceMax');
+    const pMin = priceMinEl ? parsePriceValue(priceMinEl.value.trim()) : NaN;
+    const pMax = priceMaxEl ? parsePriceValue(priceMaxEl.value.trim()) : NaN;
+    if (!isNaN(pMin) && !isNaN(pMax) && pMin > pMax) {
+      params.set('price_min', pMax);
+      params.set('price_max', pMin);
+    } else {
+      if (!isNaN(pMin)) params.set('price_min', pMin);
+      if (!isNaN(pMax)) params.set('price_max', pMax);
+    }
+
+    // Age Min (only append unit if not default 'months')
+    const ageMinEl = document.getElementById('ageMin');
+    const ageMinVal = ageMinEl ? ageMinEl.value.trim() : '';
+    const ageMinUnitEl = document.getElementById('ageMinUnit');
+    const ageMinUnit = ageMinUnitEl ? ageMinUnitEl.value : 'months';
+    if (ageMinVal !== '') {
+      params.set('age_min', ageMinVal);
+      if (ageMinUnit && ageMinUnit !== 'months') {
+        params.set('age_min_unit', ageMinUnit);
       }
-    });
+    }
+
+    // Age Max (only append unit if not default 'months')
+    const ageMaxEl = document.getElementById('ageMax');
+    const ageMaxVal = ageMaxEl ? ageMaxEl.value.trim() : '';
+    const ageMaxUnitEl = document.getElementById('ageMaxUnit');
+    const ageMaxUnit = ageMaxUnitEl ? ageMaxUnitEl.value : 'months';
+    if (ageMaxVal !== '') {
+      params.set('age_max', ageMaxVal);
+      if (ageMaxUnit && ageMaxUnit !== 'months') {
+        params.set('age_max_unit', ageMaxUnit);
+      }
+    }
+
+    // Gender (clean string or comma-separated without array brackets %5B%5D)
+    const checkedGenders = Array.from(sidebarForm.querySelectorAll('input[name="gender"]:checked, input[name="gender[]"]:checked'))
+      .map(cb => cb.value.toLowerCase().trim())
+      .filter(Boolean);
+    if (checkedGenders.length > 0) {
+      params.set('gender', checkedGenders.join(','));
+    }
+
+    // Health
+    const healthCb = sidebarForm.querySelector('input[name="health"]:checked');
+    if (healthCb && healthCb.value) {
+      params.set('health', healthCb.value);
+    }
+    const healthInfoCb = sidebarForm.querySelector('input[name="health_info"]:checked');
+    if (healthInfoCb) {
+      params.set('health_info', '1');
+    }
+
+    // Pedigree
+    const pedigreeCb = sidebarForm.querySelector('input[name="pedigree"]:checked');
+    if (pedigreeCb && pedigreeCb.value) {
+      params.set('pedigree', pedigreeCb.value);
+    }
+
+    // Seller Type
+    const sellerTypeCb = sidebarForm.querySelector('input[name="seller_type"]:checked');
+    if (sellerTypeCb && sellerTypeCb.value) {
+      params.set('seller_type', sellerTypeCb.value);
+    }
+
+    // Date
+    const dateSelect = document.getElementById('filterDate');
+    const dateVal = dateSelect ? (dateSelect.value || '').trim() : '';
+    if (dateVal) {
+      params.set('date', dateVal);
+    }
+
+    // Preserve sort or search query if present
+    const currentParams = new URLSearchParams(window.location.search);
+    if (currentParams.has('q')) {
+      params.set('q', currentParams.get('q'));
+    } else if (currentParams.has('search')) {
+      params.set('search', currentParams.get('search'));
+    }
+    if (currentParams.has('sort')) {
+      params.set('sort', currentParams.get('sort'));
+    }
+
+    const queryStr = params.toString();
+    window.location.href = basePath + (queryStr ? '?' + queryStr : '');
   });
 
   // Live filter on change (immediate) or input (debounced)
@@ -870,7 +972,7 @@ function initSidebarFilter() {
       }
       hasUrlParams = true;
   }
-  if (urlParams.has('featured')) {
+  if (urlParams.has('gender') || urlParams.has('age_min') || urlParams.has('age_max') || urlParams.has('health') || urlParams.has('pedigree') || urlParams.has('seller_type') || urlParams.has('featured')) {
       hasUrlParams = true;
   }
 

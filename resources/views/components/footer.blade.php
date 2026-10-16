@@ -58,14 +58,14 @@
                 <div class="footer-col">
                     <h4 class="footer-col-title">Contact & Support</h4>
                     <div class="footer-contact-items">
-                        <div class="contact-item">
+                        <a href="mailto:Support@petmarket.com" class="contact-item">
                             <i class="far fa-envelope contact-icon"></i>
                             <span>Support@petmarket.com</span>
-                        </div>
-                        <div class="contact-item">
+                        </a>
+                        <a href="tel:+923100865765" class="contact-item">
                             <i class="fas fa-phone-alt contact-icon"></i>
                             <span>+92 3100865765</span>
-                        </div>
+                        </a>
                     </div>
 
                     <div class="footer-social-wrapper">
