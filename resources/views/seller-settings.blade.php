@@ -546,21 +546,22 @@
                     </div>
                 </div>
 
+                {{-- USER PROMPT: "in Profile setting when User chnage their profile photo or cover photo don not save them automatically until user click save changes when the user click on save changes then photos are changed" --}}
                 <div class="form-row">
                     <div class="form-group" style="max-width: 350px; width: 100%;">
                         <label>Full Name</label>
-                        <input type="text" class="form-control" value="Ahmed Khan">
+                        <input type="text" class="form-control" value="Ahmed Khan" id="sellerFullNameInput">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>About</label>
-                    <textarea class="form-control">Pet owner based in Lahore. Buyers can review my active listings and contact me through the marketplace.</textarea>
+                    <textarea class="form-control" id="sellerAboutInput">Pet owner based in Lahore. Buyers can review my active listings and contact me through the marketplace.</textarea>
                 </div>
 
                 <div class="form-actions">
-                    <button class="btn-cancel">Cancel</button>
-                    <button class="btn-save">Save Changes</button>
+                    <button type="button" class="btn-cancel" id="btnCancelProfile">Cancel</button>
+                    <button type="button" class="btn-save" id="btnSaveProfile">Save Changes</button>
                 </div>
             </div>
 
@@ -588,6 +589,7 @@
             }
         }
 
+        // USER PROMPT: "in Profile setting when User chnage their profile photo or cover photo don not save them automatically until user click save changes when the user click on save changes then photos are changed"
         document.addEventListener('DOMContentLoaded', () => {
             const coverPhotoImg = document.getElementById('coverPhotoImg');
             const profilePhotoImg = document.getElementById('profilePhotoImg');
@@ -595,19 +597,37 @@
             const btnChangePhoto = document.getElementById('btnChangePhoto');
             const coverFileInput = document.getElementById('coverFileInput');
             const profileFileInput = document.getElementById('profileFileInput');
+            const fullNameInput = document.getElementById('sellerFullNameInput');
+            const aboutInput = document.getElementById('sellerAboutInput');
+            const saveBtn = document.getElementById('btnSaveProfile');
+            const cancelBtn = document.getElementById('btnCancelProfile');
+
+            // Store original default images
+            const defaultCover = coverPhotoImg ? coverPhotoImg.src : '';
+            const defaultAvatar = profilePhotoImg ? profilePhotoImg.src : '';
 
             // Load saved photos from localStorage
-            const savedCover = localStorage.getItem('seller_cover_image');
-            const savedAvatar = localStorage.getItem('seller_avatar_image');
+            let currentSavedCover = localStorage.getItem('seller_cover_image') || defaultCover;
+            let currentSavedAvatar = localStorage.getItem('seller_avatar_image') || defaultAvatar;
 
-            if (savedCover && coverPhotoImg) {
-                coverPhotoImg.src = savedCover;
+            if (currentSavedCover && coverPhotoImg) {
+                coverPhotoImg.src = currentSavedCover;
             }
-            if (savedAvatar && profilePhotoImg) {
-                profilePhotoImg.src = savedAvatar;
+            if (currentSavedAvatar && profilePhotoImg) {
+                profilePhotoImg.src = currentSavedAvatar;
             }
 
-            // Upload Cover handler
+            // Load saved text fields
+            const savedName = localStorage.getItem('seller_full_name');
+            const savedAbout = localStorage.getItem('seller_about');
+            if (savedName && fullNameInput) fullNameInput.value = savedName;
+            if (savedAbout && aboutInput) aboutInput.value = savedAbout;
+
+            // In-memory pending photo data (DO NOT save automatically)
+            let pendingCoverDataUrl = null;
+            let pendingProfileDataUrl = null;
+
+            // Upload Cover handler (Preview locally only, do NOT save automatically)
             if (btnUploadCover && coverFileInput) {
                 btnUploadCover.addEventListener('click', () => {
                     coverFileInput.click();
@@ -618,17 +638,15 @@
                     if (file) {
                         const reader = new FileReader();
                         reader.onload = function(event) {
-                            const dataUrl = event.target.result;
-                            if (coverPhotoImg) coverPhotoImg.src = dataUrl;
-                            localStorage.setItem('seller_cover_image', dataUrl);
-                            showToast('Cover photo uploaded successfully!');
+                            pendingCoverDataUrl = event.target.result;
+                            if (coverPhotoImg) coverPhotoImg.src = pendingCoverDataUrl;
                         };
                         reader.readAsDataURL(file);
                     }
                 });
             }
 
-            // Change Photo handler
+            // Change Photo handler (Preview locally only, do NOT save automatically)
             if (btnChangePhoto && profileFileInput) {
                 btnChangePhoto.addEventListener('click', () => {
                     profileFileInput.click();
@@ -639,28 +657,70 @@
                     if (file) {
                         const reader = new FileReader();
                         reader.onload = function(event) {
-                            const dataUrl = event.target.result;
-                            if (profilePhotoImg) profilePhotoImg.src = dataUrl;
-                            localStorage.setItem('seller_avatar_image', dataUrl);
-                            
-                            // Update all header/avatar images on current page
-                            document.querySelectorAll('.header-avatar, .dropdown-user-avatar').forEach(img => {
-                                img.src = dataUrl;
-                            });
-
-                            showToast('Profile photo updated successfully!');
+                            pendingProfileDataUrl = event.target.result;
+                            if (profilePhotoImg) profilePhotoImg.src = pendingProfileDataUrl;
                         };
                         reader.readAsDataURL(file);
                     }
                 });
             }
 
-            // Save Changes button
-            const saveBtn = document.querySelector('.btn-save');
+            // Save Changes button - Photos are ONLY saved when clicked
             if (saveBtn) {
                 saveBtn.addEventListener('click', (e) => {
                     e.preventDefault();
+
+                    // Save pending cover photo if changed
+                    if (pendingCoverDataUrl) {
+                        localStorage.setItem('seller_cover_image', pendingCoverDataUrl);
+                        currentSavedCover = pendingCoverDataUrl;
+                        pendingCoverDataUrl = null;
+                    }
+
+                    // Save pending profile photo if changed
+                    if (pendingProfileDataUrl) {
+                        localStorage.setItem('seller_avatar_image', pendingProfileDataUrl);
+                        currentSavedAvatar = pendingProfileDataUrl;
+                        
+                        // Update all header/avatar images on current page
+                        document.querySelectorAll('.header-avatar, .dropdown-user-avatar').forEach(img => {
+                            img.src = currentSavedAvatar;
+                        });
+
+                        pendingProfileDataUrl = null;
+                    }
+
+                    // Save text fields
+                    if (fullNameInput) {
+                        localStorage.setItem('seller_full_name', fullNameInput.value.trim());
+                    }
+                    if (aboutInput) {
+                        localStorage.setItem('seller_about', aboutInput.value.trim());
+                    }
+
                     showToast('Profile settings saved successfully!');
+                });
+            }
+
+            // Cancel button - discard any unsaved preview photos
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    // Revert preview images back to current saved images
+                    if (coverPhotoImg) coverPhotoImg.src = currentSavedCover;
+                    if (profilePhotoImg) profilePhotoImg.src = currentSavedAvatar;
+
+                    pendingCoverDataUrl = null;
+                    pendingProfileDataUrl = null;
+                    if (coverFileInput) coverFileInput.value = '';
+                    if (profileFileInput) profileFileInput.value = '';
+
+                    // Revert text inputs
+                    if (fullNameInput) fullNameInput.value = localStorage.getItem('seller_full_name') || 'Ahmed Khan';
+                    if (aboutInput) aboutInput.value = localStorage.getItem('seller_about') || 'Pet owner based in Lahore. Buyers can review my active listings and contact me through the marketplace.';
+
+                    showToast('Changes discarded.');
                 });
             }
         });

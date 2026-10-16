@@ -15,8 +15,9 @@
     <link rel="stylesheet" href="{{ asset('css/pet-style.css') }}">
     
 <style>
+    /* USER PROMPT: "when user sell a pet and click on view public profile the listing pets on user are not in container look in this given images set these in conatiner" */
     /* Seller Profile specific styles */
-    .sp-wrap { max-width: 1240px; margin: 40px auto; padding: 0 20px; font-family: 'DM Sans', sans-serif; }
+    .sp-wrap { max-width: 1250px; width: 100%; margin: 40px auto; padding: 0 24px; box-sizing: border-box; font-family: 'DM Sans', sans-serif; }
     
     /* Profile Card */
     .sp-card { background: #fff; border-radius: 16px; border: 1px solid #E5E7EB; overflow: hidden; position: relative; margin-bottom: 24px; }
@@ -171,7 +172,8 @@
     <!-- HEADER COMPONENT -->
     <x-header />
 
-<div class="sp-wrap">
+{{-- USER PROMPT: "when user sell a pet and click on view public profile the listing pets on user are not in container look in this given images set these in conatiner" --}}
+<div class="container sp-wrap">
     <!-- Seller Profile Card -->
     <div class="sp-card">
         <img src="{{ asset('images/seller-profile-hero.jpg') }}" alt="Cover" class="sp-cover" onerror="this.src='https://placehold.co/1200x200/e0d9d2/e0d9d2';">
@@ -231,10 +233,9 @@
             </div>
         </div>
     </div>
-        </div>
-    </div>
     
-    <!-- Listings Section -->
+    {{-- USER PROMPT: "when user sell a pet and click on view public profile the listing pets on user are not in container look in this given images set these in conatiner" --}}
+    <!-- Listings Section (Contained inside .container.sp-wrap) -->
     <div class="sp-list-sec">
         <h2 class="sp-list-title">Seller Listings</h2>
         <p class="sp-list-desc">Browse active listings or completed/sold listing history.</p>
