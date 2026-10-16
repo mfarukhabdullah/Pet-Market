@@ -19,6 +19,23 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/pet-style.css') }}">
+    {{-- USER PROMPT: "i want that when i click on any of these opton it directly goes to pet card no scrol up no scrool down just goes to that specific Pet card with out any scrolling" --}}
+    <script>
+        if (window.location.hash === '#petCardsGrid') {
+            document.documentElement.style.scrollBehavior = 'auto';
+        }
+    </script>
+    <style>
+        html:has(:target),
+        html.instant-scroll {
+            scroll-behavior: auto !important;
+        }
+
+        {{-- USER PROMPT: "1st pic is of my breed page set same margin bottom on my featured page and categories page as 2nd pic and 3rd pic are pf my featured page and categories page set this" --}}
+        .category-listings-section {
+            padding-bottom: 60px !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -340,6 +357,15 @@
 
                             <!-- PET CARDS GRID (2 Columns on Mobile, 3 Columns on Desktop) -->
                             <div class="pet-cards-grid" id="petCardsGrid" style="scroll-margin-top: 100px;">
+                                {{-- USER PROMPT: Direct instant scroll without animation when navigating to pet cards --}}
+                                <script>
+                                    if (window.location.hash === '#petCardsGrid') {
+                                        var targetGrid = document.getElementById('petCardsGrid');
+                                        if (targetGrid) {
+                                            targetGrid.scrollIntoView({ behavior: 'instant', block: 'start' });
+                                        }
+                                    }
+                                </script>
                                 @forelse($listings as $pet)
                                     <article class="pet-card" 
                                              id="listing-{{ $pet->id }}" 
@@ -586,19 +612,16 @@
             });
         });
 
-        // Auto-scroll directly to pets cards if arriving with #petCardsGrid anchor
+        // Directly jump to pet cards if arriving with #petCardsGrid anchor without any scrolling animation
+        // USER PROMPT: "directly goes to pet card no scrol up no scrool down just goes to that specific Pet card with out any scrolling"
         if (window.location.hash === '#petCardsGrid') {
             const target = document.getElementById('petCardsGrid');
             if (target) {
-                setTimeout(() => {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    setTimeout(() => {
-                        if (window.location.hash === '#petCardsGrid') {
-                            history.replaceState(null, document.title, window.location.pathname + window.location.search);
-                        }
-                    }, 1000);
-                }, 100);
+                target.scrollIntoView({ behavior: 'instant', block: 'start' });
             }
+            requestAnimationFrame(() => {
+                document.documentElement.style.scrollBehavior = '';
+            });
         }
 
         // Scroll to card if returning from login/register with anchor
@@ -616,6 +639,15 @@
                         }
                     }, 1500);
                 }, 300);
+            }
+        }
+    });
+
+    window.addEventListener('load', function() {
+        if (window.location.hash === '#petCardsGrid') {
+            const target = document.getElementById('petCardsGrid');
+            if (target) {
+                target.scrollIntoView({ behavior: 'instant', block: 'start' });
             }
         }
     });

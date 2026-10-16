@@ -14,22 +14,27 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/pet-style.css') }}">
     <style>
-        /* ===== Shared section + card styles (same as home page) ===== */
-        .my-sec-title { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 10px; }
-        .my-sec-desc { color: #202020; font-size: 16px; font-weight: 400; line-height: 24px; margin-bottom: 40px; }
+        /* USER PROMPT: "mera pet detail page k cards ko bhi set kro" */
+        /* ===== Shared section + card styles (matching home & category cards) ===== */
+        .my-sec-title { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 700; color: #0F172A; margin-bottom: 10px; }
+        .my-sec-desc { color: #64748B; font-size: 16px; font-weight: 400; line-height: 24px; margin-bottom: 40px; }
         .my-pets-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-        .my-pet-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: none; transition: 0.3s; cursor: pointer; position: relative; text-decoration: none; color: inherit; display: block; }
+        .my-pet-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: none; transition: 0.3s; cursor: pointer; position: relative; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
         .my-pet-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.18); }
         .my-pet-img { width: 100%; height: 236px; object-fit: cover; display: block; border-radius: 12px 12px 0 0; }
+        .my-badge { position: absolute; top: 12px; left: 12px; background: #FADFA7; color: #161616; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; z-index: 5; line-height: normal; }
         .my-pet-fav { position: absolute; top: 12px; right: 12px; background: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 12px; cursor: pointer; transition: 0.2s ease; z-index: 10; border: none; }
         .my-pet-fav i { color: #94a3b8; transition: color 0.2s ease, transform 0.2s ease; }
         .my-pet-fav:hover i { color: #ff4b68; transform: scale(1.15); }
         .my-pet-fav.active i, .my-pet-fav.favorited i { color: #ff4b68 !important; }
-        .my-pet-title { font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 4px; }
-        .my-pet-breed { font-size: 12px; color: #94a3b8; margin: 0 0 12px; }
-        .my-pet-price { font-size: 16px; font-weight: 800; color: #147A4D; margin-bottom: 12px; }
-        .my-pet-meta { display: flex; justify-content: flex-start; gap: 16px; font-size: 12px; color: #64748b; margin-bottom: 12px; }
-        .my-pet-loc { font-size: 12px; color: #64748b; }
+        .my-pet-info { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .my-pet-title { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; color: #0F172A; margin: 0 0 2px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 42px; }
+        .my-pet-breed { font-size: 12px; color: #64748B; margin: 0 0 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .my-pet-price { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #0C5E3A; margin-bottom: 14px; }
+        .my-pet-meta, .my-pet-loc { display: flex; align-items: center; justify-content: flex-start; gap: 16px; font-size: 12px; color: #64748B; border: none; padding: 0; margin-bottom: 6px; }
+        .my-pet-loc { margin-bottom: 0; flex-wrap: wrap; }
+        .my-pet-meta span, .my-pet-loc span { display: inline-flex; align-items: center; gap: 6px; color: #64748B; }
+        .my-pet-meta i, .my-pet-loc i { color: #64748B; font-size: 12px; margin-right: 0; }
 
         /* ===== Pet Details page ===== */
         .pd-page { background: #FBF8F3; padding: 24px 0 60px; }
@@ -155,18 +160,47 @@
                 -ms-overflow-style: none;
             }
             .my-pets-grid::-webkit-scrollbar { display: none; }
+            /* USER PROMPT: "mera pet detail page k cards ko bhi set kro" */
             .my-pets-grid .my-pet-card {
                 flex: 0 0 calc(50% - 8px); 
                 scroll-snap-align: start;
                 border-radius: 12px;
             }
             .my-pets-grid .my-pet-img { height: 160px; }
-            .my-pets-grid .my-pet-info { padding: 12px; }
-            .my-pets-grid .my-pet-title { font-size: 14px; margin-bottom: 2px; }
+            .my-pets-grid .my-pet-info { padding: 10px 10px 12px; }
+            .my-pets-grid .my-pet-title { font-size: 13.5px; min-height: 34px; margin-bottom: 2px; }
             .my-pets-grid .my-pet-breed { font-size: 11px; margin-bottom: 6px; }
             .my-pets-grid .my-pet-price { font-size: 15px; margin-bottom: 8px; }
-            .my-pets-grid .my-pet-meta { font-size: 11px; margin-bottom: 8px; justify-content: flex-start; gap: 12px; }
-            .my-pets-grid .my-pet-loc { font-size: 11px; padding-top: 8px; }
+            .my-pets-grid .my-pet-meta,
+            .my-pets-grid .my-pet-loc {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 12px;
+                font-size: 11px;
+                line-height: 14px;
+                color: #64748B;
+                margin-bottom: 5px;
+                padding: 0;
+                border: none;
+                flex-wrap: wrap;
+                row-gap: 3px;
+            }
+            .my-pets-grid .my-pet-loc { margin-bottom: 0; padding-top: 0; }
+            .my-pets-grid .my-pet-meta span,
+            .my-pets-grid .my-pet-loc span {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                white-space: nowrap;
+                color: #64748B;
+            }
+            .my-pets-grid .my-pet-meta i,
+            .my-pets-grid .my-pet-loc i {
+                color: #64748B;
+                font-size: 11px;
+                margin-right: 0;
+            }
         }
 
         /* Modal Backdrop & Report Styling */
@@ -469,11 +503,15 @@
                                 <h3 class="my-pet-title">{{ $sellerPet->title }}</h3>
                                 <p class="my-pet-breed">{{ $sellerPet->breed_name ?: ($sellerPet->breed ? $sellerPet->breed->name : 'Pet') }}</p>
                                 <div class="my-pet-price">{{ $sellerPet->formatted_price }}</div>
+                                {{-- USER PROMPT: "mera pet detail page k cards ko bhi set kro" --}}
                                 <div class="my-pet-meta">
-                                    <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> {{ $sellerPet->age_text }}</span>
-                                    <span><i class="fa-solid fa-{{ $sellerPet->gender === 'female' ? 'venus' : 'mars' }}" style="margin-right: 4px;"></i> {{ ucfirst($sellerPet->gender) }}</span>
+                                    <span><i class="fa-regular fa-clock"></i> {{ $sellerPet->age_text }}</span>
+                                    <span><i class="fa-solid fa-{{ $sellerPet->gender === 'female' ? 'venus' : 'mars' }}"></i> {{ ucfirst($sellerPet->gender) }}</span>
                                 </div>
-                                <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> {{ $sellerPet->city }}</div>
+                                <div class="my-pet-loc">
+                                    <span><i class="fa-solid fa-location-dot"></i> {{ $sellerPet->city }}</span>
+                                    <span><i class="fa-regular fa-clock"></i> {{ $sellerPet->created_at->diffForHumans() }}</span>
+                                </div>
                             </div>
                         </a>
                     @empty
@@ -507,11 +545,15 @@
                                 <h3 class="my-pet-title">{{ $similar->title }}</h3>
                                 <p class="my-pet-breed">{{ $similar->breed_name ?: ($similar->breed ? $similar->breed->name : 'Pet') }}</p>
                                 <div class="my-pet-price">{{ $similar->formatted_price }}</div>
+                                {{-- USER PROMPT: "mera pet detail page k cards ko bhi set kro" --}}
                                 <div class="my-pet-meta">
-                                    <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> {{ $similar->age_text }}</span>
-                                    <span><i class="fa-solid fa-{{ $similar->gender == 'female' ? 'venus' : 'mars' }}" style="margin-right: 4px;"></i> {{ ucfirst($similar->gender) }}</span>
+                                    <span><i class="fa-regular fa-clock"></i> {{ $similar->age_text }}</span>
+                                    <span><i class="fa-solid fa-{{ $similar->gender == 'female' ? 'venus' : 'mars' }}"></i> {{ ucfirst($similar->gender) }}</span>
                                 </div>
-                                <div class="my-pet-loc"><i class="fa-solid fa-location-dot" style="margin-right: 4px;"></i> {{ $similar->city }}</div>
+                                <div class="my-pet-loc">
+                                    <span><i class="fa-solid fa-location-dot"></i> {{ $similar->city }}</span>
+                                    <span><i class="fa-regular fa-clock"></i> {{ $similar->created_at->diffForHumans() }}</span>
+                                </div>
                             </div>
                         </a>
                     @empty

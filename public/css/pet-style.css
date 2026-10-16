@@ -2456,9 +2456,10 @@ button {
   box-shadow: 0 6px 18px rgba(12, 94, 58, 0.35);
 }
 
+/* USER PROMPT: "1st pic is of my breed page set same margin bottom on my featured page and categories page as 2nd pic and 3rd pic are pf my featured page and categories page set this" */
 /* Category Listings Main Layout Section */
 .category-listings-section {
-  padding: 110px 0 0px 0;
+  padding: 110px 0 60px 0;
   background-color: #FFFFFF;
 }
 
@@ -2856,6 +2857,7 @@ button {
   font-size: 0.85rem;
 }
 
+/* USER PROMPT: "1st pic is of my breed page set same margin bottom on my featured page and categories page as 2nd pic and 3rd pic are pf my featured page and categories page set this" */
 /* Pagination Bar */
 .category-pagination-row {
   display: flex;
@@ -2863,7 +2865,7 @@ button {
   justify-content: center;
   gap: 8px;
   margin-top: 40px;
-  margin-bottom: 40px;
+  margin-bottom: 0px;
 }
 
 .page-num-btn,

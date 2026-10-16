@@ -17,10 +17,12 @@
     <link rel="stylesheet" href="{{ asset('css/pet-style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <script>
+        {{-- USER PROMPT: "when i click on these option it scrool up to curent page ... i want that when i click on any of these opton it directly goes to pet card no scrol up no scrool down" --}}
+        {{-- Fix: Removed beforeunload scrollTo(0,0) so page navigation does not trigger a scroll-up on the current page --}}
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
-        // Force hero section (top: 0) on page refresh / reload
+        // Force hero section (top: 0) on page refresh / reload only
         try {
             const nav = window.performance.getEntriesByType('navigation');
             const isReload = (nav && nav.length > 0 && nav[0].type === 'reload') || (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
@@ -32,14 +34,10 @@
             }
         } catch(e) {}
 
-        window.addEventListener('beforeunload', function() {
-            window.scrollTo(0, 0);
-        });
-
         window.addEventListener('pageshow', function(e) {
             const nav = window.performance.getEntriesByType('navigation');
             const isReload = (nav && nav.length > 0 && nav[0].type === 'reload') || (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
-            if (isReload || !window.location.hash) {
+            if (isReload) {
                 window.scrollTo(0, 0);
             }
         });

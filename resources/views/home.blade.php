@@ -215,39 +215,41 @@
             </style>
             <div class="home-categories-wrapper">
                 <div class="home-categories-track">
+                    {{-- USER PROMPT: "when i click on these option it scrool up to curent page ... i want that when i click on any of these opton it directly goes to pet card no scrol up no scrool down just goes to that specific Pet card with out any scrolling" --}}
+                    {{-- Changed from div onclick to semantic <a> links to prevent scroll jump and jump directly to #petCardsGrid --}}
                     <div class="home-categories" style="display: flex; gap: 30px; flex-wrap: nowrap;">
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'dogs']) }}#petCardsGrid'" style="cursor: pointer;">
+                        <a href="{{ route('category', ['category' => 'dogs']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_dog.jpg') }}" alt="Dogs"></div>
                             <div class="home-cat-name">Dogs</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'cats']) }}#petCardsGrid'" style="cursor: pointer;">
+                        </a>
+                        <a href="{{ route('category', ['category' => 'cats']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_cat.jpg') }}" alt="Cats"></div>
                             <div class="home-cat-name">Cats</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'birds']) }}#petCardsGrid'" style="cursor: pointer;">
+                        </a>
+                        <a href="{{ route('category', ['category' => 'birds']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_bird.jpg') }}" alt="Birds"></div>
                             <div class="home-cat-name">Birds</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'fish']) }}#petCardsGrid'" style="cursor: pointer;">
+                        </a>
+                        <a href="{{ route('category', ['category' => 'fish']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_fish.jpg') }}" alt="Fish"></div>
                             <div class="home-cat-name">Fish</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'reptiles']) }}#petCardsGrid'" style="cursor: pointer;">
+                        </a>
+                        <a href="{{ route('category', ['category' => 'reptiles']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_reptile.jpg') }}" alt="Reptiles"></div>
                             <div class="home-cat-name">Reptiles</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'rabbits']) }}#petCardsGrid'" style="cursor: pointer;">
+                        </a>
+                        <a href="{{ route('category', ['category' => 'rabbits']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/card_rabbit.jpg') }}" alt="Rabbits"></div>
                             <div class="home-cat-name">Rabbits</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'horses-farm']) }}#petCardsGrid'" style="cursor: pointer;">
+                        </a>
+                        <a href="{{ route('category', ['category' => 'horses-farm']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_horse.jpg') }}" alt="Horses & Farm"></div>
                             <div class="home-cat-name">Horses & Farm</div>
-                        </div>
-                        <div class="home-cat-item" onclick="window.location='{{ route('category', ['category' => 'exotic']) }}#petCardsGrid'" style="cursor: pointer;">
+                        </a>
+                        <a href="{{ route('category', ['category' => 'exotic']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/card_parrot.jpg') }}" alt="Exotic Pets"></div>
                             <div class="home-cat-name">Exotic Pets</div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -292,7 +294,11 @@
                                         <span><i class="fa-regular fa-clock"></i> {{ $pet->age_text }}</span>
                                         <span><i class="fa-solid fa-{{ $pet->gender == 'female' ? 'venus' : 'mars' }}"></i> {{ ucfirst($pet->gender) }}</span>
                                     </div>
-                                    <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> {{ $pet->city }}</span><span><i class="fa-regular fa-clock"></i> {{ $pet->created_at->diffForHumans() }}</span></div>
+                                    {{-- USER PROMPT: "set exactly like this" --}}
+                                    <div class="home-pet-location">
+                                        <span class="home-pet-city"><i class="fa-solid fa-location-dot"></i> {{ $pet->city }}</span>
+                                        <span class="home-pet-time"><i class="fa-regular fa-clock"></i> {{ $pet->created_at->diffForHumans() }}</span>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -308,7 +314,11 @@
                                 <p class="home-pet-breed">Golden Retriever</p>
                                 <div class="home-pet-price">Rs. 75,000</div>
                                 <div class="home-pet-meta"><span><i class="fa-regular fa-clock"></i> 3 Months</span><span><i class="fa-solid fa-mars"></i> Male</span></div>
-                                <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span></div>
+                                {{-- USER PROMPT: "set exactly like this" --}}
+                                <div class="home-pet-location">
+                                    <span class="home-pet-city"><i class="fa-solid fa-location-dot"></i> Lahore</span>
+                                    <span class="home-pet-time"><i class="fa-regular fa-clock"></i> 1 day ago</span>
+                                </div>
                             </div>
                         </div>
                     @endif
@@ -361,7 +371,11 @@
                                         <span><i class="fa-regular fa-clock"></i> {{ $pet->age_text }}</span>
                                         <span><i class="fa-solid fa-{{ $pet->gender == 'female' ? 'venus' : 'mars' }}"></i> {{ ucfirst($pet->gender) }}</span>
                                     </div>
-                                    <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> {{ $pet->city }}</span><span><i class="fa-regular fa-clock"></i> {{ $pet->created_at->diffForHumans() }}</span></div>
+                                    {{-- USER PROMPT: "set exactly like this" --}}
+                                    <div class="home-pet-location">
+                                        <span class="home-pet-city"><i class="fa-solid fa-location-dot"></i> {{ $pet->city }}</span>
+                                        <span class="home-pet-time"><i class="fa-regular fa-clock"></i> {{ $pet->created_at->diffForHumans() }}</span>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -376,7 +390,11 @@
                                 <p class="home-pet-breed">German Shepherd</p>
                                 <div class="home-pet-price">Rs. 55,000</div>
                                 <div class="home-pet-meta"><span><i class="fa-regular fa-clock"></i> 3 Months</span><span><i class="fa-solid fa-mars"></i> Male</span></div>
-                                <div class="home-pet-location"><span><i class="fa-solid fa-location-dot"></i> Lahore</span></div>
+                                {{-- USER PROMPT: "set exactly like this" --}}
+                                <div class="home-pet-location">
+                                    <span class="home-pet-city"><i class="fa-solid fa-location-dot"></i> Lahore</span>
+                                    <span class="home-pet-time"><i class="fa-regular fa-clock"></i> 1 day ago</span>
+                                </div>
                             </div>
                         </div>
                     @endif
@@ -475,8 +493,9 @@
                         </div>
                     </div>
                 </div>
+                {{-- USER PROMPT: "do some thing in mobile view of home page first change the 'view all pets to' 'view All breed' and when we click on this we navigate to breed page in mobile view juts do these changes and not effect any thing" --}}
                 <div class="home-mobile-btn-wrap home-mobile-btn-wrap--popular">
-                    <a href="#" class="home-btn-viewall">View All Pets</a>
+                    <a href="{{ route('breeds') }}" class="home-btn-viewall" id="popular-breeds-view-all-mobile">View All Breeds</a>
                 </div>
             </div>
         </section>

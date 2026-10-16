@@ -570,45 +570,62 @@
   padding: 16px;
 }
 
+/* USER PROMPT: "set exactly like this" */
 .home-pet-title {
+  font-family: 'Outfit', sans-serif;
   font-size: 16px;
   font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 4px;
+  color: #0F172A;
+  margin-bottom: 2px;
+  line-height: 1.3;
 }
 
 .home-pet-breed {
   font-size: 12px;
-  color: #94a3b8;
+  color: #64748B;
   margin-bottom: 12px;
 }
 
 .home-pet-price {
-  font-size: 16px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
   font-weight: 800;
-  color: #147A4D;
-  margin-bottom: 12px;
+  color: #0C5E3A;
+  margin-bottom: 14px;
 }
 
-.home-pet-meta {
+/* USER PROMPT: "set exactly like this" */
+.home-pet-meta,
+.home-pet-location {
   display: flex;
+  align-items: center;
   justify-content: flex-start;
   gap: 16px;
   font-size: 12px;
-  color: #64748b;
+  color: #64748B;
   border: none;
-  padding-top: 0;
-  margin-bottom: 12px;
+  padding: 0;
+  margin-bottom: 6px;
 }
 
 .home-pet-location {
-  font-size: 12px;
-  color: #64748b;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+}
+
+.home-pet-meta span,
+.home-pet-location span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748B;
 }
 
 .home-pet-meta i,
 .home-pet-location i {
-  margin-right: 4px;
+  color: #64748B;
+  font-size: 12px;
+  margin-right: 0;
 }
 
 /* ==========================================================================
@@ -1387,7 +1404,10 @@
     padding: 20px 0 20px;
   }
 
-  .home-pets-section .home-container {
+  /* USER PROMPT: "in mobile view of home page set popular breed section cards and location section cards in same conatiner as CTA section on this page means set then same as other feature pet cards conatienr" */
+  .home-pets-section .home-container,
+  .home-popular .home-container,
+  .home-locations-container {
     padding: 0 12px;
     box-sizing: border-box;
   }
@@ -1434,7 +1454,8 @@
   .home-pets-section .home-pet-card {
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    height: 284px;
+    height: auto;
+    min-height: 284px;
     display: flex;
     flex-direction: column;
   }
@@ -1468,46 +1489,71 @@
     box-sizing: border-box;
   }
 
+  /* USER PROMPT: "set exactly like this" */
   .home-pets-section .home-pet-title {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13.5px;
     font-weight: 700;
     line-height: 17px;
-    color: #000000;
-    margin-bottom: 1px;
-    white-space: nowrap;
+    color: #0F172A;
+    margin-bottom: 2px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .home-pets-section .home-pet-breed {
     font-size: 11px;
     line-height: 14px;
-    color: #6B6B6B;
-    margin-bottom: 4px;
+    color: #64748B;
+    margin-bottom: 6px;
   }
 
   .home-pets-section .home-pet-price {
+    font-family: 'Outfit', sans-serif;
     font-size: 15px;
+    font-weight: 800;
     line-height: 20px;
-    margin-bottom: 6px;
+    color: #0C5E3A;
+    margin-bottom: 8px;
   }
 
-  .home-pets-section .home-pet-meta {
-    gap: 10px;
+  /* USER PROMPT: "set exactly like this" */
+  .home-pets-section .home-pet-meta,
+  .home-pets-section .home-pet-location {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
     font-size: 11px;
     line-height: 14px;
-    color: #4B5563;
-    margin-bottom: 6px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid #ECECEC;
-    white-space: nowrap;
+    color: #64748B;
+    margin-bottom: 5px;
+    padding: 0;
+    border: none;
+    flex-wrap: wrap;
+    row-gap: 3px;
   }
 
   .home-pets-section .home-pet-location {
+    margin-bottom: 0;
+  }
+
+  .home-pets-section .home-pet-meta span,
+  .home-pets-section .home-pet-location span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    color: #64748B;
+  }
+
+  .home-pets-section .home-pet-meta i,
+  .home-pets-section .home-pet-location i {
+    color: #64748B;
     font-size: 11px;
-    line-height: 14px;
-    color: #4B5563;
+    margin-right: 0;
   }
 
   /* Solid, centered "View All Pets" button */
@@ -1538,6 +1584,7 @@
   }
 
   /* ---------- CTA "One More Friend" (mobile, Figma) ---------- */
+  /* USER PROMPT: Align CTA margin with 12px mobile container */
   .home-cta {
     flex-direction: column-reverse;
     /* text upar, image neeche */
@@ -1545,7 +1592,7 @@
     justify-content: flex-start;
     width: auto;
     min-height: 0;
-    margin: 24px 20px 0;
+    margin: 24px 12px 0;
     border-radius: 20px;
     background-color: #FCEED5;
   }
@@ -1686,12 +1733,15 @@
     display: none;
   }
 
+  /* USER PROMPT: "set popular breed section cards ... same as other feature pet cards container" */
   .home-popular-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px 12px;
-    padding: 0 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 10px;
+    padding: 0;
     justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .home-breed-card {
@@ -1734,8 +1784,14 @@
   }
 
   /* ---------- Locations (Mobile) ---------- */
+  /* USER PROMPT: "set location section cards in same container as CTA section on this page means set them same as other feature pet cards container" */
   .home-locations {
-    padding: 30px 16px;
+    padding: 30px 0;
+  }
+
+  .home-locations-container {
+    padding: 0 12px;
+    box-sizing: border-box;
   }
 
   .home-locations-head {
@@ -1743,7 +1799,8 @@
     text-align: left;
   }
 
-  .home-locations-title {
+  .home-locations-title,
+  .home-locations .home-sec-title--light {
     font-family: 'Manrope', sans-serif;
     font-size: 20px;
     font-weight: 700;
@@ -1751,7 +1808,8 @@
     margin: 0 0 6px 0;
   }
 
-  .home-locations-desc {
+  .home-locations-desc,
+  .home-locations .home-sec-desc--light {
     font-family: 'DM Sans', sans-serif;
     font-size: 13px;
     color: #EBEBEB;
@@ -1759,8 +1817,11 @@
   }
 
   .home-loc-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .home-loc-card {
