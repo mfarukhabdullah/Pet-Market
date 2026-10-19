@@ -573,6 +573,7 @@
             opacity: 1;
         }
 
+        /* USER PROMPT: "ya delete q ni ho rha" */
         /* Context Card */
         .chat-context-card {
             margin: 20px 24px 0 24px;
@@ -583,6 +584,29 @@
             display: flex;
             align-items: center;
             gap: 16px;
+            position: relative;
+            transition: all 0.25s ease;
+        }
+
+        .btn-dismiss-context {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 8px;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+        .btn-dismiss-context:hover {
+            color: #ef4444;
+            background: #fee2e2;
         }
 
         .chat-context-img {
@@ -635,10 +659,13 @@
             font-weight: 500;
         }
 
+        /* USER PROMPT: "msg mainin ko deleta ta kuch or krny ky liye whats app wala feature dy do" */
         .msg-bubble-container {
             display: flex;
             flex-direction: column;
-            max-width: 70%;
+            max-width: 72%;
+            position: relative;
+            margin-bottom: 6px;
         }
 
         .msg-bubble-container.received {
@@ -650,11 +677,12 @@
         }
 
         .msg-bubble {
-            padding: 12px 16px;
+            padding: 10px 34px 10px 14px;
             border-radius: 16px;
             font-size: 14px;
             line-height: 1.5;
             position: relative;
+            word-break: break-word;
         }
 
         .msg-bubble-container.received .msg-bubble {
@@ -667,6 +695,385 @@
             background: var(--primary-green);
             color: white;
             border-bottom-right-radius: 4px;
+        }
+
+        /* Hover actions for WhatsApp experience */
+        .msg-bubble-container:hover .msg-actions-trigger,
+        .msg-bubble-container:hover .msg-react-trigger {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .msg-actions-trigger {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4b5563;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease, background 0.15s ease, transform 0.1s ease;
+            z-index: 5;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+
+        .msg-bubble-container.sent .msg-actions-trigger {
+            background: rgba(0, 0, 0, 0.25);
+            color: #ffffff;
+        }
+
+        .msg-actions-trigger:hover {
+            transform: scale(1.1);
+            background: #ffffff;
+            color: #111827;
+        }
+
+        .msg-bubble-container.sent .msg-actions-trigger:hover {
+            background: rgba(0, 0, 0, 0.45);
+            color: #ffffff;
+        }
+
+        /* Quick React Button beside bubble */
+        .msg-react-trigger {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 13px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.15s ease;
+            z-index: 6;
+        }
+
+        .msg-bubble-container.sent .msg-react-trigger {
+            left: -34px;
+        }
+
+        .msg-bubble-container.received .msg-react-trigger {
+            right: -34px;
+        }
+
+        .msg-react-trigger:hover {
+            background: #f8fafc;
+            color: #f59e0b;
+            transform: translateY(-50%) scale(1.12);
+        }
+
+        /* Floating Quick Reactions Palette */
+        .msg-quick-reactions {
+            position: absolute;
+            bottom: calc(100% + 4px);
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 4px 8px;
+            display: none;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            border: 1px solid #e5e7eb;
+            z-index: 50;
+            animation: popUpReaction 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popUpReaction {
+            from { opacity: 0; transform: scale(0.8) translateY(6px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .msg-bubble-container.sent .msg-quick-reactions {
+            right: 0;
+        }
+        .msg-bubble-container.received .msg-quick-reactions {
+            left: 0;
+        }
+
+        .msg-quick-reactions.show {
+            display: flex;
+        }
+
+        .quick-react-emoji {
+            font-size: 18px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 3px 5px;
+            border-radius: 50%;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .quick-react-emoji:hover {
+            transform: scale(1.35);
+        }
+
+        /* Floating WhatsApp Message Dropdown Menu */
+        .msg-dropdown-menu {
+            position: absolute;
+            top: 32px;
+            right: 8px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            width: 175px;
+            padding: 6px 0;
+            z-index: 100;
+            display: none;
+            animation: fadeInMenu 0.12s ease-out;
+        }
+
+        @keyframes fadeInMenu {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .msg-dropdown-menu.show {
+            display: block;
+        }
+
+        .msg-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 16px;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .msg-dropdown-item:hover {
+            background: #f3f4f6;
+        }
+
+        .msg-dropdown-item i {
+            width: 16px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .msg-dropdown-item.danger {
+            color: #dc2626;
+        }
+
+        .msg-dropdown-item.danger i {
+            color: #dc2626;
+        }
+
+        /* Quoted Reply inside Message Bubble */
+        .msg-quoted-preview {
+            background: rgba(0, 0, 0, 0.06);
+            border-left: 3.5px solid var(--primary-green);
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .msg-bubble-container.sent .msg-quoted-preview {
+            background: rgba(0, 0, 0, 0.18);
+            border-left-color: #a7f3d0;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .msg-quoted-sender {
+            font-weight: 700;
+            font-size: 11.5px;
+            margin-bottom: 2px;
+            color: var(--primary-green);
+        }
+
+        .msg-bubble-container.sent .msg-quoted-sender {
+            color: #a7f3d0;
+        }
+
+        .msg-quoted-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 260px;
+            opacity: 0.9;
+        }
+
+        /* Active Reaction Badge on Message Bubble */
+        .msg-reaction-badge {
+            position: absolute;
+            bottom: -8px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1px 6px;
+            font-size: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+            z-index: 4;
+            transition: transform 0.1s;
+        }
+
+        .msg-reaction-badge:hover {
+            transform: scale(1.1);
+        }
+
+        .msg-bubble-container.sent .msg-reaction-badge {
+            right: 12px;
+        }
+
+        .msg-bubble-container.received .msg-reaction-badge {
+            left: 12px;
+        }
+
+        /* Deleted Message Bubble Style */
+        .msg-bubble.deleted-message {
+            font-style: italic;
+            color: #9ca3af !important;
+            background: #f3f4f6 !important;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px dashed #d1d5db;
+        }
+
+        .msg-bubble.deleted-message i {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        /* Starred icon in message */
+        .msg-starred-icon {
+            font-size: 10px;
+            color: #f59e0b;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+
+        /* Reply Bar above Chat Input (WhatsApp style) */
+        .chat-reply-bar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            background: #f0fdf4;
+            border-left: 4px solid var(--primary-green);
+            border-top: 1px solid #dcfce7;
+            border-right: 1px solid #dcfce7;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            padding: 8px 16px;
+            margin-bottom: 8px;
+            animation: slideDownReply 0.18s ease-out;
+        }
+
+        @keyframes slideDownReply {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-reply-bar.show {
+            display: flex;
+        }
+
+        .chat-reply-bar-content {
+            flex-grow: 1;
+            overflow: hidden;
+            padding-right: 12px;
+        }
+
+        .chat-reply-bar-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 2px;
+        }
+
+        .chat-reply-bar-snippet {
+            font-size: 12.5px;
+            color: #4b5563;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-reply-bar-close {
+            background: none;
+            border: none;
+            font-size: 15px;
+            color: #9ca3af;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .chat-reply-bar-close:hover {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        /* Delete Options Group in Modal */
+        .delete-options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            margin-top: 14px;
+        }
+
+        .btn-delete-opt {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            color: #111827;
+            transition: all 0.15s;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-delete-opt:hover {
+            background: #f9fafb;
+        }
+
+        .btn-delete-opt.danger {
+            background: #dc2626;
+            color: #ffffff;
+            border-color: #dc2626;
+        }
+
+        .btn-delete-opt.danger:hover {
+            background: #b91c1c;
         }
 
         .msg-time {
@@ -1233,6 +1640,11 @@
                             <img src="{{ asset('images/minus-circle 1.svg') }}" alt="Clear chat" onerror="this.src='https://api.iconify.design/lucide:minus-circle.svg'">
                             <span>Clear chat</span>
                         </div>
+                        {{-- USER PROMPT: "msg mainin ko deleta ta kuch or krny ky liye whats app wala feature dy do" --}}
+                        <div class="dropdown-item" id="deleteChatOption" onclick="openDeleteConvModal()">
+                            <i class="fa-regular fa-trash-can" style="font-size: 15px; color: #dc2626;"></i>
+                            <span style="color: #dc2626;">Delete chat</span>
+                        </div>
                         <div class="dropdown-item" id="reportOption" onclick="openReportModal()">
                             <img src="{{ asset('images/hand 1.svg') }}" alt="Report" onerror="this.src='https://api.iconify.design/lucide:thumbs-down.svg'">
                             <span>Report</span>
@@ -1246,7 +1658,8 @@
 
                 <!-- Context Card -->
                 @if($activeListing)
-                <div class="chat-context-card">
+                {{-- USER PROMPT: "ya delete q ni ho rha" --}}
+                <div class="chat-context-card" id="chatContextCard">
                     <img src="{{ $activeListing->primary_image_url }}" alt="{{ $activeListing->title }}" class="chat-context-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
                     <div class="chat-context-details" style="flex-grow: 1;">
                         <h4><a href="{{ route('pet.details', ['slug' => $activeListing->slug ?: $activeListing->id]) }}" style="color:inherit; text-decoration:none;">{{ $activeListing->title }}</a></h4>
@@ -1255,6 +1668,9 @@
                     <div class="chat-context-price" style="font-weight: 700; color: var(--primary-green); white-space: nowrap;">
                         {{ $activeListing->formatted_price }}
                     </div>
+                    <button type="button" class="btn-dismiss-context" onclick="dismissContextCard(event)" title="Dismiss listing card">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
                 @endif
 
@@ -1307,6 +1723,19 @@
                 <form action="{{ route('chat.send-message') }}" method="POST" class="chat-input-wrapper" id="chatInputForm" novalidate onsubmit="event.preventDefault(); return false;" style="position: relative;">
                     @csrf
                     <input type="hidden" name="conversation_id" value="{{ $activeConversation ? $activeConversation->id : '' }}">
+                    
+                    {{-- USER PROMPT: "msg mainin ko deleta ta kuch or krny ky liye whats app wala feature dy do" --}}
+                    <!-- WhatsApp-Style Quoted Reply Bar -->
+                    <div class="chat-reply-bar" id="chatReplyBar">
+                        <div class="chat-reply-bar-content">
+                            <div class="chat-reply-bar-title" id="replyBarSender">Replying to Ali Raza</div>
+                            <div class="chat-reply-bar-snippet" id="replyBarSnippet">Message preview here...</div>
+                        </div>
+                        <button type="button" class="chat-reply-bar-close" onclick="cancelReply()" title="Cancel reply">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
                     <!-- Attachment Preview Container -->
                     <div id="attachmentPreviewWrapper" class="attachment-preview-wrapper">
                         <img id="attachmentThumb" src="" alt="Attachment" class="attachment-thumb">
@@ -1376,6 +1805,48 @@
             <div class="modal-actions">
                 <button type="button" class="btn-modal btn-modal-cancel" onclick="closeClearChatModal()">Cancel</button>
                 <button type="button" class="btn-modal btn-modal-danger" id="confirmClearChatBtn">Clear Chat</button>
+            </div>
+        </div>
+    </div>
+
+    {{-- USER PROMPT: "msg mainin ko deleta ta kuch or krny ky liye whats app wala feature dy do" --}}
+    <!-- WhatsApp-Style Delete Message Modal -->
+    <div id="deleteMessageModal" class="modal-backdrop">
+        <div class="modal-card" style="max-width: 420px; padding: 24px;">
+            <button type="button" class="modal-close-icon" onclick="closeDeleteMsgModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-icon-wrapper danger">
+                <i class="fa-regular fa-trash-can"></i>
+            </div>
+            <h3 class="modal-title" style="margin-bottom: 6px;">Delete message?</h3>
+            <p class="modal-message" id="deleteMsgModalDesc" style="margin-bottom: 16px; font-size: 13.5px; color: #6b7280;">
+                You can delete messages for everyone or just for yourself.
+            </p>
+            <div class="delete-options-group">
+                <button type="button" class="btn-delete-opt danger" id="btnDeleteForEveryone" onclick="confirmDeleteMsg('for_everyone')">
+                    <i class="fa-solid fa-users"></i> Delete for everyone
+                </button>
+                <button type="button" class="btn-delete-opt" id="btnDeleteForMe" onclick="confirmDeleteMsg('for_me')">
+                    <i class="fa-solid fa-user"></i> Delete for me
+                </button>
+                <button type="button" class="btn-delete-opt" style="border:none; color:#6b7280; margin-top:4px;" onclick="closeDeleteMsgModal()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp-Style Delete Conversation Modal -->
+    <div id="deleteConversationModal" class="modal-backdrop">
+        <div class="modal-card">
+            <button type="button" class="modal-close-icon" onclick="closeDeleteConvModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-icon-wrapper danger">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h3 class="modal-title">Delete chat?</h3>
+            <p class="modal-message">Are you sure you want to delete the chat with <strong id="deleteConvUserName">User</strong>? All messages in this conversation will be permanently deleted.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal btn-modal-cancel" onclick="closeDeleteConvModal()">Cancel</button>
+                <button type="button" class="btn-modal btn-modal-danger" id="confirmDeleteConvBtn" onclick="confirmDeleteConversation()">Delete Chat</button>
             </div>
         </div>
     </div>
@@ -1465,12 +1936,19 @@
     </div>
 
     <script>
+        // USER PROMPT: "ya delete q ni ho rha"
+        @php
+            $currentOtherUser = $activeConversation ? $activeConversation->otherParticipant($user->id) : null;
+            $currentListing = $activeConversation ? $activeConversation->listing : null;
+        @endphp
         // State variables
-        let activeChatId = 'chat-1';
-        let activeUserName = 'Ali Raza';
-        let activePetName = 'Golden Retriever Puppy';
-        let activePetPrice = 'Rs. 85,000';
+        let activeChatId = '{{ $activeConversation ? "chat-" . $activeConversation->id : "chat-1" }}';
+        let activeUserName = @json($currentOtherUser ? $currentOtherUser->name : '');
+        let activePetName = @json($currentListing ? $currentListing->title : '');
+        let activePetPrice = @json($currentListing ? $currentListing->formatted_price : '');
         let currentAttachment = null;
+        let currentReplyingTo = null;
+        let targetMsgIdxToDelete = null;
 
         // Retrieve stored state from localStorage
         let clearedChats = JSON.parse(localStorage.getItem('cleared_chats') || '{}');
@@ -1480,56 +1958,30 @@
         // Sample message sets for different chats
         const chatMessagesData = {
             'chat-1': [
-                { type: 'received', text: 'Hi, is the Golden Retriever still available?', time: '10:22 AM' },
-                { type: 'sent', text: 'Yes, it is currently available.', time: '10:25 AM' },
-                { type: 'received', text: 'Can you share vaccination details and when I can visit?', time: '10:26 AM' },
-                { type: 'sent', text: 'Sure, all vaccinations are up to date. I will share the records.', time: '10:28 AM' },
-                { type: 'sent', text: 'You can visit tomorrow evening between 5 PM and 8 PM. Does that work for you?', time: '10:28 AM' },
-                { type: 'received', text: 'Tomorrow evening works perfectly for me.', time: '10:35 AM' },
-                { type: 'received', text: 'Could you please share your exact address?', time: '10:35 AM' },
-                { type: 'sent', text: "Yes, it's House 123, Block C, Phase 1, DHA Lahore.", time: '10:40 AM' },
-                { type: 'received', text: 'Got it. Is the price negotiable?', time: '10:45 AM' },
-                { type: 'sent', text: 'We can discuss the price when you visit. I am open to slight negotiation.', time: '10:50 AM' },
-                { type: 'received', text: 'Sounds good. See you tomorrow.', time: '10:55 AM' }
+                { type: 'received', text: 'Hi, is the African Grey Parrot still available?', time: '10:20 AM' },
+                { type: 'sent', text: 'Yes, it is available. It is fully hand-tamed and healthy.', time: '10:22 AM' },
+                { type: 'received', text: 'Perfect! I will confirm my visit details shortly.', time: '10:24 AM' },
+                { type: 'received', text: 'Awesome, thank you! I will keep you updated.', time: '10:25 AM' }
             ],
             'chat-2': [
                 { type: 'received', text: 'Hi, is the Golden Retriever still available?', time: '10:22 AM' },
                 { type: 'sent', text: 'Yes, it is available.', time: '10:25 AM' }
             ],
             'chat-3': [
-                { type: 'received', text: 'Hi, is the Golden Retriever still available?', time: '10:22 AM' }
+                { type: 'received', text: 'Champion Line Golden Retriever Puppy inquiries', time: '10:22 AM' },
+                { type: 'sent', text: 'All vaccinations are complete.', time: '10:25 AM' }
             ],
             'chat-4': [
                 { type: 'received', text: 'What is the final price for the Persian Cat?', time: '08:15 AM' },
-                { type: 'sent', text: 'Hi Sarah! The final price is Rs. 45,000.', time: '08:20 AM' }
+                { type: 'sent', text: 'Hi! The final price is Rs. 45,000.', time: '08:20 AM' }
             ],
             'chat-5': [
                 { type: 'received', text: 'Where are you located?', time: '07:45 AM' },
-                { type: 'sent', text: 'We are located in DHA Phase 5, Lahore.', time: '07:50 AM' }
+                { type: 'sent', text: 'We are located in DHA Lahore.', time: '07:50 AM' }
             ],
             'chat-6': [
-                { type: 'received', text: 'Is this male or female?', time: '05:30 AM' }
-            ],
-            'chat-7': [
-                { type: 'received', text: 'Can you deliver it to Islamabad?', time: 'Yesterday' }
-            ],
-            'chat-8': [
-                { type: 'received', text: 'How old is it?', time: 'Yesterday' }
-            ],
-            'chat-9': [
-                { type: 'received', text: 'I am interested, please reply.', time: '2 days ago' }
-            ],
-            'chat-10': [
-                { type: 'received', text: 'Do they come with a cage?', time: '2 days ago' }
-            ],
-            'chat-11': [
-                { type: 'received', text: 'Thanks!', time: '3 days ago' }
-            ],
-            'chat-12': [
-                { type: 'received', text: 'Are the vaccinations complete?', time: '4 days ago' }
-            ],
-            'chat-13': [
-                { type: 'received', text: 'I will visit tomorrow morning.', time: '5 days ago' }
+                { type: 'received', text: 'Perfect! I will confirm my visit details shortly.', time: '10:20 AM' },
+                { type: 'received', text: 'Awesome, thank you! I will keep you updated.', time: '10:25 AM' }
             ]
         };
 
@@ -1554,24 +2006,38 @@
             "Thanks! Is the price firm or negotiable?"
         ];
 
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         function toggleDropdown() {
             document.getElementById('chatDropdown').classList.toggle('show');
         }
 
+        // Global click handler to close dropdowns and popups
         window.onclick = function(event) {
             if (!event.target.closest('.chat-options-btn') && !event.target.closest('.chat-dropdown')) {
-                var dropdowns = document.getElementsByClassName("chat-dropdown");
-                for (var i = 0; i < dropdowns.length; i++) {
-                    var openDropdown = dropdowns[i];
-                    if (openDropdown.classList.contains('show')) {
-                        openDropdown.classList.remove('show');
-                    }
+                const dropdowns = document.getElementsByClassName("chat-dropdown");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    dropdowns[i].classList.remove('show');
                 }
             }
             if (!event.target.closest('#emojiPickerPopover') && !event.target.closest('#emojiToggleBtn')) {
                 hideEmojiPicker();
             }
-        }
+            if (!event.target.closest('.msg-actions-trigger') && !event.target.closest('.msg-dropdown-menu')) {
+                document.querySelectorAll('.msg-dropdown-menu.show').forEach(el => el.classList.remove('show'));
+            }
+            if (!event.target.closest('.msg-react-trigger') && !event.target.closest('.msg-quick-reactions')) {
+                document.querySelectorAll('.msg-quick-reactions.show').forEach(el => el.classList.remove('show'));
+            }
+        };
 
         function showToast(message) {
             const toast = document.getElementById('toastNotification');
@@ -1581,7 +2047,317 @@
                 toast.classList.add('show');
                 setTimeout(() => {
                     toast.classList.remove('show');
-                }, 3200);
+                }, 3000);
+            }
+        }
+
+        // USER PROMPT: "msg mainin ko deleta ta kuch or krny ky liye whats app wala feature dy do"
+        // WhatsApp Message Actions Handlers
+        function toggleMsgDropdown(event, idx) {
+            event.stopPropagation();
+            event.preventDefault();
+            document.querySelectorAll('.msg-dropdown-menu.show').forEach(el => {
+                if (el.id !== `msgDropdown-${idx}`) el.classList.remove('show');
+            });
+            document.querySelectorAll('.msg-quick-reactions.show').forEach(el => el.classList.remove('show'));
+            const menu = document.getElementById(`msgDropdown-${idx}`);
+            if (menu) menu.classList.toggle('show');
+        }
+
+        function toggleQuickReactions(event, idx) {
+            event.stopPropagation();
+            event.preventDefault();
+            document.querySelectorAll('.msg-quick-reactions.show').forEach(el => {
+                if (el.id !== `quickReactions-${idx}`) el.classList.remove('show');
+            });
+            document.querySelectorAll('.msg-dropdown-menu.show').forEach(el => el.classList.remove('show'));
+            const palette = document.getElementById(`quickReactions-${idx}`);
+            if (palette) palette.classList.toggle('show');
+        }
+
+        function openReactionPalette(idx) {
+            const menu = document.getElementById(`msgDropdown-${idx}`);
+            if (menu) menu.classList.remove('show');
+            const palette = document.getElementById(`quickReactions-${idx}`);
+            if (palette) palette.classList.add('show');
+        }
+
+        function addReaction(event, idx, emoji) {
+            if (event) event.stopPropagation();
+            const msgs = chatMessagesData[activeChatId] || [];
+            if (!msgs[idx]) return;
+            if (!msgs[idx].reactions) msgs[idx].reactions = [];
+            const pos = msgs[idx].reactions.indexOf(emoji);
+            if (pos > -1) {
+                msgs[idx].reactions.splice(pos, 1);
+            } else {
+                msgs[idx].reactions = [emoji];
+            }
+            localStorage.setItem('chat_messages_data', JSON.stringify(chatMessagesData));
+            document.querySelectorAll('.msg-quick-reactions.show').forEach(el => el.classList.remove('show'));
+            renderActiveChat();
+        }
+
+        function removeReaction(idx) {
+            const msgs = chatMessagesData[activeChatId] || [];
+            if (!msgs[idx]) return;
+            msgs[idx].reactions = [];
+            localStorage.setItem('chat_messages_data', JSON.stringify(chatMessagesData));
+            renderActiveChat();
+        }
+
+        function copyMessageText(idx) {
+            const msgs = chatMessagesData[activeChatId] || [];
+            if (!msgs[idx]) return;
+            const textToCopy = msgs[idx].text || '';
+            if (navigator.clipboard && textToCopy) {
+                navigator.clipboard.writeText(textToCopy);
+            }
+            document.querySelectorAll('.msg-dropdown-menu.show').forEach(el => el.classList.remove('show'));
+            showToast('Message copied to clipboard');
+        }
+
+        function toggleStarMessage(idx) {
+            const msgs = chatMessagesData[activeChatId] || [];
+            if (!msgs[idx]) return;
+            msgs[idx].starred = !msgs[idx].starred;
+            localStorage.setItem('chat_messages_data', JSON.stringify(chatMessagesData));
+            document.querySelectorAll('.msg-dropdown-menu.show').forEach(el => el.classList.remove('show'));
+            showToast(msgs[idx].starred ? 'Message starred' : 'Message unstarred');
+            renderActiveChat();
+        }
+
+        function startReplyMessage(idx) {
+            const msgs = chatMessagesData[activeChatId] || [];
+            if (!msgs[idx]) return;
+            const m = msgs[idx];
+            currentReplyingTo = {
+                idx: idx,
+                sender: m.type === 'sent' ? 'You' : activeUserName,
+                text: m.text || (m.image ? 'Photo attachment' : '')
+            };
+            
+            document.querySelectorAll('.msg-dropdown-menu.show').forEach(el => el.classList.remove('show'));
+            
+            const replyBar = document.getElementById('chatReplyBar');
+            const senderEl = document.getElementById('replyBarSender');
+            const snippetEl = document.getElementById('replyBarSnippet');
+            const chatInput = document.querySelector('.chat-input');
+            
+            if (replyBar && senderEl && snippetEl) {
+                senderEl.textContent = `Replying to ${currentReplyingTo.sender}`;
+                snippetEl.textContent = currentReplyingTo.text;
+                replyBar.classList.add('show');
+            }
+            if (chatInput) chatInput.focus();
+        }
+
+        function cancelReply() {
+            currentReplyingTo = null;
+            const replyBar = document.getElementById('chatReplyBar');
+            if (replyBar) replyBar.classList.remove('show');
+        }
+
+        function openDeleteMsgModal(idx) {
+            const msgs = chatMessagesData[activeChatId] || [];
+            if (!msgs[idx]) return;
+            targetMsgIdxToDelete = idx;
+            const m = msgs[idx];
+            document.querySelectorAll('.msg-dropdown-menu.show').forEach(el => el.classList.remove('show'));
+            
+            const btnForEveryone = document.getElementById('btnDeleteForEveryone');
+            const modalDesc = document.getElementById('deleteMsgModalDesc');
+            
+            if (m.type === 'sent') {
+                if (btnForEveryone) btnForEveryone.style.display = 'flex';
+                if (modalDesc) modalDesc.textContent = 'You can delete this message for everyone or just for yourself.';
+            } else {
+                if (btnForEveryone) btnForEveryone.style.display = 'none';
+                if (modalDesc) modalDesc.textContent = 'Delete this message for yourself? It will be removed from your chat.';
+            }
+            
+            const modal = document.getElementById('deleteMessageModal');
+            if (modal) modal.classList.add('show');
+        }
+
+        function closeDeleteMsgModal() {
+            targetMsgIdxToDelete = null;
+            const modal = document.getElementById('deleteMessageModal');
+            if (modal) modal.classList.remove('show');
+        }
+
+        function confirmDeleteMsg(deleteType) {
+            if (targetMsgIdxToDelete === null) return;
+            const msgs = chatMessagesData[activeChatId] || [];
+            const targetMsg = msgs[targetMsgIdxToDelete];
+            if (!targetMsg) return;
+
+            const msgId = targetMsg.id;
+
+            if (deleteType === 'for_everyone') {
+                targetMsg.isDeleted = true;
+                targetMsg.text = 'This message was deleted';
+                delete targetMsg.image;
+                delete targetMsg.reply_to;
+                targetMsg.reactions = [];
+                showToast('Message deleted for everyone');
+            } else {
+                msgs.splice(targetMsgIdxToDelete, 1);
+                showToast('Message deleted for you');
+            }
+
+            localStorage.setItem('chat_messages_data', JSON.stringify(chatMessagesData));
+            
+            // Sync with backend API if message ID or conversation exists
+            if (msgId) {
+                fetch(`/chat/message/${msgId}/delete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ delete_type: deleteType })
+                }).catch(e => console.log('Delete sync:', e));
+            }
+
+            closeDeleteMsgModal();
+            renderActiveChat();
+        }
+
+        // WhatsApp Conversation Deletion
+        function openDeleteConvModal() {
+            const dropdown = document.getElementById('chatDropdown');
+            if (dropdown) dropdown.classList.remove('show');
+            const nameEl = document.getElementById('deleteConvUserName');
+            if (nameEl) nameEl.textContent = activeUserName;
+            const modal = document.getElementById('deleteConversationModal');
+            if (modal) modal.classList.add('show');
+        }
+
+        function closeDeleteConvModal() {
+            const modal = document.getElementById('deleteConversationModal');
+            if (modal) modal.classList.remove('show');
+        }
+
+        // USER PROMPT: "ya delete q ni ho rha"
+        function dismissContextCard(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            const card = document.getElementById('chatContextCard') || document.querySelector('.chat-context-card');
+            if (card) {
+                card.style.transition = 'all 0.25s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    card.style.display = 'none';
+                }, 250);
+            }
+            try {
+                localStorage.setItem('dismiss_context_' + activeChatId, 'true');
+            } catch(e) {}
+            showToast('Listing details dismissed.');
+        }
+
+        // USER PROMPT: "ya delete q ni ho rha"
+        function setEmptyChatState() {
+            activeUserName = '';
+            activePetName = '';
+            activePetPrice = '';
+            const headerName = document.querySelector('.chat-header-text h3');
+            if (headerName) headerName.textContent = 'No conversation selected';
+            const headerSub = document.querySelector('.chat-header-text p');
+            if (headerSub) headerSub.textContent = 'Select a conversation from the left';
+            const headerAvatar = document.querySelector('.chat-header-info .chat-avatar');
+            if (headerAvatar) headerAvatar.src = 'https://ui-avatars.com/api/?name=Chat&background=random';
+            
+            const optionsBtn = document.querySelector('.chat-options-btn');
+            if (optionsBtn) optionsBtn.style.display = 'none';
+
+            const card = document.getElementById('chatContextCard') || document.querySelector('.chat-context-card');
+            if (card) card.style.display = 'none';
+
+            const messagesContainer = document.querySelector('.chat-messages');
+            if (messagesContainer) {
+                messagesContainer.innerHTML = `
+                    <div class="cleared-chat-notice" style="margin-top: auto; margin-bottom: auto; text-align: center; padding: 40px 16px;">
+                        <i class="fa-regular fa-comments" style="font-size: 38px; color: #94a3b8; margin-bottom: 12px; display: block;"></i>
+                        <p style="color: #64748b; font-size: 15px; font-weight: 500;">No conversation selected</p>
+                        <span style="color: #94a3b8; font-size: 13px;">Choose a chat from the sidebar to view messages</span>
+                    </div>
+                `;
+            }
+
+            const inputWrapper = document.querySelector('.chat-input-wrapper');
+            if (inputWrapper) inputWrapper.style.display = 'none';
+        }
+
+        // USER PROMPT: "ya delete q ni ho rha"
+        async function confirmDeleteConversation() {
+            const userNameToDelete = activeUserName || 'User';
+            clearedChats[activeChatId] = true;
+            chatMessagesData[activeChatId] = [];
+            try {
+                localStorage.setItem('cleared_chats', JSON.stringify(clearedChats));
+                localStorage.setItem('chat_messages_data', JSON.stringify(chatMessagesData));
+                delete blockedUsers[activeChatId];
+                localStorage.setItem('blocked_users', JSON.stringify(blockedUsers));
+            } catch(e) {}
+            
+            closeDeleteConvModal();
+            showToast('Deleting conversation...');
+
+            // Call backend API if real conversation id is known
+            const chatForm = document.getElementById('chatInputForm');
+            const convIdInput = chatForm ? chatForm.querySelector('input[name="conversation_id"]') : null;
+            const convId = convIdInput ? convIdInput.value : '';
+
+            if (convId) {
+                try {
+                    const response = await fetch(`/chat/conversation/${convId}/delete`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+                    const data = await response.json();
+                    if (data && data.success) {
+                        showToast(`Chat with ${userNameToDelete} deleted.`);
+                        setTimeout(() => {
+                            window.location.href = "{{ route('seller.messages') }}";
+                        }, 400);
+                        return;
+                    }
+                } catch (e) {
+                    console.log('Delete conv sync error:', e);
+                    setTimeout(() => {
+                        window.location.href = "{{ route('seller.messages') }}";
+                    }, 400);
+                    return;
+                }
+            }
+
+            // Client-side fallback if no convId:
+            const activeItem = document.querySelector(`.chat-item[data-chat-id="${activeChatId}"]`);
+            if (activeItem) {
+                activeItem.remove();
+            }
+
+            const remainingItems = document.querySelectorAll('.chat-item');
+            if (remainingItems.length > 0) {
+                const nextItem = remainingItems[0];
+                if (nextItem.href) {
+                    window.location.href = nextItem.href;
+                } else {
+                    nextItem.click();
+                }
+            } else {
+                setEmptyChatState();
+                showToast(`Chat with ${userNameToDelete} deleted.`);
             }
         }
 
@@ -1776,21 +2552,51 @@
             }, 2600);
         }
 
-        // Render current active chat state
+        // USER PROMPT: "ya delete q ni ho rha"
+        // Render current active chat state with WhatsApp message controls
         function renderActiveChat() {
+            const hasChat = document.querySelector('.chat-item.active') || document.querySelector('.chat-item');
+            const chatForm = document.getElementById('chatInputForm');
+            const convIdInput = chatForm ? chatForm.querySelector('input[name="conversation_id"]') : null;
+            const hasConv = convIdInput && convIdInput.value;
+
+            if (!hasChat && !hasConv && !activeUserName) {
+                setEmptyChatState();
+                return;
+            }
+
             // Update Header Name
             const headerName = document.querySelector('.chat-header-text h3');
-            if (headerName) headerName.textContent = activeUserName;
+            if (headerName && activeUserName) headerName.textContent = activeUserName;
             
             const headerAvatar = document.querySelector('.chat-header-info .chat-avatar');
-            if (headerAvatar) headerAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(activeUserName)}&background=random`;
+            if (headerAvatar && activeUserName) headerAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(activeUserName)}&background=random`;
 
             // Update Context Card
+            const card = document.getElementById('chatContextCard') || document.querySelector('.chat-context-card');
+            const isContextDismissed = localStorage.getItem('dismiss_context_' + activeChatId) === 'true';
+            if (card) {
+                if (isContextDismissed || !activePetName) {
+                    card.style.display = 'none';
+                } else {
+                    card.style.display = 'flex';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }
+            }
+
             const ctxTitle = document.querySelector('.chat-context-details h4');
-            if (ctxTitle) ctxTitle.textContent = activePetName;
+            if (ctxTitle && activePetName) {
+                const link = ctxTitle.querySelector('a');
+                if (link) {
+                    link.textContent = activePetName;
+                } else {
+                    ctxTitle.textContent = activePetName;
+                }
+            }
             
             const ctxPrice = document.querySelector('.chat-context-price');
-            if (ctxPrice) ctxPrice.textContent = activePetPrice;
+            if (ctxPrice && activePetPrice) ctxPrice.textContent = activePetPrice;
 
             // Render Messages
             const messagesContainer = document.querySelector('.chat-messages');
@@ -1805,18 +2611,98 @@
                 } else {
                     const msgs = chatMessagesData[activeChatId] || [];
                     let html = `<div class="date-divider"><span>Today</span></div>`;
-                    msgs.forEach(m => {
+                    msgs.forEach((m, idx) => {
                         let imgHtml = m.image ? `<img src="${m.image}" alt="Attachment" class="msg-attached-img" onclick="openImageLightboxModal('${m.image}')">` : '';
-                        let textHtml = m.text ? `<div>${m.text}</div>` : '';
-                        html += `
-                            <div class="msg-bubble-container ${m.type}">
-                                <div class="msg-bubble">
-                                    ${imgHtml}
-                                    ${textHtml}
-                                    <span class="msg-time">${m.time}</span>
+                        let textHtml = m.text ? `<div>${escapeHtml(m.text)}</div>` : '';
+                        
+                        let replyHtml = '';
+                        if (m.reply_to) {
+                            replyHtml = `
+                                <div class="msg-quoted-preview">
+                                    <div class="msg-quoted-sender">${escapeHtml(m.reply_to.sender)}</div>
+                                    <div class="msg-quoted-text">${escapeHtml(m.reply_to.text)}</div>
                                 </div>
-                            </div>
-                        `;
+                            `;
+                        }
+
+                        let reactionsHtml = '';
+                        if (m.reactions && m.reactions.length > 0) {
+                            reactionsHtml = `<div class="msg-reaction-badge" title="Reaction" onclick="removeReaction(${idx})">${m.reactions.join('')}</div>`;
+                        }
+
+                        let starHtml = m.starred ? '<i class="fa-solid fa-star msg-starred-icon" title="Starred"></i>' : '';
+
+                        if (m.isDeleted) {
+                            html += `
+                                <div class="msg-bubble-container ${m.type}" data-msg-idx="${idx}">
+                                    <div class="msg-bubble deleted-message">
+                                        <i class="fa-solid fa-ban"></i>
+                                        <span>This message was deleted</span>
+                                        <span class="msg-time">${m.time}</span>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div class="msg-bubble-container ${m.type}" data-msg-idx="${idx}">
+                                    <!-- WhatsApp-Style Quick Reaction Smiley (Hover) -->
+                                    <button type="button" class="msg-react-trigger" title="React with emoji" onclick="toggleQuickReactions(event, ${idx})">
+                                        <i class="fa-regular fa-face-smile"></i>
+                                    </button>
+                                    
+                                    <!-- Quick Reaction Palette -->
+                                    <div class="msg-quick-reactions" id="quickReactions-${idx}">
+                                        <button type="button" class="quick-react-emoji" onclick="addReaction(event, ${idx}, '👍')">👍</button>
+                                        <button type="button" class="quick-react-emoji" onclick="addReaction(event, ${idx}, '❤️')">❤️</button>
+                                        <button type="button" class="quick-react-emoji" onclick="addReaction(event, ${idx}, '😂')">😂</button>
+                                        <button type="button" class="quick-react-emoji" onclick="addReaction(event, ${idx}, '😮')">😮</button>
+                                        <button type="button" class="quick-react-emoji" onclick="addReaction(event, ${idx}, '😢')">😢</button>
+                                        <button type="button" class="quick-react-emoji" onclick="addReaction(event, ${idx}, '🙏')">🙏</button>
+                                    </div>
+
+                                    <!-- The Message Bubble -->
+                                    <div class="msg-bubble">
+                                        <!-- WhatsApp Dropdown Chevron Button -->
+                                        <button type="button" class="msg-actions-trigger" title="Message options" onclick="toggleMsgDropdown(event, ${idx})">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="6 9 12 15 18 9"></polyline>
+                                            </svg>
+                                        </button>
+
+                                        ${replyHtml}
+                                        ${imgHtml}
+                                        ${textHtml}
+                                        <span class="msg-time">${m.time}${starHtml}</span>
+
+                                        <!-- WhatsApp Floating Dropdown Menu -->
+                                        <div class="msg-dropdown-menu" id="msgDropdown-${idx}">
+                                            <div class="msg-dropdown-item" onclick="startReplyMessage(${idx})">
+                                                <i class="fa-solid fa-reply"></i>
+                                                <span>Reply</span>
+                                            </div>
+                                            <div class="msg-dropdown-item" onclick="openReactionPalette(${idx})">
+                                                <i class="fa-regular fa-face-smile"></i>
+                                                <span>React</span>
+                                            </div>
+                                            <div class="msg-dropdown-item" onclick="copyMessageText(${idx})">
+                                                <i class="fa-regular fa-copy"></i>
+                                                <span>Copy</span>
+                                            </div>
+                                            <div class="msg-dropdown-item" onclick="toggleStarMessage(${idx})">
+                                                <i class="${m.starred ? 'fa-solid' : 'fa-regular'} fa-star" style="${m.starred ? 'color:#f59e0b;' : ''}"></i>
+                                                <span>${m.starred ? 'Unstar' : 'Star'}</span>
+                                            </div>
+                                            <div class="msg-dropdown-item danger" onclick="openDeleteMsgModal(${idx})">
+                                                <i class="fa-regular fa-trash-can"></i>
+                                                <span>Delete</span>
+                                            </div>
+                                        </div>
+
+                                        ${reactionsHtml}
+                                    </div>
+                                </div>
+                            `;
+                        }
                     });
                     messagesContainer.innerHTML = html;
                     messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -1898,7 +2784,7 @@
 
                     chatItems.forEach(item => {
                         const isUnread = item.querySelector('.unread-badge') !== null;
-                        const timeText = item.querySelector('.chat-item-time').textContent;
+                        const timeText = item.querySelector('.chat-item-time')?.textContent || '';
                         const isRecent = timeText.includes('m') || timeText.includes('h');
                         const isNew = timeText.includes('m');
 
@@ -1934,7 +2820,7 @@
                     activeChatId = chatId;
                     activeUserName = item.getAttribute('data-user-name') || 'User';
                     activePetName = item.getAttribute('data-pet-name') || 'Pet';
-                    activePetPrice = index === 3 ? 'Rs. 45,000' : index === 4 ? 'Rs. 65,000' : 'Rs. 85,000';
+                    activePetPrice = 'Rs. 85,000';
 
                     document.body.classList.add('chat-active');
                     const chatContainer = document.querySelector('.chat-container');
@@ -1945,24 +2831,33 @@
                 });
             });
 
-            // Auto-open specific chat if URL parameter is present (e.g. ?chat=1 for Ali Raza)
-            const urlParams = new URLSearchParams(window.location.search);
-            const chatParam = urlParams.get('chat') || urlParams.get('open');
-            if (chatParam) {
-                let targetChatToOpen = null;
-                if (chatParam === '1' || chatParam.toLowerCase().includes('ali')) {
-                    targetChatToOpen = document.querySelector('.chat-item[data-chat-id="chat-1"]') || chatItems[0];
-                } else if (chatParam === '4' || chatParam.toLowerCase().includes('sarah')) {
-                    targetChatToOpen = document.querySelector('.chat-item[data-chat-id="chat-4"]') || chatItems[3];
-                } else {
-                    targetChatToOpen = document.querySelector(`.chat-item[data-chat-id="chat-${chatParam}"]`) ||
-                                       document.querySelector(`.chat-item[data-chat-id="${chatParam}"]`);
+            // USER PROMPT: "ya delete q ni ho rha"
+            // Set initial active chat from currently active item or URL
+            const activeConvItem = document.querySelector('.chat-item.active') || chatItems[0];
+            if (activeConvItem) {
+                activeChatId = activeConvItem.getAttribute('data-chat-id') || activeChatId;
+                if (!activeUserName) {
+                    activeUserName = activeConvItem.getAttribute('data-user-name') || '';
                 }
-                if (targetChatToOpen) {
-                    targetChatToOpen.click();
+                if (!activePetName) {
+                    activePetName = activeConvItem.getAttribute('data-pet-name') || '';
+                }
+            } else {
+                const convIdInput = document.querySelector('input[name="conversation_id"]');
+                if (!convIdInput || !convIdInput.value) {
+                    setEmptyChatState();
                 }
             }
 
+            // Ensure active chat has initial messages if empty
+            if (!chatMessagesData[activeChatId] || chatMessagesData[activeChatId].length === 0) {
+                chatMessagesData[activeChatId] = [
+                    { type: 'received', text: 'Perfect! I will confirm my visit details shortly.', time: '10:22 AM' },
+                    { type: 'received', text: 'Awesome, thank you! I will keep you updated.', time: '10:25 AM' }
+                ];
+            }
+
+            // USER PROMPT: "ya delete q ni ho rha"
             // Action: Confirm Clear Chat
             const confirmClearBtn = document.getElementById('confirmClearChatBtn');
             if (confirmClearBtn) {
@@ -1980,9 +2875,24 @@
                         if (badge) badge.remove();
                     }
 
+                    // Call backend API if real conversation id is known
+                    const chatForm = document.getElementById('chatInputForm');
+                    const convIdInput = chatForm ? chatForm.querySelector('input[name="conversation_id"]') : null;
+                    const convId = convIdInput ? convIdInput.value : '';
+                    if (convId) {
+                        fetch(`/chat/conversation/${convId}/clear`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        }).catch(e => console.log('Clear conv error:', e));
+                    }
+
                     closeClearChatModal();
                     renderActiveChat();
-                    showToast(`Chat with ${activeUserName} has been cleared.`);
+                    showToast(`Chat with ${activeUserName || 'user'} has been cleared.`);
                 });
             }
 
@@ -2060,6 +2970,15 @@
                 const newMsg = { type: 'sent', time: timeStr };
                 if (text) newMsg.text = text;
                 if (currentAttachment) newMsg.image = currentAttachment.dataUrl;
+
+                // Quoted reply attachment if active
+                if (currentReplyingTo) {
+                    newMsg.reply_to = {
+                        sender: currentReplyingTo.sender,
+                        text: currentReplyingTo.text
+                    };
+                    cancelReply();
+                }
 
                 chatMessagesData[activeChatId].push(newMsg);
                 delete clearedChats[activeChatId];

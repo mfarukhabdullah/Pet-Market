@@ -9,16 +9,41 @@ use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
+    // USER PROMPT: "yr dynamic kro in ko heome page hero or in btns ko bhi"
     public function index()
     {
-        // Cached categories tree (1 hour)
+        \App\Models\SiteSetting::seedDefaults();
+
+        // Cached active categories tree (1 hour)
         $categories = Cache::remember('home_categories', 3600, function () {
-            return Category::withCount('activeListings')->orderBy('sort_order', 'asc')->get();
+            return Category::where('is_active', true)->withCount('activeListings')->orderBy('sort_order', 'asc')->get();
         });
 
         // Cached breeds with category for hero search dropdown (1 hour)
         $breeds = Cache::remember('home_breeds', 3600, function () {
-            return \App\Models\Breed::with('category')->orderBy('name', 'asc')->get();
+            return \App\Models\Breed::with('category')->whereHas('category', function ($q) {
+                $q->where('is_active', true);
+            })->orderBy('name', 'asc')->get();
+        });
+
+        // Dynamic Cities for Hero Location dropdown (Site settings + live listings)
+        $dynamicCities = Cache::remember('home_locations_list', 1800, function () {
+            $configured = \App\Models\SiteSetting::get('hero_locations');
+            $cities = [];
+            if (!empty($configured)) {
+                $cities = array_values(array_filter(array_map('trim', explode(',', $configured))));
+            }
+            if (empty($cities)) {
+                $cities = ['Islamabad', 'Karachi', 'Lahore', 'Rawalpindi', 'Faisalabad', 'Multan', 'Sialkot', 'Peshawar', 'Gujranwala', 'Quetta'];
+            }
+            $listingCities = Listing::live()->whereNotNull('city')->distinct()->pluck('city')->toArray();
+            foreach ($listingCities as $c) {
+                $trimmed = trim($c);
+                if (!empty($trimmed) && !in_array(strtolower($trimmed), array_map('strtolower', $cities))) {
+                    $cities[] = $trimmed;
+                }
+            }
+            return $cities;
         });
 
         // Featured live listings (15 mins cache)
@@ -44,7 +69,7 @@ class HomeController extends Controller
         })->toArray() : [];
 
         return response()
-            ->view('index', compact('categories', 'breeds', 'featuredListings', 'recentListings', 'favoritedListingIds'))
+            ->view('index', compact('categories', 'breeds', 'dynamicCities', 'featuredListings', 'recentListings', 'favoritedListingIds'))
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
             ->header('Pragma', 'no-cache')
             ->header('Expires', '0');

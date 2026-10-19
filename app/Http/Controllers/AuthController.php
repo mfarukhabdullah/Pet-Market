@@ -168,6 +168,10 @@ class AuthController extends Controller
         if ($redirect && (strpos($redirect, 'seller') !== false || strpos($redirect, 'create-listing') !== false)) {
             $role = 'seller';
         }
+        // USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao"
+        if ($redirect && strpos($redirect, 'admin') !== false) {
+            $role = 'admin';
+        }
 
         $email = $role === 'admin' 
             ? 'admin@petmarket.pk' 

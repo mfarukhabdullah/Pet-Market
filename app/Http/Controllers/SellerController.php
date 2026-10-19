@@ -18,9 +18,14 @@ class SellerController extends Controller
         return auth()->user() ?: User::where('email', 'seller@petmarket.pk')->first() ?: User::first();
     }
 
-    public function profile(Request $request)
+    // USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main"
+    public function profile(Request $request, $id = null)
     {
-        $userId = $request->query('id');
+        if ($request->query('id') && !$id && !$request->ajax()) {
+            return redirect()->route('seller.profile', ['id' => $request->query('id')], 301);
+        }
+
+        $userId = $id ?: $request->query('id');
         $user = $userId ? User::findOrFail($userId) : $this->getActiveUser();
 
         $activeListings = Listing::where('user_id', $user->id)
@@ -41,10 +46,15 @@ class SellerController extends Controller
         return view('seller-profile', compact('user', 'activeListings', 'soldListings', 'reviews', 'averageRating'));
     }
 
-    public function listings(Request $request)
+    // USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main"
+    public function listings(Request $request, $tab = null)
     {
+        if ($request->query('tab') && !$tab && !$request->ajax()) {
+            return redirect()->route('seller.listings', ['tab' => $request->query('tab')], 301);
+        }
+
         $user = $this->getActiveUser();
-        $tab = $request->query('tab', 'all');
+        $tab = $tab ?: $request->query('tab', 'all');
 
         $listingsQuery = Listing::where('user_id', $user->id)
             ->with(['images', 'category', 'breed'])
@@ -82,10 +92,15 @@ class SellerController extends Controller
         return view('create-listings', compact('user', 'categories', 'breeds'));
     }
 
-    public function messages(Request $request)
+    // USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main"
+    public function messages(Request $request, $conversation_id = null)
     {
+        if ($request->query('conversation_id') && !$conversation_id && !$request->ajax()) {
+            return redirect()->route('seller.messages', ['conversation_id' => $request->query('conversation_id')], 301);
+        }
+
         $user = $this->getActiveUser();
-        $activeConversationId = $request->query('conversation_id');
+        $activeConversationId = $conversation_id ?: $request->query('conversation_id');
 
         $conversations = Conversation::where('seller_id', $user->id)
             ->orWhere('buyer_id', $user->id)

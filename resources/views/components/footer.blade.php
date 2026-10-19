@@ -44,13 +44,14 @@
                 <!-- Column 3: Pet Categories -->
                 <div class="footer-col">
                     <h4 class="footer-col-title">Pet Categories</h4>
+                    {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
                     <ul class="footer-link-list">
-                        <li><a href="{{ route('category', ['category' => 'dogs']) }}">Dogs</a></li>
-                        <li><a href="{{ route('category', ['category' => 'cats']) }}">Cats</a></li>
-                        <li><a href="{{ route('category', ['category' => 'birds']) }}">Birds</a></li>
-                        <li><a href="{{ route('category', ['category' => 'rabbits']) }}">Rabbits</a></li>
-                        <li><a href="{{ route('category', ['category' => 'fish']) }}">Fish</a></li>
-                        <li><a href="{{ route('category', ['category' => 'horses-farm']) }}">Horses & Farm</a></li>
+                        <li><a href="{{ route('category', ['param1' => 'dogs']) }}">Dogs</a></li>
+                        <li><a href="{{ route('category', ['param1' => 'cats']) }}">Cats</a></li>
+                        <li><a href="{{ route('category', ['param1' => 'birds']) }}">Birds</a></li>
+                        <li><a href="{{ route('category', ['param1' => 'rabbits']) }}">Rabbits</a></li>
+                        <li><a href="{{ route('category', ['param1' => 'fish']) }}">Fish</a></li>
+                        <li><a href="{{ route('category', ['param1' => 'horses-farm']) }}">Horses & Farm</a></li>
                     </ul>
                 </div>
 

@@ -10,37 +10,48 @@ use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
-    public function index(Request $request, $category = null, $city = null)
+    public function index(Request $request, $param1 = null, $param2 = null, $param3 = null)
     {
         // 1. Featured query parameter redirect on /category route
         if ($request->query('featured') === 'true' && !$request->ajax() && !$request->wantsJson() && optional($request->route())->getName() === 'category') {
             return redirect()->route('featured.pets', $request->except('featured'));
         }
 
-        // Known category slugs and aliases
+        // Known categories, cities, and breeds
         $knownCategories = [
             'birds', 'cats', 'dogs', 'exotic', 'exotic-pets', 'fish', 'fishes',
             'horses-farm', 'horse', 'horses', 'rabbits', 'reptiles', 'reptile'
         ];
         $knownCities = ['islamabad', 'karachi', 'lahore', 'rawalpindi', 'faisalabad', 'multan', 'sialkot', 'peshawar'];
 
-        // If only 1 route parameter was passed, check if it's a city (e.g. /category/karachi)
-        if (!empty($category) && empty($city)) {
-            $catLower = strtolower(trim($category));
-            if (in_array($catLower, $knownCities) || (!in_array($catLower, $knownCategories) && Listing::where('city', 'like', "%{$catLower}%")->exists())) {
-                $city = $category;
-                $category = null;
+        $allBreedSlugs = Cache::remember('all_breed_slugs_list', 1800, function () {
+            return Breed::pluck('slug')->map(fn($s) => strtolower(trim($s)))->toArray();
+        });
+
+        $routeCategory = null;
+        $routeBreed = null;
+        $routeCity = null;
+
+        $rawSegments = array_values(array_filter([$param1, $param2, $param3]));
+        foreach ($rawSegments as $seg) {
+            $segLower = strtolower(trim($seg));
+            if (!$routeCategory && in_array($segLower, $knownCategories)) {
+                $routeCategory = $segLower;
+            } elseif (!$routeCity && (in_array($segLower, $knownCities) || Listing::where('city', 'like', "%{$segLower}%")->exists())) {
+                $routeCity = $segLower;
+            } elseif (!$routeBreed && (in_array($segLower, $allBreedSlugs) || Breed::where('slug', $segLower)->exists())) {
+                $routeBreed = $segLower;
             }
         }
 
-        // 2. Clean up query parameters & redirect query string to clean route paths (/category/{category}/{city} or /category/{city})
+        // 2. Clean up query parameters & redirect query string to clean route paths
         if (!$request->ajax() && !$request->wantsJson()) {
             $rawQuery = $request->query();
             $needsRedirect = false;
             $cleanQuery = [];
 
-            // Target category for route path
-            $targetCategory = $category;
+            // Target category
+            $targetCategory = $routeCategory;
             if (isset($rawQuery['category'])) {
                 $cVal = trim((string) $rawQuery['category']);
                 if (!empty($cVal) && $cVal !== 'all' && empty($targetCategory)) {
@@ -49,8 +60,18 @@ class CategoryController extends Controller
                 $needsRedirect = true;
             }
 
-            // Target city for route path
-            $targetCity = $city;
+            // Target breed
+            $targetBreed = $routeBreed;
+            if (isset($rawQuery['breed'])) {
+                $bVal = trim((string) $rawQuery['breed']);
+                if (!empty($bVal) && $bVal !== 'all' && empty($targetBreed)) {
+                    $targetBreed = $bVal;
+                }
+                $needsRedirect = true;
+            }
+
+            // Target city
+            $targetCity = $routeCity;
             if (isset($rawQuery['location']) || isset($rawQuery['city'])) {
                 $lVal = trim((string) ($rawQuery['location'] ?? $rawQuery['city']));
                 if (!empty($lVal) && $lVal !== 'all' && empty($targetCity)) {
@@ -60,7 +81,7 @@ class CategoryController extends Controller
             }
 
             foreach ($rawQuery as $key => $val) {
-                if ($key === 'category' || $key === 'location' || $key === 'city') continue;
+                if ($key === 'category' || $key === 'breed' || $key === 'location' || $key === 'city') continue;
 
                 // Handle gender[] or gender array
                 if ($key === 'gender') {
@@ -107,22 +128,23 @@ class CategoryController extends Controller
                     return redirect()->route('featured.pets', $cleanQuery);
                 }
 
+                $pathParts = [];
+                if ($targetCategory && $targetCategory !== 'all') $pathParts[] = $targetCategory;
+                if ($targetBreed && $targetBreed !== 'all') $pathParts[] = $targetBreed;
+                if ($targetCity && $targetCity !== 'all') $pathParts[] = $targetCity;
+
                 $routeParams = [];
-                if ($targetCategory && $targetCategory !== 'all' && $targetCity && $targetCity !== 'all') {
-                    $routeParams = ['category' => $targetCategory, 'city' => $targetCity];
-                } elseif ($targetCategory && $targetCategory !== 'all') {
-                    $routeParams = ['category' => $targetCategory];
-                } elseif ($targetCity && $targetCity !== 'all') {
-                    $routeParams = ['category' => $targetCity];
-                }
+                if (isset($pathParts[0])) $routeParams['param1'] = $pathParts[0];
+                if (isset($pathParts[1])) $routeParams['param2'] = $pathParts[1];
+                if (isset($pathParts[2])) $routeParams['param3'] = $pathParts[2];
 
                 return redirect()->route('category', array_merge($routeParams, $cleanQuery));
             }
         }
 
-        $categoryParam = $category ?: 'all';
-        $cityParam = $city ?: $request->query('city', $request->query('location', 'all'));
-        $breedParam = $request->query('breed');
+        $categoryParam = $routeCategory ?: 'all';
+        $breedParam = $routeBreed ?: $request->query('breed');
+        $cityParam = $routeCity ?: $request->query('city', $request->query('location', 'all'));
         $sortParam = $request->query('sort', 'newest');
         $searchParam = $request->query('search', $request->query('q'));
         // Robust Price Range Parsing
@@ -215,6 +237,17 @@ class CategoryController extends Controller
         $allBreeds = Cache::remember('catalog_all_breeds', 1800, function () {
             return Breed::with('category')->orderBy('name', 'asc')->get();
         });
+
+        // When breed is present but category is not specified, auto-resolve category from breed
+        if (!$selectedCategory && !empty($breedParam) && $breedParam !== 'all') {
+            $matchedBreed = $allBreeds->first(function ($b) use ($breedParam) {
+                return strtolower($b->slug) === strtolower($breedParam) || strtolower($b->name) === strtolower($breedParam);
+            });
+            if ($matchedBreed && $matchedBreed->category) {
+                $selectedCategory = $matchedBreed->category;
+                $categoryParam = $selectedCategory->slug;
+            }
+        }
 
         // Available breeds for filter (defaults to selected category or all)
         $breeds = $selectedCategory ? $selectedCategory->breeds : $allBreeds;

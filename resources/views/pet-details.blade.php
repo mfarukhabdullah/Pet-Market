@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Golden Retriever Puppy for Sale in Lahore | Pet Marketplace</title>
+    {{-- USER PROMPT: "yr idher robot tag do roebot text ni" --}}
+    <meta name="robots" content="{{ \App\Models\SiteSetting::get('seo_robots', 'index, follow') }}">
     <meta name="description" content="Golden Retriever puppy, 2 months, male, vaccinated and dewormed. View pet details, health information and contact the verified seller in Lahore.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

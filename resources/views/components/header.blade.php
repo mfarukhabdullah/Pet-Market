@@ -16,10 +16,12 @@
             <div class="header-top-content">
                 <div class="top-notice-left">
                     <img src="{{ asset('images/header-icon.svg') }}" alt="Header Icon" class="top-notice-header-icon">
-                    <span>Buy responsibly. Verify the animal and seller before completing a transaction.</span>
+                    {{-- USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao" --}}
+                    <span>{{ \App\Models\SiteSetting::get('site_top_notice', 'Buy responsibly. Verify the animal and seller before completing a transaction.') }}</span>
                 </div>
                 <div class="top-notice-right">
-                    <a href="#safety" class="safety-guide-link">Safety Guide</a>
+                    {{-- USER PROMPT: "phir ya q a rha hai" --}}
+                    <a href="{{ route('about') }}" class="safety-guide-link">Safety Guide</a>
                 </div>
             </div>
         </div>
@@ -113,6 +115,12 @@
                                 
                                 <div class="dropdown-divider"></div>
 
+                                {{-- USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao" --}}
+                                @if(auth()->user()->role === 'admin')
+                                    <a href="{{ route('admin.dashboard') }}" class="dropdown-item" style="color: #147A4D; font-weight: 700;">
+                                        <i class="fa-solid fa-shield-cat" style="width:20px; font-size:16px; text-align:center;"></i> Admin Panel
+                                    </a>
+                                @endif
                                 <a href="{{ route('dashboard') }}" class="dropdown-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"><span class="dd-icon icon-dash-dd"></span> Dashboard</a>
                                 <a href="{{ route('seller.listings') }}" class="dropdown-item {{ request()->routeIs('seller.listings') ? 'active' : '' }}"><span class="dd-icon icon-list-dd"></span> My Listings</a>
                                 <a href="{{ route('seller.messages') }}" class="dropdown-item {{ request()->routeIs('seller.messages') ? 'active' : '' }}"><span class="dd-icon icon-msg-dd"></span> Messages</a>
@@ -230,6 +238,15 @@
     <div class="account-nav-body">
         <h4 class="account-nav-section-title">Personal</h4>
         <ul class="account-nav-list">
+            {{-- USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao" --}}
+            @if(auth()->user()->role === 'admin')
+            <li>
+                <a href="{{ route('admin.dashboard') }}" style="color: #147A4D; font-weight: 700;">
+                    <div class="list-left"><i class="fa-solid fa-shield-cat"></i> <span>Admin Panel</span></div>
+                    <i class="fa-solid fa-chevron-right list-arrow"></i>
+                </a>
+            </li>
+            @endif
             <li>
                 <a href="{{ route('dashboard') }}">
                     <div class="list-left"><i class="fa-solid fa-border-all"></i> <span>My Account</span></div>

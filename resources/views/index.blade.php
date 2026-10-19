@@ -3,10 +3,22 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pet Marketplace</title>
+    {{-- USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao" --}}
+    <title>{{ \App\Models\SiteSetting::get('seo_meta_title', 'Pet Marketplace - Buy & Sell Verified Pets in Pakistan') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Trusted pet marketplace connecting responsible buyers, sellers, breeders, and pet businesses.">
+    <!-- Dynamic SEO Meta Tags -->
+    <meta name="description" content="{{ \App\Models\SiteSetting::get('seo_meta_description', 'Discover verified dogs, cats, birds, and exotic pets from trusted breeders.') }}">
+    <meta name="keywords" content="{{ \App\Models\SiteSetting::get('seo_meta_keywords', 'pets pakistan, dogs lahore, cats karachi') }}">
+    <meta name="robots" content="{{ \App\Models\SiteSetting::get('seo_robots', 'index, follow') }}">
+    <link rel="canonical" href="{{ \App\Models\SiteSetting::get('seo_canonical_base', url('/')) }}">
+
+    <!-- OpenGraph Social Sharing -->
+    <meta property="og:title" content="{{ \App\Models\SiteSetting::get('seo_og_title', \App\Models\SiteSetting::get('seo_meta_title')) }}">
+    <meta property="og:description" content="{{ \App\Models\SiteSetting::get('seo_og_description', \App\Models\SiteSetting::get('seo_meta_description')) }}">
+    <meta property="og:image" content="{{ asset(\App\Models\SiteSetting::get('seo_og_image', 'images/seller-profile-hero.jpg')) }}">
+    <meta property="og:type" content="website">
+
+    {!! \App\Models\SiteSetting::get('seo_header_scripts', '') !!}
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

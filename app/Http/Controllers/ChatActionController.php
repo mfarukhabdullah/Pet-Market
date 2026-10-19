@@ -160,4 +160,58 @@ class ChatActionController extends Controller
             'messages' => $messages,
         ]);
     }
+
+    // USER PROMPT: "msg mainin ko deleta ta kuch or krny ky liye whats app wala feature dy do"
+    public function deleteMessage(Request $request, $messageId)
+    {
+        $user = $this->getActiveUser();
+        $message = Message::findOrFail($messageId);
+        $conversation = $message->conversation;
+
+        if ($user && $conversation && $conversation->buyer_id !== $user->id && $conversation->seller_id !== $user->id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $deleteType = $request->input('delete_type', 'for_me');
+        if ($deleteType === 'for_everyone' && $user && $message->sender_id === $user->id) {
+            $message->body = 'This message was deleted';
+            $message->type = 'deleted';
+            $message->save();
+        } else {
+            $message->delete();
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    // USER PROMPT: "msg mainin ko deleta ta kuch or krny ky liye whats app wala feature dy do"
+    public function deleteConversation(Request $request, $id)
+    {
+        $user = $this->getActiveUser();
+        $conversation = Conversation::findOrFail($id);
+
+        if ($user && $conversation->buyer_id !== $user->id && $conversation->seller_id !== $user->id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $conversation->messages()->delete();
+        $conversation->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    // USER PROMPT: "msg mainin ko deleta ta kuch or krny ky liye whats app wala feature dy do"
+    public function clearConversation(Request $request, $id)
+    {
+        $user = $this->getActiveUser();
+        $conversation = Conversation::findOrFail($id);
+
+        if ($user && $conversation->buyer_id !== $user->id && $conversation->seller_id !== $user->id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $conversation->messages()->delete();
+
+        return response()->json(['success' => true]);
+    }
 }

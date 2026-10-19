@@ -7,6 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- SEO Meta Tags -->
+    {{-- USER PROMPT: "yr idher robot tag do roebot text ni" --}}
+    <meta name="robots" content="{{ \App\Models\SiteSetting::get('seo_robots', 'index, follow') }}">
     <meta name="description" content="Search and filter pet listings by category, breed, location, price, age, gender and other relevant details.">
     
     <!-- Google Fonts -->
@@ -117,7 +119,8 @@
                                 </div>
                             </div>
 
-                            <form id="sidebarFiltersForm" action="{{ request()->routeIs('featured.pets') ? route('featured.pets') : (isset($selectedCategory) && $selectedCategory ? route('category', ['category' => $selectedCategory->slug]) : route('category')) }}" method="GET" autocomplete="off">
+                            {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
+                            <form id="sidebarFiltersForm" action="{{ request()->routeIs('featured.pets') ? route('featured.pets') : (isset($selectedCategory) && $selectedCategory ? route('category', ['param1' => $selectedCategory->slug]) : route('category')) }}" method="GET" autocomplete="off">
                                 
                                 <!-- 1. Pet Category -->
                                 <div class="filter-group">
@@ -321,10 +324,11 @@
                                         <span>Filters</span>
                                     </button>
 
+                                {{-- USER PROMPT: "category main to ink chalao" --}}
                                 <div class="listings-controls-right">
                                     <div class="view-toggle-group">
                                         <span class="view-label">View:</span>
-                                        <button type="button" class="view-toggle-btn" aria-label="List View">
+                                        <button type="button" class="view-toggle-btn" id="viewListBtn" aria-label="List View" title="List View">
                                             <svg width="22" height="18" viewBox="0 0 22 18" fill="none">
                                                 <circle cx="2.2" cy="3" r="1.8" fill="#000000"/>
                                                 <line x1="7" y1="3" x2="21" y2="3" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
@@ -334,7 +338,7 @@
                                                 <line x1="7" y1="15" x2="21" y2="15" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
                                             </svg>
                                         </button>
-                                        <button type="button" class="view-toggle-btn active" aria-label="Grid View">
+                                        <button type="button" class="view-toggle-btn active" id="viewGridBtn" aria-label="Grid View" title="Grid View">
                                             <svg width="18" height="18" viewBox="0 0 18 18" fill="#000000">
                                                 <rect x="0" y="0" width="4.5" height="4.5" rx="1.2"/>
                                                 <rect x="6.75" y="0" width="4.5" height="4.5" rx="1.2"/>
@@ -352,7 +356,7 @@
                                     <div class="sort-control-group">
                                         <span class="sort-label">Sort:</span>
                                         <div class="sort-select-wrapper">
-                                            <select class="sort-select-input" onchange="const url = new URL(window.location); url.searchParams.set('sort', this.value); window.location = url.toString();">
+                                            <select class="sort-select-input" id="sortSelectInput">
                                                 <option value="newest" {{ (!request('sort') || request('sort') == 'newest') ? 'selected' : '' }}>Newest First</option>
                                                 <option value="price_asc" {{ (request('sort') == 'price_asc' || request('sort') == 'price_low') ? 'selected' : '' }}>Price: Low to High</option>
                                                 <option value="price_desc" {{ (request('sort') == 'price_desc' || request('sort') == 'price_high') ? 'selected' : '' }}>Price: High to Low</option>

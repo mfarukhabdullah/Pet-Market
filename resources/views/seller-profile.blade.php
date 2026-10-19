@@ -165,6 +165,118 @@
         .sp-tabs { gap: 8px; }
         .sp-tab { flex: 1; justify-content: center; padding: 0 10px; font-size: 13px; text-align: center; }
     }
+
+    /* USER PROMPT: "phir ya q a rha hai" */
+    /* Modal Backdrop & Report Styling */
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    }
+    .modal-backdrop.show {
+        display: flex;
+    }
+    .modal-close-icon {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: none;
+        border: none;
+        font-size: 18px;
+        color: #6b7280;
+        cursor: pointer;
+    }
+    .report-modal-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 24px 28px 28px 28px;
+        width: 90%;
+        max-width: 440px;
+        position: relative;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+        max-height: 90vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    .report-modal-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 18px;
+        padding-right: 24px;
+    }
+    .report-reasons-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        max-height: 280px;
+        overflow-y: auto;
+        padding-right: 6px;
+        margin-bottom: 18px;
+    }
+    .report-reasons-list::-webkit-scrollbar {
+        width: 5px;
+    }
+    .report-reasons-list::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+    .report-reason-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1f2937;
+    }
+    .report-reason-option input[type="radio"] {
+        accent-color: #128c5a;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    .report-textarea {
+        width: 100%;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+        resize: none;
+        height: 80px;
+        margin-bottom: 20px;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+    .report-textarea:focus {
+        border-color: #128c5a;
+    }
+    .btn-submit-report {
+        background-color: #128c5a;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 14px 24px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+        display: block;
+        text-align: center;
+    }
+    .btn-submit-report:hover {
+        background-color: #0f764a;
+    }
 </style>
 </head>
 <body>
@@ -197,6 +309,7 @@
                 </div>
             </div>
             
+            {{-- USER PROMPT: "phir ya q a rha hai" --}}
             <div class="sp-actions">
                 @php
                     $firstAd = $activeListings->first();
@@ -205,11 +318,11 @@
                             ? route('chat.start', ['listingId' => $firstAd->id])
                             : route('sign', ['redirect' => route('chat.start', ['listingId' => $firstAd->id])]);
                     } else {
-                        $contactHref = '#seller-listings';
+                        $contactHref = route('category');
                     }
                 @endphp
                 <a href="{{ $contactHref }}" class="sp-btn sp-btn-primary"><i class="fa-regular fa-message"></i> Contact Seller</a>
-                <a href="#report" class="sp-btn sp-btn-outline"><i class="fa-regular fa-flag"></i> Report Seller</a>
+                <button type="button" onclick="openReportModal()" class="sp-btn sp-btn-outline"><i class="fa-regular fa-flag"></i> Report Seller</button>
             </div>
         </div>
         
@@ -281,6 +394,61 @@
         </div>
     </div>
 </div>
+
+    {{-- USER PROMPT: "phir ya q a rha hai" --}}
+    <!-- Report User Modal -->
+    <div id="reportModal" class="modal-backdrop">
+        <div class="report-modal-card">
+            <button type="button" class="modal-close-icon" onclick="closeReportModal()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="report-modal-title">Report This Seller</h3>
+            <form id="reportUserForm" onsubmit="handleReportSubmit(event)">
+                <div class="report-reasons-list">
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Scam / Fraud" checked>
+                        <span>Scam / Fraud</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Fake Listing or Misleading Product">
+                        <span>Fake Listing or Misleading Product</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Asking for Payment Outside the Platform">
+                        <span>Asking for Payment Outside the Platform</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Spam / Unwanted Messages">
+                        <span>Spam / Unwanted Messages</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Harassment / Abusive Messages">
+                        <span>Harassment / Abusive Messages</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Fake Identity / Impersonation">
+                        <span>Fake Identity / Impersonation</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Suspicious Payment Activity">
+                        <span>Suspicious Payment Activity</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Threats or Blackmail">
+                        <span>Threats or Blackmail</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Sharing Personal Information">
+                        <span>Sharing Personal Information</span>
+                    </label>
+                    <label class="report-reason-option">
+                        <input type="radio" name="report_reason" value="Other">
+                        <span>Other</span>
+                    </label>
+                </div>
+                <textarea class="report-textarea" id="reportDetailsInput" placeholder="Additional details"></textarea>
+                <button type="submit" class="btn-submit-report">Submit Report</button>
+            </form>
+        </div>
+    </div>
 
     <!-- FOOTER COMPONENT -->
     <x-footer />
@@ -367,7 +535,52 @@
                 }, 300);
             }
         }
+
+        // USER PROMPT: "phir ya q a rha hai"
+        // Clean any hash (such as #report) immediately so it never stays in the browser URL bar
+        if (window.location.hash) {
+            if (window.location.hash === '#report') {
+                openReportModal();
+            }
+            history.replaceState(null, document.title, window.location.pathname + window.location.search);
+        }
     });
+
+    // USER PROMPT: "phir ya q a rha hai"
+    function openReportModal() {
+        const modal = document.getElementById('reportModal');
+        if (modal) modal.classList.add('show');
+    }
+
+    function closeReportModal() {
+        const modal = document.getElementById('reportModal');
+        if (modal) modal.classList.remove('show');
+    }
+
+    function handleReportSubmit(e) {
+        if (e) e.preventDefault();
+        const reason = document.querySelector('input[name="report_reason"]:checked')?.value || 'Scam / Fraud';
+        const details = document.getElementById('reportDetailsInput')?.value || '';
+        
+        fetch('{{ route('reports.submit') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                seller_id: {{ $user->id }},
+                reason: reason,
+                details: details
+            })
+        }).catch(function(){});
+
+        const detailsInput = document.getElementById('reportDetailsInput');
+        if (detailsInput) detailsInput.value = '';
+        closeReportModal();
+        alert('Thank you. Your report has been submitted.');
+    }
 </script>
 
 </body>

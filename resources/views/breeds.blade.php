@@ -7,6 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- SEO Meta Tags -->
+    {{-- USER PROMPT: "yr idher robot tag do roebot text ni" --}}
+    <meta name="robots" content="{{ \App\Models\SiteSetting::get('seo_robots', 'index, follow') }}">
     <meta name="description" content="Find pets by breed and explore available listings.">
     
     <!-- Google Fonts -->
@@ -327,13 +329,14 @@
             <div class="container">
                 
                 <!-- Breed Tags -->
+                {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
                 <div class="breed-tags-container">
-                    <a href="{{ route('category', ['category' => 'dogs']) }}" class="breed-tag">Dogs</a>
-                    <a href="{{ route('category', ['category' => 'cats']) }}" class="breed-tag">Cats</a>
-                    <a href="{{ route('category', ['category' => 'birds']) }}" class="breed-tag">Birds</a>
-                    <a href="{{ route('category', ['category' => 'fish']) }}" class="breed-tag">Fish</a>
-                    <a href="{{ route('category', ['category' => 'reptiles']) }}" class="breed-tag">Reptiles</a>
-                    <a href="{{ route('category', ['category' => 'horses-farm']) }}" class="breed-tag">Horses &amp; Farm</a>
+                    <a href="{{ route('category', ['param1' => 'dogs']) }}" class="breed-tag">Dogs</a>
+                    <a href="{{ route('category', ['param1' => 'cats']) }}" class="breed-tag">Cats</a>
+                    <a href="{{ route('category', ['param1' => 'birds']) }}" class="breed-tag">Birds</a>
+                    <a href="{{ route('category', ['param1' => 'fish']) }}" class="breed-tag">Fish</a>
+                    <a href="{{ route('category', ['param1' => 'reptiles']) }}" class="breed-tag">Reptiles</a>
+                    <a href="{{ route('category', ['param1' => 'horses-farm']) }}" class="breed-tag">Horses &amp; Farm</a>
                 </div>
 
                 <!-- Dog Breeds Section -->
@@ -345,7 +348,8 @@
 
                     <div class="breeds-grid">
                         <!-- Dog Breed 1 -->
-                        <a href="{{ route('category', ['breed' => 'golden-retriever']) }}" class="breed-card">
+                        {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
+                        <a href="{{ route('category', ['param1' => 'golden-retriever']) }}" class="breed-card">
                             <div class="breed-img-wrapper">
                                 <img src="{{ asset('images/golden_retriever.jpg') }}" alt="Golden Retriever">
                             </div>
@@ -354,7 +358,7 @@
                         </a>
 
                         <!-- Dog Breed 2 -->
-                        <a href="{{ route('category', ['breed' => 'german-shepherd']) }}" class="breed-card">
+                        <a href="{{ route('category', ['param1' => 'german-shepherd']) }}" class="breed-card">
                             <div class="breed-img-wrapper">
                                 <img src="{{ asset('images/german_shepherd.jpg') }}" alt="German Shepherd">
                             </div>
@@ -373,7 +377,8 @@
 
                     <div class="breeds-grid">
                         <!-- Cat Breed 1 -->
-                        <a href="{{ route('category', ['breed' => 'persian']) }}" class="breed-card">
+                        {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
+                        <a href="{{ route('category', ['param1' => 'persian']) }}" class="breed-card">
                             <div class="breed-img-wrapper">
                                 <img src="{{ asset('images/persian.jpg') }}" alt="Persian">
                             </div>
@@ -382,7 +387,7 @@
                         </a>
 
                         <!-- Cat Breed 2 -->
-                        <a href="{{ route('category', ['breed' => 'british-shorthair']) }}" class="breed-card">
+                        <a href="{{ route('category', ['param1' => 'british-shorthair']) }}" class="breed-card">
                             <div class="breed-img-wrapper">
                                 <img src="{{ asset('images/british_shorthair.jpg') }}" alt="British Shorthair">
                             </div>

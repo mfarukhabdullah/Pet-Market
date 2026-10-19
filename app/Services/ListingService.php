@@ -23,8 +23,16 @@ class ListingService
 
         $data['user_id'] = $seller->id;
         $data['status'] = 'draft';
+        // USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main"
         if (empty($data['slug']) && !empty($data['title'])) {
-            $data['slug'] = Str::slug($data['title']) . '-' . Str::random(6);
+            $baseSlug = Str::slug($data['title']) ?: 'pet';
+            $slug = $baseSlug;
+            $counter = 1;
+            while (Listing::where('slug', $slug)->exists()) {
+                $counter++;
+                $slug = "{$baseSlug}-{$counter}";
+            }
+            $data['slug'] = $slug;
         }
 
         return Listing::create($data);
@@ -34,9 +42,11 @@ class ListingService
      * Submit listing for publishing.
      * Verified sellers get immediate live listing, unverified go to pending approval.
      */
+    // USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao"
     public function publishListing(User $seller, ?int $listingId = null, array $finalData = []): Listing
     {
-        $newStatus = $seller->is_verified ? 'live' : 'pending';
+        $autoApprove = \App\Models\SiteSetting::get('site_auto_approve_listings') === '1';
+        $newStatus = ($seller->is_verified || $autoApprove) ? 'live' : 'pending';
         $finalData['status'] = $newStatus;
 
         if ($listingId) {
@@ -46,8 +56,16 @@ class ListingService
         }
 
         $finalData['user_id'] = $seller->id;
+        // USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main"
         if (empty($finalData['slug']) && !empty($finalData['title'])) {
-            $finalData['slug'] = Str::slug($finalData['title']) . '-' . Str::random(6);
+            $baseSlug = Str::slug($finalData['title']) ?: 'pet';
+            $slug = $baseSlug;
+            $counter = 1;
+            while (Listing::where('slug', $slug)->exists()) {
+                $counter++;
+                $slug = "{$baseSlug}-{$counter}";
+            }
+            $finalData['slug'] = $slug;
         }
 
         return Listing::create($finalData);

@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initSidebarFilter();
   initFavorites();
   initSettingsMenuScroll();
+  // USER PROMPT: "category main to ink chalao"
+  initCategoryViewToggle();
+  initCategorySorting();
 });
 
 /* ==========================================
@@ -448,8 +451,94 @@ function initSearchFilter() {
 }
 
 /* ==========================================
-   10. Sidebar Filters Logic
+   9b. Category View Toggle & Live Sorting
    ========================================== */
+// USER PROMPT: "category main to ink chalao"
+function initCategoryViewToggle() {
+  const viewListBtn = document.getElementById('viewListBtn');
+  const viewGridBtn = document.getElementById('viewGridBtn');
+  const petCardsGrid = document.getElementById('petCardsGrid');
+  if (!viewListBtn || !viewGridBtn || !petCardsGrid) return;
+
+  function setView(mode) {
+    if (mode === 'list') {
+      petCardsGrid.classList.add('list-view');
+      viewListBtn.classList.add('active');
+      viewGridBtn.classList.remove('active');
+      localStorage.setItem('pet_view_mode', 'list');
+    } else {
+      petCardsGrid.classList.remove('list-view');
+      viewGridBtn.classList.add('active');
+      viewListBtn.classList.remove('active');
+      localStorage.setItem('pet_view_mode', 'grid');
+    }
+  }
+
+  viewListBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    setView('list');
+  });
+
+  viewGridBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    setView('grid');
+  });
+
+  // Restore saved view mode on page load
+  const savedMode = localStorage.getItem('pet_view_mode');
+  if (savedMode === 'list') {
+    setView('list');
+  }
+}
+
+// USER PROMPT: "category main to ink chalao"
+function initCategorySorting() {
+  const sortSelect = document.getElementById('sortSelectInput');
+  const petCardsGrid = document.getElementById('petCardsGrid');
+  if (!sortSelect || !petCardsGrid) return;
+
+  sortSelect.addEventListener('change', function () {
+    const sortVal = this.value;
+    const url = new URL(window.location);
+    if (sortVal && sortVal !== 'newest') {
+      url.searchParams.set('sort', sortVal);
+    } else {
+      url.searchParams.delete('sort');
+    }
+    url.searchParams.delete('page');
+
+    const pagination = document.querySelector('.category-pagination-row');
+    // If there is server pagination or 'views' sort, do server reload for database-wide accurate sorting
+    if (pagination || sortVal === 'views') {
+      window.location.href = url.toString();
+      return;
+    }
+
+    // For single-page results, sort instantly in DOM
+    const cards = Array.from(petCardsGrid.querySelectorAll('.pet-card'));
+    if (cards.length > 1) {
+      cards.sort((a, b) => {
+        const priceA = parseFloat(a.dataset.price) || 0;
+        const priceB = parseFloat(b.dataset.price) || 0;
+        const idA = a.id ? parseInt(a.id.replace('listing-', '')) : 0;
+        const idB = b.id ? parseInt(b.id.replace('listing-', '')) : 0;
+
+        if (sortVal === 'price_asc' || sortVal === 'price_low') {
+          return priceA - priceB;
+        } else if (sortVal === 'price_desc' || sortVal === 'price_high') {
+          return priceB - priceA;
+        } else {
+          // newest: larger ID first
+          return idB - idA;
+        }
+      });
+
+      cards.forEach(card => petCardsGrid.appendChild(card));
+    }
+
+    history.replaceState(null, '', url.toString());
+  });
+}
 function initSidebarFilter() {
   const sidebarForm = document.getElementById('sidebarFiltersForm');
   if (!sidebarForm) return;
@@ -742,7 +831,8 @@ function initSidebarFilter() {
         grid.style.display = 'none';
         noResultsMsg.style.display = 'block';
       } else {
-        grid.style.display = 'grid'; // Restore grid
+        // USER PROMPT: "category main to ink chalao"
+        grid.style.display = ''; // Restore display based on grid/list class
         noResultsMsg.style.display = 'none';
       }
     }
@@ -778,25 +868,18 @@ function initSidebarFilter() {
     let basePath = isFeaturedPage ? '/featured-pets' : '/category';
     
     const catVal = categorySelect ? (categorySelect.value || '').trim() : '';
+    const breedVal = breedSelect ? (breedSelect.value || '').trim() : '';
     const locVal = locationSelect ? (locationSelect.value || '').trim() : '';
 
     if (!isFeaturedPage) {
-      if (catVal && catVal !== 'all' && locVal && locVal !== 'all') {
-        basePath = '/category/' + encodeURIComponent(catVal) + '/' + encodeURIComponent(locVal);
-      } else if (catVal && catVal !== 'all') {
-        basePath = '/category/' + encodeURIComponent(catVal);
-      } else if (locVal && locVal !== 'all') {
-        basePath = '/category/' + encodeURIComponent(locVal);
-      }
+      const pathParts = [];
+      if (catVal && catVal !== 'all') pathParts.push(encodeURIComponent(catVal));
+      if (breedVal && breedVal !== 'all') pathParts.push(encodeURIComponent(breedVal));
+      if (locVal && locVal !== 'all') pathParts.push(encodeURIComponent(locVal));
+      basePath = '/category' + (pathParts.length > 0 ? '/' + pathParts.join('/') : '');
     }
 
     const params = new URLSearchParams();
-
-    // Breed
-    const breedVal = breedSelect ? (breedSelect.value || '').trim() : '';
-    if (breedVal && breedVal !== 'all') {
-      params.set('breed', breedVal);
-    }
 
     // Price Range (smart swapped if inverted)
     const priceMinEl = document.getElementById('priceMin');

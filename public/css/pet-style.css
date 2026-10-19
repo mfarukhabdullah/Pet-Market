@@ -2700,6 +2700,11 @@ button {
   padding: 0;
 }
 
+/* USER PROMPT: "category main to ink chalao" */
+.view-toggle-btn:not(.active):hover {
+  background-color: #EBF3EE;
+}
+
 .view-toggle-btn.active {
   background-color: #D6E8DC;
   border-radius: 8px;
@@ -2755,6 +2760,85 @@ button {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+}
+
+/* USER PROMPT: "category main to ink chalao" - Category View Toggle (Grid & List View) */
+.pet-cards-grid.list-view {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+.pet-cards-grid.list-view .pet-card {
+  display: flex !important;
+  flex-direction: row !important;
+  height: 190px !important;
+  align-items: stretch !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid #E2E8F0 !important;
+  background-color: #FFFFFF !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.pet-cards-grid.list-view .pet-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+.pet-cards-grid.list-view .pet-card-image-box {
+  width: 250px !important;
+  min-width: 250px !important;
+  max-width: 250px !important;
+  height: 100% !important;
+  position: relative !important;
+  flex-shrink: 0 !important;
+}
+
+.pet-cards-grid.list-view .pet-card-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.pet-cards-grid.list-view .pet-card-content {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  padding: 16px 24px !important;
+  min-width: 0 !important;
+}
+
+.pet-cards-grid.list-view .pet-card-content .pet-name {
+  font-size: 1.25rem !important;
+  margin-bottom: 4px !important;
+}
+
+.pet-cards-grid.list-view .pet-card-content .pet-price {
+  font-size: 1.35rem !important;
+  margin: 6px 0 !important;
+}
+
+@media (max-width: 640px) {
+  .pet-cards-grid.list-view .pet-card {
+    height: 140px !important;
+  }
+  .pet-cards-grid.list-view .pet-card-image-box {
+    width: 130px !important;
+    min-width: 130px !important;
+    max-width: 130px !important;
+  }
+  .pet-cards-grid.list-view .pet-card-content {
+    padding: 10px 14px !important;
+  }
+  .pet-cards-grid.list-view .pet-card-content .pet-name {
+    font-size: 1rem !important;
+  }
+  .pet-cards-grid.list-view .pet-card-content .pet-price {
+    font-size: 1.1rem !important;
+  }
 }
 
 /* Pet Card Item */

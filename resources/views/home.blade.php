@@ -24,16 +24,18 @@
                 <div class="home-hero-shape-yellow-bottom"></div>
             </div>
 
-            <!-- HERO MAIN CONTENT -->
+            {{-- USER PROMPT: "yr dynamic kro in ko heome page hero or in btns ko bhi" --}}
+            <!-- HERO MAIN CONTENT (Dynamic via Admin Panel) -->
             <div class="home-hero-inner">
 
                 <!-- Left Column: Heading & Subtitle -->
                 <div class="home-hero-text">
+                    {{-- USER PROMPT: "yr idher koi html code na ho" --}}
                     <h1 class="home-hero-title">
-                        Find the right pet for <br />your family.
+                        {{ \App\Models\SiteSetting::get('hero_title', 'Find the right pet for your family.') }}
                     </h1>
                     <p class="home-hero-desc">
-                        Search pets by category, breed, location and price, then review the listing and seller before making contact.
+                        {{ \App\Models\SiteSetting::get('hero_desc', 'Search pets by category, breed, location and price, then review the listing and seller before making contact.') }}
                     </p>
                 </div>
 
@@ -47,10 +49,10 @@
                             <path d="M27 32L29 19" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>
                         </svg>
 
-                        <!-- Cutout Pet Image -->
+                        <!-- Dynamic Pet Hero Image -->
                         <img
-                            src="{{ asset('images/home-hero-image.png') }}"
-                            alt="Happy person holding a Corgi dog"
+                            src="{{ asset(\App\Models\SiteSetting::get('hero_image', 'images/home-hero-image.png')) }}"
+                            alt="Happy pet owner"
                             class="home-hero-img"
                         />
                     </div>
@@ -58,13 +60,13 @@
 
             </div>
 
-            <!-- FLOATING SEARCH BAR (Overlapping bottom edge) -->
+            <!-- FLOATING SEARCH BAR (Dynamic Interactive Filter Buttons) -->
             <form action="{{ route('category') }}" method="GET" class="home-search-wrap">
 
                 <div class="home-search-bar">
 
-                    <!-- Filter 1: PET CATEGORY -->
-                    <div class="home-filter custom-dropdown-wrap" data-filter="category" tabindex="0">
+                    <!-- Filter 1: PET CATEGORY BUTTON -->
+                    <div class="home-filter custom-dropdown-wrap" data-filter="category" data-default="{{ \App\Models\SiteSetting::get('hero_filter_cat_placeholder', 'Any category') }}" tabindex="0">
                         <input type="hidden" name="category" value="">
                         <div class="home-filter-left">
                             <!-- Green Paw Icon -->
@@ -76,15 +78,19 @@
                                 <path d="M12 10.5c-3.2 0-5.5 2.4-5.5 5.2 0 1.8 1.4 3.3 3.2 3.3 1 0 1.6-.4 2.3-.4s1.3.4 2.3.4c1.8 0 3.2-1.5 3.2-3.3 0-2.8-2.3-5.2-5.5-5.2z"/>
                             </svg>
                             <div>
-                                <span class="home-filter-label">PET CATEGORY</span>
-                                <span class="home-filter-value">Any category</span>
+                                <span class="home-filter-label">{{ \App\Models\SiteSetting::get('hero_filter_cat_label', 'PET CATEGORY') }}</span>
+                                <span class="home-filter-value">{{ \App\Models\SiteSetting::get('hero_filter_cat_placeholder', 'Any category') }}</span>
                             </div>
                         </div>
                         <!-- Dropdown Arrow -->
                         <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
 
-                        <!-- Custom Dropdown Menu -->
+                        <!-- Custom Dynamic Category Dropdown Menu -->
                         <div class="custom-dropdown-menu">
+                            <div class="custom-dropdown-item is-selected" data-value="">
+                                <span>{{ \App\Models\SiteSetting::get('hero_filter_cat_placeholder', 'Any category') }}</span>
+                                <i class="fa-solid fa-check opt-check"></i>
+                            </div>
                             @if(isset($categories) && $categories->isNotEmpty())
                                 @foreach($categories as $cat)
                                     <div class="custom-dropdown-item" data-value="{{ $cat->slug }}">
@@ -92,21 +98,12 @@
                                         <i class="fa-solid fa-check opt-check"></i>
                                     </div>
                                 @endforeach
-                            @else
-                                <div class="custom-dropdown-item" data-value="dogs"><span>Dogs</span><i class="fa-solid fa-check opt-check"></i></div>
-                                <div class="custom-dropdown-item" data-value="cats"><span>Cats</span><i class="fa-solid fa-check opt-check"></i></div>
-                                <div class="custom-dropdown-item" data-value="birds"><span>Birds</span><i class="fa-solid fa-check opt-check"></i></div>
-                                <div class="custom-dropdown-item" data-value="rabbits"><span>Rabbits</span><i class="fa-solid fa-check opt-check"></i></div>
-                                <div class="custom-dropdown-item" data-value="fish"><span>Fish</span><i class="fa-solid fa-check opt-check"></i></div>
-                                <div class="custom-dropdown-item" data-value="reptiles"><span>Reptiles</span><i class="fa-solid fa-check opt-check"></i></div>
-                                <div class="custom-dropdown-item" data-value="horses-farm"><span>Horses & Farm</span><i class="fa-solid fa-check opt-check"></i></div>
-                                <div class="custom-dropdown-item" data-value="exotic"><span>Exotic Pets</span><i class="fa-solid fa-check opt-check"></i></div>
                             @endif
                         </div>
                     </div>
 
-                    <!-- Filter 2: BREED -->
-                    <div class="home-filter custom-dropdown-wrap" data-filter="breed" tabindex="0">
+                    <!-- Filter 2: BREED BUTTON -->
+                    <div class="home-filter custom-dropdown-wrap" data-filter="breed" data-default="{{ \App\Models\SiteSetting::get('hero_filter_breed_placeholder', 'Any breed') }}" tabindex="0">
                         <input type="hidden" name="breed" value="">
                         <div class="home-filter-left">
                             <!-- Green Breed Icon (DNA) -->
@@ -118,14 +115,18 @@
                                 <path d="M8 18h8"/>
                             </svg>
                             <div>
-                                <span class="home-filter-label">BREED</span>
-                                <span class="home-filter-value">Any breed</span>
+                                <span class="home-filter-label">{{ \App\Models\SiteSetting::get('hero_filter_breed_label', 'BREED') }}</span>
+                                <span class="home-filter-value">{{ \App\Models\SiteSetting::get('hero_filter_breed_placeholder', 'Any breed') }}</span>
                             </div>
                         </div>
                         <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
 
-                        <!-- Custom Dropdown Menu -->
+                        <!-- Custom Dynamic Breed Dropdown Menu -->
                         <div class="custom-dropdown-menu" id="homeBreedDropdown">
+                            <div class="custom-dropdown-item is-selected" data-value="" data-category="">
+                                <span>{{ \App\Models\SiteSetting::get('hero_filter_breed_placeholder', 'Any breed') }}</span>
+                                <i class="fa-solid fa-check opt-check"></i>
+                            </div>
                             @if(isset($breeds) && $breeds->isNotEmpty())
                                 @foreach($breeds as $b)
                                     <div class="custom-dropdown-item" data-value="{{ $b->slug }}" data-category="{{ $b->category ? $b->category->slug : '' }}">
@@ -133,17 +134,12 @@
                                         <i class="fa-solid fa-check opt-check"></i>
                                     </div>
                                 @endforeach
-                            @else
-                                <div class="custom-dropdown-item" data-value="golden-retriever" data-category="dogs"><span>Golden Retriever</span><i class="fa-solid fa-check opt-check"></i></div>
-                                <div class="custom-dropdown-item" data-value="german-shepherd" data-category="dogs"><span>German Shepherd</span><i class="fa-solid fa-check opt-check"></i></div>
-                                <div class="custom-dropdown-item" data-value="persian" data-category="cats"><span>Persian Cat</span><i class="fa-solid fa-check opt-check"></i></div>
-                                <div class="custom-dropdown-item" data-value="british-shorthair" data-category="cats"><span>British Shorthair</span><i class="fa-solid fa-check opt-check"></i></div>
                             @endif
                         </div>
                     </div>
 
-                    <!-- Filter 3: LOCATION -->
-                    <div class="home-filter custom-dropdown-wrap" data-filter="location" tabindex="0">
+                    <!-- Filter 3: LOCATION BUTTON -->
+                    <div class="home-filter custom-dropdown-wrap" data-filter="location" data-default="{{ \App\Models\SiteSetting::get('hero_filter_loc_placeholder', 'Any location') }}" tabindex="0">
                         <input type="hidden" name="location" value="">
                         <div class="home-filter-left">
                             <!-- Green Location Pin Icon -->
@@ -151,27 +147,40 @@
                                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                             </svg>
                             <div>
-                                <span class="home-filter-label">LOCATION</span>
-                                <span class="home-filter-value">Any location</span>
+                                <span class="home-filter-label">{{ \App\Models\SiteSetting::get('hero_filter_loc_label', 'LOCATION') }}</span>
+                                <span class="home-filter-value">{{ \App\Models\SiteSetting::get('hero_filter_loc_placeholder', 'Any location') }}</span>
                             </div>
                         </div>
                         <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
 
-                        <!-- Custom Dropdown Menu -->
+                        <!-- Custom Dynamic Locations Dropdown Menu -->
                         <div class="custom-dropdown-menu">
-                            <div class="custom-dropdown-item" data-value="islamabad"><span>Islamabad</span><i class="fa-solid fa-check opt-check"></i></div>
-                            <div class="custom-dropdown-item" data-value="karachi"><span>Karachi</span><i class="fa-solid fa-check opt-check"></i></div>
-                            <div class="custom-dropdown-item" data-value="lahore"><span>Lahore</span><i class="fa-solid fa-check opt-check"></i></div>
-                            <div class="custom-dropdown-item" data-value="rawalpindi"><span>Rawalpindi</span><i class="fa-solid fa-check opt-check"></i></div>
-                            <div class="custom-dropdown-item" data-value="faisalabad"><span>Faisalabad</span><i class="fa-solid fa-check opt-check"></i></div>
-                            <div class="custom-dropdown-item" data-value="multan"><span>Multan</span><i class="fa-solid fa-check opt-check"></i></div>
-                            <div class="custom-dropdown-item" data-value="sialkot"><span>Sialkot</span><i class="fa-solid fa-check opt-check"></i></div>
-                            <div class="custom-dropdown-item" data-value="peshawar"><span>Peshawar</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item is-selected" data-value="">
+                                <span>{{ \App\Models\SiteSetting::get('hero_filter_loc_placeholder', 'Any location') }}</span>
+                                <i class="fa-solid fa-check opt-check"></i>
+                            </div>
+                            @if(isset($dynamicCities) && count($dynamicCities) > 0)
+                                @foreach($dynamicCities as $city)
+                                    <div class="custom-dropdown-item" data-value="{{ strtolower(trim($city)) }}">
+                                        <span>{{ $city }}</span>
+                                        <i class="fa-solid fa-check opt-check"></i>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="custom-dropdown-item" data-value="islamabad"><span>Islamabad</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="karachi"><span>Karachi</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="lahore"><span>Lahore</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="rawalpindi"><span>Rawalpindi</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="faisalabad"><span>Faisalabad</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="multan"><span>Multan</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="sialkot"><span>Sialkot</span><i class="fa-solid fa-check opt-check"></i></div>
+                                <div class="custom-dropdown-item" data-value="peshawar"><span>Peshawar</span><i class="fa-solid fa-check opt-check"></i></div>
+                            @endif
                         </div>
                     </div>
 
-                    <!-- Filter 4: PRICE -->
-                    <div class="home-filter custom-dropdown-wrap" data-filter="price" tabindex="0">
+                    <!-- Filter 4: PRICE BUTTON -->
+                    <div class="home-filter custom-dropdown-wrap" data-filter="price" data-default="{{ \App\Models\SiteSetting::get('hero_filter_price_placeholder', 'Any price') }}" tabindex="0">
                         <input type="hidden" name="price" value="">
                         <div class="home-filter-left">
                             <!-- Green Price Tag Icon -->
@@ -179,28 +188,36 @@
                                 <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/>
                             </svg>
                             <div>
-                                <span class="home-filter-label">PRICE</span>
-                                <span class="home-filter-value">Any price</span>
+                                <span class="home-filter-label">{{ \App\Models\SiteSetting::get('hero_filter_price_label', 'PRICE') }}</span>
+                                <span class="home-filter-value">{{ \App\Models\SiteSetting::get('hero_filter_price_placeholder', 'Any price') }}</span>
                             </div>
                         </div>
                         <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
 
-                        <!-- Custom Dropdown Menu -->
+                        <!-- Custom Price Dropdown Menu with Dynamic Currency -->
+                        @php
+                            $currencySymbol = \App\Models\SiteSetting::get('site_currency', 'PKR');
+                            $pricePrefix = ($currencySymbol === 'PKR' || $currencySymbol === 'Rs' || $currencySymbol === 'Rs.') ? 'Rs. ' : $currencySymbol . ' ';
+                        @endphp
                         <div class="custom-dropdown-menu">
-                            <div class="custom-dropdown-item" data-value="0-20000"><span>Under Rs. 20k</span><i class="fa-solid fa-check opt-check"></i></div>
-                            <div class="custom-dropdown-item" data-value="20000-50000"><span>Rs. 20k - 50k</span><i class="fa-solid fa-check opt-check"></i></div>
-                            <div class="custom-dropdown-item" data-value="50000-100000"><span>Rs. 50k - 100k</span><i class="fa-solid fa-check opt-check"></i></div>
-                            <div class="custom-dropdown-item" data-value="100000+"><span>Rs. 100k+</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item is-selected" data-value="">
+                                <span>{{ \App\Models\SiteSetting::get('hero_filter_price_placeholder', 'Any price') }}</span>
+                                <i class="fa-solid fa-check opt-check"></i>
+                            </div>
+                            <div class="custom-dropdown-item" data-value="0-20000"><span>Under {{ $pricePrefix }}20,000</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="20000-50000"><span>{{ $pricePrefix }}20k - 50k</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="50000-100000"><span>{{ $pricePrefix }}50k - 100k</span><i class="fa-solid fa-check opt-check"></i></div>
+                            <div class="custom-dropdown-item" data-value="100000+"><span>{{ $pricePrefix }}100,000+</span><i class="fa-solid fa-check opt-check"></i></div>
                         </div>
                     </div>
 
-                    <!-- CTA Button: Find a Pet -->
+                    <!-- CTA Button: Dynamic Find a Pet -->
                     <button type="submit" class="home-search-btn">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
-                        Find a Pet
+                        <span>{{ \App\Models\SiteSetting::get('hero_cta_text', 'Find a Pet') }}</span>
                     </button>
 
                 </div>
@@ -237,36 +254,37 @@
                 <div class="home-categories-track">
                     {{-- USER PROMPT: "when i click on these option it scrool up to curent page ... i want that when i click on any of these opton it directly goes to pet card no scrol up no scrool down just goes to that specific Pet card with out any scrolling" --}}
                     {{-- Changed from div onclick to semantic <a> links to prevent scroll jump and jump directly to #petCardsGrid --}}
+                    {{-- USER PROMPT: "phir ya q a rha hai" --}}
                     <div class="home-categories" style="display: flex; gap: 30px; flex-wrap: nowrap;">
-                        <a href="{{ route('category', ['category' => 'dogs']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
+                        <a href="{{ route('category', ['param1' => 'dogs']) }}" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_dog.jpg') }}" alt="Dogs"></div>
                             <div class="home-cat-name">Dogs</div>
                         </a>
-                        <a href="{{ route('category', ['category' => 'cats']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
+                        <a href="{{ route('category', ['param1' => 'cats']) }}" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_cat.jpg') }}" alt="Cats"></div>
                             <div class="home-cat-name">Cats</div>
                         </a>
-                        <a href="{{ route('category', ['category' => 'birds']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
+                        <a href="{{ route('category', ['param1' => 'birds']) }}" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_bird.jpg') }}" alt="Birds"></div>
                             <div class="home-cat-name">Birds</div>
                         </a>
-                        <a href="{{ route('category', ['category' => 'fish']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
+                        <a href="{{ route('category', ['param1' => 'fish']) }}" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_fish.jpg') }}" alt="Fish"></div>
                             <div class="home-cat-name">Fish</div>
                         </a>
-                        <a href="{{ route('category', ['category' => 'reptiles']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
+                        <a href="{{ route('category', ['param1' => 'reptiles']) }}" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_reptile.jpg') }}" alt="Reptiles"></div>
                             <div class="home-cat-name">Reptiles</div>
                         </a>
-                        <a href="{{ route('category', ['category' => 'rabbits']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
+                        <a href="{{ route('category', ['param1' => 'rabbits']) }}" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/card_rabbit.jpg') }}" alt="Rabbits"></div>
                             <div class="home-cat-name">Rabbits</div>
                         </a>
-                        <a href="{{ route('category', ['category' => 'horses-farm']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
+                        <a href="{{ route('category', ['param1' => 'horses-farm']) }}" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/cat_horse.jpg') }}" alt="Horses & Farm"></div>
                             <div class="home-cat-name">Horses & Farm</div>
                         </a>
-                        <a href="{{ route('category', ['category' => 'exotic']) }}#petCardsGrid" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
+                        <a href="{{ route('category', ['param1' => 'exotic']) }}" class="home-cat-item" style="cursor: pointer; text-decoration: none; color: inherit;">
                             <div class="home-cat-img"><img src="{{ asset('images/card_parrot.jpg') }}" alt="Exotic Pets"></div>
                             <div class="home-cat-name">Exotic Pets</div>
                         </a>
@@ -457,8 +475,9 @@
 
                 <!-- Buttons Wrapper -->
                 <div class="home-cta-buttons">
-                    <a href="{{ route('category', ['category' => 'dogs']) }}#petCardsGrid" class="home-cta-btn home-cta-btn--solid">Browse Dogs</a>
-                    <a href="{{ route('category', ['category' => 'cats']) }}#petCardsGrid" class="home-cta-btn home-cta-btn--outline">Browse Cats</a>
+                    {{-- USER PROMPT: "phir ya q a rha hai" --}}
+                    <a href="{{ route('category', ['param1' => 'dogs']) }}" class="home-cta-btn home-cta-btn--solid">Browse Dogs</a>
+                    <a href="{{ route('category', ['param1' => 'cats']) }}" class="home-cta-btn home-cta-btn--outline">Browse Cats</a>
                 </div>
 
             </div>
@@ -477,8 +496,9 @@
                 </div>
 
                 <div class="home-popular-grid">
+                    {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
                     <!-- Card 1: Golden Retriever -->
-                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['breed' => 'golden-retriever']) }}'" style="cursor: pointer;">
+                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'golden-retriever']) }}'" style="cursor: pointer;">
                         <img src="{{ asset('images/golden_retriever.jpg') }}" alt="Golden Retriever" class="home-breed-img">
                         <div class="home-breed-info home-breed-info--cream">
                             <h3 class="home-breed-name">Golden Retriever</h3>
@@ -487,7 +507,7 @@
                     </div>
 
                     <!-- Card 2: German Shepherd -->
-                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['breed' => 'german-shepherd']) }}'" style="cursor: pointer;">
+                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'german-shepherd']) }}'" style="cursor: pointer;">
                         <img src="{{ asset('images/german_shepherd.jpg') }}" alt="German Shepherd" class="home-breed-img">
                         <div class="home-breed-info home-breed-info--blue">
                             <h3 class="home-breed-name">German Shepherd</h3>
@@ -496,7 +516,7 @@
                     </div>
 
                     <!-- Card 3: Persian -->
-                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['breed' => 'persian']) }}'" style="cursor: pointer;">
+                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'persian']) }}'" style="cursor: pointer;">
                         <img src="{{ asset('images/persian.jpg') }}" alt="Persian" class="home-breed-img">
                         <div class="home-breed-info home-breed-info--rose">
                             <h3 class="home-breed-name">Persian</h3>
@@ -505,7 +525,7 @@
                     </div>
 
                     <!-- Card 4: British Shorthair -->
-                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['breed' => 'british-shorthair']) }}'" style="cursor: pointer;">
+                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'british-shorthair']) }}'" style="cursor: pointer;">
                         <img src="{{ asset('images/british_shorthair.jpg') }}" alt="British Shorthair" class="home-breed-img">
                         <div class="home-breed-info home-breed-info--pink">
                             <h3 class="home-breed-name">British Shorthair</h3>
@@ -527,15 +547,16 @@
                     <h2 class="home-sec-title home-sec-title--light">Find Pets by Location</h2>
                     <p class="home-sec-desc home-sec-desc--light">Browse pets available in major cities and find listings closer to your location.</p>
                 </div>
+                {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
                 <div class="home-loc-grid">
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'lahore']) }}'" style="cursor: pointer;"><div><h3>Lahore</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'faisalabad']) }}'" style="cursor: pointer;"><div><h3>Faisalabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'multan']) }}'" style="cursor: pointer;"><div><h3>Multan</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'sialkot']) }}'" style="cursor: pointer;"><div><h3>Sialkot</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'lahore']) }}'" style="cursor: pointer;"><div><h3>Lahore</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'faisalabad']) }}'" style="cursor: pointer;"><div><h3>Faisalabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'multan']) }}'" style="cursor: pointer;"><div><h3>Multan</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'sialkot']) }}'" style="cursor: pointer;"><div><h3>Sialkot</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
 
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'karachi']) }}'" style="cursor: pointer;"><div><h3>Karachi</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'peshawar']) }}'" style="cursor: pointer;"><div><h3>Peshawar</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['location' => 'islamabad']) }}'" style="cursor: pointer;"><div><h3>Islamabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'karachi']) }}'" style="cursor: pointer;"><div><h3>Karachi</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'peshawar']) }}'" style="cursor: pointer;"><div><h3>Peshawar</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'islamabad']) }}'" style="cursor: pointer;"><div><h3>Islamabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
                     <div class="home-loc-card" onclick="window.location='{{ route('category') }}'" style="cursor: pointer;"><div><h3>All Locations</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
                 </div>
             </div>
@@ -761,8 +782,15 @@
                             });
 
                             if (breedInput) breedInput.value = '';
-                            if (breedDisplay) breedDisplay.innerText = 'Any breed';
-                            breedItems.forEach(bi => bi.classList.remove('is-selected'));
+                            const defaultBreedPlaceholder = breedWrap.getAttribute('data-default') || 'Any breed';
+                            if (breedDisplay) breedDisplay.innerText = defaultBreedPlaceholder;
+                            breedItems.forEach(bi => {
+                                if (bi.getAttribute('data-value') === '') {
+                                    bi.classList.add('is-selected');
+                                } else {
+                                    bi.classList.remove('is-selected');
+                                }
+                            });
                         }
                     }
                 });
@@ -794,17 +822,14 @@
                 const breedVal = breedInput ? (breedInput.value || '').trim() : '';
                 const priceVal = priceInput ? (priceInput.value || '').trim() : '';
 
-                let basePath = '/category';
-                if (catVal && catVal !== 'all' && locVal && locVal !== 'all') {
-                    basePath = '/category/' + encodeURIComponent(catVal) + '/' + encodeURIComponent(locVal);
-                } else if (catVal && catVal !== 'all') {
-                    basePath = '/category/' + encodeURIComponent(catVal);
-                } else if (locVal && locVal !== 'all') {
-                    basePath = '/category/' + encodeURIComponent(locVal);
-                }
+                let pathParts = [];
+                if (catVal && catVal !== 'all') pathParts.push(encodeURIComponent(catVal));
+                if (breedVal && breedVal !== 'all') pathParts.push(encodeURIComponent(breedVal));
+                if (locVal && locVal !== 'all') pathParts.push(encodeURIComponent(locVal));
+
+                let basePath = '/category' + (pathParts.length > 0 ? '/' + pathParts.join('/') : '');
 
                 const params = new URLSearchParams();
-                if (breedVal && breedVal !== 'all') params.set('breed', breedVal);
                 if (priceVal && priceVal !== 'all') params.set('price', priceVal);
 
                 const qStr = params.toString();
