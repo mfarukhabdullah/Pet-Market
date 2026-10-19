@@ -3,7 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ (request()->routeIs('featured.pets') || request('featured') === 'true' || request('featured') === '1') ? 'Featured Pet Listings' : 'Browse Pet Listings' }} - Pet Marketplace</title>
+    {{-- USER PROMPT: "category page ka heroo section bhi dynamic kro" --}}
+    @php
+        $isFeaturedView = (request()->routeIs('featured.pets') || request('featured') === 'true' || request('featured') === '1');
+        $catHeroTitle = $isFeaturedView 
+            ? \App\Models\SiteSetting::get('featured_hero_title', 'Featured Pet Listings')
+            : \App\Models\SiteSetting::get('category_hero_title', 'Browse Pet Listings');
+        $catHeroDesc = $isFeaturedView 
+            ? \App\Models\SiteSetting::get('featured_hero_desc', 'Discover premium and featured pet listings from top verified sellers.')
+            : \App\Models\SiteSetting::get('category_hero_desc', 'Search and filter pet listings by category, breed, location, price, age, gender and other relevant details.');
+        $catHeroImage = \App\Models\SiteSetting::get('category_hero_image', 'images/category-hero-img.png');
+    @endphp
+    <title>{{ $catHeroTitle }} - Pet Marketplace</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- SEO Meta Tags -->
@@ -47,8 +58,9 @@
     <!-- PAGE BODY SHELL (Strict 1440px Outer Shell) -->
     <main class="site-wrapper">
 
+        {{-- USER PROMPT: "category page ka heroo section bhi dynamic kro" --}}
         <!-- HERO BANNER SECTION (#FAF7F2 / Cream background, 1440px shell -> 1250px container) -->
-        <x-hero :title="(request()->routeIs('featured.pets') || request('featured') === 'true' || request('featured') === '1') ? 'Featured Pet Listings' : 'Browse Pet Listings'" :description="(request()->routeIs('featured.pets') || request('featured') === 'true' || request('featured') === '1') ? 'Discover premium and featured pet listings from top verified sellers.' : 'Search and filter pet listings by category, breed, location, price, age, gender and other relevant details.'">
+        <x-hero :title="$catHeroTitle" :description="$catHeroDesc" :image="$catHeroImage">
             <!-- Floating Search Card Container -->
             <div class="shell-1440">
                 <div class="container">
@@ -65,7 +77,8 @@
                             <div class="search-input-group">
                                 <i class="fas fa-paw search-group-icon"></i>
                                 <select name="category" class="search-form-select">
-                                    <option value="">Any category</option>
+                                    {{-- USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy" --}}
+                                    <option value="">{{ \App\Models\SiteSetting::get('filter_cat_placeholder', 'Any category') }}</option>
                                     @foreach($categories as $cat)
                                         <option value="{{ $cat->slug }}" {{ (request('category') == $cat->slug || (isset($selectedCategory) && $selectedCategory && $selectedCategory->id == $cat->id)) ? 'selected' : '' }}>{{ $cat->name }}</option>
                                     @endforeach
@@ -73,20 +86,20 @@
                                 <i class="fas fa-chevron-down select-arrow-icon"></i>
                             </div>
 
-                            <!-- Location Dropdown Field -->
+                            <!-- Location Dropdown Field (Dynamic Locations Synchronized with Admin & Home Hero) -->
                             <div class="search-input-group">
                                 <i class="fas fa-map-marker-alt search-group-icon"></i>
-                                @php $currLocTop = strtolower($cityParam ?? request('location', request('city', ''))); @endphp
+                                @php 
+                                    $currLocTop = strtolower($cityParam ?? request('location', request('city', ''))); 
+                                    $topDynamicCities = $dynamicCities ?? \App\Models\SiteSetting::getLocationsList();
+                                    $topLocPlaceholder = \App\Models\SiteSetting::get('filter_loc_placeholder', 'Any location');
+                                @endphp
                                 <select name="location" class="search-form-select">
-                                    <option value="">Any location</option>
-                                    <option value="islamabad" {{ $currLocTop == 'islamabad' ? 'selected' : '' }}>Islamabad</option>
-                                    <option value="karachi" {{ $currLocTop == 'karachi' ? 'selected' : '' }}>Karachi</option>
-                                    <option value="lahore" {{ $currLocTop == 'lahore' ? 'selected' : '' }}>Lahore</option>
-                                    <option value="rawalpindi" {{ $currLocTop == 'rawalpindi' ? 'selected' : '' }}>Rawalpindi</option>
-                                    <option value="faisalabad" {{ $currLocTop == 'faisalabad' ? 'selected' : '' }}>Faisalabad</option>
-                                    <option value="multan" {{ $currLocTop == 'multan' ? 'selected' : '' }}>Multan</option>
-                                    <option value="sialkot" {{ $currLocTop == 'sialkot' ? 'selected' : '' }}>Sialkot</option>
-                                    <option value="peshawar" {{ $currLocTop == 'peshawar' ? 'selected' : '' }}>Peshawar</option>
+                                    <option value="">{{ $topLocPlaceholder }}</option>
+                                    @foreach($topDynamicCities as $city)
+                                        @php $cSlug = strtolower(trim($city)); @endphp
+                                        <option value="{{ $cSlug }}" {{ $currLocTop == $cSlug ? 'selected' : '' }}>{{ $city }}</option>
+                                    @endforeach
                                 </select>
                                 <i class="fas fa-chevron-down select-arrow-icon"></i>
                             </div>
@@ -94,7 +107,7 @@
                             <!-- Find a Pet Submit Button -->
                             <button type="submit" class="btn-find-pets">
                                 <i class="fas fa-search"></i>
-                                <span>Find a Pet</span>
+                                <span>{{ \App\Models\SiteSetting::get('filter_btn_text', 'Find a Pet') }}</span>
                             </button>
                         </form>
                     </div>
@@ -158,33 +171,57 @@
                                     </div>
                                 </div>
 
-                                <!-- 3. Location / City -->
+                                <!-- 3. Location / City (Dynamic Locations Synchronized with Admin & Home Hero) -->
+                                {{-- USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy" --}}
                                 <div class="filter-group">
-                                    <label class="filter-label" for="filterLocation">Location / City</label>
+                                    <label class="filter-label" for="filterLocation">{{ \App\Models\SiteSetting::get('filter_loc_label', 'Location / City') }}</label>
                                     <div class="filter-select-wrapper">
                                         <select id="filterLocation" name="location" class="filter-select">
                                             <option value="">All Locations</option>
-                                            @php $currLoc = strtolower($cityParam ?: request('location', request('city', ''))); @endphp
-                                            <option value="islamabad" {{ $currLoc == 'islamabad' ? 'selected' : '' }}>Islamabad</option>
-                                            <option value="karachi" {{ $currLoc == 'karachi' ? 'selected' : '' }}>Karachi</option>
-                                            <option value="lahore" {{ $currLoc == 'lahore' ? 'selected' : '' }}>Lahore</option>
-                                            <option value="rawalpindi" {{ $currLoc == 'rawalpindi' ? 'selected' : '' }}>Rawalpindi</option>
-                                            <option value="faisalabad" {{ $currLoc == 'faisalabad' ? 'selected' : '' }}>Faisalabad</option>
-                                            <option value="multan" {{ $currLoc == 'multan' ? 'selected' : '' }}>Multan</option>
-                                            <option value="sialkot" {{ $currLoc == 'sialkot' ? 'selected' : '' }}>Sialkot</option>
-                                            <option value="peshawar" {{ $currLoc == 'peshawar' ? 'selected' : '' }}>Peshawar</option>
+                                            @php 
+                                                $currLoc = strtolower($cityParam ?: request('location', request('city', ''))); 
+                                                $sidebarCities = $dynamicCities ?? \App\Models\SiteSetting::getLocationsList();
+                                            @endphp
+                                            @foreach($sidebarCities as $city)
+                                                @php $cSlug = strtolower(trim($city)); @endphp
+                                                <option value="{{ $cSlug }}" {{ $currLoc == $cSlug ? 'selected' : '' }}>{{ $city }}</option>
+                                            @endforeach
                                         </select>
                                         <i class="fas fa-chevron-down select-chevron"></i>
                                     </div>
                                 </div>
 
-                                <!-- 4. Price Range -->
+                                <!-- 4. Price Range (Dynamic Quick Price Preset Chips Synchronized with Admin) -->
                                 <div class="filter-group">
-                                    <label class="filter-label">Price Range (PKR)</label>
+                                    <label class="filter-label">{{ \App\Models\SiteSetting::get('filter_price_label', 'Price Range (PKR)') }}</label>
                                     <div class="min-max-inputs-row">
                                         <input type="text" inputmode="numeric" name="price_min" placeholder="Min (e.g. 5,000)" class="filter-number-input" id="priceMin" value="{{ isset($minPrice) && $minPrice !== null ? number_format($minPrice, 0, '', '') : request('price_min', request('min_price')) }}" autocomplete="off">
                                         <input type="text" inputmode="numeric" name="price_max" placeholder="Max (e.g. 60,000)" class="filter-number-input" id="priceMax" value="{{ isset($maxPrice) && $maxPrice !== null ? number_format($maxPrice, 0, '', '') : request('price_max', request('max_price')) }}" autocomplete="off">
                                     </div>
+                                    @php
+                                        $sidebarPriceRanges = $priceRanges ?? \App\Models\SiteSetting::getPriceRanges();
+                                    @endphp
+                                    @if(!empty($sidebarPriceRanges))
+                                        <div class="category-quick-price-chips" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;">
+                                            @foreach($sidebarPriceRanges as $pRange)
+                                                @php
+                                                    $pMin = (string)($pRange['min'] ?? '');
+                                                    $pMax = (string)($pRange['max'] ?? '');
+                                                    $curMinStr = (string)(isset($minPrice) && $minPrice !== null ? (int)$minPrice : request('price_min', ''));
+                                                    $curMaxStr = (string)(isset($maxPrice) && $maxPrice !== null ? (int)$maxPrice : request('price_max', ''));
+                                                    $isActivePrice = ($curMinStr === $pMin && $curMaxStr === $pMax) || request('price') === $pRange['val'];
+                                                @endphp
+                                                <button type="button" 
+                                                        class="quick-price-chip {{ $isActivePrice ? 'active-chip' : '' }}" 
+                                                        data-min="{{ $pMin }}" 
+                                                        data-max="{{ $pMax }}"
+                                                        onclick="selectQuickPrice('{{ $pMin }}', '{{ $pMax }}', this)"
+                                                        style="border: 1px solid {{ $isActivePrice ? '#14794A' : '#E5E7EB' }}; background: {{ $isActivePrice ? '#EAF5EF' : '#FFFFFF' }}; color: {{ $isActivePrice ? '#14794A' : '#4B5563' }}; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease;">
+                                                    {{ $pRange['label'] }}
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <!-- 5. Age Range -->
@@ -605,6 +642,38 @@
             window.syncCategoryFavorites();
         }
     });
+
+    // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
+    window.selectQuickPrice = function(min, max, btn) {
+        const minInput = document.getElementById('priceMin');
+        const maxInput = document.getElementById('priceMax');
+        const isAlreadyActive = btn && btn.classList.contains('active-chip');
+
+        if (isAlreadyActive) {
+            // Deselect
+            if (minInput) minInput.value = '';
+            if (maxInput) maxInput.value = '';
+            btn.classList.remove('active-chip');
+            btn.style.borderColor = '#E5E7EB';
+            btn.style.background = '#FFFFFF';
+            btn.style.color = '#4B5563';
+        } else {
+            if (minInput) minInput.value = min || '';
+            if (maxInput) maxInput.value = max || '';
+            document.querySelectorAll('.quick-price-chip').forEach(c => {
+                c.classList.remove('active-chip');
+                c.style.borderColor = '#E5E7EB';
+                c.style.background = '#FFFFFF';
+                c.style.color = '#4B5563';
+            });
+            if (btn) {
+                btn.classList.add('active-chip');
+                btn.style.borderColor = '#14794A';
+                btn.style.background = '#EAF5EF';
+                btn.style.color = '#14794A';
+            }
+        }
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
         const soldPets = JSON.parse(localStorage.getItem('sold_pets') || '{}');

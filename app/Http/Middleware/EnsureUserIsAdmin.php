@@ -17,29 +17,13 @@ class EnsureUserIsAdmin
     {
         $user = Auth::user();
 
-        // In local development / testing, seamlessly auto-authenticate or switch to system admin
-        if ((!$user || $user->role !== 'admin') && (app()->environment('local') || config('app.debug'))) {
-            $admin = User::where('role', 'admin')->first() ?: User::where('email', 'admin@petmarket.pk')->first();
-            if ($admin) {
-                Auth::login($admin);
-                return $next($request);
-            }
-        }
-
-        if (!$user) {
+        // USER PROMPT: "ni yr ya to alag ha admin pannel in sy is ky liye login ya sin up no need just admin open ho is url sy or login mangy"
+        // Strict check: unauthenticated users or non-admins are redirected directly to dedicated Admin Login
+        if (!$user || $user->role !== 'admin') {
             if ($request->expectsJson()) {
-                return response()->json(['error' => 'Unauthenticated.'], 401);
+                return response()->json(['error' => 'Administrator access required.'], 403);
             }
-            return redirect()->route('login', ['redirect' => $request->fullUrl()])
-                ->with('error', 'Please log in with administrator credentials.');
-        }
-
-        if ($user->role !== 'admin') {
-            if ($request->expectsJson()) {
-                return response()->json(['error' => 'Unauthorized. Administrator access required.'], 403);
-            }
-            return redirect()->route('login', ['redirect' => $request->fullUrl()])
-                ->with('error', 'Administrator access required. Please sign in as admin@petmarket.pk.');
+            return redirect()->route('admin.login');
         }
 
         return $next($request);

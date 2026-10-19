@@ -24,6 +24,12 @@ class AuthController extends Controller
 
     protected function getSafeRedirectUrl(Request $request, $default = null): string
     {
+        // USER PROMPT: "yr admin pannel ka loginpassword bnao login tum bnao petmarket@gmail.com password: pet@123"
+        $user = Auth::user();
+        if ($user && $user->role === 'admin' && !$request->has('redirect') && !$default) {
+            return route('admin.dashboard');
+        }
+
         $redirectUrl = $request->input('redirect', $default ?: route('dashboard'));
         $favListingId = $request->input('favorite_listing', $request->session()->get('pending_favorite_listing_id'));
 
@@ -134,13 +140,18 @@ class AuthController extends Controller
         return redirect()->to($redirectUrl)->with('success', 'Welcome to Pet Marketplace!');
     }
 
+    // USER PROMPT: "yr ya direct open ho rha hai login ni mang rha hai"
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('home');
+        if ($request->is('admin*') || $request->routeIs('admin.*')) {
+            return redirect()->route('login')->with('success', 'You have been logged out from Admin. Please sign in to continue.');
+        }
+
+        return redirect()->route('login')->with('success', 'You have been logged out. Please sign in to continue.');
     }
 
     /**
@@ -173,8 +184,9 @@ class AuthController extends Controller
             $role = 'admin';
         }
 
+        // USER PROMPT: "yr admin pannel ka loginpassword bnao login tum bnao petmarket@gmail.com password: pet@123"
         $email = $role === 'admin' 
-            ? 'admin@petmarket.pk' 
+            ? 'petmarket@gmail.com' 
             : ($role === 'buyer' ? 'buyer@petmarket.pk' : 'seller@petmarket.pk');
 
         $user = User::where('email', $email)->first() ?: User::where('role', $role)->first() ?: User::first();
