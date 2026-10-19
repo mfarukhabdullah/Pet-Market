@@ -157,8 +157,11 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::post('/categories/{id}/toggle', [AdminController::class, 'toggleCategory'])->name('admin.categories.toggle');
     Route::delete('/categories/{id}', [AdminController::class, 'deleteCategory'])->name('admin.categories.delete');
 
+    // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
     Route::post('/breeds/store', [AdminController::class, 'storeBreed'])->name('admin.breeds.store');
+    Route::post('/breeds/{id}/update', [AdminController::class, 'updateBreed'])->name('admin.breeds.update');
     Route::delete('/breeds/{id}', [AdminController::class, 'deleteBreed'])->name('admin.breeds.delete');
+    Route::post('/breeds/{id}/delete', [AdminController::class, 'deleteBreed'])->name('admin.breeds.delete.post');
 
     // Listings Moderation & Featured Toggles
     Route::post('/listings/{id}/approve', [AdminController::class, 'approveListing'])->name('admin.listings.approve');

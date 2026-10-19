@@ -87,8 +87,11 @@ class SellerController extends Controller
     public function createListing(Request $request)
     {
         $user = $this->getActiveUser();
-        $categories = Category::with('breeds')->where('is_active', true)->orderBy('sort_order')->get();
-        $breeds = Breed::all();
+        // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
+        $categories = Category::with(['breeds' => function ($q) {
+            $q->orderBy('name', 'asc');
+        }])->where('is_active', true)->orderBy('sort_order')->get();
+        $breeds = Breed::with('category')->orderBy('name', 'asc')->get();
 
         $editId = $request->query('edit') ?: $request->query('id');
         $editingListing = null;

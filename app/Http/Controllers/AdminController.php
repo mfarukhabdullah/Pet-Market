@@ -81,7 +81,8 @@ class AdminController extends Controller
         // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
         // USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly"
         // USER PROMPT: "yr home page main in sections ko dynamic kro"
-        $validTabs = ['overview', 'featured_pets', 'hero', 'hero_filters', 'home_categories', 'home_cta', 'home_locations', 'category_hero', 'safety', 'footer', 'about', 'seo', 'categories', 'listings', 'users', 'reports', 'settings'];
+        // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
+        $validTabs = ['overview', 'featured_pets', 'hero', 'hero_filters', 'home_categories', 'home_cta', 'home_locations', 'category_hero', 'safety', 'footer', 'about', 'seo', 'categories', 'breeds', 'listings', 'users', 'reports', 'settings'];
         if (!in_array($tab, $validTabs)) {
             $tab = 'overview';
         }
@@ -121,10 +122,25 @@ class AdminController extends Controller
             ->orderBy('sort_order', 'asc')
             ->get();
 
-        $breeds = Breed::with('category')
+        // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
+        $breedSearch = $request->query('breed_q');
+        $breedCategoryFilter = $request->query('breed_cat');
+        $breedsQuery = Breed::with('category')
             ->withCount('listings')
-            ->orderBy('name', 'asc')
-            ->get();
+            ->orderBy('name', 'asc');
+
+        if ($breedSearch) {
+            $breedsQuery->where(function ($q) use ($breedSearch) {
+                $q->where('name', 'like', "%{$breedSearch}%")
+                  ->orWhere('slug', 'like', "%{$breedSearch}%");
+            });
+        }
+
+        if ($breedCategoryFilter && $breedCategoryFilter !== 'all') {
+            $breedsQuery->where('category_id', $breedCategoryFilter);
+        }
+
+        $breeds = $breedsQuery->get();
 
         // Listings Tab Data (Search & Filter Support)
         $listingStatus = $request->query('listing_status', 'all');
@@ -946,37 +962,136 @@ class AdminController extends Controller
         return redirect()->route('admin.dashboard', ['tab' => $redirectTab])->with('success', "Category '{$category->name}' removed.");
     }
 
+    // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
     public function storeBreed(Request $request)
     {
         $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:100',
+            'slug' => 'nullable|string|max:100',
+            'image' => 'nullable|image|max:4096',
+            'image_path' => 'nullable|string',
             'description' => 'nullable|string',
         ]);
 
-        $slug = Str::slug($request->input('name'));
+        $baseSlug = $request->filled('slug') ? Str::slug($request->input('slug')) : Str::slug($request->input('name'));
+        if (empty($baseSlug)) {
+            $baseSlug = 'breed-' . time();
+        }
 
-        Breed::create([
+        // Ensure unique slug within category
+        $slug = $baseSlug;
+        $counter = 1;
+        while (Breed::where('category_id', $request->input('category_id'))->where('slug', $slug)->exists()) {
+            $slug = "{$baseSlug}-{$counter}";
+            $counter++;
+        }
+
+        $imagePath = null;
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $file = $request->file('image');
+            $uploadDir = public_path('uploads/breeds');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $filename = 'breed_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            $imagePath = 'uploads/breeds/' . $filename;
+        } elseif ($request->filled('image_path')) {
+            $imagePath = trim($request->input('image_path'));
+        }
+
+        $breed = Breed::create([
             'category_id' => $request->input('category_id'),
-            'name' => $request->input('name'),
+            'name' => trim($request->input('name')),
             'slug' => $slug,
+            'image' => $imagePath,
             'description' => $request->input('description'),
         ]);
 
-        \Illuminate\Support\Facades\Cache::forget('home_breeds');
+        $this->flushBreedCaches();
 
-        return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('success', "Breed '{$request->input('name')}' added successfully!");
+        $redirectTab = $request->input('redirect_tab', 'breeds');
+        return redirect()->route('admin.dashboard', ['tab' => $redirectTab])->with('success', "Breed '{$breed->name}' added successfully and synced across all pages!");
     }
 
-    public function deleteBreed($id)
+    // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
+    public function updateBreed(Request $request, $id)
+    {
+        $breed = Breed::findOrFail($id);
+
+        $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|string|max:100',
+            'slug' => 'nullable|string|max:100',
+            'image' => 'nullable|image|max:4096',
+            'image_path' => 'nullable|string',
+            'description' => 'nullable|string',
+        ]);
+
+        $baseSlug = $request->filled('slug') ? Str::slug($request->input('slug')) : Str::slug($request->input('name'));
+        if (empty($baseSlug)) {
+            $baseSlug = 'breed-' . time();
+        }
+
+        // Ensure unique slug within category (excluding this breed)
+        $slug = $baseSlug;
+        $counter = 1;
+        while (Breed::where('category_id', $request->input('category_id'))->where('slug', $slug)->where('id', '!=', $breed->id)->exists()) {
+            $slug = "{$baseSlug}-{$counter}";
+            $counter++;
+        }
+
+        $breedData = [
+            'category_id' => $request->input('category_id'),
+            'name' => trim($request->input('name')),
+            'slug' => $slug,
+            'description' => $request->input('description'),
+        ];
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $file = $request->file('image');
+            $uploadDir = public_path('uploads/breeds');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $filename = 'breed_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            $breedData['image'] = 'uploads/breeds/' . $filename;
+        } elseif ($request->filled('image_path')) {
+            $breedData['image'] = trim($request->input('image_path'));
+        }
+
+        $breed->update($breedData);
+
+        $this->flushBreedCaches();
+
+        $redirectTab = $request->input('redirect_tab', 'breeds');
+        return redirect()->route('admin.dashboard', ['tab' => $redirectTab])->with('success', "Breed '{$breed->name}' updated and synced successfully!");
+    }
+
+    // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
+    public function deleteBreed(Request $request, $id)
     {
         $breed = Breed::findOrFail($id);
         $name = $breed->name;
         $breed->delete();
 
-        \Illuminate\Support\Facades\Cache::forget('home_breeds');
+        $this->flushBreedCaches();
 
-        return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('success', "Breed '{$name}' deleted.");
+        $redirectTab = $request->input('redirect_tab', 'breeds');
+        return redirect()->route('admin.dashboard', ['tab' => $redirectTab])->with('success', "Breed '{$name}' deleted.");
+    }
+
+    // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
+    private function flushBreedCaches(): void
+    {
+        \Illuminate\Support\Facades\Cache::forget('home_breeds');
+        \Illuminate\Support\Facades\Cache::forget('catalog_all_breeds');
+        \Illuminate\Support\Facades\Cache::forget('all_breed_slugs_list');
+        \Illuminate\Support\Facades\Cache::forget('catalog_categories_tree');
+        \Illuminate\Support\Facades\Cache::forget('home_categories');
+        \Illuminate\Support\Facades\Cache::forget('home_popular_breeds');
     }
 
     /* ========================================================

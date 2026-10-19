@@ -943,9 +943,17 @@
                         </select>
                     </div>
                     
+                    {{-- USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain" --}}
                     <div class="form-group">
                         <label class="form-label">Breed *</label>
-                        <input type="text" id="input-breed" class="form-input" placeholder="Enter the pet's breed" value="{{ isset($editingListing) ? ($editingListing->breed_name ?: ($editingListing->breed ? $editingListing->breed->name : '')) : '' }}">
+                        <input type="text" id="input-breed" list="breeds-datalist" class="form-input" placeholder="Select or enter the pet's breed" value="{{ isset($editingListing) ? ($editingListing->breed_name ?: ($editingListing->breed ? $editingListing->breed->name : '')) : '' }}" autocomplete="off">
+                        <datalist id="breeds-datalist">
+                            @if(isset($breeds) && count($breeds) > 0)
+                                @foreach($breeds as $b)
+                                    <option value="{{ $b->name }}"></option>
+                                @endforeach
+                            @endif
+                        </datalist>
                     </div>
 
                     <div class="form-group">
@@ -2006,6 +2014,43 @@
                     // Reset input so users can select additional files or re-select
                     fileInput.value = ''; 
                 });
+            }
+
+            // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
+            // Dynamic Breeds Autocomplete Cascaded by Selected Category
+            const categoryBreedsLookup = @json(isset($categories) ? $categories->mapWithKeys(function($c) {
+                return [$c->id => $c->breeds->pluck('name')->values()];
+            }) : []);
+
+            const categoryNameLookup = @json(isset($categories) ? $categories->mapWithKeys(function($c) {
+                return [strtolower($c->name) => $c->breeds->pluck('name')->values()];
+            }) : []);
+
+            function filterBreedsForSelectedCategory() {
+                const catSelect = document.getElementById('input-category');
+                const datalist = document.getElementById('breeds-datalist');
+                if (!catSelect || !datalist) return;
+
+                const selectedOption = catSelect.options[catSelect.selectedIndex];
+                const catId = selectedOption ? selectedOption.getAttribute('data-id') : null;
+                const catName = (catSelect.value || '').toLowerCase().trim();
+
+                let breedNames = [];
+                if (catId && categoryBreedsLookup[catId]) {
+                    breedNames = categoryBreedsLookup[catId];
+                } else if (catName && categoryNameLookup[catName]) {
+                    breedNames = categoryNameLookup[catName];
+                }
+
+                if (breedNames && breedNames.length > 0) {
+                    datalist.innerHTML = breedNames.map(b => `<option value="${b}"></option>`).join('');
+                }
+            }
+
+            const catDropdown = document.getElementById('input-category');
+            if (catDropdown) {
+                catDropdown.addEventListener('change', filterBreedsForSelectedCategory);
+                filterBreedsForSelectedCategory();
             }
         });
     </script>

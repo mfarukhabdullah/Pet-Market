@@ -481,42 +481,84 @@
                 </div>
 
                 <div class="home-popular-grid">
-                    {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
-                    <!-- Card 1: Golden Retriever -->
-                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'golden-retriever']) }}'" style="cursor: pointer;">
-                        <img src="{{ asset('images/golden_retriever.jpg') }}" alt="Golden Retriever" class="home-breed-img">
-                        <div class="home-breed-info home-breed-info--cream">
-                            <h3 class="home-breed-name">Golden Retriever</h3>
-                            <span class="home-breed-count">320 available</span>
-                        </div>
-                    </div>
+                    {{-- USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain" --}}
+                    @php
+                        $colorThemes = ['cream', 'blue', 'rose', 'pink'];
+                        $catFallbacks = [
+                            'dogs' => 'images/cat_dog.jpg',
+                            'cats' => 'images/cat_cat.jpg',
+                            'birds' => 'images/cat_bird.jpg',
+                            'fish' => 'images/cat_fish.jpg',
+                            'fishes' => 'images/cat_fish.jpg',
+                            'horses-farm' => 'images/cat_horse.jpg',
+                            'rabbits' => 'images/card_rabbit.jpg',
+                            'reptiles' => 'images/cat_reptile.jpg',
+                            'exotic' => 'images/card_parrot.jpg',
+                        ];
+                    @endphp
 
-                    <!-- Card 2: German Shepherd -->
-                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'german-shepherd']) }}'" style="cursor: pointer;">
-                        <img src="{{ asset('images/german_shepherd.jpg') }}" alt="German Shepherd" class="home-breed-img">
-                        <div class="home-breed-info home-breed-info--blue">
-                            <h3 class="home-breed-name">German Shepherd</h3>
-                            <span class="home-breed-count">320 available</span>
-                        </div>
-                    </div>
+                    @if(isset($popularBreeds) && $popularBreeds->isNotEmpty())
+                        @foreach($popularBreeds->take(4) as $idx => $pBreed)
+                            @php
+                                $theme = $colorThemes[$idx % count($colorThemes)];
+                                $catSlug = $pBreed->category ? $pBreed->category->slug : 'all';
+                                
+                                // Image resolution
+                                $pImg = null;
+                                if (!empty($pBreed->image) && file_exists(public_path($pBreed->image))) {
+                                    $pImg = asset($pBreed->image);
+                                } elseif ($pBreed->listings && $pBreed->listings->first() && $pBreed->listings->first()->images->first()) {
+                                    $pImg = asset($pBreed->listings->first()->images->first()->image_path);
+                                } elseif (file_exists(public_path('images/' . str_replace('-', '_', $pBreed->slug) . '.jpg'))) {
+                                    $pImg = asset('images/' . str_replace('-', '_', $pBreed->slug) . '.jpg');
+                                } else {
+                                    $pImg = asset($catFallbacks[$catSlug] ?? 'images/golden_retriever.jpg');
+                                }
 
-                    <!-- Card 3: Persian -->
-                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'persian']) }}'" style="cursor: pointer;">
-                        <img src="{{ asset('images/persian.jpg') }}" alt="Persian" class="home-breed-img">
-                        <div class="home-breed-info home-breed-info--rose">
-                            <h3 class="home-breed-name">Persian</h3>
-                            <span class="home-breed-count">320 available</span>
+                                $cnt = $pBreed->active_listings_count ?? 0;
+                            @endphp
+                            <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => $catSlug, 'param2' => $pBreed->slug]) }}'" style="cursor: pointer;">
+                                <img src="{{ $pImg }}" alt="{{ $pBreed->name }}" class="home-breed-img" onerror="this.src='{{ asset('images/golden_retriever.jpg') }}'">
+                                <div class="home-breed-info home-breed-info--{{ $theme }}">
+                                    <h3 class="home-breed-name">{{ $pBreed->name }}</h3>
+                                    <span class="home-breed-count">{{ $cnt > 0 ? $cnt . ' available' : 'Available in listings' }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <!-- Fallback static cards -->
+                        <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'golden-retriever']) }}'" style="cursor: pointer;">
+                            <img src="{{ asset('images/golden_retriever.jpg') }}" alt="Golden Retriever" class="home-breed-img">
+                            <div class="home-breed-info home-breed-info--cream">
+                                <h3 class="home-breed-name">Golden Retriever</h3>
+                                <span class="home-breed-count">Available</span>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Card 4: British Shorthair -->
-                    <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'british-shorthair']) }}'" style="cursor: pointer;">
-                        <img src="{{ asset('images/british_shorthair.jpg') }}" alt="British Shorthair" class="home-breed-img">
-                        <div class="home-breed-info home-breed-info--pink">
-                            <h3 class="home-breed-name">British Shorthair</h3>
-                            <span class="home-breed-count">320 available</span>
+                        <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'german-shepherd']) }}'" style="cursor: pointer;">
+                            <img src="{{ asset('images/german_shepherd.jpg') }}" alt="German Shepherd" class="home-breed-img">
+                            <div class="home-breed-info home-breed-info--blue">
+                                <h3 class="home-breed-name">German Shepherd</h3>
+                                <span class="home-breed-count">Available</span>
+                            </div>
                         </div>
-                    </div>
+
+                        <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'persian']) }}'" style="cursor: pointer;">
+                            <img src="{{ asset('images/persian.jpg') }}" alt="Persian" class="home-breed-img">
+                            <div class="home-breed-info home-breed-info--rose">
+                                <h3 class="home-breed-name">Persian</h3>
+                                <span class="home-breed-count">Available</span>
+                            </div>
+                        </div>
+
+                        <div class="home-breed-card" onclick="window.location='{{ route('category', ['param1' => 'british-shorthair']) }}'" style="cursor: pointer;">
+                            <img src="{{ asset('images/british_shorthair.jpg') }}" alt="British Shorthair" class="home-breed-img">
+                            <div class="home-breed-info home-breed-info--pink">
+                                <h3 class="home-breed-name">British Shorthair</h3>
+                                <span class="home-breed-count">Available</span>
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 {{-- USER PROMPT: "do some thing in mobile view of home page first change the 'view all pets to' 'view All breed' and when we click on this we navigate to breed page in mobile view juts do these changes and not effect any thing" --}}
                 <div class="home-mobile-btn-wrap home-mobile-btn-wrap--popular">

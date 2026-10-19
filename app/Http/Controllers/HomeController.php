@@ -55,9 +55,24 @@ class HomeController extends Controller
             return (int) $id;
         })->toArray() : [];
 
+        // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
+        $popularBreeds = Cache::remember('home_popular_breeds', 3600, function () {
+            return \App\Models\Breed::with(['category', 'listings' => function ($q) {
+                $q->where('status', 'live');
+            }])
+            ->whereHas('category', function ($q) {
+                $q->where('is_active', true);
+            })
+            ->withCount('activeListings')
+            ->orderBy('active_listings_count', 'desc')
+            ->orderBy('name', 'asc')
+            ->take(4)
+            ->get();
+        });
+
         // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
         return response()
-            ->view('index', compact('categories', 'breeds', 'dynamicCities', 'priceRanges', 'featuredListings', 'recentListings', 'favoritedListingIds'))
+            ->view('index', compact('categories', 'breeds', 'popularBreeds', 'dynamicCities', 'priceRanges', 'featuredListings', 'recentListings', 'favoritedListingIds'))
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
             ->header('Pragma', 'no-cache')
             ->header('Expires', '0');

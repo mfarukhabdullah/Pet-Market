@@ -146,8 +146,11 @@ class ListingActionController extends Controller
                     ]
                 );
                 $breedId = $newBreed->id;
+                // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
                 \Illuminate\Support\Facades\Cache::forget('all_breed_slugs_list');
                 \Illuminate\Support\Facades\Cache::forget('catalog_all_breeds');
+                \Illuminate\Support\Facades\Cache::forget('home_breeds');
+                \Illuminate\Support\Facades\Cache::forget('home_popular_breeds');
             }
         }
 

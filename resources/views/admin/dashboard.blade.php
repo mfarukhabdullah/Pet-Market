@@ -772,10 +772,17 @@
                     <span class="nav-pill">Live</span>
                 </a>
             </li>
+            {{-- USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain" --}}
             <li class="admin-nav-item {{ $tab === 'categories' ? 'active' : '' }}">
                 <a href="{{ route('admin.dashboard', ['tab' => 'categories']) }}">
-                    <span class="nav-left"><i class="fa-solid fa-layer-group"></i> Categories &amp; Breeds</span>
+                    <span class="nav-left"><i class="fa-solid fa-layer-group"></i> Categories</span>
                     <span class="nav-pill">{{ $stats['total_categories'] }}</span>
+                </a>
+            </li>
+            <li class="admin-nav-item {{ $tab === 'breeds' ? 'active' : '' }}">
+                <a href="{{ route('admin.dashboard', ['tab' => 'breeds']) }}">
+                    <span class="nav-left"><i class="fa-solid fa-dna" style="color: #8B5CF6;"></i> Breeds</span>
+                    <span class="nav-pill" style="background: rgba(139, 92, 246, 0.15); color: #7C3AED; border: 1px solid rgba(139, 92, 246, 0.3);">{{ $stats['total_breeds'] }}</span>
                 </a>
             </li>
             <li class="admin-nav-item {{ $tab === 'listings' ? 'active' : '' }}">
@@ -874,8 +881,12 @@
                         <h1>Dynamic SEO &amp; Meta Tag Engine</h1>
                         <p>Configure search engine titles, open-graph cards, sitemaps, and indexing rules</p>
                     @elseif($tab === 'categories')
-                        <h1>Dynamic Categories &amp; Breeds Management</h1>
-                        <p>Control pet categories, breed taxonomies, active states, and custom slugs</p>
+                        <h1>Dynamic Categories Management</h1>
+                        <p>Control pet categories, active states, display order, and custom slugs</p>
+                    {{-- USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain" --}}
+                    @elseif($tab === 'breeds')
+                        <h1>Dynamic Pet Breeds Management</h1>
+                        <p>Add, edit, organize and manage pet breeds across all categories with instant synchronization across hero search, category filters, breeds directory, and seller forms</p>
                     @elseif($tab === 'listings')
                         <h1>Platform Pet Inventory &amp; Moderation</h1>
                         <p>Review, verify, mark featured, and moderate listings across all cities</p>
@@ -3237,16 +3248,25 @@
 
                 <!-- Breeds List Panel -->
                 <div class="admin-panel">
-                    <div class="panel-head">
-                        <h2><i class="fa-solid fa-dna" style="color: #8B5CF6;"></i> Registered Breeds Inventory ({{ $breeds->count() }})</h2>
-                        <button type="button" class="btn-admin btn-admin-primary btn-sm" onclick="openModal('addBreedModal')">
-                            <i class="fa-solid fa-plus"></i> Add New Breed
-                        </button>
+                    <div class="panel-head" style="flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            <h2><i class="fa-solid fa-dna" style="color: #8B5CF6;"></i> Registered Breeds Inventory ({{ $breeds->count() }})</h2>
+                            <p style="font-size: 13px; color: var(--admin-text-muted); margin: 3px 0 0 0;">Manage breeds taxonomies or view the dedicated Breeds tab for full search and filtering.</p>
+                        </div>
+                        <div style="display:flex;gap:10px;align-items:center;">
+                            <a href="{{ route('admin.dashboard', ['tab' => 'breeds']) }}" class="btn-admin btn-admin-secondary btn-sm">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Breeds Manager
+                            </a>
+                            <button type="button" class="btn-admin btn-admin-primary btn-sm" onclick="openAddBreedModalWithTab('categories')">
+                                <i class="fa-solid fa-plus"></i> Add New Breed
+                            </button>
+                        </div>
                     </div>
                     <div style="overflow-x: auto;">
                         <table class="admin-table">
                             <thead>
                                 <tr>
+                                    <th>Thumbnail</th>
                                     <th>Breed Name</th>
                                     <th>Parent Category</th>
                                     <th>URL Slug</th>
@@ -3257,6 +3277,15 @@
                             <tbody>
                                 @foreach($breeds as $breed)
                                     <tr>
+                                        <td>
+                                            <div style="width:36px;height:36px;border-radius:8px;overflow:hidden;background:#F1F5F9;border:1px solid var(--admin-border);display:flex;align-items:center;justify-content:center;">
+                                                @if(!empty($breed->image) && file_exists(public_path($breed->image)))
+                                                    <img src="{{ asset($breed->image) }}" alt="{{ $breed->name }}" style="width:100%;height:100%;object-fit:cover;">
+                                                @else
+                                                    <i class="{{ $breed->category ? $breed->category->icon : 'fa-solid fa-dna' }}" style="color:#8B5CF6;font-size:14px;"></i>
+                                                @endif
+                                            </div>
+                                        </td>
                                         <td><strong>{{ $breed->name }}</strong></td>
                                         <td>
                                             @if($breed->category)
@@ -3268,14 +3297,133 @@
                                         <td><code style="background:#F1F5F9;padding:4px 8px;border-radius:6px;color:#0F172A;">/category/{{ $breed->slug }}</code></td>
                                         <td><span class="badge badge-live">{{ $breed->listings_count }} ads</span></td>
                                         <td>
-                                            <form action="{{ route('admin.breeds.delete', ['id' => $breed->id]) }}" method="POST" onsubmit="return confirm('Delete breed {{ $breed->name }}?');" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn-admin btn-admin-danger btn-sm"><i class="fa-solid fa-trash"></i> Delete</button>
-                                            </form>
+                                            <div style="display:flex;gap:6px;">
+                                                <button type="button" class="btn-admin btn-admin-secondary btn-sm" onclick="openEditBreedModal({{ $breed->id }}, '{{ addslashes($breed->name) }}', {{ $breed->category_id }}, '{{ $breed->slug }}', '{{ $breed->image ? asset($breed->image) : '' }}', '{{ addslashes($breed->description ?? '') }}', 'categories')">
+                                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                                </button>
+                                                <form action="{{ route('admin.breeds.delete', ['id' => $breed->id]) }}" method="POST" onsubmit="return confirm('Delete breed {{ addslashes($breed->name) }}?');" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <input type="hidden" name="redirect_tab" value="categories">
+                                                    <button type="submit" class="btn-admin btn-admin-danger btn-sm" title="Delete Breed"><i class="fa-solid fa-trash"></i></button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            {{-- USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain" --}}
+            <!-- TAB: DEDICATED BREEDS MANAGEMENT -->
+            @elseif($tab === 'breeds')
+                <div class="admin-panel">
+                    <div class="panel-head" style="flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            <h2><i class="fa-solid fa-dna" style="color: #8B5CF6;"></i> Dynamic Breeds Inventory ({{ $breeds->count() }})</h2>
+                            <p style="font-size: 13px; color: var(--admin-text-muted); margin: 3px 0 0 0;">Breeds added or edited here immediately apply to the Homepage Hero search, Category page sidebar filters, Breeds directory, and Seller post form.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <form action="{{ route('admin.dashboard') }}" method="GET" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                                <input type="hidden" name="tab" value="breeds">
+                                <input type="text" name="breed_q" value="{{ request('breed_q') }}" placeholder="Search breed name or slug..." class="form-control" style="width:200px;padding:7px 12px;font-size:13px;">
+                                <select name="breed_cat" class="form-control" style="width:160px;padding:7px 12px;font-size:13px;" onchange="this.form.submit()">
+                                    <option value="all" {{ request('breed_cat') === 'all' || !request('breed_cat') ? 'selected' : '' }}>All Categories</option>
+                                    @foreach($categories as $c)
+                                        <option value="{{ $c->id }}" {{ request('breed_cat') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="submit" class="btn-admin btn-admin-primary btn-sm" title="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                @if(request('breed_q') || (request('breed_cat') && request('breed_cat') !== 'all'))
+                                    <a href="{{ route('admin.dashboard', ['tab' => 'breeds']) }}" class="btn-admin btn-admin-secondary btn-sm" title="Clear Filters"><i class="fa-solid fa-rotate-left"></i> Clear</a>
+                                @endif
+                            </form>
+                            <button type="button" class="btn-admin btn-admin-primary btn-sm" onclick="openAddBreedModalWithTab('breeds')">
+                                <i class="fa-solid fa-plus"></i> Add New Breed
+                            </button>
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Thumbnail</th>
+                                    <th>Breed Name</th>
+                                    <th>Parent Category</th>
+                                    <th>Clean Route URL</th>
+                                    <th>Description</th>
+                                    <th>Listings Count</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($breeds as $breed)
+                                    <tr>
+                                        <td>
+                                            <div style="width:42px;height:42px;border-radius:8px;overflow:hidden;background:#F1F5F9;border:1px solid var(--admin-border);display:flex;align-items:center;justify-content:center;">
+                                                @if(!empty($breed->image) && file_exists(public_path($breed->image)))
+                                                    <img src="{{ asset($breed->image) }}" alt="{{ $breed->name }}" style="width:100%;height:100%;object-fit:cover;">
+                                                @else
+                                                    <i class="{{ $breed->category ? $breed->category->icon : 'fa-solid fa-dna' }}" style="color:#8B5CF6;font-size:16px;"></i>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <strong style="font-size: 14px; color: #1E293B;">{{ $breed->name }}</strong>
+                                        </td>
+                                        <td>
+                                            @if($breed->category)
+                                                <span class="badge" style="background:#F1F5F9;color:#334155;">
+                                                    <i class="{{ $breed->category->icon }}"></i> {{ $breed->category->name }}
+                                                </span>
+                                            @else
+                                                <span style="color:#94A3B8;">General</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('category', ['param1' => $breed->category ? $breed->category->slug : 'all', 'param2' => $breed->slug]) }}" target="_blank" style="text-decoration:none;">
+                                                <code style="background:#F1F5F9;padding:4px 8px;border-radius:6px;color:#0F172A;font-size:12px;">
+                                                    /category/{{ $breed->category ? $breed->category->slug : 'all' }}/{{ $breed->slug }}
+                                                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;margin-left:4px;color:#64748B;"></i>
+                                                </code>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span style="font-size:12px;color:var(--admin-text-muted);">
+                                                {{ \Illuminate\Support\Str::limit($breed->description ?: 'No description provided', 45) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge {{ $breed->listings_count > 0 ? 'badge-live' : '' }}" style="{{ $breed->listings_count == 0 ? 'background:#F1F5F9;color:#64748B;' : '' }}">
+                                                {{ $breed->listings_count }} {{ \Illuminate\Support\Str::plural('ad', $breed->listings_count) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div style="display:flex;gap:6px;">
+                                                <button type="button" class="btn-admin btn-admin-secondary btn-sm" onclick="openEditBreedModal({{ $breed->id }}, '{{ addslashes($breed->name) }}', {{ $breed->category_id }}, '{{ $breed->slug }}', '{{ $breed->image ? asset($breed->image) : '' }}', '{{ addslashes($breed->description ?? '') }}', 'breeds')">
+                                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                                </button>
+                                                <form action="{{ route('admin.breeds.delete', ['id' => $breed->id]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete breed {{ addslashes($breed->name) }}?');" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <input type="hidden" name="redirect_tab" value="breeds">
+                                                    <button type="submit" class="btn-admin btn-admin-danger btn-sm" title="Delete Breed">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" style="text-align: center; padding: 36px; color: var(--admin-text-muted);">
+                                            <i class="fa-solid fa-dna" style="font-size: 32px; color: #CBD5E1; margin-bottom: 10px; display: block;"></i>
+                                            No breeds found matching your search or category filter.
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -3726,36 +3874,98 @@
         </div>
     </div>
 
+    {{-- USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain" --}}
     <!-- MODAL: ADD BREED -->
     <div id="addBreedModal" class="admin-modal-backdrop">
         <div class="admin-modal">
             <div class="admin-modal-header">
-                <h3>Add New Breed</h3>
+                <h3><i class="fa-solid fa-dna" style="color: #8B5CF6;"></i> Add New Breed</h3>
                 <button type="button" onclick="closeModal('addBreedModal')" style="background:none;border:none;font-size:18px;cursor:pointer;color:#64748B;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form action="{{ route('admin.breeds.store') }}" method="POST">
+            <form action="{{ route('admin.breeds.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="redirect_tab" id="addBreedRedirectTab" value="{{ $tab }}">
                 <div class="admin-modal-body">
                     <div class="form-group">
-                        <label class="form-label">Parent Category</label>
-                        <select name="category_id" class="form-control" required>
+                        <label class="form-label">Parent Category *</label>
+                        <select name="category_id" id="addBreedCategoryId" class="form-control" required>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Breed Name</label>
-                        <input type="text" name="name" class="form-control" placeholder="e.g. Siberian Husky" required>
+                        <label class="form-label">Breed Name *</label>
+                        <input type="text" name="name" id="addBreedName" class="form-control" placeholder="e.g. Siberian Husky, Persian, Parrot" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Description (Optional)</label>
-                        <textarea name="description" rows="2" class="form-control" placeholder="Short description for SEO"></textarea>
+                        <label class="form-label">Custom URL Slug (Optional)</label>
+                        <input type="text" name="slug" class="form-control" placeholder="Leave blank to auto-generate from name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Breed Image (Optional)</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                        <span style="font-size: 11px; color: var(--admin-text-muted); display: block; margin-top: 4px;">Upload breed photo for directory and popular breeds cards</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description / Bio (Optional)</label>
+                        <textarea name="description" rows="2" class="form-control" placeholder="Short description for breed details and SEO"></textarea>
                     </div>
                 </div>
                 <div class="admin-modal-footer">
                     <button type="button" class="btn-admin btn-admin-secondary" onclick="closeModal('addBreedModal')">Cancel</button>
-                    <button type="submit" class="btn-admin btn-admin-primary">Create Breed</button>
+                    <button type="submit" class="btn-admin btn-admin-primary"><i class="fa-solid fa-plus"></i> Save Breed</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain" --}}
+    <!-- MODAL: EDIT BREED -->
+    <div id="editBreedModal" class="admin-modal-backdrop">
+        <div class="admin-modal">
+            <div class="admin-modal-header">
+                <h3><i class="fa-solid fa-pen-to-square" style="color: #8B5CF6;"></i> Edit Breed</h3>
+                <button type="button" onclick="closeModal('editBreedModal')" style="background:none;border:none;font-size:18px;cursor:pointer;color:#64748B;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="editBreedForm" action="" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="redirect_tab" id="editBreedRedirectTab" value="{{ $tab }}">
+                <div class="admin-modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Parent Category *</label>
+                        <select name="category_id" id="editBreedCategory" class="form-control" required>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Breed Name *</label>
+                        <input type="text" name="name" id="editBreedName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Custom URL Slug</label>
+                        <input type="text" name="slug" id="editBreedSlug" class="form-control" required>
+                    </div>
+                    <div class="form-group" id="editBreedImgContainer" style="display:none;">
+                        <label class="form-label">Current Photo</label>
+                        <div style="width: 50px; height: 50px; border-radius: 8px; overflow: hidden; border: 1px solid var(--admin-border); margin-bottom: 6px;">
+                            <img id="editBreedImgPreview" src="" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Replace Image (Optional)</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description (Optional)</label>
+                        <textarea name="description" id="editBreedDesc" rows="2" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn-admin btn-admin-secondary" onclick="closeModal('editBreedModal')">Cancel</button>
+                    <button type="submit" class="btn-admin btn-admin-primary"><i class="fa-solid fa-check"></i> Update Breed</button>
                 </div>
             </form>
         </div>
@@ -3784,6 +3994,43 @@
             const redirectInput = document.getElementById('addCatRedirectTab');
             if (redirectInput) redirectInput.value = tab || 'home_categories';
             openModal('addCategoryModal');
+        }
+
+        // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
+        function openAddBreedModalWithTab(tab) {
+            const redirectInput = document.getElementById('addBreedRedirectTab');
+            if (redirectInput) redirectInput.value = tab || 'breeds';
+            openModal('addBreedModal');
+        }
+
+        function openEditBreedModal(id, name, categoryId, slug, image, description, redirectTab) {
+            const form = document.getElementById('editBreedForm');
+            if (form) {
+                form.action = '/admin/breeds/' + id + '/update';
+                const nameEl = document.getElementById('editBreedName');
+                if (nameEl) nameEl.value = name || '';
+                const catEl = document.getElementById('editBreedCategory');
+                if (catEl) catEl.value = categoryId || '';
+                const slugEl = document.getElementById('editBreedSlug');
+                if (slugEl) slugEl.value = slug || '';
+                const descEl = document.getElementById('editBreedDesc');
+                if (descEl) descEl.value = description || '';
+
+                const imgPreview = document.getElementById('editBreedImgPreview');
+                const imgContainer = document.getElementById('editBreedImgContainer');
+                if (image && image.trim() !== '') {
+                    if (imgPreview) imgPreview.src = (image.startsWith('http') || image.startsWith('/')) ? image : '/' + image;
+                    if (imgContainer) imgContainer.style.display = 'block';
+                } else {
+                    if (imgContainer) imgContainer.style.display = 'none';
+                }
+
+                const redirectInput = document.getElementById('editBreedRedirectTab');
+                if (redirectInput) {
+                    redirectInput.value = redirectTab || 'breeds';
+                }
+                openModal('editBreedModal');
+            }
         }
 
         function editCategoryWithImage(id, name, slug, icon, sortOrder, isActive, image, redirectTab) {
