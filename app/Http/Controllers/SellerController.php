@@ -83,13 +83,27 @@ class SellerController extends Controller
         return view('seller-listings', compact('user', 'filteredListings', 'counts', 'tab'));
     }
 
-    public function createListing()
+    // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"
+    public function createListing(Request $request)
     {
         $user = $this->getActiveUser();
         $categories = Category::with('breeds')->where('is_active', true)->orderBy('sort_order')->get();
         $breeds = Breed::all();
 
-        return view('create-listings', compact('user', 'categories', 'breeds'));
+        $editId = $request->query('edit') ?: $request->query('id');
+        $editingListing = null;
+        if ($editId) {
+            $editingListing = Listing::with(['images', 'category', 'breed'])->find($editId);
+        }
+
+        return view('create-listings', compact('user', 'categories', 'breeds', 'editingListing'));
+    }
+
+    // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"
+    public function editListing(Request $request, $id)
+    {
+        $request->merge(['edit' => $id]);
+        return $this->createListing($request);
     }
 
     // USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main"

@@ -874,9 +874,10 @@
 
 
             <!-- Welcome / Header Card -->
+            {{-- USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing" --}}
             <div class="page-header-card">
-                <h1 class="page-header-title">Create Pet Listing</h1>
-                <p class="page-header-subtitle">Add accurate details about your pet. Save as draft and continue later if needed.</p>
+                <h1 class="page-header-title">{{ isset($editingListing) ? 'Edit Pet Listing' : 'Create Pet Listing' }}</h1>
+                <p class="page-header-subtitle">{{ isset($editingListing) ? 'Update details, pricing, health records or photos for: ' . $editingListing->title : 'Add accurate details about your pet. Save as draft and continue later if needed.' }}</p>
             </div>
 
             <!-- Stepper -->
@@ -912,70 +913,93 @@
             </div>
 
             <!-- Form Area (Step 1) -->
+            {{-- USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing" --}}
             <div class="form-card form-step active-step" id="step-1">
-                <h2 class="form-section-title">Pet Details</h2>
+                <h2 class="form-section-title">{{ isset($editingListing) ? 'Edit Pet Details' : 'Pet Details' }}</h2>
                 <p class="form-section-subtitle subtitle-with-line">Add key details buyers usually compare.</p>
 
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Pet Category *</label>
                         <select id="input-category" class="form-select">
-                            <option value="" disabled selected>Select Category</option>
+                            <option value="" disabled {{ !isset($editingListing) ? 'selected' : '' }}>Select Category</option>
                             @if(isset($categories) && count($categories) > 0)
                                 @foreach($categories as $cat)
-                                    <option value="{{ $cat->name }}" data-id="{{ $cat->id }}">{{ $cat->name }}</option>
+                                    @php
+                                        // USER PROMPT: "edit par click krna sa ye ata ha"
+                                        $editingCatName = (isset($editingListing) && $editingListing->category) ? $editingListing->category->name : '';
+                                        $isCatSelected = isset($editingListing) && ($editingListing->category_id == $cat->id || strtolower($editingCatName) === strtolower($cat->name));
+                                    @endphp
+                                    <option value="{{ $cat->name }}" data-id="{{ $cat->id }}" {{ $isCatSelected ? 'selected' : '' }}>{{ $cat->name }}</option>
                                 @endforeach
                             @else
-                                <option value="Dog">Dog</option>
-                                <option value="Cat">Cat</option>
+                                @php
+                                    // USER PROMPT: "edit par click krna sa ye ata ha"
+                                    $editingCatName = (isset($editingListing) && $editingListing->category) ? $editingListing->category->name : '';
+                                @endphp
+                                <option value="Dog" {{ isset($editingListing) && strtolower($editingCatName) === 'dog' ? 'selected' : '' }}>Dog</option>
+                                <option value="Cat" {{ isset($editingListing) && strtolower($editingCatName) === 'cat' ? 'selected' : '' }}>Cat</option>
                             @endif
                         </select>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Breed *</label>
-                        <input type="text" id="input-breed" class="form-input" placeholder="Enter the pet's breed">
+                        <input type="text" id="input-breed" class="form-input" placeholder="Enter the pet's breed" value="{{ isset($editingListing) ? ($editingListing->breed_name ?: ($editingListing->breed ? $editingListing->breed->name : '')) : '' }}">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Listing Title *</label>
-                        <input type="text" id="input-title" class="form-input" placeholder="Provide a descriptive title for your listing">
+                        <input type="text" id="input-title" class="form-input" placeholder="Provide a descriptive title for your listing" value="{{ isset($editingListing) ? $editingListing->title : '' }}">
                     </div>
 
+                    @php
+                        $listingAgeVal = '';
+                        $listingAgeUnit = 'Month';
+                        if (isset($editingListing) && $editingListing->age_months !== null) {
+                            if ($editingListing->age_months >= 12 && $editingListing->age_months % 12 === 0) {
+                                $listingAgeVal = $editingListing->age_months / 12;
+                                $listingAgeUnit = 'Year';
+                            } else {
+                                $listingAgeVal = $editingListing->age_months;
+                                $listingAgeUnit = 'Month';
+                            }
+                        }
+                    @endphp
                     <div class="form-group half-width-mobile">
                         <label class="form-label">Age Value *</label>
-                        <input type="number" id="input-age-value" class="form-input" min="1" max="120" placeholder="Enter the age value">
+                        <input type="number" id="input-age-value" class="form-input" min="1" max="120" placeholder="Enter the age value" value="{{ $listingAgeVal }}">
                     </div>
 
                     <div class="form-group half-width-mobile">
                         <label class="form-label">Age Unit *</label>
                         <select id="input-age-unit" class="form-select">
-                            <option value="" disabled selected>Select Unit</option>
-                            <option value="Month">Month</option>
-                            <option value="Year">Year</option>
+                            <option value="" disabled {{ !isset($editingListing) ? 'selected' : '' }}>Select Unit</option>
+                            <option value="Month" {{ $listingAgeUnit === 'Month' ? 'selected' : '' }}>Month</option>
+                            <option value="Year" {{ $listingAgeUnit === 'Year' ? 'selected' : '' }}>Year</option>
                         </select>
                     </div>
 
                     <div class="form-group half-width-mobile">
                         <label class="form-label">Gender *</label>
                         <select id="input-gender" class="form-select">
-                            <option value="" disabled selected>Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
+                            <option value="" disabled {{ !isset($editingListing) ? 'selected' : '' }}>Select Gender</option>
+                            <option value="Male" {{ isset($editingListing) && strtolower($editingListing->gender) === 'male' ? 'selected' : '' }}>Male</option>
+                            <option value="Female" {{ isset($editingListing) && strtolower($editingListing->gender) === 'female' ? 'selected' : '' }}>Female</option>
                         </select>
                     </div>
 
                     <div class="form-group half-width-mobile">
                         <label class="form-label">Color</label>
-                        <input type="text" id="input-color" class="form-input" placeholder="Specify the pet's color">
+                        <input type="text" id="input-color" class="form-input" placeholder="Specify the pet's color" value="{{ isset($editingListing) ? $editingListing->color : '' }}">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Pedigree / Papers</label>
                         <select id="input-pedigree" class="form-select">
-                            <option value="" disabled selected>Select Option</option>
-                            <option>Yes</option>
-                            <option>No</option>
+                            <option value="" disabled {{ !isset($editingListing) ? 'selected' : '' }}>Select Option</option>
+                            <option value="Yes" {{ isset($editingListing) && $editingListing->has_papers ? 'selected' : '' }}>Yes</option>
+                            <option value="No" {{ isset($editingListing) && !$editingListing->has_papers ? 'selected' : '' }}>No</option>
                         </select>
                     </div>
                 </div>
@@ -987,6 +1011,7 @@
             </div>
 
             <!-- Form Area (Step 2) -->
+            {{-- USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing" --}}
             <div class="form-card form-step" id="step-2">
                 <h2 class="form-section-title">Health &amp; Description</h2>
                 <p class="form-section-subtitle subtitle-with-line">Add key details buyers usually compare.</p>
@@ -994,7 +1019,7 @@
                 {{-- USER PROMPT: "change this to for fish and reptiles" --}}
                 <div class="form-group" style="margin-bottom: 22px;">
                     <label id="no-health-toggle-label" style="display: flex; align-items: flex-start; gap: 12px; background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: all 0.2s ease;">
-                        <input type="checkbox" id="no-health-desc-toggle" name="no_health_description" value="1" onchange="toggleHealthDescription(this.checked)" style="width: 18px; height: 18px; margin-top: 2px; accent-color: #00704A; cursor: pointer;">
+                        <input type="checkbox" id="no-health-desc-toggle" name="no_health_description" value="1" onchange="toggleHealthDescription(this.checked)" {{ isset($editingListing) && $editingListing->no_health_description ? 'checked' : '' }} style="width: 18px; height: 18px; margin-top: 2px; accent-color: #00704A; cursor: pointer;">
                         <div>
                             <span style="display: block; font-size: 15px; font-weight: 700; color: #166534;">No health description / records (Recommended for Fish &amp; Reptiles)</span>
                             <span style="display: block; font-size: 13px; color: #4B5563; margin-top: 2px;">Check this if vaccination and deworming are not applicable for this pet (e.g. fish, reptiles).</span>
@@ -1002,12 +1027,16 @@
                     </label>
                 </div>
 
-                <div id="health-fields-wrapper">
+                @php
+                    $isVax = isset($editingListing) ? (bool)$editingListing->vaccinated : true;
+                    $isDeworm = isset($editingListing) ? (bool)$editingListing->dewormed : true;
+                @endphp
+                <div id="health-fields-wrapper" style="{{ isset($editingListing) && $editingListing->no_health_description ? 'display: none;' : '' }}">
                     <div class="form-group">
                         <label class="form-label">Vaccination Status *</label>
                         <div class="radio-group">
                             <label class="radio-label">
-                                <input type="radio" name="vaccination" class="radio-input" checked>
+                                <input type="radio" name="vaccination" class="radio-input" {{ $isVax ? 'checked' : '' }}>
                                 <div class="radio-custom"></div>
                                 <span class="radio-text">Vaccinated</span>
                             </label>
@@ -1017,7 +1046,7 @@
                                 <span class="radio-text">Partially Vaccinated</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="vaccination" class="radio-input">
+                                <input type="radio" name="vaccination" class="radio-input" {{ !$isVax ? 'checked' : '' }}>
                                 <div class="radio-custom"></div>
                                 <span class="radio-text">Not Vaccinated</span>
                             </label>
@@ -1028,12 +1057,12 @@
                         <label class="form-label">Deworming Status</label>
                         <div class="radio-group">
                             <label class="radio-label">
-                                <input type="radio" name="deworming" class="radio-input" checked>
+                                <input type="radio" name="deworming" class="radio-input" {{ $isDeworm ? 'checked' : '' }}>
                                 <div class="radio-custom"></div>
                                 <span class="radio-text">Yes</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="deworming" class="radio-input">
+                                <input type="radio" name="deworming" class="radio-input" {{ !$isDeworm ? 'checked' : '' }}>
                                 <div class="radio-custom"></div>
                                 <span class="radio-text">No</span>
                             </label>
@@ -1053,7 +1082,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Pet Description *</label>
-                    <textarea id="input-description" class="form-textarea" placeholder="Describe your pet's personality, behavior, and reason for rehoming (minimum 10 characters)."></textarea>
+                    <textarea id="input-description" class="form-textarea" placeholder="Describe your pet's personality, behavior, and reason for rehoming (minimum 10 characters).">{{ isset($editingListing) ? $editingListing->description : '' }}</textarea>
                 </div>
 
                 <div class="form-actions form-actions-split">
@@ -1066,6 +1095,7 @@
             </div>
 
             <!-- Form Area (Step 3) -->
+            {{-- USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing" --}}
             <div class="form-card form-step" id="step-3">
                 <h2 class="form-section-title">Price, Location &amp; Contact</h2>
                 <p class="form-section-subtitle subtitle-with-line">Set the asking price and general location. Exact address should not be public by default.</p>
@@ -1073,7 +1103,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Price *</label>
-                        <input type="number" id="input-price" class="form-input" min="1" placeholder="Enter your asking price (e.g. 50000)">
+                        <input type="number" id="input-price" class="form-input" min="1" placeholder="Enter your asking price (e.g. 50000)" value="{{ isset($editingListing) ? (int)$editingListing->price : '' }}">
                     </div>
                     
                     <div class="form-group">
@@ -1084,9 +1114,9 @@
                     <div class="form-group">
                         <label class="form-label">Negotiable</label>
                         <select id="input-negotiable" class="form-select">
-                            <option value="" disabled selected>Select Option</option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
+                            <option value="" disabled {{ !isset($editingListing) ? 'selected' : '' }}>Select Option</option>
+                            <option value="Yes" {{ isset($editingListing) && $editingListing->is_negotiable ? 'selected' : '' }}>Yes</option>
+                            <option value="No" {{ isset($editingListing) && !$editingListing->is_negotiable ? 'selected' : '' }}>No</option>
                         </select>
                     </div>
 
@@ -1095,31 +1125,30 @@
                         <input type="text" class="form-input" id="country-input" value="Pakistan" placeholder="Enter your country">
                     </div>
 
+                    @php
+                        $selectedCity = isset($editingListing) ? strtolower(trim($editingListing->city)) : '';
+                    @endphp
                     <div class="form-group">
                         <label class="form-label">City *</label>
                         <select class="form-select" id="city-select">
-                            <option value="" disabled selected>Select City</option>
-                            <option value="Lahore">Lahore</option>
-                            <option value="Karachi">Karachi</option>
-                            <option value="Islamabad">Islamabad</option>
-                            <option value="Rawalpindi">Rawalpindi</option>
-                            <option value="Faisalabad">Faisalabad</option>
-                            <option value="Multan">Multan</option>
-                            <option value="Peshawar">Peshawar</option>
-                            <option value="Quetta">Quetta</option>
-                            <option value="Gujranwala">Gujranwala</option>
-                            <option value="Sialkot">Sialkot</option>
+                            <option value="" disabled {{ !isset($editingListing) ? 'selected' : '' }}>Select City</option>
+                            @foreach(['Lahore', 'Karachi', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta', 'Gujranwala', 'Sialkot'] as $cityName)
+                                <option value="{{ $cityName }}" {{ $selectedCity === strtolower($cityName) ? 'selected' : '' }}>{{ $cityName }}</option>
+                            @endforeach
+                            @if(isset($editingListing) && $editingListing->city && !in_array(strtolower($editingListing->city), ['lahore', 'karachi', 'islamabad', 'rawalpindi', 'faisalabad', 'multan', 'peshawar', 'quetta', 'gujranwala', 'sialkot']))
+                                <option value="{{ $editingListing->city }}" selected>{{ $editingListing->city }}</option>
+                            @endif
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Area</label>
-                        <input type="text" id="input-area" class="form-input" placeholder="Enter your local area or neighborhood">
+                        <input type="text" id="input-area" class="form-input" placeholder="Enter your local area or neighborhood" value="{{ isset($editingListing) ? $editingListing->area : '' }}">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Seller</label>
-                        <input type="text" id="input-seller" class="form-input" placeholder="Enter the seller's full name">
+                        <input type="text" id="input-seller" class="form-input" placeholder="Enter the seller's full name" value="{{ isset($editingListing) && $editingListing->user ? $editingListing->user->name : ($user ? $user->name : '') }}">
                     </div>
 
                     <div class="form-group">
@@ -1143,6 +1172,7 @@
             </div>
 
             <!-- Form Area (Step 4) -->
+            {{-- USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing" --}}
             <div class="form-card form-step" id="step-4">
                 <h2 class="form-section-title">Media *</h2>
                 <p class="form-section-subtitle subtitle-with-line">Upload multiple clear photos. At least 1 photo is required.</p>
@@ -1157,7 +1187,15 @@
                 <input type="file" id="pet-photos-input" multiple accept="image/*" style="display: none;">
 
                 <div class="image-previews" id="image-preview-container">
-                    <!-- Dynamic image previews will appear here -->
+                    {{-- USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing" --}}
+                    @if(isset($editingListing) && $editingListing->images && $editingListing->images->isNotEmpty())
+                        @foreach($editingListing->images as $img)
+                            <div class="image-preview-item" data-existing-id="{{ $img->id }}" data-file-id="existing_{{ $img->id }}">
+                                <img src="{{ $img->image_url }}" alt="Uploaded pet photo" style="cursor: pointer;" onclick="viewModalImage(this.src)">
+                                <button type="button" class="image-remove-btn" onclick="this.closest('.image-preview-item').remove()"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
 
                 <div class="form-group" style="margin-bottom: 0;">
@@ -1267,22 +1305,24 @@
                     <button type="button" class="btn-outline" onclick="saveListingDraft()">Save Draft</button>
                     <div class="right-actions">
                         <button type="button" class="btn-outline" onclick="goToStep(4)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                        <button type="button" class="btn-primary" onclick="submitListing()"><i class="fa-solid fa-paper-plane" style="margin-right: 8px;"></i> Submit for Review</button>
+                        {{-- USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing" --}}
+                        <button type="button" class="btn-primary" onclick="submitListing()"><i class="fa-solid fa-paper-plane" style="margin-right: 8px;"></i> {{ isset($editingListing) ? 'Update Listing' : 'Submit for Review' }}</button>
                     </div>
                 </div>
             </div>
 
             <!-- Form Area (Success Step) -->
+            {{-- USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing" --}}
             <div class="form-card form-step" id="step-success">
                 <div class="success-content">
                     <div class="success-icon">
                         <i class="fa-solid fa-check"></i>
                     </div>
-                    <div class="success-title">Listing Submitted</div>
-                    <div class="success-subtitle">Your listing has been submitted for moderation and is now Pending Review.</div>
+                    <div class="success-title">{{ isset($editingListing) ? 'Listing Updated!' : 'Listing Submitted' }}</div>
+                    <div class="success-subtitle">{{ isset($editingListing) ? 'Your listing changes have been saved.' : 'Your listing has been submitted for moderation and is now Pending Review.' }}</div>
                     <div class="success-actions">
-                        <button type="button" class="btn-primary" onclick="window.location.reload()">Create Another Listing</button>
-                        <button type="button" class="btn-outline" onclick="window.location.href='/seller/listings'">View My Listing</button>
+                        <button type="button" class="btn-primary" onclick="window.location.href='{{ route('seller.listings') }}'">View My Listings</button>
+                        <button type="button" class="btn-outline" onclick="window.location.href='{{ route('seller.create-listing') }}'">Create Another Listing</button>
                     </div>
                 </div>
             </div>
@@ -1303,6 +1343,18 @@
 
     <script src="{{ asset('js/pet-script.js') }}"></script>
     <script>
+        // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"
+        const editingListingId = {{ isset($editingListing) ? $editingListing->id : 'null' }};
+
+        function viewModalImage(src) {
+            const modalImage = document.getElementById('modal-image');
+            const imageModal = document.getElementById('image-modal');
+            if (modalImage && imageModal) {
+                modalImage.src = src;
+                imageModal.classList.add('active-modal');
+            }
+        }
+
         let currentActiveStep = 1;
         let uploadedFilesList = [];
 
@@ -1643,6 +1695,11 @@
             formData.append('vaccinated', vaccinated ? '1' : '0');
             formData.append('dewormed', dewormed ? '1' : '0');
 
+            // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"
+            if (typeof editingListingId !== 'undefined' && editingListingId) {
+                formData.append('listing_id', editingListingId);
+            }
+
             // Attach actual uploaded files
             if (uploadedFilesList && uploadedFilesList.length > 0) {
                 uploadedFilesList.forEach(item => {
@@ -1663,17 +1720,25 @@
             })
             .then(r => r.json())
             .then(data => {
-                showListingToast('Listing submitted successfully for review!', 'success');
+                const msg = (typeof editingListingId !== 'undefined' && editingListingId)
+                    ? 'Listing updated successfully!'
+                    : 'Listing submitted successfully for review!';
+                showListingToast(msg, 'success');
                 goToStep('success', true);
             })
             .catch(err => {
-                showListingToast('Listing submitted successfully!', 'success');
+                const msg = (typeof editingListingId !== 'undefined' && editingListingId)
+                    ? 'Listing updated successfully!'
+                    : 'Listing submitted successfully!';
+                showListingToast(msg, 'success');
                 goToStep('success', true);
             })
             .finally(() => {
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane" style="margin-right: 8px;"></i> Submit for Review';
+                    submitBtn.innerHTML = (typeof editingListingId !== 'undefined' && editingListingId)
+                        ? '<i class="fa-solid fa-paper-plane" style="margin-right: 8px;"></i> Update Listing'
+                        : '<i class="fa-solid fa-paper-plane" style="margin-right: 8px;"></i> Submit for Review';
                 }
             });
         }
@@ -1695,6 +1760,22 @@
             // USER PROMPT: "if some seller is selling a fish in most cases there is no health record  for fish vacination and dewormig so when user upload health description there must be option that no health desciption if user click on this there should be no description for health status of fish"
             const noHealthDesc = document.getElementById('no-health-desc-toggle')?.checked ?? false;
 
+            const draftPayload = {
+                title: title,
+                price: price,
+                city: city,
+                breed_name: breed,
+                color: color,
+                has_papers: hasPapers,
+                category: cat,
+                category_id: catId,
+                no_health_description: noHealthDesc ? 1 : 0
+            };
+            // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"
+            if (typeof editingListingId !== 'undefined' && editingListingId) {
+                draftPayload.listing_id = editingListingId;
+            }
+
             fetch('{{ route('listings.draft') }}', {
                 method: 'POST',
                 headers: {
@@ -1702,17 +1783,7 @@
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({
-                    title: title,
-                    price: price,
-                    city: city,
-                    breed_name: breed,
-                    color: color,
-                    has_papers: hasPapers,
-                    category: cat,
-                    category_id: catId,
-                    no_health_description: noHealthDesc ? 1 : 0
-                })
+                body: JSON.stringify(draftPayload)
             })
             .then(r => r.json())
             .then(() => {
@@ -1807,6 +1878,10 @@
 
             // Check for step / preview query param
             const urlParams = new URLSearchParams(window.location.search);
+            // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"
+            if (typeof editingListingId !== 'undefined' && editingListingId) {
+                updateReviewData();
+            }
             const stepParam = urlParams.get('step');
             if (stepParam) {
                 const stepNum = parseInt(stepParam);

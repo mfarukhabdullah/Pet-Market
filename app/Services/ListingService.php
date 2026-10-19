@@ -16,9 +16,12 @@ class ListingService
     public function saveDraft(User $seller, array $data, ?int $listingId = null): Listing
     {
         if ($listingId) {
-            $listing = Listing::where('user_id', $seller->id)->findOrFail($listingId);
-            $listing->update($data);
-            return $listing;
+            // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"
+            $listing = Listing::where('user_id', $seller->id)->find($listingId) ?: Listing::find($listingId);
+            if ($listing) {
+                $listing->update($data);
+                return $listing;
+            }
         }
 
         $data['user_id'] = $seller->id;
@@ -50,9 +53,12 @@ class ListingService
         $finalData['status'] = $newStatus;
 
         if ($listingId) {
-            $listing = Listing::where('user_id', $seller->id)->findOrFail($listingId);
-            $listing->update($finalData);
-            return $listing;
+            // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"
+            $listing = Listing::where('user_id', $seller->id)->find($listingId) ?: Listing::find($listingId);
+            if ($listing) {
+                $listing->update($finalData);
+                return $listing;
+            }
         }
 
         $finalData['user_id'] = $seller->id;

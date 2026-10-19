@@ -63,6 +63,8 @@ Route::middleware(['seller.auth', 'not_banned'])->group(function () {
     // USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main"
     Route::get('/seller/listings/{tab?}', [SellerController::class, 'listings'])->name('seller.listings');
     Route::get('/seller/create-listing', [SellerController::class, 'createListing'])->name('seller.create-listing');
+    // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"
+    Route::get('/seller/edit-listing/{id}', [SellerController::class, 'editListing'])->name('seller.edit-listing');
     // USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main"
     Route::get('/seller/messages/{conversation_id?}', [SellerController::class, 'messages'])->name('seller.messages');
     Route::get('/seller/settings', [SellerController::class, 'settings'])->name('seller.settings');

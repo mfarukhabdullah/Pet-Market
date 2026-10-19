@@ -254,6 +254,8 @@
             background-color: #fef2f2;
         }
 
+        /* USER PROMPT: "just give edit option in listing front page not in this delete section" */
+
         /* Delete Modal Styles */
         .modal-backdrop {
             position: fixed;
@@ -652,6 +654,7 @@
                             <i class="fa-solid fa-ellipsis-vertical"></i>
                         </button>
                         <div class="listing-dropdown">
+                            {{-- USER PROMPT: "just give edit option in listing front page not in this delete section" --}}
                             <form action="{{ route('listings.delete', ['id' => $listing->id]) }}" method="POST" onsubmit="return confirm('Delete this listing?');">
                                 @csrf
                                 @method('DELETE')
@@ -683,21 +686,27 @@
                             </div>
                         @endif
                     </div>
+                    {{-- USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing" --}}
+                    {{-- USER PROMPT: "just give edit option in listing front page not in this delete section" --}}
                     <div class="listing-actions">
                         @if($listing->status === 'live')
                             <a href="{{ route('pet.details', ['slug' => $listing->slug ?: $listing->id]) }}" class="btn-action btn-solid">View Listing</a>
+                            <a href="{{ route('seller.create-listing', ['edit' => $listing->id]) }}" class="btn-action btn-outline">Edit Listing</a>
                             <form action="{{ route('listings.mark-sold', ['id' => $listing->id]) }}" method="POST" style="display:inline;">
                                 @csrf
                                 <button type="submit" class="btn-action btn-outline mark-sold-btn">Mark Sold</button>
                             </form>
                         @elseif($listing->status === 'pending')
                             <a href="{{ route('pet.details', ['slug' => $listing->slug ?: $listing->id]) }}" class="btn-action btn-solid">Preview</a>
+                            <a href="{{ route('seller.create-listing', ['edit' => $listing->id]) }}" class="btn-action btn-outline">Edit Listing</a>
                         @elseif($listing->status === 'draft')
-                            <a href="{{ route('seller.create-listing') }}?edit={{ $listing->id }}" class="btn-action btn-solid">Continue Draft</a>
+                            <a href="{{ route('seller.create-listing', ['edit' => $listing->id]) }}" class="btn-action btn-solid">Continue Draft</a>
+                            <a href="{{ route('seller.create-listing', ['edit' => $listing->id]) }}" class="btn-action btn-outline">Edit Listing</a>
                         @elseif($listing->status === 'sold')
                             <a href="{{ route('pet.details', ['slug' => $listing->slug ?: $listing->id]) }}" class="btn-action btn-solid">View Listing</a>
+                            <a href="{{ route('seller.create-listing', ['edit' => $listing->id]) }}" class="btn-action btn-outline">Edit Listing</a>
                         @elseif($listing->status === 'rejected')
-                            <a href="{{ route('seller.create-listing') }}?edit={{ $listing->id }}" class="btn-action btn-solid">Edit & Fix</a>
+                            <a href="{{ route('seller.create-listing', ['edit' => $listing->id]) }}" class="btn-action btn-solid">Edit & Fix</a>
                         @endif
                     </div>
                 </div>
