@@ -991,51 +991,64 @@
                 <h2 class="form-section-title">Health &amp; Description</h2>
                 <p class="form-section-subtitle subtitle-with-line">Add key details buyers usually compare.</p>
 
-                <div class="form-group">
-                    <label class="form-label">Vaccination Status *</label>
-                    <div class="radio-group">
-                        <label class="radio-label">
-                            <input type="radio" name="vaccination" class="radio-input" checked>
-                            <div class="radio-custom"></div>
-                            <span class="radio-text">Vaccinated</span>
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="vaccination" class="radio-input">
-                            <div class="radio-custom"></div>
-                            <span class="radio-text">Partially Vaccinated</span>
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="vaccination" class="radio-input">
-                            <div class="radio-custom"></div>
-                            <span class="radio-text">Not Vaccinated</span>
-                        </label>
-                    </div>
+                {{-- USER PROMPT: "change this to for fish and reptiles" --}}
+                <div class="form-group" style="margin-bottom: 22px;">
+                    <label id="no-health-toggle-label" style="display: flex; align-items: flex-start; gap: 12px; background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: all 0.2s ease;">
+                        <input type="checkbox" id="no-health-desc-toggle" name="no_health_description" value="1" onchange="toggleHealthDescription(this.checked)" style="width: 18px; height: 18px; margin-top: 2px; accent-color: #00704A; cursor: pointer;">
+                        <div>
+                            <span style="display: block; font-size: 15px; font-weight: 700; color: #166534;">No health description / records (Recommended for Fish &amp; Reptiles)</span>
+                            <span style="display: block; font-size: 13px; color: #4B5563; margin-top: 2px;">Check this if vaccination and deworming are not applicable for this pet (e.g. fish, reptiles).</span>
+                        </div>
+                    </label>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Deworming Status</label>
-                    <div class="radio-group">
-                        <label class="radio-label">
-                            <input type="radio" name="deworming" class="radio-input" checked>
-                            <div class="radio-custom"></div>
-                            <span class="radio-text">Yes</span>
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="deworming" class="radio-input">
-                            <div class="radio-custom"></div>
-                            <span class="radio-text">No</span>
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="deworming" class="radio-input">
-                            <div class="radio-custom"></div>
-                            <span class="radio-text">Not Sure</span>
-                        </label>
+                <div id="health-fields-wrapper">
+                    <div class="form-group">
+                        <label class="form-label">Vaccination Status *</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="vaccination" class="radio-input" checked>
+                                <div class="radio-custom"></div>
+                                <span class="radio-text">Vaccinated</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="vaccination" class="radio-input">
+                                <div class="radio-custom"></div>
+                                <span class="radio-text">Partially Vaccinated</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="vaccination" class="radio-input">
+                                <div class="radio-custom"></div>
+                                <span class="radio-text">Not Vaccinated</span>
+                            </label>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label">Health Notes</label>
-                    <input type="text" class="form-input" placeholder="Include any medical conditions or dietary needs">
+                    <div class="form-group">
+                        <label class="form-label">Deworming Status</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="deworming" class="radio-input" checked>
+                                <div class="radio-custom"></div>
+                                <span class="radio-text">Yes</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="deworming" class="radio-input">
+                                <div class="radio-custom"></div>
+                                <span class="radio-text">No</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="deworming" class="radio-input">
+                                <div class="radio-custom"></div>
+                                <span class="radio-text">Not Sure</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Health Notes</label>
+                        <input type="text" id="input-health-notes" class="form-input" placeholder="Include any medical conditions or dietary needs">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -1203,21 +1216,22 @@
                     </div>
                 </div>
 
+                {{-- USER PROMPT: "if some seller is selling a fish in most cases there is no health record  for fish vacination and dewormig so when user upload health description there must be option that no health desciption if user click on this there should be no description for health status of fish" --}}
                 <div class="review-card">
                     <div class="review-header">
                         <div class="review-title">Health &amp; Description</div>
                         <a onclick="goToStep(2)" class="review-edit">Edit</a>
                     </div>
                     <div class="review-grid">
-                        <div class="review-item">
+                        <div class="review-item" id="review-vaccination-item">
                             <span class="review-label">Vaccination Status</span>
                             <span class="review-value" id="review-vaccination">Vaccinated</span>
                         </div>
-                        <div class="review-item">
+                        <div class="review-item" id="review-deworming-item">
                             <span class="review-label">Deworming Status</span>
                             <span class="review-value" id="review-deworming">Yes</span>
                         </div>
-                        <div class="review-item review-desc has-content">
+                        <div class="review-item review-desc has-content" id="review-description-item">
                             <span class="review-label">Description</span>
                             <span class="review-value" id="review-description" style="line-height: 1.6;">Friendly Golden Retriever puppy, active and playful. Raised in a home environment and comfortable around people.</span>
                         </div>
@@ -1548,6 +1562,23 @@
             }
         }
 
+        // USER PROMPT: "if some seller is selling a fish in most cases there is no health record  for fish vacination and dewormig so when user upload health description there must be option that no health desciption if user click on this there should be no description for health status of fish"
+        function toggleHealthDescription(isNoHealth) {
+            const wrapper = document.getElementById('health-fields-wrapper');
+            const vaxReview = document.getElementById('review-vaccination-item');
+            const dewormReview = document.getElementById('review-deworming-item');
+
+            if (wrapper) {
+                wrapper.style.display = isNoHealth ? 'none' : 'block';
+            }
+            if (vaxReview) {
+                vaxReview.style.display = isNoHealth ? 'none' : 'block';
+            }
+            if (dewormReview) {
+                dewormReview.style.display = isNoHealth ? 'none' : 'block';
+            }
+        }
+
         function submitListing() {
             // Validate all steps from 1 to 4 before permitting submission
             for (let s = 1; s <= 4; s++) {
@@ -1571,6 +1602,11 @@
             const breed = document.getElementById('input-breed').value.trim();
             const categorySelect = document.getElementById('input-category');
             const categoryVal = categorySelect ? categorySelect.value : 'Dog';
+            let categoryId = 1;
+            if (categorySelect && categorySelect.selectedOptions && categorySelect.selectedOptions[0]) {
+                categoryId = categorySelect.selectedOptions[0].dataset.id || categorySelect.selectedOptions[0].value;
+            }
+
             const ageVal = parseInt(document.getElementById('input-age-value').value) || 1;
             const ageUnit = document.getElementById('input-age-unit').value;
             const ageMonths = ageUnit === 'Year' ? ageVal * 12 : ageVal;
@@ -1578,8 +1614,11 @@
             const color = document.getElementById('input-color')?.value.trim() || '';
             const pedigreeSelect = document.getElementById('input-pedigree');
             const hasPapers = pedigreeSelect ? (pedigreeSelect.value === 'Yes') : false;
-            const vaccinated = document.querySelector('input[name="vaccination"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase().includes('vac') ?? true;
-            const dewormed = document.querySelector('input[name="deworming"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase() === 'yes';
+
+            // USER PROMPT: "if some seller is selling a fish in most cases there is no health record  for fish vacination and dewormig so when user upload health description there must be option that no health desciption if user click on this there should be no description for health status of fish"
+            const noHealthDesc = document.getElementById('no-health-desc-toggle')?.checked ?? false;
+            const vaccinated = !noHealthDesc && (document.querySelector('input[name="vaccination"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase().includes('vac') ?? true);
+            const dewormed = !noHealthDesc && (document.querySelector('input[name="deworming"]:checked')?.nextElementSibling?.nextElementSibling?.innerText.toLowerCase() === 'yes');
 
             const submitBtn = document.querySelector('#step-5 .btn-primary');
             if (submitBtn) {
@@ -1595,7 +1634,8 @@
             formData.append('description', desc);
             formData.append('breed_name', breed);
             formData.append('category', categoryVal);
-            formData.append('category_id', (categoryVal === 'Cat' || categoryVal == 2) ? 2 : 1);
+            formData.append('category_id', categoryId);
+            formData.append('no_health_description', noHealthDesc ? '1' : '0');
             formData.append('age_months', ageMonths);
             formData.append('gender', (gender === 'male' || gender === 'female') ? gender : 'unknown');
             formData.append('color', color);
@@ -1643,10 +1683,17 @@
             const price = parseFloat(document.getElementById('input-price')?.value) || 0;
             const city = document.getElementById('city-select')?.value || 'Lahore';
             const breed = document.getElementById('input-breed')?.value.trim() || '';
-            const cat = document.getElementById('input-category')?.value || 'Dog';
+            const catSelect = document.getElementById('input-category');
+            const cat = catSelect?.value || 'Dog';
+            let catId = 1;
+            if (catSelect && catSelect.selectedOptions && catSelect.selectedOptions[0]) {
+                catId = catSelect.selectedOptions[0].dataset.id || catSelect.selectedOptions[0].value;
+            }
             const color = document.getElementById('input-color')?.value.trim() || '';
             const pedigreeSelect = document.getElementById('input-pedigree');
             const hasPapers = pedigreeSelect ? (pedigreeSelect.value === 'Yes') : false;
+            // USER PROMPT: "if some seller is selling a fish in most cases there is no health record  for fish vacination and dewormig so when user upload health description there must be option that no health desciption if user click on this there should be no description for health status of fish"
+            const noHealthDesc = document.getElementById('no-health-desc-toggle')?.checked ?? false;
 
             fetch('{{ route('listings.draft') }}', {
                 method: 'POST',
@@ -1662,7 +1709,9 @@
                     breed_name: breed,
                     color: color,
                     has_papers: hasPapers,
-                    category_id: (cat === 'Cat' || cat == 2) ? 2 : 1
+                    category: cat,
+                    category_id: catId,
+                    no_health_description: noHealthDesc ? 1 : 0
                 })
             })
             .then(r => r.json())
@@ -1694,11 +1743,17 @@
             setVal('review-pedigree', document.getElementById('input-pedigree')?.value);
             
             // Step 2
-            const vax = document.querySelector('input[name="vaccination"]:checked');
-            setVal('review-vaccination', vax ? vax.nextElementSibling.nextElementSibling.innerText : '-');
-            
-            const deworm = document.querySelector('input[name="deworming"]:checked');
-            setVal('review-deworming', deworm ? deworm.nextElementSibling.nextElementSibling.innerText : '-');
+            // USER PROMPT: "if some seller is selling a fish in most cases there is no health record  for fish vacination and dewormig so when user upload health description there must be option that no health desciption if user click on this there should be no description for health status of fish"
+            const noHealthDesc = document.getElementById('no-health-desc-toggle')?.checked ?? false;
+            toggleHealthDescription(noHealthDesc);
+
+            if (!noHealthDesc) {
+                const vax = document.querySelector('input[name="vaccination"]:checked');
+                setVal('review-vaccination', vax ? vax.nextElementSibling.nextElementSibling.innerText : '-');
+                
+                const deworm = document.querySelector('input[name="deworming"]:checked');
+                setVal('review-deworming', deworm ? deworm.nextElementSibling.nextElementSibling.innerText : '-');
+            }
             
             const descInput = document.getElementById('input-description')?.value;
             const descEl = document.getElementById('review-description');
@@ -1736,6 +1791,19 @@
                     }
                 });
             });
+
+            // USER PROMPT: "change this to for fish and reptiles"
+            const categorySelectElem = document.getElementById('input-category');
+            if (categorySelectElem) {
+                categorySelectElem.addEventListener('change', function() {
+                    const selectedText = (this.value || '').toLowerCase();
+                    const noHealthBox = document.getElementById('no-health-desc-toggle');
+                    if (noHealthBox && (selectedText.includes('fish') || selectedText.includes('aqua') || selectedText.includes('reptile'))) {
+                        noHealthBox.checked = true;
+                        toggleHealthDescription(true);
+                    }
+                });
+            }
 
             // Check for step / preview query param
             const urlParams = new URLSearchParams(window.location.search);

@@ -151,6 +151,28 @@
             white-space: nowrap;
         }
 
+        /* USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this" */
+        .breed-section-view-all {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: #147A4D;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background-color: #EBF7EE;
+            border-radius: 20px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .breed-section-view-all:hover {
+            background-color: #D6EADF;
+            color: #0E5C38;
+        }
+
         .breed-section-line {
             flex-grow: 1;
             height: 1px;
@@ -325,77 +347,117 @@
         </x-hero>
 
         <!-- MAIN BREEDS SECTION -->
+        {{-- USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this" --}}
+        @php
+            if (!isset($categories)) {
+                $categories = \App\Models\Category::with(['breeds' => function ($q) {
+                    $q->withCount(['listings' => function ($l) {
+                        $l->where('status', 'live');
+                    }]);
+                }])->get();
+            }
+            if (!isset($liveListings)) {
+                $liveListings = \App\Models\Listing::live()->with(['images', 'category', 'breed'])->get();
+            }
+            $fallbackImages = [
+                'dogs' => 'images/cat_dog.jpg',
+                'cats' => 'images/cat_cat.jpg',
+                'birds' => 'images/cat_bird.jpg',
+                'rabbits' => 'images/card_rabbit.jpg',
+                'fish' => 'images/cat_fish.jpg',
+                'fishes' => 'images/cat_fish.jpg',
+                'reptiles' => 'images/cat_reptile.jpg',
+                'reptile' => 'images/cat_reptile.jpg',
+                'horses-farm' => 'images/cat_horse.jpg',
+                'horse' => 'images/cat_horse.jpg',
+                'horses' => 'images/cat_horse.jpg',
+                'exotic' => 'images/card_parrot.jpg',
+                'exotic-pets' => 'images/card_parrot.jpg',
+            ];
+        @endphp
+
         <section class="shell-1440">
             <div class="container">
                 
                 <!-- Breed Tags -->
-                {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
                 <div class="breed-tags-container">
-                    <a href="{{ route('category', ['param1' => 'dogs']) }}" class="breed-tag">Dogs</a>
-                    <a href="{{ route('category', ['param1' => 'cats']) }}" class="breed-tag">Cats</a>
-                    <a href="{{ route('category', ['param1' => 'birds']) }}" class="breed-tag">Birds</a>
-                    <a href="{{ route('category', ['param1' => 'fish']) }}" class="breed-tag">Fish</a>
-                    <a href="{{ route('category', ['param1' => 'reptiles']) }}" class="breed-tag">Reptiles</a>
-                    <a href="{{ route('category', ['param1' => 'horses-farm']) }}" class="breed-tag">Horses &amp; Farm</a>
+                    @foreach($categories as $cat)
+                        <a href="#{{ $cat->slug }}-section" class="breed-tag" data-category="{{ $cat->slug }}">{{ $cat->name }}</a>
+                    @endforeach
                 </div>
 
-                <!-- Dog Breeds Section -->
-                <div class="breed-category-section" id="dogs-section">
-                    <div class="breed-section-header">
-                        <h2 class="breed-section-title">Dog Breeds</h2>
-                        <div class="breed-section-line"></div>
-                    </div>
+                @foreach($categories as $cat)
+                    @php
+                        $catListings = $liveListings->where('category_id', $cat->id);
+                        $categoryBreeds = collect($cat->breeds);
+                        $existingNames = $categoryBreeds->pluck('name')->map(fn($n) => strtolower(trim($n)))->toArray();
 
-                    <div class="breeds-grid">
-                        <!-- Dog Breed 1 -->
-                        {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
-                        <a href="{{ route('category', ['param1' => 'golden-retriever']) }}" class="breed-card">
-                            <div class="breed-img-wrapper">
-                                <img src="{{ asset('images/golden_retriever.jpg') }}" alt="Golden Retriever">
+                        // Include any custom breeds from live listings
+                        foreach ($catListings as $listing) {
+                            $bName = trim($listing->breed_name ?? '');
+                            if (!empty($bName) && !in_array(strtolower($bName), $existingNames)) {
+                                $existingNames[] = strtolower($bName);
+                                $firstImg = $listing->images->first();
+                                $categoryBreeds->push((object) [
+                                    'id' => null,
+                                    'name' => $bName,
+                                    'slug' => \Illuminate\Support\Str::slug($bName),
+                                    'image' => $firstImg ? $firstImg->image_path : '',
+                                    'listings_count' => $catListings->where('breed_name', $bName)->count(),
+                                ]);
+                            }
+                        }
+
+                        $totalListings = $catListings->count();
+                    @endphp
+
+                    @if($categoryBreeds->count() > 0 || $totalListings > 0)
+                        <!-- {{ $cat->name }} Breeds Section -->
+                        <div class="breed-category-section" id="{{ $cat->slug }}-section">
+                            <div class="breed-section-header">
+                                <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;">
+                                    <h2 class="breed-section-title">{{ $cat->name }} Breeds</h2>
+                                    <a href="{{ route('category', ['param1' => $cat->slug]) }}" class="breed-section-view-all">
+                                        View All {{ $cat->name }} ({{ $totalListings }}) <i class="fa-solid fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                                <div class="breed-section-line"></div>
                             </div>
-                            <h3 class="breed-name">Golden Retriever</h3>
-                            <span class="breed-count">Available in listings</span>
-                        </a>
 
-                        <!-- Dog Breed 2 -->
-                        <a href="{{ route('category', ['param1' => 'german-shepherd']) }}" class="breed-card">
-                            <div class="breed-img-wrapper">
-                                <img src="{{ asset('images/german_shepherd.jpg') }}" alt="German Shepherd">
+                            <div class="breeds-grid">
+                                @foreach($categoryBreeds as $breed)
+                                    @php
+                                        $breedName = $breed->name;
+                                        $breedSlug = $breed->slug ?: \Illuminate\Support\Str::slug($breedName);
+                                        $count = isset($breed->listings_count) ? $breed->listings_count : $catListings->where('breed_name', $breedName)->count();
+
+                                        // Image resolution
+                                        $imgSrc = null;
+                                        if (!empty($breed->image) && file_exists(public_path($breed->image))) {
+                                            $imgSrc = asset($breed->image);
+                                        } else {
+                                            $matchingListing = $catListings->first(function ($l) use ($breedName) {
+                                                return strtolower(trim($l->breed_name ?? '')) === strtolower(trim($breedName)) && $l->images->count() > 0;
+                                            });
+                                            if ($matchingListing && $matchingListing->images->first()) {
+                                                $imgSrc = asset($matchingListing->images->first()->image_path);
+                                            } else {
+                                                $imgSrc = asset($fallbackImages[$cat->slug] ?? 'images/cat_dog.jpg');
+                                            }
+                                        }
+                                    @endphp
+                                    <a href="{{ route('category', ['param1' => $cat->slug, 'param2' => $breedSlug]) }}" class="breed-card">
+                                        <div class="breed-img-wrapper">
+                                            <img src="{{ $imgSrc }}" alt="{{ $breedName }}" loading="lazy">
+                                        </div>
+                                        <h3 class="breed-name">{{ $breedName }}</h3>
+                                        <span class="breed-count">{{ $count > 0 ? $count . ' ' . \Illuminate\Support\Str::plural('listing', $count) . ' available' : 'Available in listings' }}</span>
+                                    </a>
+                                @endforeach
                             </div>
-                            <h3 class="breed-name">German Shepherd</h3>
-                            <span class="breed-count">Available in listings</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Cat Breeds Section -->
-                <div class="breed-category-section" id="cats-section">
-                    <div class="breed-section-header">
-                        <h2 class="breed-section-title">Cat Breeds</h2>
-                        <div class="breed-section-line"></div>
-                    </div>
-
-                    <div class="breeds-grid">
-                        <!-- Cat Breed 1 -->
-                        {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
-                        <a href="{{ route('category', ['param1' => 'persian']) }}" class="breed-card">
-                            <div class="breed-img-wrapper">
-                                <img src="{{ asset('images/persian.jpg') }}" alt="Persian">
-                            </div>
-                            <h3 class="breed-name">Persian</h3>
-                            <span class="breed-count">Available in listings</span>
-                        </a>
-
-                        <!-- Cat Breed 2 -->
-                        <a href="{{ route('category', ['param1' => 'british-shorthair']) }}" class="breed-card">
-                            <div class="breed-img-wrapper">
-                                <img src="{{ asset('images/british_shorthair.jpg') }}" alt="British Shorthair">
-                            </div>
-                            <h3 class="breed-name">British Shorthair</h3>
-                            <span class="breed-count">Available in listings</span>
-                        </a>
-                    </div>
-                </div>
+                        </div>
+                    @endif
+                @endforeach
 
             </div>
         </section>
@@ -407,5 +469,39 @@
 
     <!-- Custom JavaScript -->
     <script src="{{ asset('js/pet-script.js') }}"></script>
+    <script>
+        // USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this"
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-scroll if hash exists or category query param exists (e.g. /breeds#fish-section or /breeds?category=fish)
+            const hash = window.location.hash;
+            const urlParams = new URLSearchParams(window.location.search);
+            const catParam = urlParams.get('category');
+            
+            const targetId = hash ? hash.replace('#', '') : (catParam ? (catParam + '-section') : null);
+            if (targetId) {
+                const el = document.getElementById(targetId);
+                if (el) {
+                    setTimeout(() => {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 150);
+                }
+            }
+
+            // Smooth scroll on clicking top breed tags
+            document.querySelectorAll('.breed-tag').forEach(tag => {
+                tag.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            history.pushState(null, null, href);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

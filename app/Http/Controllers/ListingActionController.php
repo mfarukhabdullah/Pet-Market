@@ -45,6 +45,8 @@ class ListingActionController extends Controller
             'vaccinated' => 'nullable|boolean',
             'dewormed' => 'nullable|boolean',
             'health_certificate' => 'nullable|boolean',
+            // USER PROMPT: "if some seller is selling a fish in most cases there is no health record  for fish vacination and dewormig so when user upload health description there must be option that no health desciption if user click on this there should be no description for health status of fish"
+            'no_health_description' => 'nullable|boolean',
             'city' => 'nullable|string|max:100',
             'area' => 'nullable|string|max:150',
             'phone_hidden' => 'nullable|boolean',
@@ -105,13 +107,48 @@ class ListingActionController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
 
+        // USER PROMPT: "if some seller is selling a fish in most cases there is no health record  for fish vacination and dewormig so when user upload health description there must be option that no health desciption if user click on this there should be no description for health status of fish"
+        // USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this"
         $catInput = $request->input('category_id') ?: $request->input('category');
-        $categoryId = 1;
-        if (is_numeric($catInput)) {
-            $categoryId = (int) $catInput;
-        } elseif (is_string($catInput)) {
-            $cat = Category::where('name', 'like', "%{$catInput}%")->first();
+        $categoryId = null;
+        if (is_numeric($catInput) && (int) $catInput > 0) {
+            $cat = Category::find((int) $catInput);
             if ($cat) $categoryId = $cat->id;
+        }
+        if (!$categoryId && $request->input('category')) {
+            $catName = trim($request->input('category'));
+            $cat = Category::where('name', 'like', "%{$catName}%")->orWhere('slug', 'like', "%{$catName}%")->first();
+            if ($cat) $categoryId = $cat->id;
+        }
+        if (!$categoryId) {
+            $categoryId = 1;
+        }
+
+        $breedName = $request->input('breed_name') ?: $request->input('breed', 'Pet');
+        $breedId = null;
+        if ($categoryId) {
+            $matchedBreed = \App\Models\Breed::where('category_id', $categoryId)
+                ->where(function ($q) use ($breedName) {
+                    $q->where('name', 'like', "%{$breedName}%")
+                      ->orWhere('slug', 'like', "%" . \Illuminate\Support\Str::slug($breedName) . "%");
+                })->first();
+            if ($matchedBreed) {
+                $breedId = $matchedBreed->id;
+            } elseif (!empty($breedName) && strtolower(trim($breedName)) !== 'pet') {
+                // USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this"
+                $newBreed = \App\Models\Breed::firstOrCreate(
+                    [
+                        'category_id' => $categoryId,
+                        'slug' => \Illuminate\Support\Str::slug($breedName),
+                    ],
+                    [
+                        'name' => ucwords(trim($breedName)),
+                    ]
+                );
+                $breedId = $newBreed->id;
+                \Illuminate\Support\Facades\Cache::forget('all_breed_slugs_list');
+                \Illuminate\Support\Facades\Cache::forget('catalog_all_breeds');
+            }
         }
 
         $color = $request->input('color');
@@ -127,9 +164,15 @@ class ListingActionController extends Controller
             $hasPapers = true;
         }
 
+        $noHealthDesc = $request->boolean('no_health_description') || $request->input('no_health_description') === '1' || $request->input('no_health_description') === 1;
+        if ($categoryId == 5 && $request->input('no_health_description') === null && !$request->has('vaccinated')) {
+            $noHealthDesc = true;
+        }
+
         $listing = $this->listingService->publishListing($user, $listingId, [
             'category_id' => $categoryId,
-            'breed_name' => $request->input('breed_name') ?: $request->input('breed', 'Pet'),
+            'breed_id' => $breedId,
+            'breed_name' => $breedName,
             'title' => $request->input('title', 'New Pet Listing'),
             'description' => $request->input('description', 'Healthy and friendly pet.'),
             'price' => (float) $request->input('price', 0),
@@ -139,8 +182,9 @@ class ListingActionController extends Controller
             'gender' => $request->input('gender', 'unknown'),
             'color' => $color,
             'has_papers' => $hasPapers,
-            'vaccinated' => (bool) $request->input('vaccinated', false),
-            'dewormed' => (bool) $request->input('dewormed', false),
+            'no_health_description' => $noHealthDesc,
+            'vaccinated' => $noHealthDesc ? false : (bool) $request->input('vaccinated', false),
+            'dewormed' => $noHealthDesc ? false : (bool) $request->input('dewormed', false),
         ]);
 
         // Process uploaded images directly from request

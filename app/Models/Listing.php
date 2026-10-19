@@ -28,6 +28,8 @@ class Listing extends Model
         'vaccinated',
         'dewormed',
         'health_certificate',
+        // USER PROMPT: "if some seller is selling a fish in most cases there is no health record  for fish vacination and dewormig so when user upload health description there must be option that no health desciption if user click on this there should be no description for health status of fish"
+        'no_health_description',
         'city',
         'area',
         'phone_hidden',
@@ -44,6 +46,8 @@ class Listing extends Model
         'vaccinated' => 'boolean',
         'dewormed' => 'boolean',
         'health_certificate' => 'boolean',
+        // USER PROMPT: "if some seller is selling a fish in most cases there is no health record  for fish vacination and dewormig so when user upload health description there must be option that no health desciption if user click on this there should be no description for health status of fish"
+        'no_health_description' => 'boolean',
         'phone_hidden' => 'boolean',
         'is_featured' => 'boolean',
         'views_count' => 'integer',

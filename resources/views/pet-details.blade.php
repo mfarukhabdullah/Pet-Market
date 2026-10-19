@@ -19,8 +19,9 @@
         /* ===== Shared section + card styles (matching home & category cards) ===== */
         .my-sec-title { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 700; color: #0F172A; margin-bottom: 10px; }
         .my-sec-desc { color: #64748B; font-size: 16px; font-weight: 400; line-height: 24px; margin-bottom: 40px; }
-        .my-pets-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-        .my-pet-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: none; transition: 0.3s; cursor: pointer; position: relative; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
+        /* USER PROMPT: "decrease margin bottom it is very much" */
+        .my-pets-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 0; }
+        .my-pet-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: none; transition: 0.3s; cursor: pointer; position: relative; text-decoration: none; color: inherit; display: flex; flex-direction: column; margin-bottom: 10px; }
         .my-pet-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.18); }
         .my-pet-img { width: 100%; height: 236px; object-fit: cover; display: block; border-radius: 12px 12px 0 0; }
         .my-badge { position: absolute; top: 12px; left: 12px; background: #FADFA7; color: #161616; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; z-index: 5; line-height: normal; }
@@ -37,8 +38,8 @@
         .my-pet-meta span, .my-pet-loc span { display: inline-flex; align-items: center; gap: 6px; color: #64748B; }
         .my-pet-meta i, .my-pet-loc i { color: #64748B; font-size: 12px; margin-right: 0; }
 
-        /* ===== Pet Details page ===== */
-        .pd-page { background: #FBF8F3; padding: 24px 0 60px; }
+        /* USER PROMPT: "decrease margin bottom it is very much" */
+        .pd-page { background: #FBF8F3; padding: 24px 0 35px; }
         .pd-wrap { width: 100%; max-width: 1200px; margin: 0 auto; }
         .pd-card { background: #FFFFFF; border-radius: 16px; box-shadow: 0 6px 24px rgba(17, 24, 39, 0.06); border: 1px solid #F1ECE3; box-sizing: border-box; }
 
@@ -115,7 +116,8 @@
         .pd-safety li i { color: #000000; font-size: 13px; line-height: 13px; margin-top: 4px; }
 
         /* Listings sections */
-        .pd-listings { margin-top: 60px; }
+        /* USER PROMPT: "decrease margin bottom it is very much" */
+        .pd-listings { margin-top: 60px; margin-bottom: 0; }
         .pd-listings .my-sec-title { font-size: 28px; margin-bottom: 8px; }
         .pd-listings .my-sec-desc { margin-bottom: 30px; }
 
@@ -149,23 +151,26 @@
             .pd-card { padding: 16px; }
 
             /* Horizontal Scroll for Cards */
+            /* USER PROMPT: "decrease margin bottom it is very much" */
             .my-pets-grid { 
                 display: flex; 
                 flex-wrap: nowrap; 
                 overflow-x: auto; 
                 gap: 16px; 
-                padding-bottom: 16px; 
+                padding-bottom: 12px; 
+                margin-bottom: 10px;
                 scroll-snap-type: x mandatory; 
                 -webkit-overflow-scrolling: touch;
                 scrollbar-width: none;
                 -ms-overflow-style: none;
             }
             .my-pets-grid::-webkit-scrollbar { display: none; }
-            /* USER PROMPT: "mera pet detail page k cards ko bhi set kro" */
+            /* USER PROMPT: "decrease margin bottom it is very much" */
             .my-pets-grid .my-pet-card {
                 flex: 0 0 calc(50% - 8px); 
                 scroll-snap-align: start;
                 border-radius: 12px;
+                margin-bottom: 4px;
             }
             .my-pets-grid .my-pet-img { height: 160px; }
             .my-pets-grid .my-pet-info { padding: 10px 10px 12px; }
@@ -410,28 +415,35 @@
 
                     <hr class="pd-divider">
 
-                    <!-- Health Information -->
-                    <h2 class="pd-h3">Health Information</h2>
-                    <div class="pd-health-grid">
-                        <div class="pd-health">
-                            <div class="pd-health-icon"><i class="fa-solid fa-syringe"></i></div>
-                            <div><strong>Vaccination</strong><span>{{ $listing->vaccinated ? 'Vaccinated' : 'Not Vaccinated' }}</span></div>
+                    {{-- USER PROMPT: "change this to for fish and reptiles" --}}
+                    @php
+                        $isExemptCategory = $listing->category && in_array(strtolower($listing->category->slug), ['fish', 'fishes', 'reptile', 'reptiles']);
+                        $hasHealthDescription = !$listing->no_health_description && !($isExemptCategory && !$listing->vaccinated && !$listing->dewormed);
+                    @endphp
+                    @if($hasHealthDescription)
+                        <!-- Health Information -->
+                        <h2 class="pd-h3">Health Information</h2>
+                        <div class="pd-health-grid">
+                            <div class="pd-health">
+                                <div class="pd-health-icon"><i class="fa-solid fa-syringe"></i></div>
+                                <div><strong>Vaccination</strong><span>{{ $listing->vaccinated ? 'Vaccinated' : 'Not Vaccinated' }}</span></div>
+                            </div>
+                            <div class="pd-health">
+                                <div class="pd-health-icon"><i class="fa-solid fa-shield-heart"></i></div>
+                                <div><strong>Deworming</strong><span>{{ $listing->dewormed ? 'Completed' : 'Pending' }}</span></div>
+                            </div>
+                            <div class="pd-health">
+                                <div class="pd-health-icon"><i class="fa-solid fa-notes-medical"></i></div>
+                                <div><strong>Health Status</strong><span>{{ $listing->vaccinated && $listing->dewormed ? 'Fully Checked' : 'Standard Health' }}</span></div>
+                            </div>
+                            <div class="pd-health">
+                                <div class="pd-health-icon"><i class="fa-solid fa-file-lines"></i></div>
+                                <div><strong>Papers</strong><span>{{ $listing->has_papers ? 'Available' : 'Not Available' }}</span></div>
+                            </div>
                         </div>
-                        <div class="pd-health">
-                            <div class="pd-health-icon"><i class="fa-solid fa-shield-heart"></i></div>
-                            <div><strong>Deworming</strong><span>{{ $listing->dewormed ? 'Completed' : 'Pending' }}</span></div>
-                        </div>
-                        <div class="pd-health">
-                            <div class="pd-health-icon"><i class="fa-solid fa-notes-medical"></i></div>
-                            <div><strong>Health Status</strong><span>{{ $listing->vaccinated && $listing->dewormed ? 'Fully Checked' : 'Standard Health' }}</span></div>
-                        </div>
-                        <div class="pd-health">
-                            <div class="pd-health-icon"><i class="fa-solid fa-file-lines"></i></div>
-                            <div><strong>Papers</strong><span>{{ $listing->has_papers ? 'Available' : 'Not Available' }}</span></div>
-                        </div>
-                    </div>
 
-                    <hr class="pd-divider">
+                        <hr class="pd-divider">
+                    @endif
 
                     <!-- Description -->
                     <div class="pd-desc-box">
@@ -566,6 +578,8 @@
             </section>
 
         </div>
+    {{-- USER PROMPT: "in my pet detail page give this card some margin bottom like on other pages just do this chnage" --}}
+    </main>
     <!-- Report User Modal -->
     <div id="reportModal" class="modal-backdrop">
         <div class="report-modal-card">

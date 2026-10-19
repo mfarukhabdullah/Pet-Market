@@ -39,7 +39,8 @@ class CategoryController extends Controller
                 $routeCategory = $segLower;
             } elseif (!$routeCity && (in_array($segLower, $knownCities) || Listing::where('city', 'like', "%{$segLower}%")->exists())) {
                 $routeCity = $segLower;
-            } elseif (!$routeBreed && (in_array($segLower, $allBreedSlugs) || Breed::where('slug', $segLower)->exists())) {
+            // USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this"
+            } elseif (!$routeBreed && (in_array($segLower, $allBreedSlugs) || Breed::where('slug', $segLower)->exists() || Listing::where('breed_name', 'like', str_replace('-', ' ', $segLower))->exists())) {
                 $routeBreed = $segLower;
             }
         }
@@ -368,5 +369,19 @@ class CategoryController extends Controller
     {
         $request->merge(['featured' => 'true']);
         return $this->index($request);
+    }
+
+    // USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this"
+    public function breeds(Request $request)
+    {
+        $categories = Category::with(['breeds' => function ($q) {
+            $q->withCount(['listings' => function ($l) {
+                $l->where('status', 'live');
+            }]);
+        }])->get();
+
+        $liveListings = Listing::live()->with(['images', 'category', 'breed'])->get();
+
+        return view('breeds', compact('categories', 'liveListings'));
     }
 }

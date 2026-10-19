@@ -37,7 +37,8 @@ $knownCategoriesRegex = 'birds|cats|dogs|exotic|exotic-pets|fish|fishes|horses-f
 Route::get('/category/{param1?}/{param2?}/{param3?}', [CategoryController::class, 'index'])->middleware('throttle:120,1')->name('category');
 Route::get('/city/{city}', [CategoryController::class, 'index'])->where('city', $knownCitiesRegex)->name('city.show');
 Route::get('/featured-pets', [CategoryController::class, 'featured'])->middleware('throttle:120,1')->name('featured.pets');
-Route::view('/breeds', 'breeds')->name('breeds');
+// USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this"
+Route::get('/breeds', [CategoryController::class, 'breeds'])->name('breeds');
 Route::get('/pet-details/{slug?}', [PetController::class, 'details'])->name('pet.details');
 Route::get('/listings/{id}/reveal-phone', [PetController::class, 'revealPhone'])->middleware('throttle:30,1')->name('listings.reveal-phone');
 Route::get('/seller-profile/{id?}', [SellerController::class, 'profile'])->name('seller.profile');

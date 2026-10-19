@@ -430,6 +430,7 @@
         .fav-price-mobile {
             display: none;
         }
+        /* USER PROMPT: "on dashboard page in Recent favrouite section the pets that are in recent favrouite section their heart icon must be red but here is grey and when we unfavrouite them heart trun red for while and card remove just set this in such the card that show in recent favrouites must have red heart icon just do this and nothing else" */
         .fav-heart {
             width: 40px;
             height: 40px;
@@ -438,9 +439,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #666;
+            color: #ff4b68;
             cursor: pointer;
             transition: all 0.2s;
+        }
+        .fav-heart i {
+            color: #ff4b68;
+            transition: color 0.2s;
         }
         .fav-heart:hover {
             background-color: #ffeef0;
@@ -604,8 +609,9 @@
                 cursor: pointer !important;
                 pointer-events: auto !important;
             }
+            /* USER PROMPT: "on dashboard page in Recent favrouite section the pets that are in recent favrouite section their heart icon must be red but here is grey and when we unfavrouite them heart trun red for while and card remove just set this in such the card that show in recent favrouites must have red heart icon just do this and nothing else" */
             .fav-heart i {
-                color: #666;
+                color: #ff4b68;
                 font-size: 14px;
                 pointer-events: none;
             }
@@ -728,7 +734,7 @@
             
             <div class="card-body favorites-grid-mobile">
                 @forelse($recentFavorites as $fav)
-                    <a href="{{ route('pet.details', ['slug' => $fav->slug ?: $fav->id]) }}" class="favorite-item">
+                    <a href="{{ route('pet.details', ['slug' => $fav->slug ?: $fav->id]) }}" class="favorite-item" data-fav-id="{{ $fav->id }}">
                         @if($fav->is_featured)
                             <span class="fav-badge">FEATURED</span>
                         @endif
@@ -743,9 +749,10 @@
                                 <span><i class="fa-solid fa-{{ $fav->gender === 'female' ? 'venus' : 'mars' }}"></i> {{ ucfirst($fav->gender) }}</span>
                             </div>
                         </div>
+                        {{-- USER PROMPT: "on dashboard page in Recent favrouite section the pets that are in recent favrouite section their heart icon must be red but here is grey and when we unfavrouite them heart trun red for while and card remove just set this in such the card that show in recent favrouites must have red heart icon just do this and nothing else" --}}
                         <div class="fav-actions">
-                            <div class="fav-heart" style="color: #e11d48;">
-                                <i class="fa-solid fa-heart"></i>
+                            <div class="fav-heart active favorited" style="color: #ff4b68;" data-id="{{ $fav->id }}" data-url="{{ route('favorites.toggle', ['listingId' => $fav->id]) }}" title="Remove from favorites">
+                                <i class="fa-solid fa-heart" style="color: #ff4b68;"></i>
                             </div>
                             <div class="fav-price">{{ $fav->formatted_price }}</div>
                         </div>

@@ -1582,7 +1582,8 @@
                             $isActive = $activeConversation && $activeConversation->id === $conv->id;
                             $unreadCount = $conv->messages()->where('sender_id', '!=', $user->id)->whereNull('read_at')->count();
                         @endphp
-                        <a href="{{ route('seller.messages', ['conversation_id' => $conv->id]) }}" class="chat-item {{ $isActive ? 'active' : '' }}" style="text-decoration:none; color:inherit;">
+                        {{-- USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this" --}}
+                        <a href="{{ route('seller.messages', ['conversation_id' => $conv->id]) }}" data-chat-id="chat-{{ $conv->id }}" class="chat-item {{ $isActive ? 'active' : '' }}" style="text-decoration:none; color:inherit;">
                             <img src="{{ $otherUser->avatar_url }}" alt="{{ $otherUser->name }}" class="chat-avatar" onerror="this.src='https://ui-avatars.com/api/?name=' . urlencode($otherUser->name) . '&background=random'">
                             <div class="chat-item-info">
                                 <div class="chat-item-header">
@@ -1940,6 +1941,16 @@
         @php
             $currentOtherUser = $activeConversation ? $activeConversation->otherParticipant($user->id) : null;
             $currentListing = $activeConversation ? $activeConversation->listing : null;
+            // USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this"
+            $initialDbMessages = $messages->map(function($m) use ($user) {
+                return [
+                    'id' => $m->id,
+                    'type' => $m->sender_id === $user->id ? 'sent' : 'received',
+                    'text' => $m->message,
+                    'time' => $m->created_at ? $m->created_at->format('h:i A') : '',
+                    'isDeleted' => $m->type === 'deleted'
+                ];
+            })->values();
         @endphp
         // State variables
         let activeChatId = '{{ $activeConversation ? "chat-" . $activeConversation->id : "chat-1" }}';
@@ -1955,40 +1966,26 @@
         let blockedUsers = JSON.parse(localStorage.getItem('blocked_users') || '{}');
         let customMessages = JSON.parse(localStorage.getItem('chat_messages_data') || '{}');
 
-        // Sample message sets for different chats
-        const chatMessagesData = {
+        // USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this"
+        // Only load mock buyer messages if no conversations exist; never overwrite cleared chats
+        const chatMessagesData = @json($conversations->isEmpty()) ? {
             'chat-1': [
                 { type: 'received', text: 'Hi, is the African Grey Parrot still available?', time: '10:20 AM' },
-                { type: 'sent', text: 'Yes, it is available. It is fully hand-tamed and healthy.', time: '10:22 AM' },
-                { type: 'received', text: 'Perfect! I will confirm my visit details shortly.', time: '10:24 AM' },
-                { type: 'received', text: 'Awesome, thank you! I will keep you updated.', time: '10:25 AM' }
-            ],
-            'chat-2': [
-                { type: 'received', text: 'Hi, is the Golden Retriever still available?', time: '10:22 AM' },
-                { type: 'sent', text: 'Yes, it is available.', time: '10:25 AM' }
-            ],
-            'chat-3': [
-                { type: 'received', text: 'Champion Line Golden Retriever Puppy inquiries', time: '10:22 AM' },
-                { type: 'sent', text: 'All vaccinations are complete.', time: '10:25 AM' }
-            ],
-            'chat-4': [
-                { type: 'received', text: 'What is the final price for the Persian Cat?', time: '08:15 AM' },
-                { type: 'sent', text: 'Hi! The final price is Rs. 45,000.', time: '08:20 AM' }
-            ],
-            'chat-5': [
-                { type: 'received', text: 'Where are you located?', time: '07:45 AM' },
-                { type: 'sent', text: 'We are located in DHA Lahore.', time: '07:50 AM' }
-            ],
-            'chat-6': [
-                { type: 'received', text: 'Perfect! I will confirm my visit details shortly.', time: '10:20 AM' },
-                { type: 'received', text: 'Awesome, thank you! I will keep you updated.', time: '10:25 AM' }
+                { type: 'sent', text: 'Yes, it is available. It is fully hand-tamed and healthy.', time: '10:22 AM' }
             ]
-        };
+        } : {};
 
         // Merge saved chat messages from localStorage
         Object.keys(customMessages).forEach(id => {
             chatMessagesData[id] = customMessages[id];
         });
+
+        // Initialize active conversation messages from database if not custom stored
+        @if($activeConversation)
+            if (!customMessages[activeChatId]) {
+                chatMessagesData[activeChatId] = @json($initialDbMessages);
+            }
+        @endif
 
         // Ensure cleared chats start with an empty messages array
         Object.keys(clearedChats).forEach(id => {
@@ -1996,15 +1993,8 @@
                 chatMessagesData[id] = [];
             }
         });
-
-        const simulatedReplies = [
-            "Thank you for the quick reply! That works for me.",
-            "Sounds great! Can you please share any additional pictures if available?",
-            "Got it. What time would be best to contact or visit?",
-            "Awesome, thank you! I will keep you updated.",
-            "Perfect! I will confirm my visit details shortly.",
-            "Thanks! Is the price firm or negotiable?"
-        ];
+        // USER PROMPT: "in chat when remove the functionality of automatic reply like when i send some message chatbot automatically reply remove this functonality"
+        // Automated chatbot / simulated replies removed
 
         function escapeHtml(str) {
             if (!str) return '';
@@ -2501,56 +2491,8 @@
             const modal = document.getElementById('imageLightboxModal');
             if (modal) modal.classList.remove('show');
         }
-
-        function triggerSimulatedBuyerReply(targetChatId) {
-            setTimeout(() => {
-                if (activeChatId === targetChatId && !blockedUsers[targetChatId]) {
-                    const messagesContainer = document.querySelector('.chat-messages');
-                    if (messagesContainer && !document.getElementById('typingIndicatorBubble')) {
-                        const typingEl = document.createElement('div');
-                        typingEl.className = 'msg-bubble-container received typing-indicator-bubble';
-                        typingEl.id = 'typingIndicatorBubble';
-                        typingEl.innerHTML = `
-                            <div class="msg-bubble typing-dots">
-                                <span></span><span></span><span></span>
-                            </div>
-                        `;
-                        messagesContainer.appendChild(typingEl);
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    }
-                }
-            }, 1200);
-
-            setTimeout(() => {
-                const typingEl = document.getElementById('typingIndicatorBubble');
-                if (typingEl) typingEl.remove();
-
-                if (!blockedUsers[targetChatId]) {
-                    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    const replyText = simulatedReplies[Math.floor(Math.random() * simulatedReplies.length)];
-
-                    if (!chatMessagesData[targetChatId]) chatMessagesData[targetChatId] = [];
-                    chatMessagesData[targetChatId].push({
-                        type: 'received',
-                        text: replyText,
-                        time: timeStr
-                    });
-                    localStorage.setItem('chat_messages_data', JSON.stringify(chatMessagesData));
-
-                    const activeItem = document.querySelector(`.chat-item[data-chat-id="${targetChatId}"]`);
-                    if (activeItem) {
-                        const preview = activeItem.querySelector('.chat-item-preview');
-                        if (preview) preview.textContent = replyText;
-                        const timeElem = activeItem.querySelector('.chat-item-time');
-                        if (timeElem) timeElem.textContent = 'Just now';
-                    }
-
-                    if (activeChatId === targetChatId) {
-                        renderActiveChat();
-                    }
-                }
-            }, 2600);
-        }
+        // USER PROMPT: "in chat when remove the functionality of automatic reply like when i send some message chatbot automatically reply remove this functonality"
+        // Automatic simulated reply function removed
 
         // USER PROMPT: "ya delete q ni ho rha"
         // Render current active chat state with WhatsApp message controls
@@ -2804,7 +2746,8 @@
             });
 
             chatItems.forEach((item, index) => {
-                const chatId = `chat-${index + 1}`;
+                // USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this"
+                const chatId = item.getAttribute('data-chat-id') || `chat-${index + 1}`;
                 item.setAttribute('data-chat-id', chatId);
 
                 const nameElem = item.querySelector('.chat-item-name');
@@ -2849,12 +2792,10 @@
                 }
             }
 
-            // Ensure active chat has initial messages if empty
-            if (!chatMessagesData[activeChatId] || chatMessagesData[activeChatId].length === 0) {
-                chatMessagesData[activeChatId] = [
-                    { type: 'received', text: 'Perfect! I will confirm my visit details shortly.', time: '10:22 AM' },
-                    { type: 'received', text: 'Awesome, thank you! I will keep you updated.', time: '10:25 AM' }
-                ];
+            // USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this"
+            // Never re-inject dummy buyer messages if conversation is cleared or empty
+            if (!chatMessagesData[activeChatId]) {
+                chatMessagesData[activeChatId] = [];
             }
 
             // USER PROMPT: "ya delete q ni ho rha"
@@ -2862,8 +2803,10 @@
             const confirmClearBtn = document.getElementById('confirmClearChatBtn');
             if (confirmClearBtn) {
                 confirmClearBtn.addEventListener('click', () => {
+                    // USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this"
                     clearedChats[activeChatId] = true;
                     chatMessagesData[activeChatId] = [];
+                    customMessages[activeChatId] = [];
                     localStorage.setItem('cleared_chats', JSON.stringify(clearedChats));
                     localStorage.setItem('chat_messages_data', JSON.stringify(chatMessagesData));
 
@@ -2964,7 +2907,11 @@
                 const text = chatInput ? chatInput.value.trim() : '';
                 if ((!text && !currentAttachment) || blockedUsers[activeChatId]) return;
 
-                if (!chatMessagesData[activeChatId]) chatMessagesData[activeChatId] = [];
+                // USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this"
+                // Ensure cleared chat history is completely empty before pushing new message
+                if (clearedChats[activeChatId] || !chatMessagesData[activeChatId]) {
+                    chatMessagesData[activeChatId] = [];
+                }
                 const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                 const newMsg = { type: 'sent', time: timeStr };
@@ -3021,8 +2968,8 @@
                 }
 
                 renderActiveChat();
-
-                triggerSimulatedBuyerReply(activeChatId);
+                // USER PROMPT: "in chat when remove the functionality of automatic reply like when i send some message chatbot automatically reply remove this functonality"
+                // Automatic simulated reply removed
             };
 
             if (chatForm) {
