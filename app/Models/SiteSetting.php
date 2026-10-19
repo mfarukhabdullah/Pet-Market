@@ -259,6 +259,28 @@ class SiteSetting extends Model
             'site_city_default' => ['value' => 'Lahore', 'group' => 'general'],
             // USER PROMPT: "yr mera ya flow ho ga ab user ay ga vo signup kry ga agr vo pet  sell jo krta hao vo show hon is ky ilawa koi dummy data show pets na hon jo vo listing bany vohi sirf show hon"
             'site_auto_approve_listings' => ['value' => '1', 'group' => 'general'],
+
+            // USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly"
+            'featured_sec_title' => ['value' => 'Featured Pets', 'group' => 'featured_pets'],
+            'featured_sec_subtitle' => ['value' => 'Highlighted pet listings from sellers on the marketplace.', 'group' => 'featured_pets'],
+
+            // USER PROMPT: "yr home page main in sections ko dynamic kro"
+            // Homepage Promotional CTA Banner Settings
+            'home_cta_title' => ['value' => 'One More Friend', 'group' => 'home_cta'],
+            'home_cta_subtitle' => ['value' => 'Thousands More Fun!', 'group' => 'home_cta'],
+            'home_cta_desc' => ['value' => 'Having a pet means you have more joy, a new friend, a happy person who will always be with you to have fun. We have 200+ different pets that can meet your needs!', 'group' => 'home_cta'],
+            'home_cta_image' => ['value' => 'images/more-friend.png', 'group' => 'home_cta'],
+            'home_cta_btn1_text' => ['value' => 'Browse Dogs', 'group' => 'home_cta'],
+            'home_cta_btn1_link' => ['value' => '/category/dogs', 'group' => 'home_cta'],
+            'home_cta_btn2_text' => ['value' => 'Browse Cats', 'group' => 'home_cta'],
+            'home_cta_btn2_link' => ['value' => '/category/cats', 'group' => 'home_cta'],
+
+            // Homepage Find Pets by Location Section Settings
+            'loc_sec_title' => ['value' => 'Find Pets by Location', 'group' => 'home_locations'],
+            'loc_sec_subtitle' => ['value' => 'Browse pets available in major cities and find listings closer to your location.', 'group' => 'home_locations'],
+            'loc_sec_cities' => ['value' => 'Lahore, Faisalabad, Multan, Sialkot, Karachi, Peshawar, Islamabad', 'group' => 'home_locations'],
+            'loc_sec_card_subtext' => ['value' => 'Browse listings', 'group' => 'home_locations'],
+            'loc_sec_all_text' => ['value' => 'All Locations', 'group' => 'home_locations'],
         ];
 
         foreach ($defaults as $key => $data) {

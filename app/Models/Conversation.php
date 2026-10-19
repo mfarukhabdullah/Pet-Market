@@ -61,4 +61,23 @@ class Conversation extends Model
     {
         return $this->buyer_id == $currentUserId ? $this->seller : $this->buyer;
     }
+
+    // USER PROMPT: "yr msg per timer q a rha hai"
+    public function getFormattedTimeAttribute(): string
+    {
+        if (!$this->last_message_at) {
+            return '';
+        }
+
+        $date = $this->last_message_at;
+        if ($date->isToday()) {
+            return $date->format('h:i A');
+        } elseif ($date->isYesterday()) {
+            return 'Yesterday';
+        } elseif ($date->diffInDays(now()) < 7) {
+            return $date->format('D');
+        } else {
+            return $date->format('d/m/y');
+        }
+    }
 }

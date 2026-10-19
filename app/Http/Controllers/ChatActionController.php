@@ -85,9 +85,23 @@ class ChatActionController extends Controller
         $conversation = Conversation::findOrFail($request->input('conversation_id'));
         $message = $this->chatService->sendMessage($conversation, $sender, $request->input('body'));
 
+        // USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain"
+        if ($request->filled('image')) {
+            $message->attachment_path = $request->input('image');
+            $message->save();
+        }
+
         return response()->json([
             'success' => true,
             'message' => $message,
+            'formatted_message' => [
+                'id' => $message->id,
+                'type' => 'sent',
+                'text' => $message->body,
+                'time' => $message->created_at->format('h:i A'),
+                'isDeleted' => false,
+                'image' => $message->attachment_path,
+            ],
             'sender_name' => $sender->name,
             'sender_avatar' => $sender->avatar_url,
             'created_at_human' => $message->created_at->diffForHumans(),
@@ -142,22 +156,69 @@ class ChatActionController extends Controller
     }
 
     /**
-     * Fetch conversation messages via AJAX.
+     * Fetch conversation messages via AJAX for live real-time sync.
      */
+    // USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain"
     public function getMessages($conversationId)
     {
         $user = $this->getActiveUser();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
+        }
+
         $conversation = Conversation::with(['listing.images', 'buyer', 'seller'])->findOrFail($conversationId);
+
+        if ($conversation->buyer_id !== $user->id && $conversation->seller_id !== $user->id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
         $messages = $conversation->messages()->with('sender')->get();
 
-        // Mark unread as read
+        // Mark unread incoming messages as read
         $this->chatService->markAsRead($conversation, $user);
+
+        $formattedMessages = $messages->map(function ($m) use ($user) {
+            $isSent = $m->sender_id === $user->id;
+            return [
+                'id' => $m->id,
+                'type' => $isSent ? 'sent' : 'received',
+                'text' => $m->body,
+                'time' => $m->created_at ? $m->created_at->format('h:i A') : '',
+                'isDeleted' => $m->type === 'deleted',
+                'is_read' => (bool) $m->is_read,
+                'msg_type' => $m->type,
+                'offer_amount' => $m->offer_amount,
+                'offer_status' => $m->offer_status,
+                'formatted_offer' => $m->formatted_offer_amount,
+                'sender_name' => $m->sender ? $m->sender->name : 'User',
+                'image' => $m->attachment_path,
+            ];
+        });
+
+        // Get sidebar live updates for all active user conversations
+        $sidebarConversations = Conversation::where('seller_id', $user->id)
+            ->orWhere('buyer_id', $user->id)
+            ->with(['latestMessage'])
+            ->orderBy('last_message_at', 'desc')
+            ->get()
+            ->map(function ($c) use ($user) {
+                return [
+                    'id' => $c->id,
+                    'chat_id' => 'chat-' . $c->id,
+                    'latest_message' => $c->latestMessage ? $c->latestMessage->body : 'No messages yet',
+                    // USER PROMPT: "yr msg per timer q a rha hai"
+                    'time_human' => $c->formatted_time,
+                    'unread_count' => $c->messages()->where('sender_id', '!=', $user->id)->where('is_read', false)->count(),
+                ];
+            });
 
         return response()->json([
             'success' => true,
             'conversation' => $conversation,
             'listing' => $conversation->listing,
-            'messages' => $messages,
+            'messages' => $formattedMessages,
+            'sidebar' => $sidebarConversations,
+            'current_user_id' => $user->id,
         ]);
     }
 

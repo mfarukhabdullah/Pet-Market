@@ -47,7 +47,8 @@ class EnsureSellerAuthenticated
                     ->with('info', 'Please log in to add this pet to your favorites.');
             }
 
-            if ($request->expectsJson()) {
+            // USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain"
+            if ($request->expectsJson() || $request->ajax() || $request->isJson()) {
                 return response()->json(['error' => 'Unauthenticated.'], 401);
             }
 

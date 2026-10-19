@@ -79,7 +79,9 @@ class AdminController extends Controller
         // USER PROMPT: "category page ka heroo section bhi dynamic kro"
         // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
         // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
-        $validTabs = ['overview', 'hero', 'hero_filters', 'home_categories', 'category_hero', 'safety', 'footer', 'about', 'seo', 'categories', 'listings', 'users', 'reports', 'settings'];
+        // USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly"
+        // USER PROMPT: "yr home page main in sections ko dynamic kro"
+        $validTabs = ['overview', 'featured_pets', 'hero', 'hero_filters', 'home_categories', 'home_cta', 'home_locations', 'category_hero', 'safety', 'footer', 'about', 'seo', 'categories', 'listings', 'users', 'reports', 'settings'];
         if (!in_array($tab, $validTabs)) {
             $tab = 'overview';
         }
@@ -91,6 +93,7 @@ class AdminController extends Controller
             'banned_users' => User::where('is_banned', true)->count(),
             'total_listings' => Listing::count(),
             'live_listings' => Listing::where('status', 'live')->count(),
+            'featured_listings' => Listing::where('is_featured', true)->count(),
             'pending_listings' => Listing::where('status', 'pending')->count(),
             'rejected_listings' => Listing::where('status', 'rejected')->count(),
             'sold_listings' => Listing::where('status', 'sold')->count(),
@@ -289,6 +292,68 @@ class AdminController extends Controller
             'home_cat_subtitle' => SiteSetting::get('home_cat_subtitle', "Start your search by choosing the type of companion you're looking for."),
         ];
 
+        // USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly"
+        // Featured Pets Management Data
+        $featuredPets = Listing::where('is_featured', true)
+            ->with(['images', 'category', 'breed', 'user'])
+            ->latest()
+            ->get();
+
+        $featuredSearch = $request->query('featured_q');
+        $featuredCat = $request->query('featured_cat');
+        // USER PROMPT: "yr ya jb feature main a gy hai to nichay waly main abhi q ha oper walay sy hi un feature ho"
+        $availablePetsQuery = Listing::where('status', 'live')
+            ->where('is_featured', false)
+            ->with(['images', 'category', 'breed', 'user'])
+            ->latest();
+
+        if ($featuredSearch) {
+            $availablePetsQuery->where(function ($q) use ($featuredSearch) {
+                $q->where('title', 'like', "%{$featuredSearch}%")
+                  ->orWhere('city', 'like', "%{$featuredSearch}%")
+                  ->orWhereHas('breed', function ($bq) use ($featuredSearch) {
+                      $bq->where('name', 'like', "%{$featuredSearch}%");
+                  })
+                  ->orWhereHas('category', function ($cq) use ($featuredSearch) {
+                      $cq->where('name', 'like', "%{$featuredSearch}%");
+                  })
+                  ->orWhereHas('user', function ($uq) use ($featuredSearch) {
+                      $uq->where('name', 'like', "%{$featuredSearch}%")
+                        ->orWhere('email', 'like', "%{$featuredSearch}%");
+                  });
+            });
+        }
+        if ($featuredCat && $featuredCat !== 'all') {
+            $availablePetsQuery->where('category_id', $featuredCat);
+        }
+
+        $availableLivePets = $availablePetsQuery->paginate(12, ['*'], 'featured_page')->withQueryString();
+
+        $featuredSecSettings = [
+            'featured_sec_title' => SiteSetting::get('featured_sec_title', 'Featured Pets'),
+            'featured_sec_subtitle' => SiteSetting::get('featured_sec_subtitle', 'Highlighted pet listings from sellers on the marketplace.'),
+        ];
+
+        // USER PROMPT: "yr home page main in sections ko dynamic kro"
+        $homeCtaSettings = [
+            'home_cta_title' => SiteSetting::get('home_cta_title', 'One More Friend'),
+            'home_cta_subtitle' => SiteSetting::get('home_cta_subtitle', 'Thousands More Fun!'),
+            'home_cta_desc' => SiteSetting::get('home_cta_desc', 'Having a pet means you have more joy, a new friend, a happy person who will always be with you to have fun. We have 200+ different pets that can meet your needs!'),
+            'home_cta_image' => SiteSetting::get('home_cta_image', 'images/more-friend.png'),
+            'home_cta_btn1_text' => SiteSetting::get('home_cta_btn1_text', 'Browse Dogs'),
+            'home_cta_btn1_link' => SiteSetting::get('home_cta_btn1_link', '/category/dogs'),
+            'home_cta_btn2_text' => SiteSetting::get('home_cta_btn2_text', 'Browse Cats'),
+            'home_cta_btn2_link' => SiteSetting::get('home_cta_btn2_link', '/category/cats'),
+        ];
+
+        $homeLocSettings = [
+            'loc_sec_title' => SiteSetting::get('loc_sec_title', 'Find Pets by Location'),
+            'loc_sec_subtitle' => SiteSetting::get('loc_sec_subtitle', 'Browse pets available in major cities and find listings closer to your location.'),
+            'loc_sec_cities' => SiteSetting::get('loc_sec_cities', 'Lahore, Faisalabad, Multan, Sialkot, Karachi, Peshawar, Islamabad'),
+            'loc_sec_card_subtext' => SiteSetting::get('loc_sec_card_subtext', 'Browse listings'),
+            'loc_sec_all_text' => SiteSetting::get('loc_sec_all_text', 'All Locations'),
+        ];
+
         return view('admin.dashboard', compact(
             'tab',
             'stats',
@@ -299,6 +364,13 @@ class AdminController extends Controller
             'listings',
             'users',
             'allReports',
+            // USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly"
+            'featuredPets',
+            'availableLivePets',
+            'featuredSecSettings',
+            // USER PROMPT: "yr home page main in sections ko dynamic kro"
+            'homeCtaSettings',
+            'homeLocSettings',
             'heroSettings',
             'categoryHeroSettings',
             // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
@@ -661,6 +733,70 @@ class AdminController extends Controller
         return redirect()->route('admin.dashboard', ['tab' => 'home_categories'])->with('success', 'Homepage Pet Categories headline and description updated!');
     }
 
+    // USER PROMPT: "yr home page main in sections ko dynamic kro"
+    /**
+     * Update Homepage Promotional CTA Banner section.
+     */
+    public function updateHomeCta(Request $request)
+    {
+        $keys = [
+            'home_cta_title',
+            'home_cta_subtitle',
+            'home_cta_desc',
+            'home_cta_btn1_text',
+            'home_cta_btn1_link',
+            'home_cta_btn2_text',
+            'home_cta_btn2_link',
+        ];
+
+        foreach ($keys as $key) {
+            $value = trim(strip_tags((string) $request->input($key, '')));
+            SiteSetting::set($key, $value, 'home_cta');
+        }
+
+        // Direct single image file upload or keep current
+        if ($request->hasFile('home_cta_image') && $request->file('home_cta_image')->isValid()) {
+            $file = $request->file('home_cta_image');
+            $uploadDir = public_path('uploads/cta');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $filename = 'cta_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            SiteSetting::set('home_cta_image', 'uploads/cta/' . $filename, 'home_cta');
+        } elseif ($request->filled('home_cta_image_path')) {
+            SiteSetting::set('home_cta_image', trim((string) $request->input('home_cta_image_path')), 'home_cta');
+        }
+
+        \Illuminate\Support\Facades\Cache::forget('site_settings_cache');
+
+        return redirect()->route('admin.dashboard', ['tab' => 'home_cta'])->with('success', 'Homepage Promotional CTA Banner updated successfully!');
+    }
+
+    // USER PROMPT: "yr home page main in sections ko dynamic kro"
+    /**
+     * Update Homepage Find Pets by Location section.
+     */
+    public function updateHomeLocations(Request $request)
+    {
+        $keys = [
+            'loc_sec_title',
+            'loc_sec_subtitle',
+            'loc_sec_cities',
+            'loc_sec_card_subtext',
+            'loc_sec_all_text',
+        ];
+
+        foreach ($keys as $key) {
+            $value = trim(strip_tags((string) $request->input($key, '')));
+            SiteSetting::set($key, $value, 'home_locations');
+        }
+
+        \Illuminate\Support\Facades\Cache::forget('site_settings_cache');
+
+        return redirect()->route('admin.dashboard', ['tab' => 'home_locations'])->with('success', 'Homepage Find Pets by Location section updated successfully!');
+    }
+
     // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
     /**
      * Quick upload / update for Category circular thumbnail image.
@@ -868,13 +1004,41 @@ class AdminController extends Controller
         return redirect()->back()->with('info', "Listing '{$listing->title}' rejected.");
     }
 
-    public function toggleFeaturedListing($id)
+    // USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly"
+    public function toggleFeaturedListing(Request $request, $id)
     {
         $listing = Listing::findOrFail($id);
         $listing->update(['is_featured' => !$listing->is_featured]);
 
-        $state = $listing->is_featured ? 'marked as Featured' : 'unmarked from Featured';
+        // Invalidate cached home page featured listings immediately
+        \Illuminate\Support\Facades\Cache::forget('home_featured_listings');
+
+        $state = $listing->is_featured ? 'marked as Featured ⭐' : 'removed from Featured';
+
+        if ($request->input('redirect_tab') === 'featured_pets') {
+            return redirect()->route('admin.dashboard', ['tab' => 'featured_pets'])->with('success', "Listing '{$listing->title}' {$state}!");
+        }
+
         return redirect()->back()->with('success', "Listing '{$listing->title}' {$state}!");
+    }
+
+    // USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly"
+    /**
+     * Update Homepage Featured Pets section title and subtitle.
+     */
+    public function updateFeaturedSection(Request $request)
+    {
+        $request->validate([
+            'featured_sec_title' => 'required|string|max:255',
+            'featured_sec_subtitle' => 'nullable|string|max:500',
+        ]);
+
+        SiteSetting::set('featured_sec_title', $request->input('featured_sec_title'), 'featured_pets');
+        SiteSetting::set('featured_sec_subtitle', $request->input('featured_sec_subtitle', ''), 'featured_pets');
+
+        \Illuminate\Support\Facades\Cache::forget('home_featured_listings');
+
+        return redirect()->route('admin.dashboard', ['tab' => 'featured_pets'])->with('success', 'Featured Pets section settings updated successfully!');
     }
 
     public function deleteListing($id)

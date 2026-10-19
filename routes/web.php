@@ -148,6 +148,9 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     // Categories & Breeds Dynamic Actions
     // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
     Route::post('/home-categories/update', [AdminController::class, 'updateHomeCategories'])->name('admin.home_categories.update');
+    // USER PROMPT: "yr home page main in sections ko dynamic kro"
+    Route::post('/home-cta/update', [AdminController::class, 'updateHomeCta'])->name('admin.home_cta.update');
+    Route::post('/home-locations/update', [AdminController::class, 'updateHomeLocations'])->name('admin.home_locations.update');
     Route::post('/categories/{id}/image', [AdminController::class, 'updateCategoryImage'])->name('admin.categories.image');
     Route::post('/categories/store', [AdminController::class, 'storeCategory'])->name('admin.categories.store');
     Route::post('/categories/{id}/update', [AdminController::class, 'updateCategory'])->name('admin.categories.update');
@@ -161,6 +164,8 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::post('/listings/{id}/approve', [AdminController::class, 'approveListing'])->name('admin.listings.approve');
     Route::post('/listings/{id}/reject', [AdminController::class, 'rejectListing'])->name('admin.listings.reject');
     Route::post('/listings/{id}/featured', [AdminController::class, 'toggleFeaturedListing'])->name('admin.listings.featured');
+    // USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly"
+    Route::post('/featured-pets/section-update', [AdminController::class, 'updateFeaturedSection'])->name('admin.featured_pets.section_update');
     Route::delete('/listings/{id}', [AdminController::class, 'deleteListing'])->name('admin.listings.delete');
 
     // User & Seller Moderation Actions

@@ -713,9 +713,11 @@
                             <div class="msg-content">
                                 <div class="msg-header">
                                     <span class="msg-name">{{ $other->name }}</span>
-                                    <span class="msg-time">{{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}</span>
+                                    {{-- USER PROMPT: "yr msg per timer  q a rha hai" --}}
+                                    <span class="msg-time">{{ $conv->formatted_time }}</span>
                                 </div>
-                                <div class="msg-text">{{ $conv->latestMessage ? Str::limit($conv->latestMessage->message, 40) : 'No messages' }}</div>
+                                {{-- USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain" --}}
+                                <div class="msg-text">{{ $conv->latestMessage ? Str::limit($conv->latestMessage->body ?: $conv->latestMessage->message, 40) : 'No messages' }}</div>
                             </div>
                         </a>
                     @empty

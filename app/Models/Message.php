@@ -35,6 +35,22 @@ class Message extends Model
         return $this->belongsTo(Conversation::class);
     }
 
+    // USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain"
+    public function getMessageAttribute()
+    {
+        return $this->body;
+    }
+
+    public function getFormattedOfferAmountAttribute()
+    {
+        return $this->offer_amount ? 'PKR ' . number_format($this->offer_amount, 0) : null;
+    }
+
+    public function getIsFlaggedAttribute()
+    {
+        return (bool) $this->has_warning;
+    }
+
     public function sender()
     {
         return $this->belongsTo(User::class, 'sender_id');

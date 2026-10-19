@@ -725,6 +725,19 @@
                     <span class="nav-pill">Home</span>
                 </a>
             </li>
+            {{-- USER PROMPT: "yr home page main in sections ko dynamic kro" --}}
+            <li class="admin-nav-item {{ $tab === 'home_cta' ? 'active' : '' }}">
+                <a href="{{ route('admin.dashboard', ['tab' => 'home_cta']) }}">
+                    <span class="nav-left"><i class="fa-solid fa-bullhorn"></i> Promo CTA Banner</span>
+                    <span class="nav-pill">Home</span>
+                </a>
+            </li>
+            <li class="admin-nav-item {{ $tab === 'home_locations' ? 'active' : '' }}">
+                <a href="{{ route('admin.dashboard', ['tab' => 'home_locations']) }}">
+                    <span class="nav-left"><i class="fa-solid fa-location-crosshairs"></i> Location Cards</span>
+                    <span class="nav-pill">Home</span>
+                </a>
+            </li>
             {{-- USER PROMPT: "category page ka heroo section bhi dynamic kro" --}}
             <li class="admin-nav-item {{ $tab === 'category_hero' ? 'active' : '' }}">
                 <a href="{{ route('admin.dashboard', ['tab' => 'category_hero']) }}">
@@ -769,6 +782,13 @@
                 <a href="{{ route('admin.dashboard', ['tab' => 'listings']) }}">
                     <span class="nav-left"><i class="fa-solid fa-paw"></i> Pet Listings</span>
                     <span class="nav-pill">{{ $stats['live_listings'] }}</span>
+                </a>
+            </li>
+            {{-- USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly" --}}
+            <li class="admin-nav-item {{ $tab === 'featured_pets' ? 'active' : '' }}">
+                <a href="{{ route('admin.dashboard', ['tab' => 'featured_pets']) }}">
+                    <span class="nav-left"><i class="fa-solid fa-star" style="color: #F59E0B;"></i> Featured Pets</span>
+                    <span class="nav-pill" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.3);">{{ $stats['featured_listings'] ?? 0 }}</span>
                 </a>
             </li>
             <li class="admin-nav-item {{ $tab === 'users' ? 'active' : '' }}">
@@ -827,6 +847,13 @@
                     @elseif($tab === 'home_categories')
                         <h1>Homepage Pet Categories Section</h1>
                         <p>Customize section title, subtitle description, category display order, and circular pet icons</p>
+                    {{-- USER PROMPT: "yr home page main in sections ko dynamic kro" --}}
+                    @elseif($tab === 'home_cta')
+                        <h1>Homepage Promotional CTA Banner</h1>
+                        <p>Customize promotional headline, subtitle, description, visual image, and direct action buttons</p>
+                    @elseif($tab === 'home_locations')
+                        <h1>Homepage Find Pets by Location</h1>
+                        <p>Customize section title, subtitle, target cities list, card subtext, and all locations button</p>
                     {{-- USER PROMPT: "category page ka heroo section bhi dynamic kro" --}}
                     @elseif($tab === 'category_hero')
                         <h1>Category Page Hero Banner Settings</h1>
@@ -852,6 +879,10 @@
                     @elseif($tab === 'listings')
                         <h1>Platform Pet Inventory &amp; Moderation</h1>
                         <p>Review, verify, mark featured, and moderate listings across all cities</p>
+                    {{-- USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly" --}}
+                    @elseif($tab === 'featured_pets')
+                        <h1>Featured Pets Management &amp; Highlight Showcase</h1>
+                        <p>Select, feature, or un-feature any live pet listings to showcase them instantly on the marketplace homepage</p>
                     @elseif($tab === 'users')
                         <h1>Registered Users &amp; Seller Verification</h1>
                         <p>Manage user accounts, assign trust ratings, verify breeders, and shield against fraud</p>
@@ -1086,6 +1117,278 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+            {{-- USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly" --}}
+            <!-- TAB: FEATURED PETS MANAGEMENT -->
+            @elseif($tab === 'featured_pets')
+                <!-- Quick Navigation Pills between Homepage Sections -->
+                <div style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+                    <a href="{{ route('admin.dashboard', ['tab' => 'featured_pets']) }}" class="btn-admin btn-admin-primary">
+                        <i class="fa-solid fa-star" style="color: #F59E0B;"></i> Featured Pets Manager
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'home_categories']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-shapes"></i> Homepage Categories
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'hero']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Homepage Hero
+                    </a>
+                    <a href="{{ route('featured.pets') }}" target="_blank" class="btn-admin btn-admin-secondary" style="margin-left: auto;">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Public Featured Showcase
+                    </a>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="admin-stats-grid" style="margin-bottom: 24px;">
+                    <div class="stat-card">
+                        <div>
+                            <div class="val" style="color: #F59E0B;">{{ $featuredPets->count() }}</div>
+                            <div class="lbl">Currently Featured Pets</div>
+                        </div>
+                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B;"><i class="fa-solid fa-star"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="val">{{ $stats['live_listings'] }}</div>
+                            <div class="lbl">Total Live Pets in Inventory</div>
+                        </div>
+                        <div class="stat-icon icon-green"><i class="fa-solid fa-paw"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="val" style="font-size: 18px; color: #10B981; margin-top: 4px;">Live on Homepage</div>
+                            <div class="lbl">Instant Realtime Sync</div>
+                        </div>
+                        <div class="stat-icon icon-blue"><i class="fa-solid fa-bolt"></i></div>
+                    </div>
+                </div>
+
+                <!-- Section 1: Homepage Section Heading Settings -->
+                <div class="admin-panel" style="margin-bottom: 24px;">
+                    <div class="panel-head">
+                        <h2><i class="fa-solid fa-pen-to-square" style="color: var(--admin-primary);"></i> Homepage "Featured Pets" Section Titles</h2>
+                    </div>
+                    <div class="panel-body">
+                        <form action="{{ route('admin.featured_pets.section_update') }}" method="POST">
+                            @csrf
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="featured_sec_title">Section Main Title</label>
+                                    <input type="text" name="featured_sec_title" id="featured_sec_title" class="form-control" value="{{ $featuredSecSettings['featured_sec_title'] }}" placeholder="Featured Pets" required>
+                                    <div class="form-help">Displayed as the main heading on the homepage (default: <code>Featured Pets</code>).</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="featured_sec_subtitle">Section Subtitle Description</label>
+                                    <input type="text" name="featured_sec_subtitle" id="featured_sec_subtitle" class="form-control" value="{{ $featuredSecSettings['featured_sec_subtitle'] }}" placeholder="Highlighted pet listings from sellers on the marketplace.">
+                                    <div class="form-help">Short text description under the headline.</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right; margin-top: 10px;">
+                                <button type="submit" class="btn-admin btn-admin-primary">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Section Heading
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Section 2: Currently Featured Pets -->
+                <div class="admin-panel" style="margin-bottom: 28px;">
+                    <div class="panel-head" style="border-bottom: 1px solid var(--admin-border); padding-bottom: 16px;">
+                        <div>
+                            <h2><i class="fa-solid fa-star" style="color: #F59E0B;"></i> Currently Featured Pets ({{ $featuredPets->count() }})</h2>
+                            <p style="margin: 4px 0 0; font-size: 13px; color: var(--admin-text-muted);">These pets are currently pinned and showcased at the top of the homepage and in the Featured Pets filter.</p>
+                        </div>
+                    </div>
+
+                    @if($featuredPets->isEmpty())
+                        <div style="text-align: center; padding: 48px 24px; background: #FAF8F5; border-radius: 12px; margin: 20px; border: 1.5px dashed #CBD5E1;">
+                            <i class="fa-solid fa-star" style="font-size: 36px; color: #CBD5E1; margin-bottom: 14px; display: inline-block;"></i>
+                            <h3 style="font-size: 18px; font-weight: 700; color: #1E293B; margin-bottom: 6px;">No Pets Featured Yet</h3>
+                            {{-- USER PROMPT: "yr pets errow sy open ho or oper text ho english main urdu main ni" --}}
+                            <p style="font-size: 14px; color: #64748B; max-width: 520px; margin: 0 auto 18px; line-height: 1.5;">
+                                No pet listings are currently marked as featured. Choose and feature any pet listing from the live marketplace inventory below to showcase it prominently on the homepage.
+                            </p>
+                            <button type="button" onclick="openAvailablePetsSection()" class="btn-admin btn-admin-primary" style="background: #147A4D; color: white; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; padding: 12px 24px; border-radius: 10px; cursor: pointer; border: none; font-weight: 700; box-shadow: 0 4px 12px rgba(20, 122, 77, 0.25); transition: all 0.2s;">
+                                <i class="fa-solid fa-arrow-down" id="heroArrowIcon" style="font-size: 14px; transition: transform 0.3s ease;"></i> Open Live Pets to Feature
+                            </button>
+                        </div>
+                    @else
+                        <div style="overflow-x: auto;">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Pet Details</th>
+                                        <th>Seller</th>
+                                        <th>Price</th>
+                                        <th>City</th>
+                                        <th>Status</th>
+                                        <th>Featured Order</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($featuredPets as $fPet)
+                                        <tr>
+                                            <td>
+                                                <div style="display:flex; align-items:center; gap:12px;">
+                                                    <img src="{{ $fPet->primary_image_url }}" alt="{{ $fPet->title }}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid #E2E8F0;">
+                                                    <div>
+                                                        <a href="{{ route('pet.details', ['slug' => $fPet->slug ?: $fPet->id]) }}" target="_blank" style="font-weight:700;color:var(--admin-text-main);text-decoration:none;">{{ $fPet->title }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;color:#94A3B8;margin-left:3px;"></i></a>
+                                                        <div style="font-size:12px;color:var(--admin-text-muted);">
+                                                            {{ $fPet->category ? $fPet->category->name : 'Pet' }} • {{ $fPet->breed_name ?: ($fPet->breed ? $fPet->breed->name : 'N/A') }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <strong>{{ $fPet->user ? $fPet->user->name : 'N/A' }}</strong>
+                                                <div style="font-size:12px;color:var(--admin-text-muted);">{{ $fPet->user ? ($fPet->user->phone ?: $fPet->user->email) : '' }}</div>
+                                            </td>
+                                            <td><strong style="color: #147A4D;">{{ $fPet->formatted_price }}</strong></td>
+                                            <td>{{ $fPet->city }}</td>
+                                            <td>
+                                                @if($fPet->status === 'live')
+                                                    <span class="badge badge-live">Live</span>
+                                                @else
+                                                    <span class="badge badge-sold">{{ ucfirst($fPet->status) }}</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #B45309; border: 1px solid rgba(245, 158, 11, 0.3);">
+                                                    <i class="fa-solid fa-star"></i> Featured
+                                                </span>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <div style="display:inline-flex; gap:8px; align-items: center;">
+                                                    <a href="{{ route('pet.details', ['slug' => $fPet->slug ?: $fPet->id]) }}" target="_blank" class="btn-admin btn-admin-secondary btn-sm" title="Open Pet Details in New Tab" style="display:inline-flex;align-items:center;gap:4px;">
+                                                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+                                                    </a>
+                                                    <form action="{{ route('admin.listings.featured', ['id' => $fPet->id]) }}" method="POST" onsubmit="return confirm('Remove this pet from the Featured section on the homepage?');">
+                                                        @csrf
+                                                        <input type="hidden" name="redirect_tab" value="featured_pets">
+                                                        <button type="submit" class="btn-admin btn-admin-danger btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+                                                            <i class="fa-solid fa-trash-can"></i> Remove from Featured
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- USER PROMPT: "yr ya jb feature main a gy hai to nichay waly main abhi q ha oper walay sy hi un feature ho" --}}
+                <!-- Section 3: Add Pets to Featured (Choose from Live Listings) -->
+                <div class="admin-panel" id="available-pets-section" style="scroll-margin-top: 100px;">
+                    <div class="panel-head" style="flex-wrap: wrap; gap: 14px; cursor: pointer;" onclick="toggleAvailablePetsSection()">
+                        <div>
+                            <h2>
+                                <i class="fa-solid fa-paw" style="color: var(--admin-primary);"></i> Choose Live Pets to Feature ({{ $availableLivePets->total() }})
+                                <i class="fa-solid fa-chevron-down" id="petsChevron" style="font-size: 14px; margin-left: 8px; color: var(--admin-text-muted); transition: transform 0.3s ease;"></i>
+                            </h2>
+                            <p style="margin: 4px 0 0; font-size: 13px; color: var(--admin-text-muted);">Live pets available to feature. Click <strong>"Feature This Pet"</strong> to add it to the Featured showcase above.</p>
+                        </div>
+
+                        <!-- Search & Filter Form -->
+                        <form action="{{ route('admin.dashboard') }}" method="GET" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;" onclick="event.stopPropagation();">
+                            <input type="hidden" name="tab" value="featured_pets">
+                            
+                            <select name="featured_cat" class="form-control" style="width: 170px; padding: 8px 12px; font-size: 13px;">
+                                <option value="all">All Categories</option>
+                                @foreach($categories as $c)
+                                    <option value="{{ $c->id }}" {{ request('featured_cat') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
+                                @endforeach
+                            </select>
+
+                            <input type="text" name="featured_q" value="{{ request('featured_q') }}" placeholder="Search title, breed, city, seller..." class="form-control" style="width: 240px; padding: 8px 12px; font-size: 13px;">
+                            
+                            <button type="submit" class="btn-admin btn-admin-primary btn-sm">
+                                <i class="fa-solid fa-magnifying-glass"></i> Filter
+                            </button>
+
+                            @if(request('featured_q') || (request('featured_cat') && request('featured_cat') !== 'all'))
+                                <a href="{{ route('admin.dashboard', ['tab' => 'featured_pets']) }}" class="btn-admin btn-admin-secondary btn-sm" title="Clear Filters">
+                                    <i class="fa-solid fa-xmark"></i> Reset
+                                </a>
+                            @endif
+                        </form>
+                    </div>
+
+                    <div id="availablePetsBody">
+                        <div style="overflow-x: auto;">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Pet Listing</th>
+                                        <th>Category &amp; Breed</th>
+                                        <th>Seller</th>
+                                        <th>Price</th>
+                                        <th>City</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($availableLivePets as $item)
+                                        <tr>
+                                            <td>
+                                                <div style="display:flex; align-items:center; gap:12px;">
+                                                    <img src="{{ $item->primary_image_url }}" alt="{{ $item->title }}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid #E2E8F0;">
+                                                    <div>
+                                                        <a href="{{ route('pet.details', ['slug' => $item->slug ?: $item->id]) }}" target="_blank" style="font-weight:700;color:var(--admin-text-main);text-decoration:none;">{{ $item->title }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;color:#94A3B8;margin-left:3px;"></i></a>
+                                                        <div style="font-size:12px;color:var(--admin-text-muted);">Listed: {{ $item->created_at->format('M d, Y') }}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <strong>{{ $item->category ? $item->category->name : 'N/A' }}</strong>
+                                                <div style="font-size:12px;color:var(--admin-text-muted);">{{ $item->breed_name ?: ($item->breed ? $item->breed->name : 'N/A') }}</div>
+                                            </td>
+                                            <td>
+                                                <strong>{{ $item->user ? $item->user->name : 'N/A' }}</strong>
+                                                <div style="font-size:12px;color:var(--admin-text-muted);">{{ $item->user ? ($item->user->phone ?: $item->user->email) : '' }}</div>
+                                            </td>
+                                            <td><strong style="color: #147A4D;">{{ $item->formatted_price }}</strong></td>
+                                            <td>{{ $item->city }}</td>
+                                            <td>
+                                                <span class="badge badge-sold"><i class="fa-regular fa-star"></i> Not Featured</span>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <div style="display:inline-flex; gap:8px; align-items:center;">
+                                                    <a href="{{ route('pet.details', ['slug' => $item->slug ?: $item->id]) }}" target="_blank" class="btn-admin btn-admin-secondary btn-sm" title="Open Pet Details in New Tab" style="display:inline-flex;align-items:center;gap:4px;">
+                                                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+                                                    </a>
+                                                    <form action="{{ route('admin.listings.featured', ['id' => $item->id]) }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="redirect_tab" value="featured_pets">
+                                                        <button type="submit" class="btn-admin btn-sm" style="background: #10B981; color: #FFFFFF; border: none; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+                                                            <i class="fa-solid fa-star" style="color: #FEF08A;"></i> Feature This Pet
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" style="text-align:center;padding:36px;color:var(--admin-text-muted);">
+                                                No live pet listings matching your search filter.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
+                        @if($availableLivePets->hasPages())
+                            <div style="padding:16px 24px; border-top: 1px solid var(--admin-border);">
+                                {{ $availableLivePets->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -1686,6 +1989,344 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+            <!-- TAB: HOMEPAGE PROMOTIONAL CTA BANNER -->
+            {{-- USER PROMPT: "yr home page main in sections ko dynamic kro" --}}
+            @elseif($tab === 'home_cta')
+                <!-- Quick Navigation Pills between Homepage Sections -->
+                <div style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+                    <a href="{{ route('admin.dashboard', ['tab' => 'hero']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> 1. Homepage Hero Section
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'hero_filters']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-sliders"></i> 2. Hero Search Filters
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'home_categories']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-shapes"></i> 3. Browse by Category
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'home_cta']) }}" class="btn-admin btn-admin-primary">
+                        <i class="fa-solid fa-bullhorn"></i> 4. Promo CTA Banner
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'home_locations']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-location-crosshairs"></i> 5. Location Cards
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'safety']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-shield-halved"></i> 6. Safety &amp; Trust
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'footer']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-shoe-prints"></i> 7. Dynamic Footer
+                    </a>
+                </div>
+
+                <!-- Live Simulation Preview of Promo Banner -->
+                <div class="admin-panel" style="margin-bottom: 24px; border-left: 4px solid var(--admin-primary); background: #FAF8F5;">
+                    <div class="panel-head" style="background: transparent; border-bottom: 1px solid rgba(0,0,0,0.06);">
+                        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:12px;">
+                            <div>
+                                <h2><i class="fa-solid fa-eye" style="color: var(--admin-primary);"></i> Live Promotional CTA Banner Simulation</h2>
+                                <p style="font-size: 12px; color: var(--admin-text-muted); margin: 2px 0 0;">Visual replica matching the public homepage promotional banner</p>
+                            </div>
+                            <a href="{{ route('home') }}" target="_blank" class="btn-admin btn-admin-secondary btn-sm">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live Homepage
+                            </a>
+                        </div>
+                    </div>
+                    <div class="panel-body" style="padding: 24px;">
+                        <!-- Front-End Banner Simulation Container -->
+                        <div style="position: relative; width: 100%; min-height: 320px; background-color: #147A4D; border-radius: 20px; overflow: hidden; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box; box-shadow: 0 12px 30px rgba(20, 122, 77, 0.2);">
+                            <!-- Decorative Cream Shape -->
+                            <div style="position: absolute; top: -140px; right: -100px; width: 680px; height: 580px; background-color: #FCEED5; border-radius: 99px; transform: rotate(25deg); z-index: 1;"></div>
+                            
+                            <!-- Left: Image Preview -->
+                            <div style="position: relative; z-index: 2; width: 45%; height: 100%; display: flex; align-items: flex-end; justify-content: center; padding-top: 20px;">
+                                <img src="{{ asset($homeCtaSettings['home_cta_image']) }}" alt="Banner Visual" style="max-width: 90%; max-height: 290px; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));" onerror="this.src='{{ asset('images/more-friend.png') }}'">
+                            </div>
+
+                            <!-- Right: Text & Buttons -->
+                            <div style="position: relative; z-index: 2; width: 55%; padding: 30px 45px 30px 40px; text-align: left; box-sizing: border-box; display: flex; flex-direction: column; align-items: flex-start;">
+                                <h1 style="margin: 0; font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 800; color: #000000; line-height: 1.15;">
+                                    {{ $homeCtaSettings['home_cta_title'] }}
+                                </h1>
+                                <h2 style="margin: 6px 0 12px 0; font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 700; color: #161616; line-height: 1.2;">
+                                    {{ $homeCtaSettings['home_cta_subtitle'] }}
+                                </h2>
+                                <p style="margin: 0 0 20px 0; font-size: 13px; font-weight: 400; line-height: 1.6; color: #242B33; max-width: 440px;">
+                                    {{ $homeCtaSettings['home_cta_desc'] }}
+                                </p>
+                                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                                    <span style="display: inline-block; padding: 10px 22px; border-radius: 8px; font-weight: 600; font-size: 13px; background-color: #147A4D; color: #FFFFFF; border: 1px solid #147A4D;">
+                                        {{ $homeCtaSettings['home_cta_btn1_text'] ?: 'Button 1' }}
+                                    </span>
+                                    <span style="display: inline-block; padding: 10px 22px; border-radius: 8px; font-weight: 600; font-size: 13px; background-color: #FCEED5; color: #147A4D; border: 1px solid #147A4D;">
+                                        {{ $homeCtaSettings['home_cta_btn2_text'] ?: 'Button 2' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form: Promotional CTA Banner Configuration -->
+                <div class="admin-panel">
+                    <div class="panel-head">
+                        <h2><i class="fa-solid fa-sliders" style="color: var(--admin-primary);"></i> Promotional CTA Banner Configuration</h2>
+                    </div>
+                    <div class="panel-body">
+                        <form action="{{ route('admin.home_cta.update') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+
+                            <!-- Section 1: Headlines & Copy -->
+                            <div style="margin-bottom: 24px;">
+                                <h3 style="font-size: 15px; font-weight: 700; color: #1E293B; margin-bottom: 14px; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px;">
+                                    <i class="fa-solid fa-heading" style="color: var(--admin-primary);"></i> 1. Banner Headlines &amp; Description
+                                </h3>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="home_cta_title">Primary Headline Title</label>
+                                        <input type="text" name="home_cta_title" id="home_cta_title" class="form-control" value="{{ $homeCtaSettings['home_cta_title'] }}" placeholder="One More Friend" required>
+                                        <div class="form-help">Large main title text (default: <code>One More Friend</code>).</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="home_cta_subtitle">Secondary Subtitle</label>
+                                        <input type="text" name="home_cta_subtitle" id="home_cta_subtitle" class="form-control" value="{{ $homeCtaSettings['home_cta_subtitle'] }}" placeholder="Thousands More Fun!" required>
+                                        <div class="form-help">Subtitle beneath the headline (default: <code>Thousands More Fun!</code>).</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="home_cta_desc">Banner Description Paragraph</label>
+                                    <textarea name="home_cta_desc" id="home_cta_desc" rows="3" class="form-control" required>{{ $homeCtaSettings['home_cta_desc'] }}</textarea>
+                                    <div class="form-help">Short text explaining the joy of adopting/buying pets on the platform.</div>
+                                </div>
+                            </div>
+
+                            <!-- Section 2: Banner Visual / Image -->
+                            <div style="margin-bottom: 24px;">
+                                <h3 style="font-size: 15px; font-weight: 700; color: #1E293B; margin-bottom: 14px; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px;">
+                                    <i class="fa-solid fa-image" style="color: var(--admin-primary);"></i> 2. Promotional Pet Visual Image
+                                </h3>
+
+                                <div style="display: flex; gap: 24px; align-items: center; background: #FAF8F5; padding: 18px; border-radius: 12px; border: 1px solid var(--admin-border); flex-wrap: wrap;">
+                                    <div style="width: 100px; height: 100px; border-radius: 12px; background: #147A4D; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                        <img src="{{ asset($homeCtaSettings['home_cta_image']) }}" alt="Current CTA Image" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.src='{{ asset('images/more-friend.png') }}'">
+                                    </div>
+                                    <div style="flex: 1; min-width: 260px;">
+                                        <label class="form-label" for="home_cta_image">Upload New Visual Image (PNG / Transparent Recommended)</label>
+                                        <input type="file" name="home_cta_image" id="home_cta_image" class="form-control" accept="image/*">
+                                        <div class="form-help" style="margin-top: 6px;">
+                                            Current image path: <code>{{ $homeCtaSettings['home_cta_image'] }}</code>. Transparent PNG gives the best result on the dark green background.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 3: Action Buttons -->
+                            <div style="margin-bottom: 24px;">
+                                <h3 style="font-size: 15px; font-weight: 700; color: #1E293B; margin-bottom: 14px; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px;">
+                                    <i class="fa-solid fa-hand-pointer" style="color: var(--admin-primary);"></i> 3. Action Buttons &amp; Navigation Links
+                                </h3>
+
+                                <div class="form-row">
+                                    <!-- Button 1 -->
+                                    <div style="background: #FAF8F5; padding: 16px; border-radius: 12px; border: 1px solid var(--admin-border);">
+                                        <div style="font-weight: 700; color: #147A4D; margin-bottom: 10px; font-size: 13px;">
+                                            <i class="fa-solid fa-square" style="color: #147A4D;"></i> Button 1 (Solid Dark Green)
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 12px;">
+                                            <label class="form-label" for="home_cta_btn1_text">Button Label</label>
+                                            <input type="text" name="home_cta_btn1_text" id="home_cta_btn1_text" class="form-control" value="{{ $homeCtaSettings['home_cta_btn1_text'] }}" placeholder="Browse Dogs" required>
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label class="form-label" for="home_cta_btn1_link">Destination Link / URL</label>
+                                            <input type="text" name="home_cta_btn1_link" id="home_cta_btn1_link" class="form-control" value="{{ $homeCtaSettings['home_cta_btn1_link'] }}" placeholder="/category/dogs" required>
+                                            <div class="form-help">e.g. <code>/category/dogs</code> or <code>{{ route('category', ['param1' => 'dogs']) }}</code></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Button 2 -->
+                                    <div style="background: #FAF8F5; padding: 16px; border-radius: 12px; border: 1px solid var(--admin-border);">
+                                        <div style="font-weight: 700; color: #B45309; margin-bottom: 10px; font-size: 13px;">
+                                            <i class="fa-regular fa-square" style="color: #147A4D;"></i> Button 2 (Cream Outline)
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 12px;">
+                                            <label class="form-label" for="home_cta_btn2_text">Button Label</label>
+                                            <input type="text" name="home_cta_btn2_text" id="home_cta_btn2_text" class="form-control" value="{{ $homeCtaSettings['home_cta_btn2_text'] }}" placeholder="Browse Cats" required>
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label class="form-label" for="home_cta_btn2_link">Destination Link / URL</label>
+                                            <input type="text" name="home_cta_btn2_link" id="home_cta_btn2_link" class="form-control" value="{{ $homeCtaSettings['home_cta_btn2_link'] }}" placeholder="/category/cats" required>
+                                            <div class="form-help">e.g. <code>/category/cats</code> or <code>{{ route('category', ['param1' => 'cats']) }}</code></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Action Bar -->
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--admin-border); flex-wrap: wrap; gap: 12px;">
+                                <a href="{{ route('home') }}" target="_blank" class="btn-admin btn-admin-secondary">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Public Homepage
+                                </a>
+                                <button type="submit" class="btn-admin btn-admin-primary">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Promotional Banner Settings
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            <!-- TAB: HOMEPAGE FIND PETS BY LOCATION -->
+            {{-- USER PROMPT: "yr home page main in sections ko dynamic kro" --}}
+            @elseif($tab === 'home_locations')
+                <!-- Quick Navigation Pills between Homepage Sections -->
+                <div style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+                    <a href="{{ route('admin.dashboard', ['tab' => 'hero']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> 1. Homepage Hero Section
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'hero_filters']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-sliders"></i> 2. Hero Search Filters
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'home_categories']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-shapes"></i> 3. Browse by Category
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'home_cta']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-bullhorn"></i> 4. Promo CTA Banner
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'home_locations']) }}" class="btn-admin btn-admin-primary">
+                        <i class="fa-solid fa-location-crosshairs"></i> 5. Location Cards
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'safety']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-shield-halved"></i> 6. Safety &amp; Trust
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['tab' => 'footer']) }}" class="btn-admin btn-admin-secondary">
+                        <i class="fa-solid fa-shoe-prints"></i> 7. Dynamic Footer
+                    </a>
+                </div>
+
+                <!-- Live Simulation Preview of Locations Grid -->
+                <div class="admin-panel" style="margin-bottom: 24px; border-left: 4px solid var(--admin-primary); background: #FAF8F5;">
+                    <div class="panel-head" style="background: transparent; border-bottom: 1px solid rgba(0,0,0,0.06);">
+                        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:12px;">
+                            <div>
+                                <h2><i class="fa-solid fa-eye" style="color: var(--admin-primary);"></i> Live "Find Pets by Location" Simulation</h2>
+                                <p style="font-size: 12px; color: var(--admin-text-muted); margin: 2px 0 0;">Visual replica matching the green location cards section on the homepage</p>
+                            </div>
+                            <a href="{{ route('home') }}" target="_blank" class="btn-admin btn-admin-secondary btn-sm">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live Homepage
+                            </a>
+                        </div>
+                    </div>
+                    <div class="panel-body" style="padding: 24px;">
+                        <!-- Deep Green Simulation Container -->
+                        <div style="background-color: #0E6B40; border-radius: 20px; padding: 36px 30px; box-shadow: 0 12px 32px rgba(14, 107, 64, 0.25);">
+                            <div style="margin-bottom: 28px;">
+                                <h2 style="font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 700; color: #FFFFFF; margin: 0 0 8px;">
+                                    {{ $homeLocSettings['loc_sec_title'] }}
+                                </h2>
+                                <p style="font-size: 14px; color: rgba(255, 255, 255, 0.85); margin: 0; max-width: 620px;">
+                                    {{ $homeLocSettings['loc_sec_subtitle'] }}
+                                </p>
+                            </div>
+
+                            @php
+                                $previewCities = array_values(array_filter(array_map('trim', explode(',', $homeLocSettings['loc_sec_cities']))));
+                            @endphp
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px;">
+                                @foreach($previewCities as $c)
+                                    <div style="background: rgba(255, 255, 255, 0.08); border: 0.67px solid rgba(255, 255, 255, 0.1); border-top: 0.67px solid rgba(255, 255, 255, 0.72); border-radius: 14px; padding: 18px 20px; color: white; display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <h3 style="font-size: 18px; font-weight: 700; margin: 0; color: #FFFFFF; font-family: 'Manrope', sans-serif;">{{ $c }}</h3>
+                                            <p style="font-size: 13px; font-weight: 500; margin: 4px 0 0; color: #EBEBEB;">{{ $homeLocSettings['loc_sec_card_subtext'] }}</p>
+                                        </div>
+                                        <i class="fa-solid fa-arrow-right" style="color: rgba(255,255,255,0.85); font-size: 14px;"></i>
+                                    </div>
+                                @endforeach
+
+                                @if(!empty($homeLocSettings['loc_sec_all_text']))
+                                    <div style="background: rgba(255, 255, 255, 0.12); border: 0.67px solid rgba(255, 255, 255, 0.15); border-top: 0.67px solid rgba(255, 255, 255, 0.9); border-radius: 14px; padding: 18px 20px; color: white; display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <h3 style="font-size: 18px; font-weight: 700; margin: 0; color: #FFFFFF; font-family: 'Manrope', sans-serif;">{{ $homeLocSettings['loc_sec_all_text'] }}</h3>
+                                            <p style="font-size: 13px; font-weight: 500; margin: 4px 0 0; color: #EBEBEB;">{{ $homeLocSettings['loc_sec_card_subtext'] }}</p>
+                                        </div>
+                                        <i class="fa-solid fa-arrow-right" style="color: #FFFFFF; font-size: 14px;"></i>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form: Location Cards Configuration -->
+                <div class="admin-panel">
+                    <div class="panel-head">
+                        <h2><i class="fa-solid fa-sliders" style="color: var(--admin-primary);"></i> Location Cards Configuration</h2>
+                    </div>
+                    <div class="panel-body">
+                        <form action="{{ route('admin.home_locations.update') }}" method="POST">
+                            @csrf
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="loc_sec_title">Section Headline Title</label>
+                                    <input type="text" name="loc_sec_title" id="loc_sec_title" class="form-control" value="{{ $homeLocSettings['loc_sec_title'] }}" placeholder="Find Pets by Location" required>
+                                    <div class="form-help">Main heading displayed above the cards (default: <code>Find Pets by Location</code>).</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="loc_sec_subtitle">Section Subtitle Description</label>
+                                    <input type="text" name="loc_sec_subtitle" id="loc_sec_subtitle" class="form-control" value="{{ $homeLocSettings['loc_sec_subtitle'] }}" placeholder="Browse pets available in major cities..." required>
+                                    <div class="form-help">Subtitle beneath the headline explaining the location section.</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="loc_sec_cities">Target Cities (Comma-Separated)</label>
+                                <textarea name="loc_sec_cities" id="loc_sec_cities" rows="3" class="form-control" required>{{ $homeLocSettings['loc_sec_cities'] }}</textarea>
+                                <div class="form-help">
+                                    Enter city names separated by commas (e.g. <code>Lahore, Faisalabad, Multan, Sialkot, Karachi, Peshawar, Islamabad</code>).
+                                    Each city listed will dynamically generate its own card on the homepage and redirect users to filtered listings in that city!
+                                </div>
+                            </div>
+
+                            <!-- Currently Parsed Cities Badges -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 14px 18px; margin-bottom: 20px;">
+                                <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 8px;">
+                                    Recognized Cities ({{ count($previewCities) }} cards will be generated):
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                    @foreach($previewCities as $c)
+                                        <span style="font-size: 12px; background: #FFFFFF; border: 1px solid #CBD5E1; color: #0E6B40; font-weight: 600; padding: 4px 10px; border-radius: 6px;">
+                                            <i class="fa-solid fa-location-dot" style="font-size: 11px;"></i> {{ $c }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="loc_sec_card_subtext">Card Subtext / Action Line</label>
+                                    <input type="text" name="loc_sec_card_subtext" id="loc_sec_card_subtext" class="form-control" value="{{ $homeLocSettings['loc_sec_card_subtext'] }}" placeholder="Browse listings" required>
+                                    <div class="form-help">Short text inside each card under the city name (default: <code>Browse listings</code>).</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="loc_sec_all_text">Final Card Title (Links to all listings)</label>
+                                    <input type="text" name="loc_sec_all_text" id="loc_sec_all_text" class="form-control" value="{{ $homeLocSettings['loc_sec_all_text'] }}" placeholder="All Locations">
+                                    <div class="form-help">Label for the last card that opens the full catalog without city filters (default: <code>All Locations</code>). Leave blank to disable.</div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Action Bar -->
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--admin-border); flex-wrap: wrap; gap: 12px;">
+                                <a href="{{ route('home') }}" target="_blank" class="btn-admin btn-admin-secondary">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Public Homepage
+                                </a>
+                                <button type="submit" class="btn-admin btn-admin-primary">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Location Cards Configuration
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -3302,6 +3943,64 @@
                     if (sim) sim.src = e.target.result;
                 };
                 reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // USER PROMPT: "yr pets errow sy open ho or oper text ho english main urdu main ni"
+        function toggleAvailablePetsSection() {
+            const body = document.getElementById('availablePetsBody');
+            const chevron = document.getElementById('petsChevron');
+            if (body) {
+                if (body.style.display === 'none') {
+                    body.style.display = 'block';
+                    if (chevron) {
+                        chevron.style.transform = 'rotate(0deg)';
+                        chevron.className = 'fa-solid fa-chevron-down';
+                    }
+                } else {
+                    body.style.display = 'none';
+                    if (chevron) {
+                        chevron.style.transform = 'rotate(-90deg)';
+                        chevron.className = 'fa-solid fa-chevron-right';
+                    }
+                }
+            }
+        }
+
+        function openAvailablePetsSection() {
+            const sec = document.getElementById('available-pets-section');
+            const body = document.getElementById('availablePetsBody');
+            const chevron = document.getElementById('petsChevron');
+            if (body && body.style.display === 'none') {
+                body.style.display = 'block';
+                if (chevron) {
+                    chevron.style.transform = 'rotate(0deg)';
+                    chevron.className = 'fa-solid fa-chevron-down';
+                }
+            }
+            if (sec) {
+                const topbar = document.querySelector('.admin-topbar');
+                const offset = topbar ? topbar.offsetHeight + 24 : 90;
+                const elementPosition = sec.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+
+                sec.style.transition = 'box-shadow 0.4s ease, border-color 0.4s ease';
+                sec.style.borderColor = '#147A4D';
+                sec.style.boxShadow = '0 0 0 4px rgba(20, 122, 77, 0.25)';
+                setTimeout(() => {
+                    sec.style.borderColor = '';
+                    sec.style.boxShadow = '';
+                }, 1800);
+
+                const searchInput = sec.querySelector('input[name="featured_q"]');
+                if (searchInput) {
+                    setTimeout(() => searchInput.focus(), 600);
+                }
             }
         }
 

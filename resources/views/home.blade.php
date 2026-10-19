@@ -280,10 +280,11 @@
             <div class="home-container">
                 <div class="home-header">
                     <div>
+                        {{-- USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly" --}}
                         <a href="{{ route('featured.pets') }}" style="text-decoration: none; color: inherit;">
-                            <h2 class="home-sec-title home-sec-title--md" style="cursor: pointer;">Featured Pets</h2>
+                            <h2 class="home-sec-title home-sec-title--md" style="cursor: pointer;">{{ \App\Models\SiteSetting::get('featured_sec_title', 'Featured Pets') }}</h2>
                         </a>
-                        <p class="home-sec-desc home-sec-desc--flush">Highlighted pet listings from sellers on the marketplace.</p>
+                        <p class="home-sec-desc home-sec-desc--flush">{{ \App\Models\SiteSetting::get('featured_sec_subtitle', 'Highlighted pet listings from sellers on the marketplace.') }}</p>
                     </div>
                     <button class="home-btn-outline home-btn-desktop" onclick="window.location='{{ route('featured.pets') }}'">View All Pets</button>
                 </div>
@@ -413,7 +414,18 @@
             </div>
         </div>
 
+        {{-- USER PROMPT: "yr home page main in sections ko dynamic kro" --}}
         <!-- CTA BANNER -->
+        @php
+            $homeCtaTitle = \App\Models\SiteSetting::get('home_cta_title', 'One More Friend');
+            $homeCtaSubtitle = \App\Models\SiteSetting::get('home_cta_subtitle', 'Thousands More Fun!');
+            $homeCtaDesc = \App\Models\SiteSetting::get('home_cta_desc', 'Having a pet means you have more joy, a new friend, a happy person who will always be with you to have fun. We have 200+ different pets that can meet your needs!');
+            $homeCtaImg = \App\Models\SiteSetting::get('home_cta_image', 'images/more-friend.png');
+            $homeCtaBtn1Text = \App\Models\SiteSetting::get('home_cta_btn1_text', 'Browse Dogs');
+            $homeCtaBtn1Link = \App\Models\SiteSetting::get('home_cta_btn1_link', '/category/dogs');
+            $homeCtaBtn2Text = \App\Models\SiteSetting::get('home_cta_btn2_text', 'Browse Cats');
+            $homeCtaBtn2Link = \App\Models\SiteSetting::get('home_cta_btn2_link', '/category/cats');
+        @endphp
         <div class="home-cta">
 
             <!-- Decorative shapes (Background) -->
@@ -422,7 +434,7 @@
 
             <!-- Left Side: Image Container -->
             <div class="home-cta-img-wrap">
-                <img src="{{ asset('images/more-friend.png') }}" alt="Woman kissing dog" class="home-cta-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <img src="{{ asset($homeCtaImg) }}" alt="{{ $homeCtaTitle }}" class="home-cta-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
 
                 <div class="home-cta-img-fallback">
                     <img src="{{ asset('images/cta-green-mb-vw.png') }}" alt="CTA Banner Image" class="home-cta-fallback-img">
@@ -433,21 +445,24 @@
             <div class="home-cta-text">
 
                 <!-- Main Heading -->
-                <h1 class="home-cta-title">One More Friend</h1>
+                <h1 class="home-cta-title">{{ $homeCtaTitle }}</h1>
 
                 <!-- Sub Heading -->
-                <h2 class="home-cta-subtitle">Thousands More Fun!</h2>
+                <h2 class="home-cta-subtitle">{{ $homeCtaSubtitle }}</h2>
 
                 <!-- Description Paragraph -->
                 <p class="home-cta-desc">
-                    Having a pet means you have more joy, a new friend, a happy person who will always be with you to have fun. We have 200+ different pets that can meet your needs!
+                    {{ $homeCtaDesc }}
                 </p>
 
                 <!-- Buttons Wrapper -->
                 <div class="home-cta-buttons">
-                    {{-- USER PROMPT: "phir ya q a rha hai" --}}
-                    <a href="{{ route('category', ['param1' => 'dogs']) }}" class="home-cta-btn home-cta-btn--solid">Browse Dogs</a>
-                    <a href="{{ route('category', ['param1' => 'cats']) }}" class="home-cta-btn home-cta-btn--outline">Browse Cats</a>
+                    @if(!empty($homeCtaBtn1Text))
+                    <a href="{{ url($homeCtaBtn1Link) }}" class="home-cta-btn home-cta-btn--solid">{{ $homeCtaBtn1Text }}</a>
+                    @endif
+                    @if(!empty($homeCtaBtn2Text))
+                    <a href="{{ url($homeCtaBtn2Link) }}" class="home-cta-btn home-cta-btn--outline">{{ $homeCtaBtn2Text }}</a>
+                    @endif
                 </div>
 
             </div>
@@ -510,24 +525,45 @@
             </div>
         </section>
 
+        {{-- USER PROMPT: "yr home page main in sections ko dynamic kro" --}}
         <!-- LOCATIONS -->
+        @php
+            $locSecTitle = \App\Models\SiteSetting::get('loc_sec_title', 'Find Pets by Location');
+            $locSecSubtitle = \App\Models\SiteSetting::get('loc_sec_subtitle', 'Browse pets available in major cities and find listings closer to your location.');
+            $rawCities = \App\Models\SiteSetting::get('loc_sec_cities', 'Lahore, Faisalabad, Multan, Sialkot, Karachi, Peshawar, Islamabad');
+            $citiesList = array_values(array_filter(array_map('trim', explode(',', $rawCities))));
+            $locSecCardSubtext = \App\Models\SiteSetting::get('loc_sec_card_subtext', 'Browse listings');
+            $locSecAllText = \App\Models\SiteSetting::get('loc_sec_all_text', 'All Locations');
+        @endphp
         <div class="home-locations">
             <div class="home-locations-container">
                 <div class="home-locations-head">
-                    <h2 class="home-sec-title home-sec-title--light">Find Pets by Location</h2>
-                    <p class="home-sec-desc home-sec-desc--light">Browse pets available in major cities and find listings closer to your location.</p>
+                    <h2 class="home-sec-title home-sec-title--light">{{ $locSecTitle }}</h2>
+                    <p class="home-sec-desc home-sec-desc--light">{{ $locSecSubtitle }}</p>
                 </div>
                 {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
                 <div class="home-loc-grid">
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'lahore']) }}'" style="cursor: pointer;"><div><h3>Lahore</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'faisalabad']) }}'" style="cursor: pointer;"><div><h3>Faisalabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'multan']) }}'" style="cursor: pointer;"><div><h3>Multan</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'sialkot']) }}'" style="cursor: pointer;"><div><h3>Sialkot</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'karachi']) }}'" style="cursor: pointer;"><div><h3>Karachi</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'peshawar']) }}'" style="cursor: pointer;"><div><h3>Peshawar</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => 'islamabad']) }}'" style="cursor: pointer;"><div><h3>Islamabad</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="home-loc-card" onclick="window.location='{{ route('category') }}'" style="cursor: pointer;"><div><h3>All Locations</h3><p>Browse listings</p></div><i class="fa-solid fa-arrow-right"></i></div>
+                    @foreach($citiesList as $city)
+                        @php
+                            $citySlug = \Illuminate\Support\Str::slug($city);
+                        @endphp
+                        <div class="home-loc-card" onclick="window.location='{{ route('category', ['param1' => $citySlug]) }}'" style="cursor: pointer;">
+                            <div>
+                                <h3>{{ $city }}</h3>
+                                <p>{{ $locSecCardSubtext }}</p>
+                            </div>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    @endforeach
+                    @if(!empty($locSecAllText))
+                    <div class="home-loc-card" onclick="window.location='{{ route('category') }}'" style="cursor: pointer;">
+                        <div>
+                            <h3>{{ $locSecAllText }}</h3>
+                            <p>{{ $locSecCardSubtext }}</p>
+                        </div>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

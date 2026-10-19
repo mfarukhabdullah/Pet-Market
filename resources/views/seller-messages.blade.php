@@ -201,6 +201,7 @@
             justify-content: space-between;
             align-items: baseline;
             margin-bottom: 4px;
+            gap: 8px;
         }
 
         .chat-item-name {
@@ -210,11 +211,16 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            min-width: 0;
+            flex: 1;
         }
 
+        /* USER PROMPT: "yr msg per timer  q a rha hai" */
         .chat-item-time {
-            font-size: 12px;
+            font-size: 11.5px;
             color: var(--text-gray);
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .chat-item-pet {
@@ -1580,18 +1586,20 @@
                         @php
                             $otherUser = $conv->otherParticipant($user->id);
                             $isActive = $activeConversation && $activeConversation->id === $conv->id;
-                            $unreadCount = $conv->messages()->where('sender_id', '!=', $user->id)->whereNull('read_at')->count();
+                            // USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain"
+                            $unreadCount = $conv->messages()->where('sender_id', '!=', $user->id)->where('is_read', false)->count();
                         @endphp
-                        {{-- USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this" --}}
+                        {{-- USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain" --}}
                         <a href="{{ route('seller.messages', ['conversation_id' => $conv->id]) }}" data-chat-id="chat-{{ $conv->id }}" class="chat-item {{ $isActive ? 'active' : '' }}" style="text-decoration:none; color:inherit;">
                             <img src="{{ $otherUser->avatar_url }}" alt="{{ $otherUser->name }}" class="chat-avatar" onerror="this.src='https://ui-avatars.com/api/?name=' . urlencode($otherUser->name) . '&background=random'">
                             <div class="chat-item-info">
                                 <div class="chat-item-header">
                                     <span class="chat-item-name">{{ $otherUser->name }}</span>
-                                    <span class="chat-item-time">{{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}</span>
+                                    {{-- USER PROMPT: "yr msg per timer  q a rha hai" --}}
+                                    <span class="chat-item-time">{{ $conv->formatted_time }}</span>
                                 </div>
                                 <div class="chat-item-pet">{{ $conv->listing ? $conv->listing->title : 'Listing' }}</div>
-                                <div class="chat-item-preview">{{ $conv->latestMessage ? Str::limit($conv->latestMessage->message, 30) : 'No messages yet' }}</div>
+                                <div class="chat-item-preview">{{ $conv->latestMessage ? Str::limit($conv->latestMessage->body ?: $conv->latestMessage->message, 30) : 'No messages yet' }}</div>
                             </div>
                             @if($unreadCount > 0)
                                 <div class="unread-badge">{{ $unreadCount }}</div>
@@ -1704,13 +1712,25 @@
                                         @endif
                                     </div>
                                 @endif
-                                {{ $msg->message }}
+                                @if($msg->attachment_path)
+                                    <img src="{{ $msg->attachment_path }}" alt="Attachment" class="msg-attached-img" onclick="openImageLightboxModal('{{ $msg->attachment_path }}')">
+                                @endif
+                                <div>{{ $msg->body ?: $msg->message }}</div>
                                 @if($msg->is_flagged)
                                     <div style="color: #dc2626; font-size: 11px; margin-top: 4px; font-weight: 600;">
                                         <i class="fa-solid fa-triangle-exclamation"></i> Warning: Never send advance money via JazzCash or Easypaisa before meeting.
                                     </div>
                                 @endif
-                                <span class="msg-time">{{ $msg->created_at->format('h:i A') }}</span>
+                                <span class="msg-time">
+                                    {{ $msg->created_at->format('h:i A') }}
+                                    @if($isSent)
+                                        @if($msg->is_read)
+                                            <i class="fa-solid fa-check-double" style="color:#38bdf8; font-size:11px; margin-left:3px;" title="Read"></i>
+                                        @else
+                                            <i class="fa-solid fa-check" style="font-size:11px; margin-left:3px; opacity:0.7;" title="Sent"></i>
+                                        @endif
+                                    @endif
+                                </span>
                             </div>
                         </div>
                     @empty
@@ -1937,23 +1957,32 @@
     </div>
 
     <script>
-        // USER PROMPT: "ya delete q ni ho rha"
+        // USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain"
         @php
             $currentOtherUser = $activeConversation ? $activeConversation->otherParticipant($user->id) : null;
             $currentListing = $activeConversation ? $activeConversation->listing : null;
-            // USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this"
             $initialDbMessages = $messages->map(function($m) use ($user) {
+                $isSent = $m->sender_id === $user->id;
                 return [
                     'id' => $m->id,
-                    'type' => $m->sender_id === $user->id ? 'sent' : 'received',
-                    'text' => $m->message,
+                    'type' => $isSent ? 'sent' : 'received',
+                    'text' => $m->body ?: $m->message,
                     'time' => $m->created_at ? $m->created_at->format('h:i A') : '',
-                    'isDeleted' => $m->type === 'deleted'
+                    'isDeleted' => $m->type === 'deleted',
+                    'is_read' => (bool) $m->is_read,
+                    'msg_type' => $m->type,
+                    'offer_amount' => $m->offer_amount,
+                    'offer_status' => $m->offer_status,
+                    'formatted_offer' => $m->formatted_offer_amount,
+                    'sender_name' => $m->sender ? $m->sender->name : 'User',
+                    'image' => $m->attachment_path,
                 ];
             })->values();
         @endphp
         // State variables
         let activeChatId = '{{ $activeConversation ? "chat-" . $activeConversation->id : "chat-1" }}';
+        let activeConversationDbId = {{ $activeConversation ? $activeConversation->id : 'null' }};
+        let currentUserId = {{ $user->id }};
         let activeUserName = @json($currentOtherUser ? $currentOtherUser->name : '');
         let activePetName = @json($currentListing ? $currentListing->title : '');
         let activePetPrice = @json($currentListing ? $currentListing->formatted_price : '');
@@ -1964,37 +1993,125 @@
         // Retrieve stored state from localStorage
         let clearedChats = JSON.parse(localStorage.getItem('cleared_chats') || '{}');
         let blockedUsers = JSON.parse(localStorage.getItem('blocked_users') || '{}');
-        let customMessages = JSON.parse(localStorage.getItem('chat_messages_data') || '{}');
+        // USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain"
+        try { localStorage.removeItem('chat_messages_data'); } catch(e) {}
 
-        // USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this"
-        // Only load mock buyer messages if no conversations exist; never overwrite cleared chats
-        const chatMessagesData = @json($conversations->isEmpty()) ? {
-            'chat-1': [
-                { type: 'received', text: 'Hi, is the African Grey Parrot still available?', time: '10:20 AM' },
-                { type: 'sent', text: 'Yes, it is available. It is fully hand-tamed and healthy.', time: '10:22 AM' }
-            ]
-        } : {};
-
-        // Merge saved chat messages from localStorage
-        Object.keys(customMessages).forEach(id => {
-            chatMessagesData[id] = customMessages[id];
-        });
-
-        // Initialize active conversation messages from database if not custom stored
+        // Database messages are the single source of truth for active conversations!
+        const chatMessagesData = {};
         @if($activeConversation)
-            if (!customMessages[activeChatId]) {
+            if (!clearedChats[activeChatId]) {
                 chatMessagesData[activeChatId] = @json($initialDbMessages);
+            } else {
+                chatMessagesData[activeChatId] = [];
             }
+        @else
+            chatMessagesData['chat-1'] = [];
         @endif
 
-        // Ensure cleared chats start with an empty messages array
+        // Ensure cleared chats start empty
         Object.keys(clearedChats).forEach(id => {
             if (clearedChats[id]) {
                 chatMessagesData[id] = [];
             }
         });
-        // USER PROMPT: "in chat when remove the functionality of automatic reply like when i send some message chatbot automatically reply remove this functonality"
-        // Automated chatbot / simulated replies removed
+
+        // USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain"
+        // Real-time live polling function for receiving new messages and updating sidebar
+        let isPolling = false;
+        async function fetchLiveMessages() {
+            if (isPolling) return;
+            const chatForm = document.getElementById('chatInputForm');
+            const convIdInput = chatForm ? chatForm.querySelector('input[name="conversation_id"]') : null;
+            const convId = (convIdInput && convIdInput.value) ? convIdInput.value : activeConversationDbId;
+
+            if (!convId) return;
+
+            try {
+                isPolling = true;
+                const response = await fetch(`/chat/conversation/${convId}/messages`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) return;
+
+                const data = await response.json();
+                if (data && data.success && Array.isArray(data.messages)) {
+                    const currentMsgs = chatMessagesData[activeChatId] || [];
+                    const newMsgs = data.messages;
+
+                    // Preserve any local reaction/starred states
+                    newMsgs.forEach(nm => {
+                        const existing = currentMsgs.find(cm => cm.id && cm.id === nm.id);
+                        if (existing) {
+                            if (existing.reactions) nm.reactions = existing.reactions;
+                            if (existing.starred) nm.starred = existing.starred;
+                        }
+                    });
+
+                    // Check if new messages arrived or message statuses changed
+                    let hasChanged = currentMsgs.length !== newMsgs.length;
+                    if (!hasChanged && newMsgs.length > 0) {
+                        const lastCurrent = currentMsgs[currentMsgs.length - 1];
+                        const lastNew = newMsgs[newMsgs.length - 1];
+                        if (!lastCurrent || !lastNew || 
+                            lastCurrent.id !== lastNew.id || 
+                            lastCurrent.isDeleted !== lastNew.isDeleted || 
+                            lastCurrent.text !== lastNew.text ||
+                            lastCurrent.is_read !== lastNew.is_read) {
+                            hasChanged = true;
+                        }
+                    }
+
+                    if (hasChanged) {
+                        chatMessagesData[activeChatId] = newMsgs;
+                        // USER PROMPT: "clear chat ni ho rhy"
+                        if (newMsgs.length > 0) {
+                            delete clearedChats[activeChatId];
+                            localStorage.setItem('cleared_chats', JSON.stringify(clearedChats));
+                        }
+                        renderActiveChat();
+                    }
+
+                    // Real-time Sidebar list update (previews & unread counters)
+                    if (data.sidebar && Array.isArray(data.sidebar)) {
+                        data.sidebar.forEach(item => {
+                            const sideItem = document.querySelector(`.chat-item[data-chat-id="${item.chat_id}"]`);
+                            if (sideItem) {
+                                const previewEl = sideItem.querySelector('.chat-item-preview');
+                                if (previewEl && item.latest_message) {
+                                    previewEl.textContent = item.latest_message;
+                                }
+                                const timeEl = sideItem.querySelector('.chat-item-time');
+                                if (timeEl && item.time_human) {
+                                    timeEl.textContent = item.time_human;
+                                }
+                                let badgeEl = sideItem.querySelector('.unread-badge');
+                                if (item.unread_count > 0) {
+                                    if (!badgeEl) {
+                                        badgeEl = document.createElement('div');
+                                        badgeEl.className = 'unread-badge';
+                                        sideItem.appendChild(badgeEl);
+                                    }
+                                    badgeEl.textContent = item.unread_count;
+                                } else if (badgeEl) {
+                                    badgeEl.remove();
+                                }
+                            }
+                        });
+                    }
+                }
+            } catch (err) {
+                console.log('Chat live polling error:', err);
+            } finally {
+                isPolling = false;
+            }
+        }
+
+        // Start live polling every 2.5 seconds
+        setInterval(fetchLiveMessages, 2500);
 
         function escapeHtml(str) {
             if (!str) return '';
@@ -2291,7 +2408,6 @@
             chatMessagesData[activeChatId] = [];
             try {
                 localStorage.setItem('cleared_chats', JSON.stringify(clearedChats));
-                localStorage.setItem('chat_messages_data', JSON.stringify(chatMessagesData));
                 delete blockedUsers[activeChatId];
                 localStorage.setItem('blocked_users', JSON.stringify(blockedUsers));
             } catch(e) {}
@@ -2302,7 +2418,8 @@
             // Call backend API if real conversation id is known
             const chatForm = document.getElementById('chatInputForm');
             const convIdInput = chatForm ? chatForm.querySelector('input[name="conversation_id"]') : null;
-            const convId = convIdInput ? convIdInput.value : '';
+            // USER PROMPT: "clear chat ni ho rhy"
+            const convId = (convIdInput && convIdInput.value) ? convIdInput.value : activeConversationDbId;
 
             if (convId) {
                 try {
@@ -2574,6 +2691,27 @@
 
                         let starHtml = m.starred ? '<i class="fa-solid fa-star msg-starred-icon" title="Starred"></i>' : '';
 
+                        // USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain"
+                        let checkHtml = '';
+                        if (m.type === 'sent') {
+                            if (m.is_read) {
+                                checkHtml = '<i class="fa-solid fa-check-double" style="color:#38bdf8; font-size:11px; margin-left:3px;" title="Read"></i>';
+                            } else {
+                                checkHtml = '<i class="fa-solid fa-check" style="font-size:11px; margin-left:3px; opacity:0.7;" title="Sent"></i>';
+                            }
+                        }
+
+                        let offerHtml = '';
+                        if (m.msg_type === 'offer' || m.type_raw === 'offer' || m.offer_amount) {
+                            offerHtml = `
+                                <div style="background: rgba(20, 122, 77, 0.08); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #147A4D;">
+                                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #147A4D;">Price Offer Received</div>
+                                    <div style="font-size: 18px; font-weight: 800; color: #17211C; margin: 4px 0;">${escapeHtml(m.formatted_offer || ('PKR ' + m.offer_amount))}</div>
+                                    <div style="font-size: 12px; color: #64748b;">Status: <strong>${escapeHtml(m.offer_status ? (m.offer_status.charAt(0).toUpperCase() + m.offer_status.slice(1)) : 'Pending')}</strong></div>
+                                </div>
+                            `;
+                        }
+
                         if (m.isDeleted) {
                             html += `
                                 <div class="msg-bubble-container ${m.type}" data-msg-idx="${idx}">
@@ -2611,10 +2749,11 @@
                                             </svg>
                                         </button>
 
+                                        ${offerHtml}
                                         ${replyHtml}
                                         ${imgHtml}
                                         ${textHtml}
-                                        <span class="msg-time">${m.time}${starHtml}</span>
+                                        <span class="msg-time">${m.time}${checkHtml}${starHtml}</span>
 
                                         <!-- WhatsApp Floating Dropdown Menu -->
                                         <div class="msg-dropdown-menu" id="msgDropdown-${idx}">
@@ -2799,16 +2938,16 @@
             }
 
             // USER PROMPT: "ya delete q ni ho rha"
+            // USER PROMPT: "clear chat ni ho rhy"
             // Action: Confirm Clear Chat
             const confirmClearBtn = document.getElementById('confirmClearChatBtn');
             if (confirmClearBtn) {
-                confirmClearBtn.addEventListener('click', () => {
-                    // USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this"
+                confirmClearBtn.addEventListener('click', async () => {
                     clearedChats[activeChatId] = true;
                     chatMessagesData[activeChatId] = [];
-                    customMessages[activeChatId] = [];
-                    localStorage.setItem('cleared_chats', JSON.stringify(clearedChats));
-                    localStorage.setItem('chat_messages_data', JSON.stringify(chatMessagesData));
+                    try {
+                        localStorage.setItem('cleared_chats', JSON.stringify(clearedChats));
+                    } catch(e) {}
 
                     const activeItem = document.querySelector(`.chat-item[data-chat-id="${activeChatId}"]`);
                     if (activeItem) {
@@ -2821,21 +2960,29 @@
                     // Call backend API if real conversation id is known
                     const chatForm = document.getElementById('chatInputForm');
                     const convIdInput = chatForm ? chatForm.querySelector('input[name="conversation_id"]') : null;
-                    const convId = convIdInput ? convIdInput.value : '';
-                    if (convId) {
-                        fetch(`/chat/conversation/${convId}/clear`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json'
-                            }
-                        }).catch(e => console.log('Clear conv error:', e));
-                    }
+                    const convId = (convIdInput && convIdInput.value) ? convIdInput.value : activeConversationDbId;
 
                     closeClearChatModal();
                     renderActiveChat();
                     showToast(`Chat with ${activeUserName || 'user'} has been cleared.`);
+
+                    if (convId) {
+                        try {
+                            await fetch(`/chat/conversation/${convId}/clear`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json'
+                                }
+                            });
+                            if (typeof fetchLiveMessages === 'function') {
+                                fetchLiveMessages();
+                            }
+                        } catch(e) {
+                            console.log('Clear conv error:', e);
+                        }
+                    }
                 });
             }
 
@@ -2898,6 +3045,7 @@
                 });
             });
 
+            // USER PROMPT: "yr msg kisy ko bhi live recieve ni ho rhy hain"
             // Action: Send Message
             const sendBtn = document.getElementById('sendMessageBtn');
             const chatInput = document.querySelector('.chat-input');
@@ -2907,14 +3055,12 @@
                 const text = chatInput ? chatInput.value.trim() : '';
                 if ((!text && !currentAttachment) || blockedUsers[activeChatId]) return;
 
-                // USER PROMPT: "there is some issue like if we clear chat and after clearing chat when we send message sometimes it show some previous messages from buyer sort out this"
-                // Ensure cleared chat history is completely empty before pushing new message
                 if (clearedChats[activeChatId] || !chatMessagesData[activeChatId]) {
                     chatMessagesData[activeChatId] = [];
                 }
                 const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-                const newMsg = { type: 'sent', time: timeStr };
+                const newMsg = { type: 'sent', time: timeStr, is_read: false };
                 if (text) newMsg.text = text;
                 if (currentAttachment) newMsg.image = currentAttachment.dataUrl;
 
@@ -2930,13 +3076,15 @@
                 chatMessagesData[activeChatId].push(newMsg);
                 delete clearedChats[activeChatId];
                 localStorage.setItem('cleared_chats', JSON.stringify(clearedChats));
-                localStorage.setItem('chat_messages_data', JSON.stringify(chatMessagesData));
 
                 // Send via AJAX to backend if activeConversation exists
                 const conversationIdInput = chatForm ? chatForm.querySelector('input[name="conversation_id"]') : null;
-                const conversationId = conversationIdInput ? conversationIdInput.value : '';
+                const conversationId = (conversationIdInput && conversationIdInput.value) ? conversationIdInput.value : activeConversationDbId;
 
-                if (conversationId && text) {
+                const msgBody = text || (currentAttachment ? 'Photo attachment' : '');
+                const msgImage = currentAttachment ? currentAttachment.dataUrl : null;
+
+                if (conversationId && (text || currentAttachment)) {
                     fetch("{{ route('chat.send-message') }}", {
                         method: 'POST',
                         headers: {
@@ -2946,10 +3094,20 @@
                         },
                         body: JSON.stringify({
                             conversation_id: conversationId,
-                            body: text,
-                            message: text
+                            body: msgBody,
+                            message: msgBody,
+                            image: msgImage
                         })
-                    }).catch(err => console.log('Message sync:', err));
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data && data.success && data.formatted_message) {
+                            newMsg.id = data.formatted_message.id;
+                        }
+                        // Instantly poll to sync server state
+                        fetchLiveMessages();
+                    })
+                    .catch(err => console.log('Message sync:', err));
                 }
 
                 if (chatInput) {
@@ -2964,13 +3122,13 @@
                     const preview = activeItem.querySelector('.chat-item-preview');
                     if (preview) preview.textContent = text || 'Sent an attachment';
                     const timeElem = activeItem.querySelector('.chat-item-time');
-                    if (timeElem) timeElem.textContent = 'Just now';
+                    // USER PROMPT: "yr msg per timer  q a rha hai"
+                    if (timeElem) timeElem.textContent = timeStr;
                 }
 
                 renderActiveChat();
-                // USER PROMPT: "in chat when remove the functionality of automatic reply like when i send some message chatbot automatically reply remove this functonality"
-                // Automatic simulated reply removed
             };
+
 
             if (chatForm) {
                 chatForm.addEventListener('submit', (e) => {
