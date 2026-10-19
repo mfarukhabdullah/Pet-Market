@@ -369,6 +369,19 @@
                     </div>
                 @endif
 
+                {{-- USER PROMPT: "yr admin pannel ka loginpassword bnao login tum bnao petmarket@gmail.com password: pet@123" --}}
+                @if(session('error'))
+                    <div style="background-color: #FEE2E2; border: 1px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> {{ session('error') }}
+                    </div>
+                @endif
+
+                @if(session('success'))
+                    <div style="background-color: #EAF7F0; border: 1px solid #147A4D; color: #0E5E39; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
+                    </div>
+                @endif
+
                 @if(session('info'))
                     <div style="background-color: #EAF7F0; border: 1px solid #147A4D; color: #0E5E39; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px;">
                         <i class="fa-solid fa-circle-info"></i> {{ session('info') }}

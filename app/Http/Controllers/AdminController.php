@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Listing;
 use App\Models\Report;
@@ -14,13 +16,70 @@ use App\Models\SiteSetting;
 // USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao"
 class AdminController extends Controller
 {
+    // USER PROMPT: "ni yr ya to alag ha admin pannel in sy is ky liye login ya sin up no need just admin open ho is url sy or login mangy"
+    /**
+     * Show dedicated Admin Portal login page.
+     */
+    public function showLogin(Request $request)
+    {
+        if (Auth::check() && Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return view('admin.login');
+    }
+
+    /**
+     * Authenticate Administrator credentials.
+     */
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        $remember = $request->boolean('remember');
+        $user = User::where('email', trim($credentials['email']))->first();
+
+        if ($user && $user->role === 'admin' && Hash::check($credentials['password'], $user->password)) {
+            Auth::login($user, $remember);
+            $request->session()->regenerate();
+
+            return redirect()->route('admin.dashboard')->with('success', 'Authenticated as Platform Administrator.');
+        }
+
+        return back()->withErrors([
+            'email' => 'Invalid administrator credentials. Access restricted to platform admins.',
+        ])->onlyInput('email');
+    }
+
+    /**
+     * Log out administrator and return strictly to admin login.
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('admin.login')->with('success', 'Admin session ended successfully.');
+    }
+
     /**
      * Display unified Admin Panel with tab navigation.
      */
-    // USER PROMPT: "yr dynamic kro in ko heome page hero or in btns ko bhi"
+    // USER PROMPT: "ya ption ni chal rha hai"
     public function dashboard(Request $request, $tab = 'overview')
     {
-        $validTabs = ['overview', 'hero', 'seo', 'categories', 'listings', 'users', 'reports', 'settings'];
+        if ($request->has('tab')) {
+            $tab = $request->query('tab');
+        }
+
+        // USER PROMPT: "category page ka heroo section bhi dynamic kro"
+        // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
+        // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
+        $validTabs = ['overview', 'hero', 'hero_filters', 'home_categories', 'category_hero', 'safety', 'footer', 'about', 'seo', 'categories', 'listings', 'users', 'reports', 'settings'];
         if (!in_array($tab, $validTabs)) {
             $tab = 'overview';
         }
@@ -106,21 +165,11 @@ class AdminController extends Controller
         // Dynamic Settings & SEO Meta
         SiteSetting::seedDefaults();
 
-        // USER PROMPT: "yr dynamic kro in ko heome page hero or in btns ko bhi"
+        // USER PROMPT: "yr home hero main sir image heading or text ko dynamic kro btns ko dynamic ni krna hai"
         $heroSettings = [
-            'hero_title' => SiteSetting::get('hero_title', 'Find the right pet for <br />your family.'),
+            'hero_title' => SiteSetting::get('hero_title', 'Find the right pet for your family.'),
             'hero_desc' => SiteSetting::get('hero_desc', 'Search pets by category, breed, location and price, then review the listing and seller before making contact.'),
             'hero_image' => SiteSetting::get('hero_image', 'images/home-hero-image.png'),
-            'hero_cta_text' => SiteSetting::get('hero_cta_text', 'Find a Pet'),
-            'hero_filter_cat_label' => SiteSetting::get('hero_filter_cat_label', 'PET CATEGORY'),
-            'hero_filter_cat_placeholder' => SiteSetting::get('hero_filter_cat_placeholder', 'Any category'),
-            'hero_filter_breed_label' => SiteSetting::get('hero_filter_breed_label', 'BREED'),
-            'hero_filter_breed_placeholder' => SiteSetting::get('hero_filter_breed_placeholder', 'Any breed'),
-            'hero_filter_loc_label' => SiteSetting::get('hero_filter_loc_label', 'LOCATION'),
-            'hero_filter_loc_placeholder' => SiteSetting::get('hero_filter_loc_placeholder', 'Any location'),
-            'hero_filter_price_label' => SiteSetting::get('hero_filter_price_label', 'PRICE'),
-            'hero_filter_price_placeholder' => SiteSetting::get('hero_filter_price_placeholder', 'Any price'),
-            'hero_locations' => SiteSetting::get('hero_locations', 'Islamabad, Karachi, Lahore, Rawalpindi, Faisalabad, Multan, Sialkot, Peshawar, Gujranwala, Quetta'),
         ];
 
         $seoSettings = [
@@ -147,6 +196,99 @@ class AdminController extends Controller
             'site_auto_approve_listings' => SiteSetting::get('site_auto_approve_listings', '0'),
         ];
 
+        // USER PROMPT: "ya admin pannel home page main ya section dynamic kro"
+        $safetySettings = [
+            'safety_title' => SiteSetting::get('safety_title', 'Safety & Responsible'),
+            'safety_title_highlight' => SiteSetting::get('safety_title_highlight', 'Pet Ownership'),
+            'safety_lead_bold' => SiteSetting::get('safety_lead_bold', 'We promote safe pet transactions'),
+            'safety_lead_text' => SiteSetting::get('safety_lead_text', 'and responsible ownership to help protect both pets and people.'),
+            'safety_image' => SiteSetting::get('safety_image', 'images/safety-responsible.png'),
+            'safety_points' => SiteSetting::get('safety_points', "Verify the pet’s health and vaccination details before buying.\nMeet the seller and pet in a safe location.\nNever send advance payment without proper verification.\nUnderstand the pet’s food, care, medical, and exercise needs.\nReport suspicious or misleading listings."),
+        ];
+
+        // USER PROMPT: "footer to dynamic kro"
+        $footerSettings = [
+            'footer_brand_title' => SiteSetting::get('footer_brand_title', 'Pet Marketplace'),
+            'footer_brand_logo' => SiteSetting::get('footer_brand_logo', 'images/Italic-text.png'),
+            'footer_brand_desc' => SiteSetting::get('footer_brand_desc', 'A trusted pet marketplace connecting responsible buyers, sellers, breeders, and pet businesses in one safe and easy-to-use platform.'),
+            'footer_quick_links_title' => SiteSetting::get('footer_quick_links_title', 'Quick Links'),
+            'footer_categories_title' => SiteSetting::get('footer_categories_title', 'Pet Categories'),
+            'footer_contact_title' => SiteSetting::get('footer_contact_title', 'Contact & Support'),
+            'footer_email' => SiteSetting::get('footer_email', 'Support@petmarket.com'),
+            'footer_phone' => SiteSetting::get('footer_phone', '+92 3100865765'),
+            'footer_social_title' => SiteSetting::get('footer_social_title', 'Follow Us:'),
+            'footer_facebook_url' => SiteSetting::get('footer_facebook_url', '#'),
+            'footer_instagram_url' => SiteSetting::get('footer_instagram_url', '#'),
+            'footer_youtube_url' => SiteSetting::get('footer_youtube_url', '#'),
+            'footer_copyright' => SiteSetting::get('footer_copyright', '© 2026 Pet Marketplace. All rights reserved.'),
+        ];
+
+        // USER PROMPT: "about us ky ya ection dynamic kro or yahi lgao dta admin main"
+        $aboutSettings = [
+            'about_purpose_badge' => SiteSetting::get('about_purpose_badge', 'OUR PURPOSE'),
+            'about_purpose_title' => SiteSetting::get('about_purpose_title', 'A marketplace built around better information, not just listings.'),
+            'about_purpose_desc1' => SiteSetting::get('about_purpose_desc1', 'Finding a pet is different from buying an ordinary classified item. Buyers need to understand the animal, its health information, seller details and long-term care requirements before making a decision.'),
+            'about_purpose_desc2' => SiteSetting::get('about_purpose_desc2', 'That is why the marketplace brings pet details, seller profiles, messaging, moderation and safety guidance into one consistent journey.'),
+            'about_purpose_points' => SiteSetting::get('about_purpose_points', "Clear breed, age, gender, price and location information.\nHealth and vaccination details where applicable.\nSeller information and marketplace messaging before contact."),
+            'about_purpose_image' => SiteSetting::get('about_purpose_image', 'images/about-purpose.jpg'),
+
+            'about_marketplace_title' => SiteSetting::get('about_marketplace_title', 'One marketplace for different pet-related needs.'),
+            'about_marketplace_image' => SiteSetting::get('about_marketplace_image', 'images/about-dogs.jpg'),
+            'about_need_1_title' => SiteSetting::get('about_need_1_title', 'Individual pet owners'),
+            'about_need_1_desc' => SiteSetting::get('about_need_1_desc', 'People who want to sell or responsibly rehome a pet through a structured listing.'),
+            'about_need_2_title' => SiteSetting::get('about_need_2_title', 'Pet buyers'),
+            'about_need_2_desc' => SiteSetting::get('about_need_2_desc', 'Users looking for specific breeds, ages, genders, price ranges or locations.'),
+            'about_need_3_title' => SiteSetting::get('about_need_3_title', 'Breeders and pet businesses'),
+            'about_need_3_desc' => SiteSetting::get('about_need_3_desc', 'Professional sellers that need profiles, listings and marketplace visibility.'),
+            'about_need_4_title' => SiteSetting::get('about_need_4_title', 'Platform moderators'),
+            'about_need_4_desc' => SiteSetting::get('about_need_4_desc', 'Teams responsible for listings, reports, categories and marketplace quality.'),
+
+            'about_safer_title' => SiteSetting::get('about_safer_title', 'Safer interactions start with better information.'),
+            'about_safer_desc' => SiteSetting::get('about_safer_desc', 'Pet transactions require more care than a typical classified listing. That is why the platform keeps safety, moderation and responsible ownership visible throughout the experience.'),
+            'about_safer_points' => SiteSetting::get('about_safer_points', "Verify the animal, seller, ownership and available health information.\nUse reporting tools for suspicious or misleading listings and users.\nKeep exact seller address private by default.\nReview local requirements and responsible ownership considerations before proceeding."),
+            'about_safer_card_1_icon' => SiteSetting::get('about_safer_card_1_icon', 'fas fa-user-shield'),
+            'about_safer_card_1_title' => SiteSetting::get('about_safer_card_1_title', 'Seller Profiles'),
+            'about_safer_card_1_desc' => SiteSetting::get('about_safer_card_1_desc', 'Buyers can review seller information, active listings and relevant verification status before making contact.'),
+            'about_safer_card_2_icon' => SiteSetting::get('about_safer_card_2_icon', 'fas fa-comments'),
+            'about_safer_card_2_title' => SiteSetting::get('about_safer_card_2_title', 'Marketplace Messaging'),
+            'about_safer_card_2_desc' => SiteSetting::get('about_safer_card_2_desc', 'Users can communicate through the platform without automatically exposing private contact information.'),
+            'about_safer_card_3_icon' => SiteSetting::get('about_safer_card_3_icon', 'fas fa-flag'),
+            'about_safer_card_3_title' => SiteSetting::get('about_safer_card_3_title', 'Reporting & Moderation'),
+            'about_safer_card_3_desc' => SiteSetting::get('about_safer_card_3_desc', 'Listings and users can be reported so marketplace moderators can review possible policy or safety concerns.'),
+        ];
+
+        // USER PROMPT: "category page ka heroo section bhi dynamic kro"
+        $categoryHeroSettings = [
+            'category_hero_title' => SiteSetting::get('category_hero_title', 'Browse Pet Listings'),
+            'category_hero_desc' => SiteSetting::get('category_hero_desc', 'Search and filter pet listings by category, breed, location, price, age, gender and other relevant details.'),
+            'category_hero_image' => SiteSetting::get('category_hero_image', 'images/category-hero-img.png'),
+            'featured_hero_title' => SiteSetting::get('featured_hero_title', 'Featured Pet Listings'),
+            'featured_hero_desc' => SiteSetting::get('featured_hero_desc', 'Discover premium and featured pet listings from top verified sellers.'),
+        ];
+
+        // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
+        $heroFilterSettings = [
+            'filter_cat_label' => SiteSetting::get('filter_cat_label', 'PET CATEGORY'),
+            'filter_cat_placeholder' => SiteSetting::get('filter_cat_placeholder', 'Any category'),
+            'filter_breed_label' => SiteSetting::get('filter_breed_label', 'BREED'),
+            'filter_breed_placeholder' => SiteSetting::get('filter_breed_placeholder', 'Any breed'),
+            'filter_loc_label' => SiteSetting::get('filter_loc_label', 'LOCATION'),
+            'filter_loc_placeholder' => SiteSetting::get('filter_loc_placeholder', 'Any location'),
+            'filter_price_label' => SiteSetting::get('filter_price_label', 'PRICE'),
+            'filter_price_placeholder' => SiteSetting::get('filter_price_placeholder', 'Any price'),
+            'filter_btn_text' => SiteSetting::get('filter_btn_text', 'Find a Pet'),
+            'hero_locations' => SiteSetting::get('hero_locations', 'Islamabad, Karachi, Lahore, Rawalpindi, Faisalabad, Multan, Sialkot, Peshawar, Gujranwala, Quetta'),
+            'hero_price_ranges' => SiteSetting::get('hero_price_ranges'),
+            'price_ranges_list' => SiteSetting::getPriceRanges(),
+            'locations_list' => SiteSetting::getLocationsList(),
+        ];
+
+        // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
+        $homeCatSettings = [
+            'home_cat_title' => SiteSetting::get('home_cat_title', 'Browse by Pet Category'),
+            'home_cat_subtitle' => SiteSetting::get('home_cat_subtitle', "Start your search by choosing the type of companion you're looking for."),
+        ];
+
         return view('admin.dashboard', compact(
             'tab',
             'stats',
@@ -158,46 +300,293 @@ class AdminController extends Controller
             'users',
             'allReports',
             'heroSettings',
+            'categoryHeroSettings',
+            // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
+            'heroFilterSettings',
+            // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
+            'homeCatSettings',
+            'safetySettings',
+            'footerSettings',
+            'aboutSettings',
             'seoSettings',
             'generalSettings'
         ));
     }
 
-    /* ========================================================
-       HOMEPAGE HERO & BUTTONS ACTIONS
-       ======================================================== */
-
-    // USER PROMPT: "yr dynamic kro in ko heome page hero or in btns ko bhi"
-    public function updateHero(Request $request)
+    // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
+    /**
+     * Update Homepage Hero & Category dynamic search filter settings.
+     */
+    public function updateHeroFilters(Request $request)
     {
-        $keys = [
-            'hero_title',
-            'hero_desc',
-            'hero_image',
-            'hero_cta_text',
-            'hero_filter_cat_label',
-            'hero_filter_cat_placeholder',
-            'hero_filter_breed_label',
-            'hero_filter_breed_placeholder',
-            'hero_filter_loc_label',
-            'hero_filter_loc_placeholder',
-            'hero_filter_price_label',
-            'hero_filter_price_placeholder',
+        $simpleFields = [
+            'filter_cat_label',
+            'filter_cat_placeholder',
+            'filter_breed_label',
+            'filter_breed_placeholder',
+            'filter_loc_label',
+            'filter_loc_placeholder',
+            'filter_price_label',
+            'filter_price_placeholder',
+            'filter_btn_text',
             'hero_locations',
         ];
 
-        // USER PROMPT: "yr idher koi html code na ho"
-        foreach ($keys as $key) {
-            $value = trim(strip_tags((string) $request->input($key, '')));
-            SiteSetting::set($key, $value, 'hero');
+        foreach ($simpleFields as $field) {
+            if ($request->has($field)) {
+                $val = trim(strip_tags((string) $request->input($field, '')));
+                SiteSetting::set($field, $val, 'hero_filters');
+            }
         }
 
+        // Process price ranges array if submitted
+        if ($request->has('price_ranges') && is_array($request->input('price_ranges'))) {
+            $ranges = [];
+            foreach ($request->input('price_ranges') as $r) {
+                $min = trim((string)($r['min'] ?? ''));
+                $max = trim((string)($r['max'] ?? ''));
+                $label = trim(strip_tags((string)($r['label'] ?? '')));
+                if ($label !== '') {
+                    $val = ($max !== '' && $max !== null) ? "{$min}-{$max}" : "{$min}+";
+                    $ranges[] = [
+                        'min' => $min,
+                        'max' => $max,
+                        'label' => $label,
+                        'val' => $val,
+                    ];
+                }
+            }
+            if (!empty($ranges)) {
+                SiteSetting::set('hero_price_ranges', json_encode($ranges), 'hero_filters');
+            }
+        }
+
+        // Flush all related cache keys so changes immediately reflect everywhere
+        \Illuminate\Support\Facades\Cache::forget('site_settings_cache');
+        \Illuminate\Support\Facades\Cache::forget('site_locations_list');
         \Illuminate\Support\Facades\Cache::forget('home_locations_list');
         \Illuminate\Support\Facades\Cache::forget('home_categories');
         \Illuminate\Support\Facades\Cache::forget('home_breeds');
+        \Illuminate\Support\Facades\Cache::forget('catalog_categories_tree');
+        \Illuminate\Support\Facades\Cache::forget('catalog_all_breeds');
+        \Illuminate\Support\Facades\Cache::forget('all_breed_slugs_list');
+
+        return redirect()->route('admin.dashboard', ['tab' => 'hero_filters'])
+            ->with('success', 'Hero and Category Search Filters updated and synchronized successfully!');
+    }
+
+    /* ========================================================
+       HOMEPAGE HERO ACTIONS
+       ======================================================== */
+
+    // USER PROMPT: "yr home hero main sir image heading or text ko dynamic kro btns ko dynamic ni krna hai"
+    public function updateHero(Request $request)
+    {
+        $title = trim(strip_tags((string) $request->input('hero_title', '')));
+        $desc = trim(strip_tags((string) $request->input('hero_desc', '')));
+
+        SiteSetting::set('hero_title', $title, 'hero');
+        SiteSetting::set('hero_desc', $desc, 'hero');
+
+        // Direct image file upload or URL/path
+        // USER PROMPT: "yr image ka aik do"
+        if ($request->hasFile('hero_image') && $request->file('hero_image')->isValid()) {
+            $file = $request->file('hero_image');
+            $uploadDir = public_path('uploads/hero');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $filename = 'hero_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            SiteSetting::set('hero_image', 'uploads/hero/' . $filename, 'hero');
+        }
+
         \Illuminate\Support\Facades\Cache::forget('site_settings_cache');
 
-        return redirect()->route('admin.dashboard', ['tab' => 'hero'])->with('success', 'Homepage Hero & Search Filter Controls updated successfully!');
+        return redirect()->route('admin.dashboard', ['tab' => 'hero'])->with('success', 'Homepage Hero settings updated successfully!');
+    }
+
+    /* ========================================================
+       CATEGORY PAGE HERO ACTIONS
+       ======================================================== */
+
+    // USER PROMPT: "category page ka heroo section bhi dynamic kro"
+    public function updateCategoryHero(Request $request)
+    {
+        $keys = [
+            'category_hero_title',
+            'category_hero_desc',
+            'featured_hero_title',
+            'featured_hero_desc',
+        ];
+
+        foreach ($keys as $key) {
+            $value = trim(strip_tags((string) $request->input($key, '')));
+            SiteSetting::set($key, $value, 'category_hero');
+        }
+
+        // Direct single image file upload for category hero pets collage
+        if ($request->hasFile('category_hero_image') && $request->file('category_hero_image')->isValid()) {
+            $file = $request->file('category_hero_image');
+            $uploadDir = public_path('uploads/category_hero');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $filename = 'category_hero_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            SiteSetting::set('category_hero_image', 'uploads/category_hero/' . $filename, 'category_hero');
+        }
+
+        \Illuminate\Support\Facades\Cache::forget('site_settings_cache');
+
+        return redirect()->route('admin.dashboard', ['tab' => 'category_hero'])->with('success', 'Category page hero settings updated successfully!');
+    }
+
+    /* ========================================================
+       HOMEPAGE SAFETY & RESPONSIBLE PET OWNERSHIP ACTIONS
+       ======================================================== */
+
+    // USER PROMPT: "ya admin pannel home page main ya section dynamic kro"
+    public function updateSafety(Request $request)
+    {
+        $title = trim(strip_tags((string) $request->input('safety_title', 'Safety & Responsible')));
+        $highlight = trim(strip_tags((string) $request->input('safety_title_highlight', 'Pet Ownership')));
+        $leadBold = trim(strip_tags((string) $request->input('safety_lead_bold', 'We promote safe pet transactions')));
+        $leadText = trim(strip_tags((string) $request->input('safety_lead_text', 'and responsible ownership to help protect both pets and people.')));
+        $points = trim(strip_tags((string) $request->input('safety_points', '')));
+
+        SiteSetting::set('safety_title', $title, 'safety');
+        SiteSetting::set('safety_title_highlight', $highlight, 'safety');
+        SiteSetting::set('safety_lead_bold', $leadBold, 'safety');
+        SiteSetting::set('safety_lead_text', $leadText, 'safety');
+        SiteSetting::set('safety_points', $points, 'safety');
+
+        // Direct single image file upload or keep current
+        if ($request->hasFile('safety_image') && $request->file('safety_image')->isValid()) {
+            $file = $request->file('safety_image');
+            $uploadDir = public_path('uploads/safety');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $filename = 'safety_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            SiteSetting::set('safety_image', 'uploads/safety/' . $filename, 'safety');
+        }
+
+        \Illuminate\Support\Facades\Cache::forget('site_settings_cache');
+
+        return redirect()->route('admin.dashboard', ['tab' => 'safety'])->with('success', 'Safety & Responsible Pet Ownership Section updated successfully!');
+    }
+
+    /* ========================================================
+       HOMEPAGE DYNAMIC FOOTER ACTIONS
+       ======================================================== */
+
+    // USER PROMPT: "footer to dynamic kro"
+    public function updateFooter(Request $request)
+    {
+        $keys = [
+            'footer_brand_title',
+            'footer_brand_desc',
+            'footer_quick_links_title',
+            'footer_categories_title',
+            'footer_contact_title',
+            'footer_email',
+            'footer_phone',
+            'footer_social_title',
+            'footer_facebook_url',
+            'footer_instagram_url',
+            'footer_youtube_url',
+            'footer_copyright',
+        ];
+
+        foreach ($keys as $key) {
+            $value = trim(strip_tags((string) $request->input($key, '')));
+            SiteSetting::set($key, $value, 'footer');
+        }
+
+        // Direct single image file upload for footer logo or keep current
+        if ($request->hasFile('footer_brand_logo') && $request->file('footer_brand_logo')->isValid()) {
+            $file = $request->file('footer_brand_logo');
+            $uploadDir = public_path('uploads/footer');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $filename = 'footer_logo_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            SiteSetting::set('footer_brand_logo', 'uploads/footer/' . $filename, 'footer');
+        }
+
+        \Illuminate\Support\Facades\Cache::forget('site_settings_cache');
+
+        return redirect()->route('admin.dashboard', ['tab' => 'footer'])->with('success', 'Dynamic Footer settings updated successfully!');
+    }
+
+    /* ========================================================
+       ABOUT US DYNAMIC SECTIONS ACTIONS
+       ======================================================== */
+
+    // USER PROMPT: "about us ky ya ection dynamic kro or yahi lgao dta admin main"
+    public function updateAbout(Request $request)
+    {
+        $keys = [
+            'about_purpose_badge',
+            'about_purpose_title',
+            'about_purpose_desc1',
+            'about_purpose_desc2',
+            'about_purpose_points',
+            'about_marketplace_title',
+            'about_need_1_title',
+            'about_need_1_desc',
+            'about_need_2_title',
+            'about_need_2_desc',
+            'about_need_3_title',
+            'about_need_3_desc',
+            'about_need_4_title',
+            'about_need_4_desc',
+            'about_safer_title',
+            'about_safer_desc',
+            'about_safer_points',
+            'about_safer_card_1_icon',
+            'about_safer_card_1_title',
+            'about_safer_card_1_desc',
+            'about_safer_card_2_icon',
+            'about_safer_card_2_title',
+            'about_safer_card_2_desc',
+            'about_safer_card_3_icon',
+            'about_safer_card_3_title',
+            'about_safer_card_3_desc',
+        ];
+
+        foreach ($keys as $key) {
+            $value = trim(strip_tags((string) $request->input($key, '')));
+            SiteSetting::set($key, $value, 'about');
+        }
+
+        $uploadDir = public_path('uploads/about');
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        // Section 1: Purpose Image Upload
+        if ($request->hasFile('about_purpose_image') && $request->file('about_purpose_image')->isValid()) {
+            $file = $request->file('about_purpose_image');
+            $filename = 'purpose_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            SiteSetting::set('about_purpose_image', 'uploads/about/' . $filename, 'about');
+        }
+
+        // Section 2: Marketplace Image Upload
+        if ($request->hasFile('about_marketplace_image') && $request->file('about_marketplace_image')->isValid()) {
+            $file = $request->file('about_marketplace_image');
+            $filename = 'dogs_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            SiteSetting::set('about_marketplace_image', 'uploads/about/' . $filename, 'about');
+        }
+
+        \Illuminate\Support\Facades\Cache::forget('site_settings_cache');
+
+        return redirect()->route('admin.dashboard', ['tab' => 'about'])->with('success', 'About Us sections updated successfully!');
     }
 
     /* ========================================================
@@ -255,31 +644,98 @@ class AdminController extends Controller
        CATEGORIES & BREEDS ACTIONS
        ======================================================== */
 
+    // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
+    /**
+     * Update Homepage Browse by Pet Category section title & subtitle.
+     */
+    public function updateHomeCategories(Request $request)
+    {
+        $title = trim(strip_tags((string) $request->input('home_cat_title', 'Browse by Pet Category')));
+        $subtitle = trim(strip_tags((string) $request->input('home_cat_subtitle', "Start your search by choosing the type of companion you're looking for.")));
+
+        SiteSetting::set('home_cat_title', $title, 'home_categories');
+        SiteSetting::set('home_cat_subtitle', $subtitle, 'home_categories');
+
+        \Illuminate\Support\Facades\Cache::forget('site_settings_cache');
+
+        return redirect()->route('admin.dashboard', ['tab' => 'home_categories'])->with('success', 'Homepage Pet Categories headline and description updated!');
+    }
+
+    // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
+    /**
+     * Quick upload / update for Category circular thumbnail image.
+     */
+    public function updateCategoryImage(Request $request, $id)
+    {
+        $category = Category::findOrFail($id);
+
+        $request->validate([
+            'image' => 'required|image|max:4096',
+        ]);
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $file = $request->file('image');
+            $uploadDir = public_path('uploads/categories');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $filename = 'cat_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            $category->update(['image' => 'uploads/categories/' . $filename]);
+        }
+
+        \Illuminate\Support\Facades\Cache::forget('home_categories');
+        \Illuminate\Support\Facades\Cache::forget('home_breeds');
+
+        $redirectTab = $request->input('redirect_tab', 'home_categories');
+        return redirect()->route('admin.dashboard', ['tab' => $redirectTab])->with('success', "Image for category '{$category->name}' updated successfully!");
+    }
+
+    // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
     public function storeCategory(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:100|unique:categories,name',
             'slug' => 'nullable|string|max:100|unique:categories,slug',
             'icon' => 'nullable|string|max:100',
+            'image' => 'nullable|image|max:4096',
             'sort_order' => 'nullable|integer',
         ]);
 
         $slug = $request->input('slug') ? Str::slug($request->input('slug')) : Str::slug($request->input('name'));
 
+        $imagePath = 'images/cat_dog.jpg';
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $file = $request->file('image');
+            $uploadDir = public_path('uploads/categories');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $filename = 'cat_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            $imagePath = 'uploads/categories/' . $filename;
+        } elseif ($request->filled('image_path')) {
+            $imagePath = trim($request->input('image_path'));
+        }
+
         Category::create([
             'name' => $request->input('name'),
             'slug' => $slug,
             'icon' => $request->input('icon', 'fa-solid fa-paw'),
+            'image' => $imagePath,
             'sort_order' => $request->input('sort_order', 0),
             'is_active' => $request->has('is_active') ? 1 : 0,
         ]);
 
         \Illuminate\Support\Facades\Cache::forget('home_categories');
         \Illuminate\Support\Facades\Cache::forget('home_breeds');
+        \Illuminate\Support\Facades\Cache::forget('all_category_slugs_list');
 
-        return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('success', "Category '{$request->input('name')}' created successfully!");
+        $redirectTab = $request->input('redirect_tab', 'home_categories');
+        return redirect()->route('admin.dashboard', ['tab' => $redirectTab])->with('success', "Category '{$request->input('name')}' created successfully!");
     }
 
+    // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
     public function updateCategory(Request $request, $id)
     {
         $category = Category::findOrFail($id);
@@ -288,24 +744,43 @@ class AdminController extends Controller
             'name' => 'required|string|max:100|unique:categories,name,' . $category->id,
             'slug' => 'nullable|string|max:100|unique:categories,slug,' . $category->id,
             'icon' => 'nullable|string|max:100',
+            'image' => 'nullable|image|max:4096',
             'sort_order' => 'nullable|integer',
         ]);
 
-        $category->update([
+        $categoryData = [
             'name' => $request->input('name'),
             'slug' => $request->input('slug') ? Str::slug($request->input('slug')) : Str::slug($request->input('name')),
             'icon' => $request->input('icon', $category->icon),
             'sort_order' => $request->input('sort_order', 0),
             'is_active' => $request->has('is_active') ? 1 : 0,
-        ]);
+        ];
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $file = $request->file('image');
+            $uploadDir = public_path('uploads/categories');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $filename = 'cat_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            $categoryData['image'] = 'uploads/categories/' . $filename;
+        } elseif ($request->filled('image_path')) {
+            $categoryData['image'] = trim($request->input('image_path'));
+        }
+
+        $category->update($categoryData);
 
         \Illuminate\Support\Facades\Cache::forget('home_categories');
         \Illuminate\Support\Facades\Cache::forget('home_breeds');
+        \Illuminate\Support\Facades\Cache::forget('all_category_slugs_list');
 
-        return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('success', "Category '{$category->name}' updated!");
+        $redirectTab = $request->input('redirect_tab', 'home_categories');
+        return redirect()->route('admin.dashboard', ['tab' => $redirectTab])->with('success', "Category '{$category->name}' updated!");
     }
 
-    public function toggleCategory($id)
+    // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
+    public function toggleCategory(Request $request, $id)
     {
         $category = Category::findOrFail($id);
         $category->update(['is_active' => !$category->is_active]);
@@ -313,23 +788,26 @@ class AdminController extends Controller
         \Illuminate\Support\Facades\Cache::forget('home_categories');
         \Illuminate\Support\Facades\Cache::forget('home_breeds');
 
-        $status = $category->is_active ? 'activated' : 'deactivated';
-        return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('success', "Category '{$category->name}' is now {$status}.");
+        $redirectTab = $request->input('redirect_tab', 'home_categories');
+        $status = $category->is_active ? 'activated and is visible on Homepage' : 'deactivated and hidden from Homepage';
+        return redirect()->route('admin.dashboard', ['tab' => $redirectTab])->with('success', "Category '{$category->name}' is now {$status}.");
     }
 
-    public function deleteCategory($id)
+    // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
+    public function deleteCategory(Request $request, $id)
     {
         $category = Category::findOrFail($id);
 
+        $redirectTab = $request->input('redirect_tab', 'home_categories');
         if ($category->listings()->count() > 0) {
-            return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('error', "Cannot delete category '{$category->name}' because it contains active listings.");
+            return redirect()->route('admin.dashboard', ['tab' => $redirectTab])->with('error', "Cannot delete category '{$category->name}' because it contains active listings.");
         }
 
         $category->delete();
         \Illuminate\Support\Facades\Cache::forget('home_categories');
         \Illuminate\Support\Facades\Cache::forget('home_breeds');
 
-        return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('success', "Category '{$category->name}' removed.");
+        return redirect()->route('admin.dashboard', ['tab' => $redirectTab])->with('success', "Category '{$category->name}' removed.");
     }
 
     public function storeBreed(Request $request)

@@ -103,15 +103,41 @@ Route::middleware(['seller.auth', 'not_banned'])->group(function () {
 // Community Safety & Fraud Reporting (Rate-Limited)
 Route::post('/reports/submit', [InteractionActionController::class, 'submitReport'])->middleware('throttle:15,1')->name('reports.submit');
 
+// USER PROMPT: "ni yr ya to alag ha admin pannel in sy is ky liye login ya sin up no need just admin open ho is url sy or login mangy"
+// Dedicated Admin Login & Session Routes (Independent from public site auth)
+Route::get('/admin/login', [AdminController::class, 'showLogin'])->name('admin.login');
+Route::post('/admin/login', [AdminController::class, 'login'])->middleware('throttle:15,1')->name('admin.login.submit');
+Route::match(['get', 'post'], '/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
+
 // USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao"
 // Protected Admin Panel & Dynamic Site Engine (Secured with Admin Middleware)
 Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('/', function() { return redirect()->route('admin.dashboard'); });
     Route::get('/dashboard/{tab?}', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-    // USER PROMPT: "yr dynamic kro in ko heome page hero or in btns ko bhi"
-    // Homepage Hero & Search Filter Controls
+    // USER PROMPT: "yr home hero main sir image heading or text ko dynamic kro btns ko dynamic ni krna hai"
+    // Homepage Hero Settings (Headline, Description & Image)
     Route::post('/hero/update', [AdminController::class, 'updateHero'])->name('admin.hero.update');
+
+    // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
+    // Dynamic Hero & Category Search Filters Actions
+    Route::post('/hero-filters/update', [AdminController::class, 'updateHeroFilters'])->name('admin.hero_filters.update');
+
+    // USER PROMPT: "category page ka heroo section bhi dynamic kro"
+    // Category Page Hero Settings (Headline, Description & Pets Collage Image)
+    Route::post('/category-hero/update', [AdminController::class, 'updateCategoryHero'])->name('admin.category_hero.update');
+
+    // USER PROMPT: "ya admin pannel home page main ya section dynamic kro"
+    // Safety & Responsible Pet Ownership Section Actions
+    Route::post('/safety/update', [AdminController::class, 'updateSafety'])->name('admin.safety.update');
+
+    // USER PROMPT: "footer to dynamic kro"
+    // Dynamic Footer Section Actions
+    Route::post('/footer/update', [AdminController::class, 'updateFooter'])->name('admin.footer.update');
+
+    // USER PROMPT: "about us ky ya ection dynamic kro or yahi lgao dta admin main"
+    // About Us Dynamic Sections Actions
+    Route::post('/about/update', [AdminController::class, 'updateAbout'])->name('admin.about.update');
 
     // SEO Engine Actions
     Route::post('/seo/update', [AdminController::class, 'updateSeo'])->name('admin.seo.update');
@@ -120,6 +146,9 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::post('/settings/update', [AdminController::class, 'updateSettings'])->name('admin.settings.update');
 
     // Categories & Breeds Dynamic Actions
+    // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
+    Route::post('/home-categories/update', [AdminController::class, 'updateHomeCategories'])->name('admin.home_categories.update');
+    Route::post('/categories/{id}/image', [AdminController::class, 'updateCategoryImage'])->name('admin.categories.image');
     Route::post('/categories/store', [AdminController::class, 'storeCategory'])->name('admin.categories.store');
     Route::post('/categories/{id}/update', [AdminController::class, 'updateCategory'])->name('admin.categories.update');
     Route::post('/categories/{id}/toggle', [AdminController::class, 'toggleCategory'])->name('admin.categories.toggle');

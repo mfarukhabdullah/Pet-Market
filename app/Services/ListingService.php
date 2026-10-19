@@ -45,12 +45,17 @@ class ListingService
      * Submit listing for publishing.
      * Verified sellers get immediate live listing, unverified go to pending approval.
      */
-    // USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao"
+    // USER PROMPT: "yr mera ya flow ho ga ab user ay ga vo signup kry ga agr vo pet  sell jo krta hao vo show hon is ky ilawa koi dummy data show pets na hon jo vo listing bany vohi sirf show hon"
     public function publishListing(User $seller, ?int $listingId = null, array $finalData = []): Listing
     {
-        $autoApprove = \App\Models\SiteSetting::get('site_auto_approve_listings') === '1';
+        $autoApprove = \App\Models\SiteSetting::get('site_auto_approve_listings', '1') !== '0';
         $newStatus = ($seller->is_verified || $autoApprove) ? 'live' : 'pending';
         $finalData['status'] = $newStatus;
+
+        \Illuminate\Support\Facades\Cache::forget('home_featured_listings');
+        \Illuminate\Support\Facades\Cache::forget('home_categories');
+        \Illuminate\Support\Facades\Cache::forget('catalog_categories_tree');
+        \Illuminate\Support\Facades\Cache::forget('catalog_all_breeds');
 
         if ($listingId) {
             // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"

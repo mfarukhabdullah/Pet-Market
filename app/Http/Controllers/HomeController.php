@@ -26,25 +26,12 @@ class HomeController extends Controller
             })->orderBy('name', 'asc')->get();
         });
 
-        // Dynamic Cities for Hero Location dropdown (Site settings + live listings)
-        $dynamicCities = Cache::remember('home_locations_list', 1800, function () {
-            $configured = \App\Models\SiteSetting::get('hero_locations');
-            $cities = [];
-            if (!empty($configured)) {
-                $cities = array_values(array_filter(array_map('trim', explode(',', $configured))));
-            }
-            if (empty($cities)) {
-                $cities = ['Islamabad', 'Karachi', 'Lahore', 'Rawalpindi', 'Faisalabad', 'Multan', 'Sialkot', 'Peshawar', 'Gujranwala', 'Quetta'];
-            }
-            $listingCities = Listing::live()->whereNotNull('city')->distinct()->pluck('city')->toArray();
-            foreach ($listingCities as $c) {
-                $trimmed = trim($c);
-                if (!empty($trimmed) && !in_array(strtolower($trimmed), array_map('strtolower', $cities))) {
-                    $cities[] = $trimmed;
-                }
-            }
-            return $cities;
-        });
+        // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
+        // Dynamic Cities for Hero Location dropdown (Synchronized with Admin Settings + live listings)
+        $dynamicCities = \App\Models\SiteSetting::getLocationsList();
+
+        // Dynamic Price Ranges for Hero Search dropdown
+        $priceRanges = \App\Models\SiteSetting::getPriceRanges();
 
         // Featured live listings (15 mins cache)
         $featuredListings = Cache::remember('home_featured_listings', 900, function () {
@@ -68,8 +55,9 @@ class HomeController extends Controller
             return (int) $id;
         })->toArray() : [];
 
+        // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
         return response()
-            ->view('index', compact('categories', 'breeds', 'dynamicCities', 'featuredListings', 'recentListings', 'favoritedListingIds'))
+            ->view('index', compact('categories', 'breeds', 'dynamicCities', 'priceRanges', 'featuredListings', 'recentListings', 'favoritedListingIds'))
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
             ->header('Pragma', 'no-cache')
             ->header('Expires', '0');
