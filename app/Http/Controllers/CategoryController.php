@@ -17,12 +17,21 @@ class CategoryController extends Controller
             return redirect()->route('featured.pets', $request->except('featured'));
         }
 
-        // Known categories, cities, and breeds
-        $knownCategories = [
-            'birds', 'cats', 'dogs', 'exotic', 'exotic-pets', 'fish', 'fishes',
-            'horses-farm', 'horse', 'horses', 'rabbits', 'reptiles', 'reptile'
-        ];
-        $knownCities = ['islamabad', 'karachi', 'lahore', 'rawalpindi', 'faisalabad', 'multan', 'sialkot', 'peshawar'];
+        // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
+        $dynamicCategorySlugs = Cache::remember('all_category_slugs_list', 1800, function () {
+            return Category::pluck('slug')->map(fn($s) => strtolower(trim((string)$s)))->toArray();
+        });
+        $knownCategories = array_values(array_unique(array_merge(
+            ['birds', 'cats', 'dogs', 'exotic', 'exotic-pets', 'fish', 'fishes', 'horses-farm', 'horse', 'horses', 'rabbits', 'reptiles', 'reptile'],
+            $dynamicCategorySlugs
+        )));
+        // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
+        $dynamicCities = \App\Models\SiteSetting::getLocationsList();
+        $knownCities = array_values(array_unique(array_merge(
+            ['islamabad', 'karachi', 'lahore', 'rawalpindi', 'faisalabad', 'multan', 'sialkot', 'peshawar'],
+            array_map(fn($c) => strtolower(trim((string)$c)), $dynamicCities)
+        )));
+        $priceRanges = \App\Models\SiteSetting::getPriceRanges();
 
         $allBreedSlugs = Cache::remember('all_breed_slugs_list', 1800, function () {
             return Breed::pluck('slug')->map(fn($s) => strtolower(trim($s)))->toArray();
@@ -357,7 +366,10 @@ class CategoryController extends Controller
                 'searchParam',
                 'favoritedListingIds',
                 'minPrice',
-                'maxPrice'
+                'maxPrice',
+                // USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy"
+                'dynamicCities',
+                'priceRanges'
             ))
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
             ->header('Pragma', 'no-cache')
