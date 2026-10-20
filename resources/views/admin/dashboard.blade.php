@@ -1756,39 +1756,52 @@
                                 <h3 style="font-size: 15px; font-weight: 700; color: #1E293B; margin-bottom: 14px; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px;">
                                     <i class="fa-solid fa-tags" style="color: var(--admin-primary);"></i> 3. Dynamic Price Ranges (Synchronized with Category Quick Pills)
                                 </h3>
+                                {{-- USER PROMPT: "yr price main sirf price or kuch na ho u ky saath words" --}}
                                 <p style="font-size: 13px; color: #64748B; margin-bottom: 14px;">
-                                    Configure price range brackets. Use <code>{curr}</code> in display labels to automatically render the active currency prefix (e.g. <code>Rs. </code> or <code>PKR </code>).
+                                    Configure price range brackets. Enter numeric price ranges (e.g. <code>0 - 20,000</code> or <code>20,000 - 50,000</code>) for clean display without extra text.
                                     These tiers will populate the Home Hero Price dropdown and provide quick-click filter pills on the Category page.
                                 </p>
 
-                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                {{-- USER PROMPT: "yr idher in ko dellete or edit or add new ka bhi option or ya sary filters per apply hon" --}}
+                                <div style="display: flex; flex-direction: column; gap: 12px;" id="priceTiersContainer">
                                     @php
                                         $pTiers = $heroFilterSettings['price_ranges_list'];
                                     @endphp
                                     @foreach($pTiers as $idx => $tier)
-                                        <div style="background: #FAF8F5; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--admin-border); display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
-                                            <div style="width: 70px; font-weight: 700; color: var(--admin-primary); font-size: 12px;">
+                                        <div class="price-tier-row" style="background: #FAF8F5; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--admin-border); display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+                                            <div class="tier-badge" style="width: 70px; font-weight: 700; color: var(--admin-primary); font-size: 12px;">
                                                 Tier {{ $idx + 1 }}
                                             </div>
                                             <div style="flex: 1; min-width: 120px;">
                                                 <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Min Amount</label>
-                                                <input type="number" name="price_ranges[{{ $idx }}][min]" class="form-control" value="{{ $tier['min'] }}" placeholder="0">
+                                                <input type="number" name="price_ranges[{{ $idx }}][min]" class="form-control tier-min" value="{{ $tier['min'] }}" placeholder="0">
                                             </div>
                                             <div style="flex: 1; min-width: 120px;">
                                                 <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Max Amount (leave blank for +)</label>
-                                                <input type="number" name="price_ranges[{{ $idx }}][max]" class="form-control" value="{{ $tier['max'] }}" placeholder="e.g. 20000">
+                                                <input type="number" name="price_ranges[{{ $idx }}][max]" class="form-control tier-max" value="{{ $tier['max'] }}" placeholder="e.g. 20000">
                                             </div>
                                             <div style="flex: 2; min-width: 200px;">
-                                                <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Display Label (with {curr})</label>
+                                                <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Display Label (Price Range)</label>
                                                 @php
                                                     $rawJson = $heroFilterSettings['hero_price_ranges'];
                                                     $decodedJson = is_string($rawJson) ? json_decode($rawJson, true) : null;
                                                     $rawLabel = (is_array($decodedJson) && isset($decodedJson[$idx]['label'])) ? $decodedJson[$idx]['label'] : $tier['label'];
                                                 @endphp
-                                                <input type="text" name="price_ranges[{{ $idx }}][label]" class="form-control" value="{{ $rawLabel }}" placeholder="e.g. Under {curr}20,000" required>
+                                                <input type="text" name="price_ranges[{{ $idx }}][label]" class="form-control tier-label" value="{{ $rawLabel }}" placeholder="e.g. 0 - 20,000" required>
+                                            </div>
+                                            <div style="align-self: flex-end; padding-bottom: 2px;">
+                                                <button type="button" class="btn-admin btn-admin-danger btn-sm" onclick="removePriceTier(this)" title="Delete this tier">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     @endforeach
+                                </div>
+
+                                <div style="margin-top: 14px;">
+                                    <button type="button" class="btn-admin btn-admin-secondary btn-sm" onclick="addPriceTier()" style="font-weight: 600;">
+                                        <i class="fa-solid fa-plus"></i> Add New Price Tier
+                                    </button>
                                 </div>
                             </div>
 
@@ -4249,6 +4262,84 @@
                     setTimeout(() => searchInput.focus(), 600);
                 }
             }
+        }
+
+        // USER PROMPT: "yr idher in ko dellete or edit or add new ka bhi option or ya sary filters per apply hon"
+        function addPriceTier() {
+            const container = document.getElementById('priceTiersContainer');
+            if (!container) return;
+            const rowCount = container.querySelectorAll('.price-tier-row').length;
+            const newIdx = rowCount;
+            
+            // Suggest min based on previous row max
+            let suggestedMin = 0;
+            const lastRow = container.querySelector('.price-tier-row:last-child');
+            if (lastRow) {
+                const lastMaxInput = lastRow.querySelector('.tier-max');
+                if (lastMaxInput && lastMaxInput.value && !isNaN(lastMaxInput.value)) {
+                    suggestedMin = parseInt(lastMaxInput.value, 10);
+                }
+            }
+            
+            const div = document.createElement('div');
+            div.className = 'price-tier-row';
+            div.style.cssText = 'background: #FAF8F5; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--admin-border); display: flex; gap: 14px; align-items: center; flex-wrap: wrap;';
+            div.innerHTML = `
+                <div class="tier-badge" style="width: 70px; font-weight: 700; color: var(--admin-primary); font-size: 12px;">
+                    Tier ${newIdx + 1}
+                </div>
+                <div style="flex: 1; min-width: 120px;">
+                    <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Min Amount</label>
+                    <input type="number" name="price_ranges[${newIdx}][min]" class="form-control tier-min" value="${suggestedMin}" placeholder="0">
+                </div>
+                <div style="flex: 1; min-width: 120px;">
+                    <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Max Amount (leave blank for +)</label>
+                    <input type="number" name="price_ranges[${newIdx}][max]" class="form-control tier-max" value="" placeholder="e.g. 20000">
+                </div>
+                <div style="flex: 2; min-width: 200px;">
+                    <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Display Label (Price Range)</label>
+                    <input type="text" name="price_ranges[${newIdx}][label]" class="form-control tier-label" value="" placeholder="e.g. ${suggestedMin.toLocaleString()}+" required>
+                </div>
+                <div style="align-self: flex-end; padding-bottom: 2px;">
+                    <button type="button" class="btn-admin btn-admin-danger btn-sm" onclick="removePriceTier(this)" title="Delete this tier">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+            reindexPriceTiers();
+        }
+
+        function removePriceTier(btn) {
+            const row = btn.closest('.price-tier-row');
+            const container = document.getElementById('priceTiersContainer');
+            if (container && container.querySelectorAll('.price-tier-row').length <= 1) {
+                alert('At least one price tier is required.');
+                return;
+            }
+            if (row) {
+                row.remove();
+                reindexPriceTiers();
+            }
+        }
+
+        function reindexPriceTiers() {
+            const container = document.getElementById('priceTiersContainer');
+            if (!container) return;
+            const rows = container.querySelectorAll('.price-tier-row');
+            rows.forEach((row, idx) => {
+                const badge = row.querySelector('.tier-badge');
+                if (badge) badge.textContent = `Tier ${idx + 1}`;
+                
+                const minInput = row.querySelector('.tier-min');
+                if (minInput) minInput.name = `price_ranges[${idx}][min]`;
+                
+                const maxInput = row.querySelector('.tier-max');
+                if (maxInput) maxInput.name = `price_ranges[${idx}][max]`;
+                
+                const labelInput = row.querySelector('.tier-label');
+                if (labelInput) labelInput.name = `price_ranges[${idx}][label]`;
+            });
         }
 
         // Close modal on backdrop click

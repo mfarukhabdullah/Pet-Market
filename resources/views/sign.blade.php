@@ -717,6 +717,7 @@
                 });
             }
 
+            // USER PROMPT: "yr is main login ya sign up ky liye google ki api lagani hai"
             const googleBtn = document.querySelector('.btn-google');
             if (googleBtn) {
                 googleBtn.addEventListener('click', function(e) {
@@ -724,15 +725,12 @@
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirectUrl = urlParams.get('redirect');
                     const favListing = urlParams.get('favorite_listing');
-                    const role = (redirectUrl && (redirectUrl.includes('seller') || redirectUrl.includes('create-listing'))) ? 'seller' : 'buyer';
-                    
                     const params = new URLSearchParams();
                     if (redirectUrl) params.set('redirect', redirectUrl);
                     if (favListing) params.set('favorite_listing', favListing);
+                    if (redirectUrl && (redirectUrl.includes('seller') || redirectUrl.includes('create-listing'))) params.set('role', 'seller');
                     const qs = params.toString();
-                    
-                    const target = "{{ url('/demo-login') }}/" + role + (qs ? '?' + qs : '');
-                    window.location.href = target;
+                    window.location.href = "{{ route('google.redirect') }}" + (qs ? '?' + qs : '');
                 });
             }
         });

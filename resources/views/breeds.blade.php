@@ -347,7 +347,7 @@
         </x-hero>
 
         <!-- MAIN BREEDS SECTION -->
-        {{-- USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this" --}}
+        {{-- USER PROMPT: "yr idhr vo sirf main jo admin main main add kron" --}}
         @php
             if (!isset($categories)) {
                 $categories = \App\Models\Category::with(['breeds' => function ($q) {
@@ -359,6 +359,7 @@
             if (!isset($liveListings)) {
                 $liveListings = \App\Models\Listing::live()->with(['images', 'category', 'breed'])->get();
             }
+
             $fallbackImages = [
                 'dogs' => 'images/cat_dog.jpg',
                 'cats' => 'images/cat_cat.jpg',
@@ -374,76 +375,84 @@
                 'exotic' => 'images/card_parrot.jpg',
                 'exotic-pets' => 'images/card_parrot.jpg',
             ];
+
+            $sectionTitles = [
+                'dogs' => 'Dog Breeds',
+                'cats' => 'Cat Breeds',
+                'birds' => 'Bird Breeds',
+                'fish' => 'Fish Breeds',
+                'reptiles' => 'Reptile Breeds',
+                'horses-farm' => 'Horses & Farm Breeds',
+                'rabbits' => 'Rabbit Breeds',
+                'exotic' => 'Exotic Pet Breeds',
+            ];
+
+            // Normalize helper for fuzzy matching listings with breeds
+            $normalizeName = function($str) {
+                $clean = strtolower(trim((string)$str));
+                $clean = str_replace(['german', 'germen'], 'german', $clean);
+                $clean = str_replace(['persion', 'persian cat'], 'persian', $clean);
+                return preg_replace('/[^a-z0-9]/', '', $clean);
+            };
+
+            // Only categories that have breeds explicitly added by admin
+            $categoriesWithBreeds = $categories->filter(fn($c) => $c->breeds->count() > 0);
         @endphp
 
         <section class="shell-1440">
             <div class="container">
                 
-                <!-- Breed Tags -->
-                <div class="breed-tags-container">
-                    @foreach($categories as $cat)
-                        <a href="#{{ $cat->slug }}-section" class="breed-tag" data-category="{{ $cat->slug }}">{{ $cat->name }}</a>
-                    @endforeach
-                </div>
+                @if($categoriesWithBreeds->count() > 0)
+                    <!-- Breed Tags -->
+                    <div class="breed-tags-container">
+                        @foreach($categoriesWithBreeds as $cat)
+                            <a href="#{{ $cat->slug }}-section" class="breed-tag" data-category="{{ $cat->slug }}">{{ $cat->name }}</a>
+                        @endforeach
+                    </div>
 
-                @foreach($categories as $cat)
-                    @php
-                        $catListings = $liveListings->where('category_id', $cat->id);
-                        $categoryBreeds = collect($cat->breeds);
-                        $existingNames = $categoryBreeds->pluck('name')->map(fn($n) => strtolower(trim($n)))->toArray();
+                    @foreach($categoriesWithBreeds as $cat)
+                        @php
+                            $catListings = $liveListings->where('category_id', $cat->id);
+                            $sectionTitle = $sectionTitles[$cat->slug] ?? (\Illuminate\Support\Str::singular($cat->name) . ' Breeds');
+                        @endphp
 
-                        // Include any custom breeds from live listings
-                        foreach ($catListings as $listing) {
-                            $bName = trim($listing->breed_name ?? '');
-                            if (!empty($bName) && !in_array(strtolower($bName), $existingNames)) {
-                                $existingNames[] = strtolower($bName);
-                                $firstImg = $listing->images->first();
-                                $categoryBreeds->push((object) [
-                                    'id' => null,
-                                    'name' => $bName,
-                                    'slug' => \Illuminate\Support\Str::slug($bName),
-                                    'image' => $firstImg ? $firstImg->image_path : '',
-                                    'listings_count' => $catListings->where('breed_name', $bName)->count(),
-                                ]);
-                            }
-                        }
-
-                        $totalListings = $catListings->count();
-                    @endphp
-
-                    @if($categoryBreeds->count() > 0 || $totalListings > 0)
-                        <!-- {{ $cat->name }} Breeds Section -->
+                        <!-- {{ $sectionTitle }} Section -->
                         <div class="breed-category-section" id="{{ $cat->slug }}-section">
                             <div class="breed-section-header">
-                                <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;">
-                                    <h2 class="breed-section-title">{{ $cat->name }} Breeds</h2>
-                                    <a href="{{ route('category', ['param1' => $cat->slug]) }}" class="breed-section-view-all">
-                                        View All {{ $cat->name }} ({{ $totalListings }}) <i class="fa-solid fa-arrow-right"></i>
-                                    </a>
-                                </div>
+                                <h2 class="breed-section-title">{{ $sectionTitle }}</h2>
                                 <div class="breed-section-line"></div>
                             </div>
 
                             <div class="breeds-grid">
-                                @foreach($categoryBreeds as $breed)
+                                @foreach($cat->breeds as $breed)
                                     @php
                                         $breedName = $breed->name;
                                         $breedSlug = $breed->slug ?: \Illuminate\Support\Str::slug($breedName);
-                                        $count = isset($breed->listings_count) ? $breed->listings_count : $catListings->where('breed_name', $breedName)->count();
+                                        $bNorm = $normalizeName($breedName);
 
-                                        // Image resolution
+                                        // Match live listings count
+                                        $count = $breed->listings_count ?? 0;
+                                        $matchingListing = $catListings->first(function ($l) use ($breed, $bNorm, $normalizeName) {
+                                            return ($l->breed_id == $breed->id || $normalizeName($l->breed_name ?? '') === $bNorm) 
+                                                && $l->images->count() > 0;
+                                        });
+
+                                        if ($count === 0) {
+                                            $count = $catListings->filter(function ($l) use ($breed, $bNorm, $normalizeName) {
+                                                return $l->breed_id == $breed->id || $normalizeName($l->breed_name ?? '') === $bNorm;
+                                            })->count();
+                                        }
+
+                                        // Image resolution: Admin uploaded > Live listing photo > Local photo by slug > Category fallback
                                         $imgSrc = null;
                                         if (!empty($breed->image) && file_exists(public_path($breed->image))) {
                                             $imgSrc = asset($breed->image);
+                                        } elseif ($matchingListing && $matchingListing->images->first()) {
+                                            $imgSrc = asset($matchingListing->images->first()->image_path);
+                                        } elseif (file_exists(public_path('images/' . str_replace('-', '_', $breedSlug) . '.jpg'))) {
+                                            $imgSrc = asset('images/' . str_replace('-', '_', $breedSlug) . '.jpg');
                                         } else {
-                                            $matchingListing = $catListings->first(function ($l) use ($breedName) {
-                                                return strtolower(trim($l->breed_name ?? '')) === strtolower(trim($breedName)) && $l->images->count() > 0;
-                                            });
-                                            if ($matchingListing && $matchingListing->images->first()) {
-                                                $imgSrc = asset($matchingListing->images->first()->image_path);
-                                            } else {
-                                                $imgSrc = asset($fallbackImages[$cat->slug] ?? 'images/cat_dog.jpg');
-                                            }
+                                            $imgSrc = asset($fallbackImages[$cat->slug] ?? 'images/cat_dog.jpg');
                                         }
                                     @endphp
                                     <a href="{{ route('category', ['param1' => $cat->slug, 'param2' => $breedSlug]) }}" class="breed-card">
@@ -456,8 +465,19 @@
                                 @endforeach
                             </div>
                         </div>
-                    @endif
-                @endforeach
+                    @endforeach
+                @else
+                    <div style="text-align: center; padding: 80px 20px; background: #fff; border-radius: 12px; margin: 40px 0; border: 1px dashed #E2E7E3;">
+                        <i class="fa-solid fa-dna" style="font-size: 48px; color: #147A4D; margin-bottom: 16px;"></i>
+                        <h3 style="font-size: 22px; font-weight: 700; color: #17211C; margin-bottom: 8px;">No Breeds Added Yet</h3>
+                        <p style="font-size: 15px; color: #64748B; margin-bottom: 24px;">Admin panel mein ja kar categories ke liye breeds add karein, wo foran yahan display ho jayengi.</p>
+                        @if(auth()->check() && auth()->user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard', ['tab' => 'breeds']) }}" class="breed-search-btn" style="display: inline-flex; text-decoration: none;">
+                                <i class="fa-solid fa-plus"></i> Add Breeds in Admin Panel
+                            </a>
+                        @endif
+                    </div>
+                @endif
 
             </div>
         </section>

@@ -72,20 +72,14 @@ class MarketplaceSeeder extends Seeder
 
         // 2. Categories & Breeds
         $categoriesData = [
+            // USER PROMPT: "admin main defaut main kuch ni hona chahye jo add krin bs vo ho"
             [
                 'name' => 'Dogs',
                 'slug' => 'dogs',
                 'icon' => 'fa-solid fa-dog',
                 'image' => 'images/cat_dog.jpg',
                 'sort_order' => 1,
-                'breeds' => [
-                    ['name' => 'German Shepherd', 'slug' => 'german-shepherd', 'image' => 'images/german_shepherd.jpg'],
-                    ['name' => 'Golden Retriever', 'slug' => 'golden-retriever', 'image' => 'images/golden_retriever.jpg'],
-                    ['name' => 'Shih Tzu', 'slug' => 'shih-tzu', 'image' => 'images/card_shihtzu.jpg'],
-                    ['name' => 'Pug', 'slug' => 'pug'],
-                    ['name' => 'Rottweiler', 'slug' => 'rottweiler'],
-                    ['name' => 'Siberian Husky', 'slug' => 'siberian-husky'],
-                ]
+                'breeds' => []
             ],
             [
                 'name' => 'Cats',
@@ -93,89 +87,7 @@ class MarketplaceSeeder extends Seeder
                 'icon' => 'fa-solid fa-cat',
                 'image' => 'images/cat_cat.jpg',
                 'sort_order' => 2,
-                'breeds' => [
-                    ['name' => 'Persian Cat', 'slug' => 'persian-cat', 'image' => 'images/persian.jpg'],
-                    ['name' => 'British Shorthair', 'slug' => 'british-shorthair', 'image' => 'images/british_shorthair.jpg'],
-                    ['name' => 'Siamese Cat', 'slug' => 'siamese-cat'],
-                    ['name' => 'Maine Coon', 'slug' => 'maine-coon'],
-                    ['name' => 'Scottish Fold', 'slug' => 'scottish-fold'],
-                ]
-            ],
-            [
-                'name' => 'Birds',
-                'slug' => 'birds',
-                'icon' => 'fa-solid fa-dove',
-                'image' => 'images/cat_bird.jpg',
-                'sort_order' => 3,
-                'breeds' => [
-                    ['name' => 'Raw Parrot', 'slug' => 'raw-parrot', 'image' => 'images/card_parrot.jpg'],
-                    ['name' => 'Cockatiel', 'slug' => 'cockatiel'],
-                    ['name' => 'Lovebird', 'slug' => 'lovebird'],
-                    ['name' => 'Macaw', 'slug' => 'macaw'],
-                ]
-            ],
-            [
-                'name' => 'Rabbits',
-                'slug' => 'rabbits',
-                'icon' => 'fa-solid fa-paw',
-                'image' => 'images/card_rabbit.jpg',
-                'sort_order' => 4,
-                'breeds' => [
-                    ['name' => 'Netherland Dwarf', 'slug' => 'netherland-dwarf'],
-                    ['name' => 'Lionhead Rabbit', 'slug' => 'lionhead-rabbit'],
-                ]
-            ],
-            [
-                'name' => 'Fish',
-                'slug' => 'fish',
-                'icon' => 'fa-solid fa-fish',
-                'image' => 'images/cat_fish.jpg',
-                'sort_order' => 5,
-                'breeds' => [
-                    ['name' => 'Betta Fish', 'slug' => 'betta-fish', 'image' => 'images/cat_fish.jpg'],
-                    ['name' => 'Discus Fish', 'slug' => 'discus-fish', 'image' => 'images/cat_fish.jpg'],
-                    ['name' => 'Goldfish', 'slug' => 'goldfish'],
-                    ['name' => 'Guppy', 'slug' => 'guppy'],
-                ]
-            ],
-            [
-                'name' => 'Reptiles',
-                'slug' => 'reptiles',
-                'icon' => 'fa-solid fa-worm',
-                'image' => 'images/cat_reptile.jpg',
-                'sort_order' => 6,
-                'breeds' => [
-                    ['name' => 'Leopard Gecko', 'slug' => 'leopard-gecko', 'image' => 'images/cat_reptile.jpg'],
-                    ['name' => 'Bearded Dragon', 'slug' => 'bearded-dragon', 'image' => 'images/cat_reptile.jpg'],
-                    ['name' => 'Red-Eared Slider Turtle', 'slug' => 'red-eared-slider-turtle', 'image' => 'images/cat_reptile.jpg'],
-                    ['name' => 'Ball Python', 'slug' => 'ball-python'],
-                ]
-            ],
-            [
-                'name' => 'Horses & Farm',
-                'slug' => 'horses-farm',
-                'icon' => 'fa-solid fa-horse',
-                'image' => 'images/cat_horse.jpg',
-                'sort_order' => 7,
-                'breeds' => [
-                    ['name' => 'Arabian Horse', 'slug' => 'arabian-horse', 'image' => 'images/cat_horse.jpg'],
-                    ['name' => 'Thoroughbred', 'slug' => 'thoroughbred', 'image' => 'images/cat_horse.jpg'],
-                    ['name' => 'Pygmy Goat', 'slug' => 'pygmy-goat', 'image' => 'images/cat_horse.jpg'],
-                    ['name' => 'Miniature Horse', 'slug' => 'miniature-horse'],
-                ]
-            ],
-            [
-                'name' => 'Exotic Pets',
-                'slug' => 'exotic',
-                'icon' => 'fa-solid fa-feather',
-                'image' => 'images/card_parrot.jpg',
-                'sort_order' => 8,
-                'breeds' => [
-                    ['name' => 'African Grey Parrot', 'slug' => 'african-grey-parrot', 'image' => 'images/pets/african-grey.jpg'],
-                    ['name' => 'Ringneck Parakeet', 'slug' => 'ringneck-parakeet', 'image' => 'images/card_parrot.jpg'],
-                    ['name' => 'Sugar Glider', 'slug' => 'sugar-glider'],
-                    ['name' => 'Chinchilla', 'slug' => 'chinchilla'],
-                ]
+                'breeds' => []
             ],
         ];
 

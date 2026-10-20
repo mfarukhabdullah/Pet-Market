@@ -115,12 +115,13 @@ class SiteSetting extends Model
             }
         }
 
-        // Default standard price tiers
+        // USER PROMPT: "yr price main sirf price or kuch na ho u ky saath words"
+        // Default standard price tiers - pure price figures without extra words
         return [
-            ['min' => '0', 'max' => '20000', 'label' => 'Under ' . $currPrefix . '20,000', 'val' => '0-20000'],
-            ['min' => '20000', 'max' => '50000', 'label' => $currPrefix . '20k - 50k', 'val' => '20000-50000'],
-            ['min' => '50000', 'max' => '100000', 'label' => $currPrefix . '50k - 100k', 'val' => '50000-100000'],
-            ['min' => '100000', 'max' => null, 'label' => $currPrefix . '100,000+', 'val' => '100000+'],
+            ['min' => '0', 'max' => '20000', 'label' => '0 - 20,000', 'val' => '0-20000'],
+            ['min' => '20000', 'max' => '50000', 'label' => '20,000 - 50,000', 'val' => '20000-50000'],
+            ['min' => '50000', 'max' => '100000', 'label' => '50,000 - 100,000', 'val' => '50000-100000'],
+            ['min' => '100000', 'max' => null, 'label' => '100,000+', 'val' => '100000+'],
         ];
     }
 
@@ -167,12 +168,13 @@ class SiteSetting extends Model
             'filter_price_placeholder' => ['value' => 'Any price', 'group' => 'hero_filters'],
             'filter_btn_text' => ['value' => 'Find a Pet', 'group' => 'hero_filters'],
             'hero_locations' => ['value' => 'Islamabad, Karachi, Lahore, Rawalpindi, Faisalabad, Multan, Sialkot, Peshawar, Gujranwala, Quetta', 'group' => 'hero_filters'],
+            // USER PROMPT: "yr price main sirf price or kuch na ho u ky saath words"
             'hero_price_ranges' => [
                 'value' => json_encode([
-                    ['min' => '0', 'max' => '20000', 'label' => 'Under {curr}20,000', 'val' => '0-20000'],
-                    ['min' => '20000', 'max' => '50000', 'label' => '{curr}20k - 50k', 'val' => '20000-50000'],
-                    ['min' => '50000', 'max' => '100000', 'label' => '{curr}50k - 100k', 'val' => '50000-100000'],
-                    ['min' => '100000', 'max' => '', 'label' => '{curr}100,000+', 'val' => '100000+'],
+                    ['min' => '0', 'max' => '20000', 'label' => '0 - 20,000', 'val' => '0-20000'],
+                    ['min' => '20000', 'max' => '50000', 'label' => '20,000 - 50,000', 'val' => '20000-50000'],
+                    ['min' => '50000', 'max' => '100000', 'label' => '50,000 - 100,000', 'val' => '50000-100000'],
+                    ['min' => '100000', 'max' => '', 'label' => '100,000+', 'val' => '100000+'],
                 ]),
                 'group' => 'hero_filters'
             ],

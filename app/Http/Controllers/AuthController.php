@@ -5,12 +5,123 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Listing;
 use App\Models\Favorite;
 
 class AuthController extends Controller
 {
+    // USER PROMPT: "yr jb login ya sign up kro to jis page sy kya ha wapas usy page per redirect kray or jb withoit login sign up kry to sell a pet per tb vo us ko login sign upky bd create listing per redirect kry"
+    protected function getPreviousPageRedirect(Request $request): ?string
+    {
+        $previousUrl = $request->headers->get('referer');
+        if (!$previousUrl) {
+            return null;
+        }
+
+        $previous = parse_url($previousUrl);
+        if (!$previous || empty($previous['host']) || $previous['host'] !== $request->getHost()) {
+            return null;
+        }
+
+        $previousPort = $previous['port'] ?? null;
+        $requestPort = $request->getPort();
+        if ($previousPort && (int) $previousPort !== (int) $requestPort) {
+            return null;
+        }
+
+        $path = trim($previous['path'] ?? '/', '/');
+        if (in_array($path, ['login', 'register', 'auth/google', 'auth/google/callback'], true)) {
+            return null;
+        }
+
+        return $previousUrl;
+    }
+
+    // USER PROMPT: "yr is main login ya sign up ky liye google ki api lagani hai"
+    public function redirectToGoogle(Request $request)
+    {
+        $clientId = config('services.google.client_id');
+        if (!$clientId || !config('services.google.client_secret')) {
+            return redirect()->route('login')->withErrors(['email' => 'Google sign-in is not configured yet. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to .env.']);
+        }
+
+        $request->session()->put('google_oauth_state', Str::random(40));
+        $request->session()->put('google_oauth_redirect', $request->query('redirect'));
+        $request->session()->put('google_oauth_favorite', $request->query('favorite_listing'));
+        $request->session()->put('google_oauth_role', $request->query('role', 'buyer') === 'seller' ? 'seller' : 'buyer');
+
+        return redirect()->away('https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query([
+            'client_id' => $clientId,
+            'redirect_uri' => config('services.google.redirect'),
+            'response_type' => 'code',
+            'scope' => 'openid email profile',
+            'state' => $request->session()->get('google_oauth_state'),
+            'prompt' => 'select_account',
+        ]));
+    }
+
+    // USER PROMPT: "yr is main login ya sign up ky liye google ki api lagani hai"
+    public function handleGoogleCallback(Request $request)
+    {
+        $expectedState = $request->session()->pull('google_oauth_state');
+        if (!$expectedState || !$request->filled('state') || !hash_equals($expectedState, (string) $request->input('state'))) {
+            return redirect()->route('login')->withErrors(['email' => 'Google sign-in could not be verified. Please try again.']);
+        }
+        if ($request->filled('error') || !$request->filled('code')) {
+            return redirect()->route('login')->withErrors(['email' => 'Google sign-in was cancelled or could not be completed.']);
+        }
+
+        try {
+            $tokenResponse = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+                'code' => $request->input('code'),
+                'client_id' => config('services.google.client_id'),
+                'client_secret' => config('services.google.client_secret'),
+                'redirect_uri' => config('services.google.redirect'),
+                'grant_type' => 'authorization_code',
+            ]);
+            if (!$tokenResponse->successful() || !$tokenResponse->json('access_token')) {
+                throw new \RuntimeException('Google token exchange failed.');
+            }
+            $profileResponse = Http::withToken($tokenResponse->json('access_token'))->get('https://www.googleapis.com/oauth2/v2/userinfo');
+            $profile = $profileResponse->json();
+            if (!$profileResponse->successful() || empty($profile['email']) || empty($profile['verified_email'])) {
+                throw new \RuntimeException('Google did not return a verified email.');
+            }
+        } catch (\Throwable $exception) {
+            report($exception);
+            return redirect()->route('login')->withErrors(['email' => 'Could not verify your Google account. Please try again.']);
+        }
+
+        $user = User::where('email', $profile['email'])->first();
+        if (!$user) {
+            $user = User::create([
+                'name' => $profile['name'] ?? $profile['email'],
+                'email' => $profile['email'],
+                'email_verified_at' => now(),
+                'password' => Hash::make(Str::random(40)),
+                'role' => $request->session()->pull('google_oauth_role', 'buyer'),
+                'city' => 'Lahore',
+                'trust_score' => 30,
+            ]);
+        }
+
+        Auth::login($user);
+        $request->session()->regenerate();
+        $favoriteId = $request->session()->pull('google_oauth_favorite');
+        if ($favoriteId) {
+            $request->merge(['favorite_listing' => $favoriteId]);
+        }
+        $redirect = $request->session()->pull('google_oauth_redirect');
+        if ($redirect) {
+            $request->merge(['redirect' => $redirect]);
+        }
+        $this->handlePendingFavorite($user->id, $request);
+        return redirect()->to($this->getSafeRedirectUrl($request, route('dashboard')))->with('success', 'Signed in with Google successfully!');
+    }
+
     protected function handlePendingFavorite($userId, Request $request)
     {
         $favListingId = $request->input('favorite_listing', $request->session()->pull('pending_favorite_listing_id'));
@@ -51,6 +162,12 @@ class AuthController extends Controller
             $redirectUrl = $this->getSafeRedirectUrl($request);
             return redirect()->to($redirectUrl);
         }
+
+        // USER PROMPT: "yr jb login ya sign up kro to jis page sy kya ha wapas usy page per redirect kray or jb withoit login sign up kry to sell a pet per tb vo us ko login sign upky bd create listing per redirect kry"
+        if (!$request->filled('redirect') && ($previousUrl = $this->getPreviousPageRedirect($request))) {
+            return redirect()->route('login', ['redirect' => $previousUrl]);
+        }
+
         return view('login');
     }
 
@@ -89,6 +206,12 @@ class AuthController extends Controller
             $redirectUrl = $this->getSafeRedirectUrl($request);
             return redirect()->to($redirectUrl);
         }
+
+        // USER PROMPT: "yr jb login ya sign up kro to jis page sy kya ha wapas usy page per redirect kray or jb withoit login sign up kry to sell a pet per tb vo us ko login sign upky bd create listing per redirect kry"
+        if (!$request->filled('redirect') && ($previousUrl = $this->getPreviousPageRedirect($request))) {
+            return redirect()->route('sign', ['redirect' => $previousUrl]);
+        }
+
         return view('sign');
     }
 

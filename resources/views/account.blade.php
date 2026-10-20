@@ -183,7 +183,8 @@
                         @if(auth()->check())
                             <a href="{{ route('seller.profile') }}" class="account-nav-link">View Public Profile <i class="fa-solid fa-chevron-right"></i></a>
                         @else
-                            <a href="{{ route('login') }}" class="account-nav-link">Sign In <i class="fa-solid fa-chevron-right"></i></a>
+                            {{-- USER PROMPT: "yr jb login ya sign up kro to jis page sy kya ha wapas usy page per redirect kray or jb withoit login sign up kry to sell a pet per tb vo us ko login sign upky bd create listing per redirect kry" --}}
+                            <a href="{{ route('login', ['redirect' => request()->fullUrl()]) }}" class="account-nav-link">Sign In <i class="fa-solid fa-chevron-right"></i></a>
                         @endif
                     </div>
                 </div>
@@ -221,7 +222,8 @@
                                 <div class="list-left"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span></div>
                             </a>
                         @else
-                            <a href="{{ route('login') }}" class="logout-link">
+                            {{-- USER PROMPT: "yr jb login ya sign up kro to jis page sy kya ha wapas usy page per redirect kray or jb withoit login sign up kry to sell a pet per tb vo us ko login sign upky bd create listing per redirect kry" --}}
+                            <a href="{{ route('login', ['redirect' => request()->fullUrl()]) }}" class="logout-link">
                                 <div class="list-left"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Login</span></div>
                             </a>
                         @endif

@@ -20,6 +20,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        // USER PROMPT: "yr is main login ya sign up ky liye google ki api lagani hai"
+        'email_verified_at',
         'password',
         'phone',
         'phone_verified_at',

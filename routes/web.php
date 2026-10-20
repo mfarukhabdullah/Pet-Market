@@ -54,6 +54,9 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('sign');
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:6,1');
+// USER PROMPT: "yr is main login ya sign up ky liye google ki api lagani hai"
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.redirect');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('google.callback');
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/demo-login/{role?}', [AuthController::class, 'switchDemoUser'])->where('role', '.*')->name('demo.login');
 

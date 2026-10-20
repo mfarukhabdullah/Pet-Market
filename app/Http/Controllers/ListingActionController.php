@@ -134,23 +134,10 @@ class ListingActionController extends Controller
                 })->first();
             if ($matchedBreed) {
                 $breedId = $matchedBreed->id;
-            } elseif (!empty($breedName) && strtolower(trim($breedName)) !== 'pet') {
-                // USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this"
-                $newBreed = \App\Models\Breed::firstOrCreate(
-                    [
-                        'category_id' => $categoryId,
-                        'slug' => \Illuminate\Support\Str::slug($breedName),
-                    ],
-                    [
-                        'name' => ucwords(trim($breedName)),
-                    ]
-                );
-                $breedId = $newBreed->id;
-                // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
-                \Illuminate\Support\Facades\Cache::forget('all_breed_slugs_list');
-                \Illuminate\Support\Facades\Cache::forget('catalog_all_breeds');
-                \Illuminate\Support\Facades\Cache::forget('home_breeds');
-                \Illuminate\Support\Facades\Cache::forget('home_popular_breeds');
+            } else {
+                // USER PROMPT: "admin main defaut main kuch ni hona chahye jo add krin bs vo ho"
+                // Do not auto-create breeds in database; only breeds created by admin in admin panel should exist in breeds table.
+                $breedId = null;
             }
         }
 

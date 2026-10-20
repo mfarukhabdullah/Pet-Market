@@ -62,3 +62,14 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Google sign-in setup
+
+The login and sign-up pages use the same Google OAuth flow. In Google Cloud Console, create an OAuth 2.0 Web application client, add your site's base URL under Authorized JavaScript origins, and add `<APP_URL>/auth/google/callback` under Authorized redirect URIs. Set these values in `.env`:
+
+```dotenv
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URI=http://127.0.0.1:8000/auth/google/callback
+```
+
+For a deployed site, use its HTTPS URL for `GOOGLE_REDIRECT_URI` and register that exact callback URI in Google Cloud Console. Clear Laravel's cached config after changing credentials with `php artisan config:clear`.
