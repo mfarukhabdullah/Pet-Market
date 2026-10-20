@@ -10,6 +10,7 @@ use App\Models\Listing;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Favorite;
+use App\Models\SiteSetting;
 
 class SellerController extends Controller
 {
@@ -99,7 +100,10 @@ class SellerController extends Controller
             $editingListing = Listing::with(['images', 'category', 'breed'])->find($editId);
         }
 
-        return view('create-listings', compact('user', 'categories', 'breeds', 'editingListing'));
+        // USER PROMPT: "when i add cities from admin panel they are added in every page but when i look at create liting page they are not shown there just add same logic there if add cities from admin panell they also show there"
+        $dynamicCities = SiteSetting::getLocationsList();
+
+        return view('create-listings', compact('user', 'categories', 'breeds', 'editingListing', 'dynamicCities'));
     }
 
     // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"

@@ -1128,17 +1128,19 @@
                         <input type="text" class="form-input" id="country-input" value="Pakistan" placeholder="Enter your country">
                     </div>
 
+                    {{-- USER PROMPT: "when i add cities from admin panel they are added in every page but when i look at create liting page they are not shown there just add same logic there if add cities from admin panell they also show there" --}}
                     @php
+                        $dynamicCitiesList = $dynamicCities ?? \App\Models\SiteSetting::getLocationsList();
                         $selectedCity = isset($editingListing) ? strtolower(trim($editingListing->city)) : '';
                     @endphp
                     <div class="form-group">
                         <label class="form-label">City *</label>
                         <select class="form-select" id="city-select">
                             <option value="" disabled {{ !isset($editingListing) ? 'selected' : '' }}>Select City</option>
-                            @foreach(['Lahore', 'Karachi', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta', 'Gujranwala', 'Sialkot'] as $cityName)
+                            @foreach($dynamicCitiesList as $cityName)
                                 <option value="{{ $cityName }}" {{ $selectedCity === strtolower($cityName) ? 'selected' : '' }}>{{ $cityName }}</option>
                             @endforeach
-                            @if(isset($editingListing) && $editingListing->city && !in_array(strtolower($editingListing->city), ['lahore', 'karachi', 'islamabad', 'rawalpindi', 'faisalabad', 'multan', 'peshawar', 'quetta', 'gujranwala', 'sialkot']))
+                            @if(isset($editingListing) && $editingListing->city && !in_array(strtolower($editingListing->city), array_map('strtolower', $dynamicCitiesList)))
                                 <option value="{{ $editingListing->city }}" selected>{{ $editingListing->city }}</option>
                             @endif
                         </select>
@@ -2102,10 +2104,12 @@
             const countryInput = document.getElementById('country-input');
             const citySelect = document.getElementById('city-select');
 
+            // USER PROMPT: "when i add cities from admin panel they are added in every page but when i look at create liting page they are not shown there just add same logic there if add cities from admin panell they also show there"
+            const dynamicPakistanCities = @json($dynamicCitiesList ?? \App\Models\SiteSetting::getLocationsList());
             const citiesData = {
                 'usa': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami'],
                 'united states': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami'],
-                'pakistan': ['Lahore', 'Karachi', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta', 'Gujranwala', 'Sialkot'],
+                'pakistan': (Array.isArray(dynamicPakistanCities) && dynamicPakistanCities.length > 0) ? dynamicPakistanCities : ['Lahore', 'Karachi', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta', 'Gujranwala', 'Sialkot'],
                 'uk': ['London', 'Manchester', 'Birmingham', 'Liverpool'],
                 'united kingdom': ['London', 'Manchester', 'Birmingham', 'Liverpool'],
                 'india': ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad'],
@@ -2120,8 +2124,9 @@
                     // Reset city dropdown
                     citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
                     
-                    if (citiesData[country]) {
-                        citiesData[country].forEach(function(city) {
+                    const targetList = citiesData[country] || (country.includes('pak') ? citiesData['pakistan'] : null);
+                    if (targetList) {
+                        targetList.forEach(function(city) {
                             const option = document.createElement('option');
                             option.value = city;
                             option.textContent = city;

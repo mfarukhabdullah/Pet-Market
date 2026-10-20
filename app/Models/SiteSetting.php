@@ -65,6 +65,20 @@ class SiteSetting extends Model
                 $cities = ['Islamabad', 'Karachi', 'Lahore', 'Rawalpindi', 'Faisalabad', 'Multan', 'Sialkot', 'Peshawar', 'Gujranwala', 'Quetta'];
             }
 
+            // USER PROMPT: "when i add cities from admin panel they are added in every page but when i look at create liting page they are not shown there just add same logic there if add cities from admin panell they also show there"
+            $rawLocSec = static::get('loc_sec_cities', '');
+            if (!empty($rawLocSec)) {
+                $locSecCities = array_values(array_filter(array_map('trim', explode(',', $rawLocSec))));
+                $cityLookup = array_map('strtolower', $cities);
+                foreach ($locSecCities as $c) {
+                    $trimmed = trim((string) $c);
+                    if (!empty($trimmed) && !in_array(strtolower($trimmed), $cityLookup)) {
+                        $cities[] = $trimmed;
+                        $cityLookup[] = strtolower($trimmed);
+                    }
+                }
+            }
+
             try {
                 if (class_exists(\App\Models\Listing::class)) {
                     $listingCities = \App\Models\Listing::live()->whereNotNull('city')->distinct()->pluck('city')->toArray();
