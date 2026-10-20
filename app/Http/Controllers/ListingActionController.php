@@ -124,9 +124,19 @@ class ListingActionController extends Controller
             $categoryId = 1;
         }
 
+        // USER PROMPT: "when user create a pet list like if am select category as Dog and when i came to breed section there is drop down that show all the breeds of dogs that came from admin panel and user select breed from this drop down offfering breeds"
         $breedName = $request->input('breed_name') ?: $request->input('breed', 'Pet');
         $breedId = null;
-        if ($categoryId) {
+
+        if ($request->filled('breed_id')) {
+            $foundBreed = \App\Models\Breed::find($request->input('breed_id'));
+            if ($foundBreed && (!$categoryId || $foundBreed->category_id == $categoryId)) {
+                $breedId = $foundBreed->id;
+                $breedName = $foundBreed->name;
+            }
+        }
+
+        if (!$breedId && $categoryId) {
             $matchedBreed = \App\Models\Breed::where('category_id', $categoryId)
                 ->where(function ($q) use ($breedName) {
                     $q->where('name', 'like', "%{$breedName}%")
@@ -134,9 +144,21 @@ class ListingActionController extends Controller
                 })->first();
             if ($matchedBreed) {
                 $breedId = $matchedBreed->id;
+            // USER PROMPT: "Smart merge: Assign matched breed, fallback to firstOrCreate for valid breed names and clear cache, else null"
+            } elseif (!empty($breedName) && !in_array(strtolower(trim($breedName)), ['pet', 'other', 'any breed', 'any', 'all', 'any_breed', '__custom__'])) {
+                $newBreed = \App\Models\Breed::firstOrCreate(
+                    [
+                        'category_id' => $categoryId,
+                        'slug' => \Illuminate\Support\Str::slug($breedName),
+                    ],
+                    [
+                        'name' => ucwords(trim($breedName)),
+                    ]
+                );
+                $breedId = $newBreed->id;
+                \Illuminate\Support\Facades\Cache::forget('all_breed_slugs_list');
+                \Illuminate\Support\Facades\Cache::forget('catalog_all_breeds');
             } else {
-                // USER PROMPT: "admin main defaut main kuch ni hona chahye jo add krin bs vo ho"
-                // Do not auto-create breeds in database; only breeds created by admin in admin panel should exist in breeds table.
                 $breedId = null;
             }
         }

@@ -943,17 +943,12 @@
                         </select>
                     </div>
                     
-                    {{-- USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain" --}}
-                    <div class="form-group">
+                    {{-- USER PROMPT: "Smart merge: Farukh breed dropdown UI offering breeds from admin panel" --}}
+                    <div class="form-group" id="form-group-breed">
                         <label class="form-label">Breed *</label>
-                        <input type="text" id="input-breed" list="breeds-datalist" class="form-input" placeholder="Select or enter the pet's breed" value="{{ isset($editingListing) ? ($editingListing->breed_name ?: ($editingListing->breed ? $editingListing->breed->name : '')) : '' }}" autocomplete="off">
-                        <datalist id="breeds-datalist">
-                            @if(isset($breeds) && count($breeds) > 0)
-                                @foreach($breeds as $b)
-                                    <option value="{{ $b->name }}"></option>
-                                @endforeach
-                            @endif
-                        </datalist>
+                        <select id="input-breed" class="form-select">
+                            <option value="" disabled selected>Select Category First</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -1349,8 +1344,162 @@
         <img id="modal-image" src="" alt="Full preview">
     </div>
 
+    {{-- USER PROMPT: "when user create a pet list like if am select category as Dog and when i came to breed section there is drop down that show all the breeds of dogs that came from admin panel and user select breed from this drop down offfering breeds" --}}
+    @php
+        $categoriesBreedsMap = [];
+        if (isset($categories)) {
+            foreach ($categories as $cat) {
+                $cBreeds = [];
+                if ($cat->breeds) {
+                    foreach ($cat->breeds as $b) {
+                        $cBreeds[] = [
+                            'id' => $b->id,
+                            'name' => $b->name,
+                            'slug' => $b->slug,
+                        ];
+                    }
+                }
+                $categoriesBreedsMap[$cat->id] = [
+                    'id' => $cat->id,
+                    'name' => $cat->name,
+                    'slug' => $cat->slug,
+                    'breeds' => $cBreeds,
+                ];
+            }
+        }
+        $currentEditingBreed = isset($editingListing) ? ($editingListing->breed_name ?: ($editingListing->breed ? $editingListing->breed->name : '')) : '';
+        $currentEditingBreedId = isset($editingListing) ? $editingListing->breed_id : null;
+    @endphp
+
     <script src="{{ asset('js/pet-script.js') }}"></script>
     <script>
+        // USER PROMPT: "when user create a pet list like if am select category as Dog and when i came to breed section there is drop down that show all the breeds of dogs that came from admin panel and user select breed from this drop down offfering breeds"
+        const categoriesBreedsData = @json($categoriesBreedsMap);
+        const initialBreedName = @json($currentEditingBreed);
+        const initialBreedId = @json($currentEditingBreedId);
+
+        // USER PROMPT: "you just show breeds that come from admin not any custom option jutsshow breeds that come from admin"
+        function isCustomBreedMode() {
+            return false;
+        }
+
+        function setBreedMode(mode) {
+            // No custom breed mode
+        }
+
+        function getSelectedBreedValue() {
+            const breedSelect = document.getElementById('input-breed');
+            if (!breedSelect) return '';
+            return breedSelect.value.trim();
+        }
+
+        function getSelectedBreedId() {
+            const breedSelect = document.getElementById('input-breed');
+            if (!breedSelect || !breedSelect.value) return null;
+            const opt = breedSelect.selectedOptions ? breedSelect.selectedOptions[0] : null;
+            return (opt && opt.dataset.id) ? opt.dataset.id : null;
+        }
+
+        function populateBreedsForCategory(targetCatIdOrName, preselectBreedName = null) {
+            const breedSelect = document.getElementById('input-breed');
+            if (!breedSelect) return;
+
+            if (!targetCatIdOrName) {
+                breedSelect.innerHTML = '<option value="" disabled selected>Select Category First</option>';
+                return;
+            }
+
+            // Find category by ID or name or slug
+            let foundCategory = null;
+            if (categoriesBreedsData[targetCatIdOrName]) {
+                foundCategory = categoriesBreedsData[targetCatIdOrName];
+            } else {
+                const query = String(targetCatIdOrName).toLowerCase().trim();
+                for (const key in categoriesBreedsData) {
+                    const c = categoriesBreedsData[key];
+                    const cName = (c.name || '').toLowerCase();
+                    const cSlug = (c.slug || '').toLowerCase();
+                    if (cName === query || cSlug === query || query.startsWith(cName) || cName.startsWith(query) || (cSlug.includes(query) || query.includes(cSlug))) {
+                        foundCategory = c;
+                        break;
+                    }
+                }
+            }
+
+            let breedsList = (foundCategory && Array.isArray(foundCategory.breeds)) ? [...foundCategory.breeds] : [];
+
+            // Sort alphabetically by name
+            breedsList.sort((a, b) => a.name.localeCompare(b.name));
+
+            const defaultPlaceholder = (foundCategory && foundCategory.name)
+                ? `Select ${foundCategory.name.replace(/s$/i, '')} Breed`
+                : 'Select Breed';
+
+            breedSelect.innerHTML = '';
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.disabled = true;
+            defaultOpt.selected = !preselectBreedName;
+            defaultOpt.textContent = defaultPlaceholder;
+            breedSelect.appendChild(defaultOpt);
+
+            breedsList.forEach(breed => {
+                const opt = document.createElement('option');
+                opt.value = breed.name;
+                opt.dataset.id = breed.id;
+                opt.textContent = breed.name;
+                if (preselectBreedName && (
+                    preselectBreedName.toLowerCase().trim() === breed.name.toLowerCase().trim() ||
+                    preselectBreedName.toLowerCase().trim() === (breed.slug || '').toLowerCase().trim()
+                )) {
+                    opt.selected = true;
+                }
+                breedSelect.appendChild(opt);
+            });
+
+            // Also asynchronously fetch from API to get any newly added admin breeds
+            const lookupId = foundCategory ? (foundCategory.id || foundCategory.slug || foundCategory.name) : targetCatIdOrName;
+            if (lookupId) {
+                fetch(`/api/categories/${lookupId}/breeds`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.success && Array.isArray(data.breeds)) {
+                            const existingNames = new Set(breedsList.map(b => b.name.toLowerCase().trim()));
+                            let hasNew = false;
+                            data.breeds.forEach(b => {
+                                if (!existingNames.has(b.name.toLowerCase().trim())) {
+                                    breedsList.push(b);
+                                    hasNew = true;
+                                }
+                            });
+                            if (hasNew) {
+                                const curVal = getSelectedBreedValue() || preselectBreedName;
+                                breedsList.sort((a, b) => a.name.localeCompare(b.name));
+                                breedSelect.innerHTML = '';
+                                const freshDefault = document.createElement('option');
+                                freshDefault.value = '';
+                                freshDefault.disabled = true;
+                                freshDefault.selected = !curVal;
+                                freshDefault.textContent = defaultPlaceholder;
+                                breedSelect.appendChild(freshDefault);
+
+                                breedsList.forEach(breed => {
+                                    const opt = document.createElement('option');
+                                    opt.value = breed.name;
+                                    opt.dataset.id = breed.id;
+                                    opt.textContent = breed.name;
+                                    if (curVal && (curVal.toLowerCase().trim() === breed.name.toLowerCase().trim() || curVal.toLowerCase().trim() === (breed.slug || '').toLowerCase().trim())) {
+                                        opt.selected = true;
+                                    }
+                                    breedSelect.appendChild(opt);
+                                });
+                            }
+                        }
+                    })
+                    .catch(() => {});
+            }
+        }
+
         // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"
         const editingListingId = {{ isset($editingListing) ? $editingListing->id : 'null' }};
 
@@ -1439,13 +1588,15 @@
                 }
 
                 // 2. Breed
-                const breed = document.getElementById('input-breed');
-                if (!breed || !breed.value.trim()) {
-                    setFieldError(breed, 'Please enter the pet breed');
+                // USER PROMPT: "you just show breeds that come from admin not any custom option jutsshow breeds that come from admin"
+                const breedSelect = document.getElementById('input-breed');
+                const breedVal = getSelectedBreedValue();
+                if (!breedVal || !breedVal.trim()) {
+                    setFieldError(breedSelect, 'Please select a pet breed');
+                    if (!firstInvalidElement) firstInvalidElement = breedSelect;
                     valid = false;
-                    if (!firstInvalidElement) firstInvalidElement = breed;
                 } else {
-                    clearFieldError(breed);
+                    clearFieldError(breedSelect);
                 }
 
                 // 3. Listing Title
@@ -1659,7 +1810,9 @@
             const city = document.getElementById('city-select').value;
             const area = document.getElementById('input-area')?.value.trim() || '';
             const desc = document.getElementById('input-description').value.trim();
-            const breed = document.getElementById('input-breed').value.trim();
+            // USER PROMPT: "when user create a pet list like if am select category as Dog and when i came to breed section there is drop down that show all the breeds of dogs that came from admin panel and user select breed from this drop down offfering breeds"
+            const breed = getSelectedBreedValue();
+            const breedId = getSelectedBreedId();
             const categorySelect = document.getElementById('input-category');
             const categoryVal = categorySelect ? categorySelect.value : 'Dog';
             let categoryId = 1;
@@ -1693,6 +1846,9 @@
             formData.append('area', area);
             formData.append('description', desc);
             formData.append('breed_name', breed);
+            if (breedId) {
+                formData.append('breed_id', breedId);
+            }
             formData.append('category', categoryVal);
             formData.append('category_id', categoryId);
             formData.append('no_health_description', noHealthDesc ? '1' : '0');
@@ -1755,7 +1911,9 @@
             const title = document.getElementById('input-title')?.value.trim() || 'Untitled Draft';
             const price = parseFloat(document.getElementById('input-price')?.value) || 0;
             const city = document.getElementById('city-select')?.value || 'Lahore';
-            const breed = document.getElementById('input-breed')?.value.trim() || '';
+            // USER PROMPT: "when user create a pet list like if am select category as Dog and when i came to breed section there is drop down that show all the breeds of dogs that came from admin panel and user select breed from this drop down offfering breeds"
+            const breed = getSelectedBreedValue();
+            const breedId = getSelectedBreedId();
             const catSelect = document.getElementById('input-category');
             const cat = catSelect?.value || 'Dog';
             let catId = 1;
@@ -1773,6 +1931,7 @@
                 price: price,
                 city: city,
                 breed_name: breed,
+                breed_id: breedId,
                 color: color,
                 has_papers: hasPapers,
                 category: cat,
@@ -1810,7 +1969,8 @@
             
             // Step 1
             setVal('review-category', document.getElementById('input-category')?.value);
-            setVal('review-breed', document.getElementById('input-breed')?.value);
+            // USER PROMPT: "when user create a pet list like if am select category as Dog and when i came to breed section there is drop down that show all the breeds of dogs that came from admin panel and user select breed from this drop down offfering breeds"
+            setVal('review-breed', getSelectedBreedValue());
             setVal('review-title', document.getElementById('input-title')?.value);
             
             const ageVal = document.getElementById('input-age-value')?.value || '';
@@ -1871,10 +2031,28 @@
                 });
             });
 
-            // USER PROMPT: "change this to for fish and reptiles"
+            // USER PROMPT: "you just show breeds that come from admin not any custom option jutsshow breeds that come from admin"
             const categorySelectElem = document.getElementById('input-category');
+            const breedSelectElem = document.getElementById('input-breed');
+
+            if (breedSelectElem) {
+                breedSelectElem.addEventListener('change', function() {
+                    if (this.value) {
+                        clearFieldError(this);
+                    }
+                });
+            }
+
             if (categorySelectElem) {
                 categorySelectElem.addEventListener('change', function() {
+                    const selectedOpt = this.selectedOptions ? this.selectedOptions[0] : null;
+                    const catId = selectedOpt ? selectedOpt.dataset.id : null;
+                    const catVal = this.value;
+
+                    // Automatically populate breeds dropdown offering all breeds for selected category from admin panel
+                    populateBreedsForCategory(catId || catVal);
+
+                    // USER PROMPT: "change this to for fish and reptiles"
                     const selectedText = (this.value || '').toLowerCase();
                     const noHealthBox = document.getElementById('no-health-desc-toggle');
                     if (noHealthBox && (selectedText.includes('fish') || selectedText.includes('aqua') || selectedText.includes('reptile'))) {
@@ -1882,6 +2060,13 @@
                         toggleHealthDescription(true);
                     }
                 });
+
+                // Auto-populate on page load if category is already selected
+                if (categorySelectElem.value) {
+                    const initialSelectedOpt = categorySelectElem.selectedOptions ? categorySelectElem.selectedOptions[0] : null;
+                    const initialCatId = initialSelectedOpt ? initialSelectedOpt.dataset.id : null;
+                    populateBreedsForCategory(initialCatId || categorySelectElem.value, initialBreedName);
+                }
             }
 
             // Check for step / preview query param

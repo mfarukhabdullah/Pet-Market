@@ -396,4 +396,37 @@ class CategoryController extends Controller
 
         return view('breeds', compact('categories', 'liveListings'));
     }
+
+    // USER PROMPT: "when user create a pet list like if am select category as Dog and when i came to breed section there is drop down that show all the breeds of dogs that came from admin panel and user select breed from this drop down offfering breeds"
+    public function getBreedsByCategory($id)
+    {
+        $category = null;
+        if (is_numeric($id)) {
+            $category = Category::find($id);
+        }
+        if (!$category) {
+            $category = Category::where('slug', $id)->orWhere('name', $id)->first();
+        }
+
+        if (!$category) {
+            return response()->json([
+                'success' => false,
+                'breeds' => [],
+            ], 404);
+        }
+
+        $breeds = Breed::where('category_id', $category->id)
+            ->orderBy('name', 'asc')
+            ->get(['id', 'category_id', 'name', 'slug']);
+
+        return response()->json([
+            'success' => true,
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'slug' => $category->slug,
+            ],
+            'breeds' => $breeds,
+        ]);
+    }
 }

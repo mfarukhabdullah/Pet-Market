@@ -39,6 +39,8 @@ Route::get('/city/{city}', [CategoryController::class, 'index'])->where('city', 
 Route::get('/featured-pets', [CategoryController::class, 'featured'])->middleware('throttle:120,1')->name('featured.pets');
 // USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this"
 Route::get('/breeds', [CategoryController::class, 'breeds'])->name('breeds');
+// USER PROMPT: "when user create a pet list like if am select category as Dog and when i came to breed section there is drop down that show all the breeds of dogs that came from admin panel and user select breed from this drop down offfering breeds"
+Route::get('/api/categories/{id}/breeds', [CategoryController::class, 'getBreedsByCategory'])->name('api.categories.breeds');
 Route::get('/pet-details/{slug?}', [PetController::class, 'details'])->name('pet.details');
 Route::get('/listings/{id}/reveal-phone', [PetController::class, 'revealPhone'])->middleware('throttle:30,1')->name('listings.reveal-phone');
 Route::get('/seller-profile/{id?}', [SellerController::class, 'profile'])->name('seller.profile');
