@@ -124,9 +124,19 @@ class ListingActionController extends Controller
             $categoryId = 1;
         }
 
+        // USER PROMPT: "when user create a pet list like if am select category as Dog and when i came to breed section there is drop down that show all the breeds of dogs that came from admin panel and user select breed from this drop down offfering breeds"
         $breedName = $request->input('breed_name') ?: $request->input('breed', 'Pet');
         $breedId = null;
-        if ($categoryId) {
+
+        if ($request->filled('breed_id')) {
+            $foundBreed = \App\Models\Breed::find($request->input('breed_id'));
+            if ($foundBreed && (!$categoryId || $foundBreed->category_id == $categoryId)) {
+                $breedId = $foundBreed->id;
+                $breedName = $foundBreed->name;
+            }
+        }
+
+        if (!$breedId && $categoryId) {
             $matchedBreed = \App\Models\Breed::where('category_id', $categoryId)
                 ->where(function ($q) use ($breedName) {
                     $q->where('name', 'like', "%{$breedName}%")
@@ -134,7 +144,8 @@ class ListingActionController extends Controller
                 })->first();
             if ($matchedBreed) {
                 $breedId = $matchedBreed->id;
-            } elseif (!empty($breedName) && strtolower(trim($breedName)) !== 'pet') {
+            // USER PROMPT: "butt user can.t write his customize breed set this"
+            } elseif (!empty($breedName) && !in_array(strtolower(trim($breedName)), ['pet', 'other', 'any breed', 'any', 'all', 'any_breed', '__custom__'])) {
                 // USER PROMPT: "and when seller upload fish and when user come in breed section and click on fish user new uploaded fish is not shown in breed and section sort out this"
                 $newBreed = \App\Models\Breed::firstOrCreate(
                     [

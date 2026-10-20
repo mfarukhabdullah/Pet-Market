@@ -83,12 +83,14 @@ class SellerController extends Controller
         return view('seller-listings', compact('user', 'filteredListings', 'counts', 'tab'));
     }
 
-    // USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing"
+    // USER PROMPT: "when user create a pet list like if am select category as Dog and when i came to breed section there is drop down that show all the breeds of dogs that came from admin panel and user select breed from this drop down offfering breeds"
     public function createListing(Request $request)
     {
         $user = $this->getActiveUser();
-        $categories = Category::with('breeds')->where('is_active', true)->orderBy('sort_order')->get();
-        $breeds = Breed::all();
+        $categories = Category::with(['breeds' => function($q) {
+            $q->orderBy('name', 'asc');
+        }])->where('is_active', true)->orderBy('sort_order')->get();
+        $breeds = Breed::orderBy('name', 'asc')->get();
 
         $editId = $request->query('edit') ?: $request->query('id');
         $editingListing = null;

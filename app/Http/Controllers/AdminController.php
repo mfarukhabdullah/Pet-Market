@@ -946,6 +946,7 @@ class AdminController extends Controller
         return redirect()->route('admin.dashboard', ['tab' => $redirectTab])->with('success', "Category '{$category->name}' removed.");
     }
 
+    // USER PROMPT: "when user create a pet list like if am select category as Dog and when i came to breed section there is drop down that show all the breeds of dogs that came from admin panel and user select breed from this drop down offfering breeds"
     public function storeBreed(Request $request)
     {
         $request->validate([
@@ -964,6 +965,8 @@ class AdminController extends Controller
         ]);
 
         \Illuminate\Support\Facades\Cache::forget('home_breeds');
+        \Illuminate\Support\Facades\Cache::forget('all_breed_slugs_list');
+        \Illuminate\Support\Facades\Cache::forget('catalog_all_breeds');
 
         return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('success', "Breed '{$request->input('name')}' added successfully!");
     }
@@ -975,6 +978,8 @@ class AdminController extends Controller
         $breed->delete();
 
         \Illuminate\Support\Facades\Cache::forget('home_breeds');
+        \Illuminate\Support\Facades\Cache::forget('all_breed_slugs_list');
+        \Illuminate\Support\Facades\Cache::forget('catalog_all_breeds');
 
         return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('success', "Breed '{$name}' deleted.");
     }
