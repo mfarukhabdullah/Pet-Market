@@ -65,43 +65,99 @@
             <div class="shell-1440">
                 <div class="container">
                     <div class="category-search-card">
+                        {{-- USER PROMPT: "yr is main kitny bhi filters drop down hain un ka design same as home page kr do mb vw and desk top view" --}}
                         <form action="{{ request()->routeIs('featured.pets') ? route('featured.pets') : route('category') }}" method="GET" class="category-search-form" id="searchFilterForm">
                             
                             <!-- Search Input Field -->
                             <div class="search-input-group">
                                 <i class="fas fa-search search-group-icon"></i>
-                                <input type="text" name="q" value="{{ request('q', request('search')) }}" placeholder="Search pets or breed" class="search-form-input">
+                                <input type="text" name="q" value="{{ request('q', request('search')) }}" placeholder="Search pets or breed" class="search-form-input" autocomplete="off">
                             </div>
 
-                            <!-- Category Dropdown Field -->
-                            <div class="search-input-group">
-                                <i class="fas fa-paw search-group-icon"></i>
-                                <select name="category" class="search-form-select">
-                                    {{-- USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy" --}}
-                                    <option value="">{{ \App\Models\SiteSetting::get('filter_cat_placeholder', 'Any category') }}</option>
+                            @php
+                                $topCatPlaceholder = \App\Models\SiteSetting::get('filter_cat_placeholder', 'Any category');
+                                $topCatLabel = \App\Models\SiteSetting::get('filter_cat_label', 'PET CATEGORY');
+                                $topSelectedCatSlug = request('category', isset($selectedCategory) && $selectedCategory ? $selectedCategory->slug : '');
+                                $topSelectedCatName = $topCatPlaceholder;
+                                if ($topSelectedCatSlug) {
+                                    $matchedCat = $categories->firstWhere('slug', $topSelectedCatSlug);
+                                    if ($matchedCat) $topSelectedCatName = $matchedCat->name;
+                                }
+
+                                // USER PROMPT: "yr ya filters sai kaam ni kr rahy hain authentic bnao in ko"
+                                $topLocPlaceholder = \App\Models\SiteSetting::get('filter_loc_placeholder', 'Any location');
+                                $topLocLabel = \App\Models\SiteSetting::get('filter_loc_label', 'LOCATION');
+                                $currLocTop = strtolower($cityParam ?? request('location', request('city', '')));
+                                if ($currLocTop === 'all') $currLocTop = '';
+                                $topDynamicCities = $dynamicCities ?? \App\Models\SiteSetting::getLocationsList();
+                                $topSelectedLocName = $topLocPlaceholder;
+                                if ($currLocTop) {
+                                    foreach ($topDynamicCities as $cItem) {
+                                        if (strtolower(trim($cItem)) === $currLocTop) {
+                                            $topSelectedLocName = $cItem;
+                                            break;
+                                        }
+                                    }
+                                }
+                            @endphp
+
+                            <!-- Category Dropdown Field (Home Page Style) -->
+                            <div class="home-filter custom-dropdown-wrap" data-filter="category" data-default="{{ $topCatPlaceholder }}" tabindex="0">
+                                <input type="hidden" name="category" value="{{ $topSelectedCatSlug }}">
+                                <div class="home-filter-left">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#14794A">
+                                        <circle cx="7" cy="7.5" r="2.2"/>
+                                        <circle cx="12" cy="5.5" r="2.2"/>
+                                        <circle cx="17" cy="7.5" r="2.2"/>
+                                        <circle cx="4.5" cy="12" r="2"/>
+                                        <path d="M12 10.5c-3.2 0-5.5 2.4-5.5 5.2 0 1.8 1.4 3.3 3.2 3.3 1 0 1.6-.4 2.3-.4s1.3.4 2.3.4c1.8 0 3.2-1.5 3.2-3.3 0-2.8-2.3-5.2-5.5-5.2z"/>
+                                    </svg>
+                                    <div class="home-filter-text-col">
+                                        <span class="home-filter-label">{{ $topCatLabel }}</span>
+                                        <span class="home-filter-value">{{ $topSelectedCatName }}</span>
+                                    </div>
+                                </div>
+                                <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <div class="custom-dropdown-menu">
+                                    <div class="custom-dropdown-item {{ empty($topSelectedCatSlug) ? 'is-selected' : '' }}" data-value="">
+                                        <span>{{ $topCatPlaceholder }}</span>
+                                        <i class="fa-solid fa-check opt-check"></i>
+                                    </div>
                                     @foreach($categories as $cat)
-                                        <option value="{{ $cat->slug }}" {{ (request('category') == $cat->slug || (isset($selectedCategory) && $selectedCategory && $selectedCategory->id == $cat->id)) ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                        <div class="custom-dropdown-item {{ $topSelectedCatSlug == $cat->slug ? 'is-selected' : '' }}" data-value="{{ $cat->slug }}">
+                                            <span>{{ $cat->name }}</span>
+                                            <i class="fa-solid fa-check opt-check"></i>
+                                        </div>
                                     @endforeach
-                                </select>
-                                <i class="fas fa-chevron-down select-arrow-icon"></i>
+                                </div>
                             </div>
 
-                            <!-- Location Dropdown Field (Dynamic Locations Synchronized with Admin & Home Hero) -->
-                            <div class="search-input-group">
-                                <i class="fas fa-map-marker-alt search-group-icon"></i>
-                                @php 
-                                    $currLocTop = strtolower($cityParam ?? request('location', request('city', ''))); 
-                                    $topDynamicCities = $dynamicCities ?? \App\Models\SiteSetting::getLocationsList();
-                                    $topLocPlaceholder = \App\Models\SiteSetting::get('filter_loc_placeholder', 'Any location');
-                                @endphp
-                                <select name="location" class="search-form-select">
-                                    <option value="">{{ $topLocPlaceholder }}</option>
+                            <!-- Location Dropdown Field (Home Page Style) -->
+                            <div class="home-filter custom-dropdown-wrap" data-filter="location" data-default="{{ $topLocPlaceholder }}" tabindex="0">
+                                <input type="hidden" name="location" value="{{ $currLocTop }}">
+                                <div class="home-filter-left">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#14794A">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                    </svg>
+                                    <div class="home-filter-text-col">
+                                        <span class="home-filter-label">{{ $topLocLabel }}</span>
+                                        <span class="home-filter-value">{{ $topSelectedLocName }}</span>
+                                    </div>
+                                </div>
+                                <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <div class="custom-dropdown-menu">
+                                    <div class="custom-dropdown-item {{ empty($currLocTop) ? 'is-selected' : '' }}" data-value="">
+                                        <span>{{ $topLocPlaceholder }}</span>
+                                        <i class="fa-solid fa-check opt-check"></i>
+                                    </div>
                                     @foreach($topDynamicCities as $city)
                                         @php $cSlug = strtolower(trim($city)); @endphp
-                                        <option value="{{ $cSlug }}" {{ $currLocTop == $cSlug ? 'selected' : '' }}>{{ $city }}</option>
+                                        <div class="custom-dropdown-item {{ $currLocTop == $cSlug ? 'is-selected' : '' }}" data-value="{{ $cSlug }}">
+                                            <span>{{ $city }}</span>
+                                            <i class="fa-solid fa-check opt-check"></i>
+                                        </div>
                                     @endforeach
-                                </select>
-                                <i class="fas fa-chevron-down select-arrow-icon"></i>
+                                </div>
                             </div>
 
                             <!-- Find a Pet Submit Button -->
@@ -127,7 +183,14 @@
                             <div class="filters-sidebar-header">
                                 <h3 class="filters-title">Filters</h3>
                                 <div class="filters-header-actions">
-                                    <a href="{{ request()->routeIs('featured.pets') ? route('featured.pets') : route('category') }}" class="btn-reset-filters" id="resetFiltersBtn" style="{{ request()->hasAny(['category', 'breed', 'location', 'city', 'price_min', 'price_max', 'min_price', 'max_price', 'age_min', 'age_max', 'gender', 'health', 'date', 'featured', 'search', 'q']) ? 'display: inline-block;' : 'display: none;' }} text-decoration: none;">Reset all</a>
+                                    {{-- USER PROMPT: "yr ya filters sai kaam ni kr rahy hain authentic bnao in ko" --}}
+                                    @php
+                                        $hasActiveFilterServer = ($categoryParam && $categoryParam !== 'all') 
+                                            || (!empty($breedParam) && $breedParam !== 'all')
+                                            || (!empty($cityParam) && $cityParam !== 'all')
+                                            || request()->hasAny(['category', 'breed', 'location', 'city', 'price_min', 'price_max', 'min_price', 'max_price', 'age_min', 'age_max', 'gender', 'health', 'date', 'featured', 'search', 'q']);
+                                    @endphp
+                                    <a href="{{ request()->routeIs('featured.pets') ? route('featured.pets') : route('category') }}" class="btn-reset-filters" id="resetFiltersBtn" style="{{ $hasActiveFilterServer ? 'display: inline-block;' : 'display: none;' }} text-decoration: none;">Reset all</a>
                                     <button type="button" class="close-sidebar-btn" id="closeFiltersBtn" aria-label="Close Filters"><i class="fas fa-times"></i></button>
                                 </div>
                             </div>
@@ -135,59 +198,133 @@
                             {{-- USER PROMPT: "yr is website per sary url / sy open hon or code na hon un main" --}}
                             <form id="sidebarFiltersForm" action="{{ request()->routeIs('featured.pets') ? route('featured.pets') : (isset($selectedCategory) && $selectedCategory ? route('category', ['param1' => $selectedCategory->slug]) : route('category')) }}" method="GET" autocomplete="off">
                                 
+                                {{-- USER PROMPT: "yr is main kitny bhi filters drop down hain un ka design same as home page kr do mb vw and desk top view" --}}
+                                @php
+                                    $sidebarSelectedCatSlug = request('category', isset($selectedCategory) && $selectedCategory ? $selectedCategory->slug : '');
+                                    $sidebarSelectedCatName = 'All Categories';
+                                    if ($sidebarSelectedCatSlug) {
+                                        $matchedSideCat = $categories->firstWhere('slug', $sidebarSelectedCatSlug);
+                                        if ($matchedSideCat) $sidebarSelectedCatName = $matchedSideCat->name;
+                                    }
+                                @endphp
                                 <!-- 1. Pet Category -->
                                 <div class="filter-group">
                                     <label class="filter-label" for="filterCategory">Pet Category</label>
-                                    <div class="filter-select-wrapper">
-                                        <select id="filterCategory" name="category" class="filter-select">
-                                            <option value="">All Categories</option>
+                                    <div class="sidebar-filter-dropdown custom-dropdown-wrap" data-filter="category" data-default="All Categories" tabindex="0">
+                                        <input type="hidden" id="filterCategory" name="category" value="{{ $sidebarSelectedCatSlug }}">
+                                        <div class="home-filter-left">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#14794A">
+                                                <circle cx="7" cy="7.5" r="2.2"/>
+                                                <circle cx="12" cy="5.5" r="2.2"/>
+                                                <circle cx="17" cy="7.5" r="2.2"/>
+                                                <circle cx="4.5" cy="12" r="2"/>
+                                                <path d="M12 10.5c-3.2 0-5.5 2.4-5.5 5.2 0 1.8 1.4 3.3 3.2 3.3 1 0 1.6-.4 2.3-.4s1.3.4 2.3.4c1.8 0 3.2-1.5 3.2-3.3 0-2.8-2.3-5.2-5.5-5.2z"/>
+                                            </svg>
+                                            <span class="custom-filter-display-val">{{ $sidebarSelectedCatName }}</span>
+                                        </div>
+                                        <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        <div class="custom-dropdown-menu">
+                                            <div class="custom-dropdown-item {{ empty($sidebarSelectedCatSlug) ? 'is-selected' : '' }}" data-value="">
+                                                <span>All Categories</span>
+                                                <i class="fa-solid fa-check opt-check"></i>
+                                            </div>
                                             @foreach($categories as $cat)
-                                                <option value="{{ $cat->slug }}" {{ (request('category') == $cat->slug || (isset($selectedCategory) && $selectedCategory && $selectedCategory->id == $cat->id)) ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                                <div class="custom-dropdown-item {{ $sidebarSelectedCatSlug == $cat->slug ? 'is-selected' : '' }}" data-value="{{ $cat->slug }}">
+                                                    <span>{{ $cat->name }}</span>
+                                                    <i class="fa-solid fa-check opt-check"></i>
+                                                </div>
                                             @endforeach
-                                        </select>
-                                        <i class="fas fa-chevron-down select-chevron"></i>
+                                        </div>
                                     </div>
                                 </div>
 
+                                @php
+                                    $selectedBreedVal = strtolower(trim(request('breed', '')));
+                                    $sidebarSelectedBreedName = 'All Breeds';
+                                    if ($selectedBreedVal) {
+                                        $matchedBreed = $allBreeds->first(function($b) use ($selectedBreedVal) {
+                                            return strtolower($b->slug) === $selectedBreedVal || strtolower($b->name) === $selectedBreedVal;
+                                        });
+                                        if ($matchedBreed) $sidebarSelectedBreedName = $matchedBreed->name;
+                                    }
+                                @endphp
                                 <!-- 2. Breed -->
                                 <div class="filter-group">
                                     <label class="filter-label" for="filterBreed">Breed</label>
-                                    <div class="filter-select-wrapper">
-                                        <select id="filterBreed" name="breed" class="filter-select">
-                                            <option value="">All Breeds</option>
-                                            @php
-                                                $selectedBreedVal = strtolower(trim(request('breed', '')));
-                                            @endphp
+                                    <div class="sidebar-filter-dropdown custom-dropdown-wrap" data-filter="breed" data-default="All Breeds" tabindex="0">
+                                        <input type="hidden" id="filterBreed" name="breed" value="{{ $selectedBreedVal }}">
+                                        <div class="home-filter-left">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14794A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M8 3v2c0 3 8 5 8 8v8"/>
+                                                <path d="M16 3v2c0 3-8 5-8 8v8"/>
+                                                <path d="M8 6h8"/>
+                                                <path d="M10 12h4"/>
+                                                <path d="M8 18h8"/>
+                                            </svg>
+                                            <span class="custom-filter-display-val">{{ $sidebarSelectedBreedName }}</span>
+                                        </div>
+                                        <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        <div class="custom-dropdown-menu" id="sidebarBreedMenu">
+                                            <div class="custom-dropdown-item {{ empty($selectedBreedVal) ? 'is-selected' : '' }}" data-value="" data-category-slug="" data-category-id="">
+                                                <span>All Breeds</span>
+                                                <i class="fa-solid fa-check opt-check"></i>
+                                            </div>
                                             @foreach($allBreeds as $b)
-                                                <option value="{{ $b->slug }}" 
-                                                        data-category-slug="{{ $b->category ? $b->category->slug : '' }}"
-                                                        data-category-id="{{ $b->category_id }}"
-                                                        {{ ($selectedBreedVal === strtolower($b->slug) || $selectedBreedVal === strtolower($b->name)) ? 'selected' : '' }}>
-                                                    {{ $b->name }}
-                                                </option>
+                                                @php
+                                                    $isBSelected = ($selectedBreedVal === strtolower($b->slug) || $selectedBreedVal === strtolower($b->name));
+                                                @endphp
+                                                <div class="custom-dropdown-item {{ $isBSelected ? 'is-selected' : '' }}" 
+                                                     data-value="{{ $b->slug }}" 
+                                                     data-category-slug="{{ $b->category ? $b->category->slug : '' }}"
+                                                     data-category-id="{{ $b->category_id }}">
+                                                    <span>{{ $b->name }}</span>
+                                                    <i class="fa-solid fa-check opt-check"></i>
+                                                </div>
                                             @endforeach
-                                        </select>
-                                        <i class="fas fa-chevron-down select-chevron"></i>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- 3. Location / City (Dynamic Locations Synchronized with Admin & Home Hero) -->
-                                {{-- USER PROMPT: "hero home main in filter ko dynamic kro or jasy jsy ya filter admin main update krain gy to  saath category waly is  ky saath update hoty jain gy" --}}
+                                {{-- USER PROMPT: "yr ya filters sai kaam ni kr rahy hain authentic bnao in ko" --}}
+                                @php 
+                                    $currLoc = strtolower($cityParam ?: request('location', request('city', ''))); 
+                                    if ($currLoc === 'all') $currLoc = '';
+                                    $sidebarCities = $dynamicCities ?? \App\Models\SiteSetting::getLocationsList();
+                                    $sidebarSelectedLocName = 'All Locations';
+                                    if ($currLoc) {
+                                        foreach ($sidebarCities as $cCity) {
+                                            if (strtolower(trim($cCity)) === $currLoc) {
+                                                $sidebarSelectedLocName = $cCity;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                @endphp
                                 <div class="filter-group">
                                     <label class="filter-label" for="filterLocation">{{ \App\Models\SiteSetting::get('filter_loc_label', 'Location / City') }}</label>
-                                    <div class="filter-select-wrapper">
-                                        <select id="filterLocation" name="location" class="filter-select">
-                                            <option value="">All Locations</option>
-                                            @php 
-                                                $currLoc = strtolower($cityParam ?: request('location', request('city', ''))); 
-                                                $sidebarCities = $dynamicCities ?? \App\Models\SiteSetting::getLocationsList();
-                                            @endphp
+                                    <div class="sidebar-filter-dropdown custom-dropdown-wrap" data-filter="location" data-default="All Locations" tabindex="0">
+                                        <input type="hidden" id="filterLocation" name="location" value="{{ $currLoc }}">
+                                        <div class="home-filter-left">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#14794A">
+                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                            </svg>
+                                            <span class="custom-filter-display-val">{{ $sidebarSelectedLocName }}</span>
+                                        </div>
+                                        <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        <div class="custom-dropdown-menu">
+                                            <div class="custom-dropdown-item {{ empty($currLoc) ? 'is-selected' : '' }}" data-value="">
+                                                <span>All Locations</span>
+                                                <i class="fa-solid fa-check opt-check"></i>
+                                            </div>
                                             @foreach($sidebarCities as $city)
                                                 @php $cSlug = strtolower(trim($city)); @endphp
-                                                <option value="{{ $cSlug }}" {{ $currLoc == $cSlug ? 'selected' : '' }}>{{ $city }}</option>
+                                                <div class="custom-dropdown-item {{ $currLoc == $cSlug ? 'is-selected' : '' }}" data-value="{{ $cSlug }}">
+                                                    <span>{{ $city }}</span>
+                                                    <i class="fa-solid fa-check opt-check"></i>
+                                                </div>
                                             @endforeach
-                                        </select>
-                                        <i class="fas fa-chevron-down select-chevron"></i>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -225,24 +362,58 @@
                                 </div>
 
                                 <!-- 5. Age Range -->
+                                {{-- USER PROMPT: "yr is main kitny bhi filters drop down hain un ka design same as home page kr do mb vw and desk top view" --}}
+                                @php
+                                    $minAgeUnit = request('age_min_unit', 'months') ?: 'months';
+                                    $maxAgeUnit = request('age_max_unit', 'months') ?: 'months';
+                                    $unitLabels = ['days' => 'Days', 'months' => 'Months', 'years' => 'Years'];
+                                @endphp
                                 <div class="filter-group">
                                     <label class="filter-label">Age Range</label>
                                     <div class="age-inputs-container" style="display: flex; flex-direction: column; gap: 8px;">
-                                        <div style="display: flex; gap: 8px;">
+                                        <div style="display: flex; gap: 8px; align-items: center;">
                                             <input type="number" name="age_min" placeholder="Min" class="filter-number-input" id="ageMin" value="{{ request('age_min') }}" autocomplete="off" style="flex: 1; min-width: 0;">
-                                            <select name="age_min_unit" id="ageMinUnit" class="filter-select" style="width: 100px; padding: 0 10px; min-height: 44px; border-radius: 8px; border: 1px solid #E5E7EB; background-color: #fff;">
-                                                <option value="days" {{ request('age_min_unit') == 'days' ? 'selected' : '' }}>Days</option>
-                                                <option value="months" {{ (!request('age_min_unit') || request('age_min_unit') == 'months') ? 'selected' : '' }}>Months</option>
-                                                <option value="years" {{ request('age_min_unit') == 'years' ? 'selected' : '' }}>Years</option>
-                                            </select>
+                                            <div class="age-unit-dropdown-wrap custom-dropdown-wrap" tabindex="0">
+                                                <input type="hidden" name="age_min_unit" id="ageMinUnit" value="{{ $minAgeUnit }}">
+                                                <span class="age-unit-display-val">{{ $unitLabels[$minAgeUnit] ?? 'Months' }}</span>
+                                                <svg class="home-filter-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                                <div class="custom-dropdown-menu" style="min-width: 110px;">
+                                                    <div class="custom-dropdown-item {{ $minAgeUnit == 'days' ? 'is-selected' : '' }}" data-value="days">
+                                                        <span>Days</span>
+                                                        <i class="fa-solid fa-check opt-check"></i>
+                                                    </div>
+                                                    <div class="custom-dropdown-item {{ $minAgeUnit == 'months' ? 'is-selected' : '' }}" data-value="months">
+                                                        <span>Months</span>
+                                                        <i class="fa-solid fa-check opt-check"></i>
+                                                    </div>
+                                                    <div class="custom-dropdown-item {{ $minAgeUnit == 'years' ? 'is-selected' : '' }}" data-value="years">
+                                                        <span>Years</span>
+                                                        <i class="fa-solid fa-check opt-check"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div style="display: flex; gap: 8px;">
+                                        <div style="display: flex; gap: 8px; align-items: center;">
                                             <input type="number" name="age_max" placeholder="Max" class="filter-number-input" id="ageMax" value="{{ request('age_max') }}" autocomplete="off" style="flex: 1; min-width: 0;">
-                                            <select name="age_max_unit" id="ageMaxUnit" class="filter-select" style="width: 100px; padding: 0 10px; min-height: 44px; border-radius: 8px; border: 1px solid #E5E7EB; background-color: #fff;">
-                                                <option value="days" {{ request('age_max_unit') == 'days' ? 'selected' : '' }}>Days</option>
-                                                <option value="months" {{ (!request('age_max_unit') || request('age_max_unit') == 'months') ? 'selected' : '' }}>Months</option>
-                                                <option value="years" {{ request('age_max_unit') == 'years' ? 'selected' : '' }}>Years</option>
-                                            </select>
+                                            <div class="age-unit-dropdown-wrap custom-dropdown-wrap" tabindex="0">
+                                                <input type="hidden" name="age_max_unit" id="ageMaxUnit" value="{{ $maxAgeUnit }}">
+                                                <span class="age-unit-display-val">{{ $unitLabels[$maxAgeUnit] ?? 'Months' }}</span>
+                                                <svg class="home-filter-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                                <div class="custom-dropdown-menu" style="min-width: 110px;">
+                                                    <div class="custom-dropdown-item {{ $maxAgeUnit == 'days' ? 'is-selected' : '' }}" data-value="days">
+                                                        <span>Days</span>
+                                                        <i class="fa-solid fa-check opt-check"></i>
+                                                    </div>
+                                                    <div class="custom-dropdown-item {{ $maxAgeUnit == 'months' ? 'is-selected' : '' }}" data-value="months">
+                                                        <span>Months</span>
+                                                        <i class="fa-solid fa-check opt-check"></i>
+                                                    </div>
+                                                    <div class="custom-dropdown-item {{ $maxAgeUnit == 'years' ? 'is-selected' : '' }}" data-value="years">
+                                                        <span>Years</span>
+                                                        <i class="fa-solid fa-check opt-check"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -325,16 +496,48 @@
                                 </div>
 
                                 <!-- 10. Date Posted -->
+                                {{-- USER PROMPT: "yr is main kitny bhi filters drop down hain un ka design same as home page kr do mb vw and desk top view" --}}
+                                @php
+                                    $currentDateVal = request('date', '');
+                                    $dateLabels = [
+                                        '' => 'Any Time',
+                                        '24h' => 'Past 24 Hours',
+                                        'week' => 'Past Week',
+                                        'month' => 'Past Month'
+                                    ];
+                                    $currentDateLabel = $dateLabels[$currentDateVal] ?? 'Any Time';
+                                @endphp
                                 <div class="filter-group filter-group-last">
                                     <label class="filter-label" for="filterDate">Date Posted</label>
-                                    <div class="filter-select-wrapper">
-                                        <select id="filterDate" name="date" class="filter-select">
-                                            <option value="">Any Time</option>
-                                            <option value="24h" {{ request('date') == '24h' ? 'selected' : '' }}>Past 24 Hours</option>
-                                            <option value="week" {{ request('date') == 'week' ? 'selected' : '' }}>Past Week</option>
-                                            <option value="month" {{ request('date') == 'month' ? 'selected' : '' }}>Past Month</option>
-                                        </select>
-                                        <i class="fas fa-chevron-down select-chevron"></i>
+                                    {{-- USER PROMPT: "yr is ka sirf drop down oper sy open howa kry" --}}
+                                    <div class="sidebar-filter-dropdown custom-dropdown-wrap dropdown-up" data-filter="date" data-default="Any Time" tabindex="0">
+                                        <input type="hidden" id="filterDate" name="date" value="{{ $currentDateVal }}">
+                                        <div class="home-filter-left">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14794A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg>
+                                            <span class="custom-filter-display-val">{{ $currentDateLabel }}</span>
+                                        </div>
+                                        <svg class="home-filter-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        <div class="custom-dropdown-menu">
+                                            <div class="custom-dropdown-item {{ empty($currentDateVal) ? 'is-selected' : '' }}" data-value="">
+                                                <span>Any Time</span>
+                                                <i class="fa-solid fa-check opt-check"></i>
+                                            </div>
+                                            <div class="custom-dropdown-item {{ $currentDateVal == '24h' ? 'is-selected' : '' }}" data-value="24h">
+                                                <span>Past 24 Hours</span>
+                                                <i class="fa-solid fa-check opt-check"></i>
+                                            </div>
+                                            <div class="custom-dropdown-item {{ $currentDateVal == 'week' ? 'is-selected' : '' }}" data-value="week">
+                                                <span>Past Week</span>
+                                                <i class="fa-solid fa-check opt-check"></i>
+                                            </div>
+                                            <div class="custom-dropdown-item {{ $currentDateVal == 'month' ? 'is-selected' : '' }}" data-value="month">
+                                                <span>Past Month</span>
+                                                <i class="fa-solid fa-check opt-check"></i>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -351,7 +554,8 @@
                                 <!-- Section Title -->
                                 <div class="listings-title-block">
                                     <h2 class="listings-section-title">Pet Listings</h2>
-                                    <p class="listings-subtitle">Showing {{ $listings->total() }} matching pet listings</p>
+                                    {{-- USER PROMPT: "yr ya filters sai kaam ni kr rahy hain authentic bnao in ko" --}}
+                                    <p class="listings-subtitle">Showing <span id="listingsCountDisplay">{{ $listings->total() }}</span> matching pet listings</p>
                                 </div>
     
                                 <!-- Header Controls Row (Mobile Filter Button + View & Sort Controls) -->
@@ -390,16 +594,45 @@
                                         </button>
                                     </div>
 
+                                    {{-- USER PROMPT: "yr is main kitny bhi filters drop down hain un ka design same as home page kr do mb vw and desk top view" --}}
+                                    @php
+                                        $currentSortVal = request('sort', 'newest');
+                                        $sortLabels = [
+                                            'newest' => 'Newest First',
+                                            'price_asc' => 'Price: Low to High',
+                                            'price_low' => 'Price: Low to High',
+                                            'price_desc' => 'Price: High to Low',
+                                            'price_high' => 'Price: High to Low',
+                                            'views' => 'Most Viewed'
+                                        ];
+                                        $currentSortLabel = $sortLabels[$currentSortVal] ?? 'Newest First';
+                                    @endphp
                                     <div class="sort-control-group">
                                         <span class="sort-label">Sort:</span>
-                                        <div class="sort-select-wrapper">
-                                            <select class="sort-select-input" id="sortSelectInput">
-                                                <option value="newest" {{ (!request('sort') || request('sort') == 'newest') ? 'selected' : '' }}>Newest First</option>
-                                                <option value="price_asc" {{ (request('sort') == 'price_asc' || request('sort') == 'price_low') ? 'selected' : '' }}>Price: Low to High</option>
-                                                <option value="price_desc" {{ (request('sort') == 'price_desc' || request('sort') == 'price_high') ? 'selected' : '' }}>Price: High to Low</option>
-                                                <option value="views" {{ request('sort') == 'views' ? 'selected' : '' }}>Most Viewed</option>
-                                            </select>
-                                            <i class="fas fa-chevron-down sort-chevron"></i>
+                                        <div class="sort-custom-dropdown-wrap custom-dropdown-wrap" tabindex="0">
+                                            <input type="hidden" id="sortSelectInput" name="sort" value="{{ $currentSortVal }}">
+                                            <div class="sort-trigger-btn">
+                                                <span class="sort-current-val">{{ $currentSortLabel }}</span>
+                                                <svg class="home-filter-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            </div>
+                                            <div class="custom-dropdown-menu sort-dropdown-menu">
+                                                <div class="custom-dropdown-item {{ ($currentSortVal == 'newest' || empty($currentSortVal)) ? 'is-selected' : '' }}" data-value="newest">
+                                                    <span>Newest First</span>
+                                                    <i class="fa-solid fa-check opt-check"></i>
+                                                </div>
+                                                <div class="custom-dropdown-item {{ ($currentSortVal == 'price_asc' || $currentSortVal == 'price_low') ? 'is-selected' : '' }}" data-value="price_asc">
+                                                    <span>Price: Low to High</span>
+                                                    <i class="fa-solid fa-check opt-check"></i>
+                                                </div>
+                                                <div class="custom-dropdown-item {{ ($currentSortVal == 'price_desc' || $currentSortVal == 'price_high') ? 'is-selected' : '' }}" data-value="price_desc">
+                                                    <span>Price: High to Low</span>
+                                                    <i class="fa-solid fa-check opt-check"></i>
+                                                </div>
+                                                <div class="custom-dropdown-item {{ $currentSortVal == 'views' ? 'is-selected' : '' }}" data-value="views">
+                                                    <span>Most Viewed</span>
+                                                    <i class="fa-solid fa-check opt-check"></i>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -417,7 +650,8 @@
                                         }
                                     }
                                 </script>
-                                @forelse($listings as $pet)
+                                 @forelse($listings as $pet)
+                                    {{-- USER PROMPT: "yr ya filters sai kaam ni kr rahy hain authentic bnao in ko" --}}
                                     <article class="pet-card" 
                                              id="listing-{{ $pet->id }}" 
                                              data-category="{{ $pet->category ? $pet->category->slug : '' }}" 
@@ -427,6 +661,8 @@
                                              data-location="{{ strtolower($pet->city) }}" 
                                              data-price="{{ (int) $pet->price }}" 
                                              data-age-months="{{ (int) $pet->age_months }}" 
+                                             data-vaccinated="{{ $pet->vaccinated ? '1' : '0' }}" 
+                                             data-created-at="{{ $pet->created_at ? $pet->created_at->timestamp : 0 }}" 
                                              onclick="window.location='{{ route('pet.details', ['slug' => $pet->slug ?: $pet->id]) }}'" 
                                              style="scroll-margin-top: 110px; cursor: pointer;">
                                         <div class="pet-card-image-box">
@@ -724,6 +960,103 @@
                 }, 300);
             }
         }
+    });
+
+    // USER PROMPT: "yr is main kitny bhi filters drop down hain un ka design same as home page kr do mb vw and desk top view"
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdownWraps = document.querySelectorAll('.custom-dropdown-wrap');
+
+        dropdownWraps.forEach(wrap => {
+            const input = wrap.querySelector('input[type="hidden"]');
+            const displayVal = wrap.querySelector('.home-filter-value, .custom-filter-display-val, .age-unit-display-val, .sort-current-val');
+            const items = wrap.querySelectorAll('.custom-dropdown-item');
+
+            wrap.addEventListener('click', function (e) {
+                if (e.target.closest('.custom-dropdown-item')) return;
+                const isOpen = wrap.classList.contains('is-open');
+                dropdownWraps.forEach(w => w.classList.remove('is-open'));
+                if (!isOpen) {
+                    wrap.classList.add('is-open');
+                }
+            });
+
+            items.forEach(item => {
+                item.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const val = item.getAttribute('data-value') ?? '';
+                    const span = item.querySelector('span');
+                    const text = span ? span.innerText.trim() : '';
+
+                    if (input) {
+                        input.value = val;
+                        // Fire change event so form listeners / sorting handlers trigger
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                    if (displayVal && text) {
+                        displayVal.innerText = text;
+                    }
+
+                    items.forEach(it => it.classList.remove('is-selected'));
+                    item.classList.add('is-selected');
+                    wrap.classList.remove('is-open');
+
+                    // If Category changed in Sidebar: filter Breed items in #sidebarBreedMenu
+                    if (wrap.classList.contains('sidebar-filter-dropdown') && wrap.dataset.filter === 'category') {
+                        const breedMenu = document.getElementById('sidebarBreedMenu');
+                        const breedInput = document.getElementById('filterBreed');
+                        const breedWrap = breedMenu ? breedMenu.closest('.sidebar-filter-dropdown') : null;
+                        const breedDisplay = breedWrap ? breedWrap.querySelector('.custom-filter-display-val') : null;
+
+                        if (breedMenu) {
+                            const bItems = breedMenu.querySelectorAll('.custom-dropdown-item');
+                            const normVal = (val || '').toLowerCase().trim();
+                            let isCurrentBreedStillValid = false;
+                            const currentBreedVal = breedInput ? (breedInput.value || '').toLowerCase().trim() : '';
+
+                            bItems.forEach(bItem => {
+                                const bVal = (bItem.getAttribute('data-value') || '').toLowerCase().trim();
+                                const bCat = (bItem.getAttribute('data-category-slug') || '').toLowerCase().trim();
+
+                                if (!bVal) {
+                                    bItem.style.display = 'flex';
+                                } else if (!normVal || bCat === normVal || (normVal === 'dogs' && bCat === 'dog') || (normVal === 'cats' && bCat === 'cat') || (normVal === 'birds' && bCat === 'bird') || (normVal === 'rabbits' && bCat === 'rabbit') || (normVal === 'reptiles' && bCat === 'reptile') || (normVal === 'fish' && bCat === 'fishes')) {
+                                    bItem.style.display = 'flex';
+                                    if (bVal === currentBreedVal) isCurrentBreedStillValid = true;
+                                } else {
+                                    bItem.style.display = 'none';
+                                }
+                            });
+
+                            if (!isCurrentBreedStillValid && currentBreedVal) {
+                                if (breedInput) {
+                                    breedInput.value = '';
+                                    breedInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                }
+                                if (breedDisplay) breedDisplay.innerText = 'All Breeds';
+                                bItems.forEach(bi => {
+                                    if (!bi.getAttribute('data-value')) bi.classList.add('is-selected');
+                                    else bi.classList.remove('is-selected');
+                                });
+                            }
+                        }
+                    }
+                });
+            });
+        });
+
+        // Close on outside click
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.custom-dropdown-wrap')) {
+                dropdownWraps.forEach(w => w.classList.remove('is-open'));
+            }
+        });
+
+        // Close on Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                dropdownWraps.forEach(w => w.classList.remove('is-open'));
+            }
+        });
     });
 
     window.addEventListener('load', function() {
