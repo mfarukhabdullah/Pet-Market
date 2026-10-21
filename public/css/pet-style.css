@@ -2377,76 +2377,398 @@ button {
   display: none;
 }
 
+/* USER PROMPT: "yr is main kitny bhi filters drop down hain un ka design same as home page kr do mb vw and desk top view" */
+/* Custom Filter Dropdown System (Matches Home Page Style 100%) */
+.custom-dropdown-wrap {
+  position: relative;
+  user-select: none;
+  outline: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.home-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #DCDCDC;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  background: #FFFFFF;
+  position: relative;
+  user-select: none;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+.home-filter:hover {
+  border-color: #147A4D;
+  background-color: #FAFAFA;
+}
+
+.home-filter.is-open,
+.custom-dropdown-wrap.is-open {
+  border-color: #147A4D !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 0 0 3px rgba(20, 122, 77, 0.12) !important;
+  z-index: 100;
+}
+
+.home-filter-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.home-filter-left svg,
+.home-filter-left i {
+  flex-shrink: 0;
+}
+
+.home-filter-text-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.home-filter-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #6B7280;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.home-filter-value,
+.custom-filter-display-val {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.home-filter-arrow {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.custom-dropdown-wrap.is-open .home-filter-arrow {
+  transform: rotate(180deg);
+  stroke: #147A4D;
+}
+
+.custom-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  min-width: 200px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.14), 0 6px 16px -2px rgba(15, 23, 42, 0.06);
+  padding: 6px;
+  z-index: 1050;
+  max-height: 250px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.98);
+  transform-origin: top center;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
+  box-sizing: border-box;
+}
+
+.custom-dropdown-wrap.is-open > .custom-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* USER PROMPT: "yr is ka sirf drop down oper sy open howa kry" */
+/* Dropup behavior: opens upwards from above the trigger */
+.custom-dropdown-wrap.dropdown-up .custom-dropdown-menu,
+.sidebar-filter-dropdown[data-filter="date"] .custom-dropdown-menu {
+  top: auto;
+  bottom: calc(100% + 6px);
+  transform-origin: bottom center;
+  transform: translateY(8px) scale(0.98);
+  box-shadow: 0 -16px 36px -4px rgba(15, 23, 42, 0.14), 0 -6px 16px -2px rgba(15, 23, 42, 0.06);
+}
+
+.custom-dropdown-wrap.dropdown-up.is-open > .custom-dropdown-menu,
+.sidebar-filter-dropdown[data-filter="date"].is-open > .custom-dropdown-menu {
+  transform: translateY(0) scale(1);
+}
+
+.custom-dropdown-menu::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-dropdown-menu::-webkit-scrollbar-thumb {
+  background-color: #E2E8F0;
+  border-radius: 9999px;
+}
+.custom-dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background-color: #CBD5E1;
+}
+
+.custom-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.custom-dropdown-item:hover {
+  background-color: #EAF7F0;
+  color: #147A4D;
+  font-weight: 600;
+  padding-left: 15px;
+}
+
+.custom-dropdown-item.is-selected {
+  background-color: #EAF7F0;
+  color: #147A4D;
+  font-weight: 600;
+}
+
+.custom-dropdown-item .opt-check {
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  color: #147A4D;
+  font-size: 11px;
+}
+
+.custom-dropdown-item.is-selected .opt-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
 /* Floating Search Bar Card (Positioned overlapping bottom border of hero section) */
 .category-search-card {
   background-color: #FFFFFF;
-  border-radius: 7px;
-  padding: 16px 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid #F0F0F0;
   position: relative;
-  z-index: 20;
+  z-index: 90;
   transform: translateY(50%);
   margin-bottom: -40px;
 }
 
 .category-search-form {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr auto;
-  gap: 16px;
+  grid-template-columns: 1.3fr 1fr 1fr auto;
+  gap: 14px;
   align-items: center;
 }
 
-.search-input-group {
+.category-search-form .search-input-group {
   position: relative;
   display: flex;
   align-items: center;
+  height: 52px;
 }
 
-.search-group-icon {
+.category-search-form .search-input-group .search-group-icon {
   position: absolute;
   left: 14px;
-  color: #0C5E3A;
+  color: #14794A;
   font-size: 1rem;
   pointer-events: none;
   z-index: 2;
 }
 
-.select-arrow-icon {
-  position: absolute;
-  right: 14px;
-  color: #64748B;
-  font-size: 0.8rem;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.search-form-input,
-.search-form-select {
+.category-search-form .search-form-input {
   width: 100%;
-  height: 48px;
+  height: 52px;
   padding: 0 16px 0 42px;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #DCDCDC;
   border-radius: 12px;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 13.5px;
+  font-weight: 500;
   color: #0F172A;
   background-color: #FFFFFF;
   outline: none;
-  appearance: none;
-  -webkit-appearance: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.category-search-form .search-form-input:hover {
+  border-color: #147A4D;
+}
+
+.category-search-form .search-form-input:focus {
+  border-color: #147A4D;
+  box-shadow: 0 0 0 3px rgba(20, 122, 77, 0.12);
+}
+
+.category-search-form .home-filter {
+  height: 52px;
+}
+
+/* Sidebar Custom Filter Dropdowns */
+.sidebar-filter-dropdown {
+  width: 100%;
+  height: 46px;
+  border: 1px solid #DCDCDC;
+  border-radius: 12px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  cursor: pointer;
+  position: relative;
+  box-sizing: border-box;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.search-form-select {
-  padding-right: 36px;
-  cursor: pointer;
+.sidebar-filter-dropdown:hover {
+  border-color: #147A4D;
+  background-color: #FAFAFA;
 }
 
-.search-form-input:focus,
-.search-form-select:focus {
-  border-color: #0C5E3A;
-  box-shadow: 0 0 0 3px rgba(12, 94, 58, 0.12);
+.sidebar-filter-dropdown.is-open {
+  border-color: #147A4D;
+  box-shadow: 0 0 0 3px rgba(20, 122, 77, 0.12);
+}
+
+.sidebar-filter-dropdown .home-filter-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.sidebar-filter-dropdown .custom-filter-display-val {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1F2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Age Unit Dropdowns */
+.age-unit-dropdown-wrap {
+  width: 105px;
+  height: 42px;
+  border: 1px solid #DCDCDC;
+  border-radius: 10px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  cursor: pointer;
+  position: relative;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.age-unit-dropdown-wrap:hover {
+  border-color: #147A4D;
+}
+
+.age-unit-dropdown-wrap.is-open {
+  border-color: #147A4D;
+  box-shadow: 0 0 0 3px rgba(20, 122, 77, 0.12);
+}
+
+.age-unit-display-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.age-unit-dropdown-wrap .custom-dropdown-menu {
+  min-width: 110px;
+}
+
+/* Sort Dropdown Header */
+.sort-control-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.sort-custom-dropdown-wrap {
+  position: relative;
+}
+
+.sort-trigger-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  height: 38px;
+  border: 1px solid #DCDCDC;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.sort-trigger-btn:hover {
+  border-color: #147A4D;
+  background-color: #FAFAFA;
+}
+
+.sort-custom-dropdown-wrap.is-open .sort-trigger-btn {
+  border-color: #147A4D;
+  box-shadow: 0 0 0 3px rgba(20, 122, 77, 0.12);
+}
+
+.sort-current-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1F2937;
+  white-space: nowrap;
+}
+
+.sort-dropdown-menu {
+  right: 0;
+  left: auto;
+  min-width: 180px;
+  transform-origin: top right;
 }
 
 .btn-find-pets {
@@ -3277,33 +3599,35 @@ button {
     color: #000000 !important;
   }
 
+  /* USER PROMPT: "yr is main kitny bhi filters drop down hain un ka design same as home page kr do mb vw and desk top view" */
   .sort-control-group {
     display: inline-flex !important;
     align-items: center !important;
-    gap: 5px !important;
-    font-size: 0.875rem !important;
-    font-weight: 500 !important;
-    color: #000000 !important;
+    gap: 6px !important;
     border: none !important;
     padding: 0 !important;
     height: auto !important;
     background-color: transparent !important;
   }
 
-  .sort-select-input {
-    background: transparent !important;
-    border: none !important;
-    font-size: 0.875rem !important;
-    font-weight: 600 !important;
-    color: #000000 !important;
-    padding: 0 10px 0 0px !important;
-    height: auto !important;
-    margin-left: -2px !important;
+  .sort-label {
+    font-size: 13px !important;
   }
 
-  .sort-chevron {
-    right: -2px !important;
-    color: #000000 !important;
+  .sort-trigger-btn {
+    height: 36px !important;
+    padding: 6px 10px !important;
+    border-radius: 9px !important;
+  }
+
+  .sort-current-val {
+    font-size: 12.5px !important;
+  }
+
+  .sort-dropdown-menu {
+    right: 0 !important;
+    left: auto !important;
+    min-width: 175px !important;
   }
 
   .close-sidebar-btn {

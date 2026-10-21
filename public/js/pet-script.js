@@ -360,19 +360,24 @@ document.addEventListener('DOMContentLoaded', function() {
 /* ==========================================
    9. Category Search Filter
    ========================================== */
+// USER PROMPT: "yr ya filters sai kaam ni kr rahy hain authentic bnao in ko"
 function initSearchFilter() {
   const searchForm = document.getElementById('searchFilterForm');
   if (!searchForm) return;
 
   const searchInput = searchForm.querySelector('.search-form-input');
-  const categorySelect = searchForm.querySelector('select[name="category"]');
-  const locationSelect = searchForm.querySelector('select[name="location"]');
+  const categorySelect = searchForm.querySelector('input[name="category"], select[name="category"]');
+  const locationSelect = searchForm.querySelector('input[name="location"], select[name="location"]');
   const petCards = document.querySelectorAll('.pet-card');
 
   function filterPets() {
-    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-    const categoryVal = categorySelect ? categorySelect.value.toLowerCase() : '';
-    const locationVal = locationSelect ? locationSelect.value.toLowerCase() : '';
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const rawCat = categorySelect ? (categorySelect.value || '').toLowerCase().trim() : '';
+    const categoryVal = (rawCat === 'all') ? '' : rawCat;
+    const rawLoc = locationSelect ? (locationSelect.value || '').toLowerCase().trim() : '';
+    const locationVal = (rawLoc === 'all') ? '' : rawLoc;
+
+    let visibleCount = 0;
 
     petCards.forEach(card => {
       const titleEl = card.querySelector('.pet-name');
@@ -382,7 +387,7 @@ function initSearchFilter() {
       const location = (card.dataset.location || '').toLowerCase();
 
       // Check text search
-      const matchesSearch = title.includes(searchTerm) || breedTag.includes(searchTerm);
+      const matchesSearch = !searchTerm || title.includes(searchTerm) || breedTag.includes(searchTerm);
       
       // Check category
       let matchesCategory = true;
@@ -413,14 +418,29 @@ function initSearchFilter() {
       }
       
       // Check location
-      const matchesLocation = !locationVal || location.includes(locationVal);
+      const matchesLocation = !locationVal || location === locationVal || location.includes(locationVal);
 
       if (matchesSearch && matchesCategory && matchesLocation) {
         card.style.display = '';
+        visibleCount++;
       } else {
         card.style.display = 'none';
       }
     });
+
+    const grid = document.getElementById('petCardsGrid');
+    const noResultsMsg = document.getElementById('noResultsMessage');
+    if (grid && noResultsMsg) {
+      if (visibleCount === 0) {
+        grid.style.display = 'none';
+        noResultsMsg.style.display = 'block';
+      } else {
+        grid.style.display = '';
+        noResultsMsg.style.display = 'none';
+      }
+    }
+    const countDisplay = document.getElementById('listingsCountDisplay');
+    if (countDisplay) countDisplay.innerText = visibleCount;
   }
 
   // Bind events for live filtering
@@ -430,21 +450,27 @@ function initSearchFilter() {
   
   searchForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const catVal = categorySelect ? (categorySelect.value || '').trim() : '';
-    const locVal = locationSelect ? (locationSelect.value || '').trim() : '';
+    const catVal = (categorySelect && categorySelect.value !== 'all') ? (categorySelect.value || '').trim() : '';
+    const locVal = (locationSelect && locationSelect.value !== 'all') ? (locationSelect.value || '').trim() : '';
     const qVal = searchInput ? (searchInput.value || '').trim() : '';
 
     let basePath = '/category';
-    if (catVal && catVal !== 'all' && locVal && locVal !== 'all') {
-      basePath = '/category/' + encodeURIComponent(catVal) + '/' + encodeURIComponent(locVal);
-    } else if (catVal && catVal !== 'all') {
-      basePath = '/category/' + encodeURIComponent(catVal);
-    } else if (locVal && locVal !== 'all') {
-      basePath = '/category/' + encodeURIComponent(locVal);
+    const isFeaturedPage = window.location.pathname.includes('/featured-pets');
+    if (isFeaturedPage) basePath = '/featured-pets';
+
+    if (!isFeaturedPage) {
+      const pathParts = [];
+      if (catVal && catVal !== 'all') pathParts.push(encodeURIComponent(catVal));
+      if (locVal && locVal !== 'all') pathParts.push(encodeURIComponent(locVal));
+      if (pathParts.length > 0) basePath = '/category/' + pathParts.join('/');
     }
 
     const params = new URLSearchParams();
     if (qVal) params.set('q', qVal);
+    if (isFeaturedPage) {
+      if (catVal && catVal !== 'all') params.set('category', catVal);
+      if (locVal && locVal !== 'all') params.set('location', locVal);
+    }
     const qStr = params.toString();
     window.location.href = basePath + (qStr ? '?' + qStr : '');
   });
@@ -564,15 +590,19 @@ function initSidebarFilter() {
   }
 
   // Dynamic Breed Cascading based on selected Category
+  // USER PROMPT: "yr is main kitny bhi filters drop down hain un ka design same as home page kr do mb vw and desk top view"
   function updateBreedDropdown() {
     if (!categorySelect || !breedSelect) return;
     const catVal = (categorySelect.value || '').toLowerCase().trim();
     const targetNormCat = normalizeCat(catVal);
 
-    const breedOptions = Array.from(breedSelect.querySelectorAll('option'));
+    const breedMenu = document.getElementById('sidebarBreedMenu');
+    const customBreedItems = breedMenu ? Array.from(breedMenu.querySelectorAll('.custom-dropdown-item')) : [];
+    const breedOptions = breedSelect.tagName === 'SELECT' ? Array.from(breedSelect.querySelectorAll('option')) : [];
     let currentlySelectedAvailable = false;
     const currentBreedVal = (breedSelect.value || '').toLowerCase().trim();
 
+    // 1. If native select options exist
     breedOptions.forEach(opt => {
       if (!opt.value) {
         opt.hidden = false;
@@ -594,8 +624,34 @@ function initSidebarFilter() {
       }
     });
 
+    // 2. If custom dropdown items exist in #sidebarBreedMenu
+    customBreedItems.forEach(item => {
+      const itemVal = (item.getAttribute('data-value') || '').toLowerCase().trim();
+      if (!itemVal) {
+        item.style.display = 'flex';
+        return;
+      }
+      const itemCat = (item.dataset.categorySlug || '').toLowerCase().trim();
+      const normItemCat = normalizeCat(itemCat);
+
+      if (!targetNormCat || normItemCat === targetNormCat || itemCat === catVal) {
+        item.style.display = 'flex';
+        if (itemVal === currentBreedVal) {
+          currentlySelectedAvailable = true;
+        }
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
     if (currentBreedVal && !currentlySelectedAvailable) {
       breedSelect.value = '';
+      const breedDisplay = document.querySelector('.sidebar-filter-dropdown[data-filter="breed"] .custom-filter-display-val');
+      if (breedDisplay) breedDisplay.innerText = 'All Breeds';
+      customBreedItems.forEach(bi => {
+        if (!bi.getAttribute('data-value')) bi.classList.add('is-selected');
+        else bi.classList.remove('is-selected');
+      });
     }
   }
 
@@ -634,10 +690,16 @@ function initSidebarFilter() {
     return Math.round(num);
   }
 
+  // USER PROMPT: "yr ya filters sai kaam ni kr rahy hain authentic bnao in ko"
   function applySidebarFilters() {
-    const categoryVal = categorySelect ? categorySelect.value.toLowerCase().trim() : '';
-    const breedVal = breedSelect ? breedSelect.value.toLowerCase().trim() : '';
-    const locationVal = locationSelect ? locationSelect.value.toLowerCase().trim() : '';
+    const rawCat = categorySelect ? (categorySelect.value || '').toLowerCase().trim() : '';
+    const categoryVal = (rawCat === 'all') ? '' : rawCat;
+
+    const rawBreed = breedSelect ? (breedSelect.value || '').toLowerCase().trim() : '';
+    const breedVal = (rawBreed === 'all') ? '' : rawBreed;
+
+    const rawLoc = locationSelect ? (locationSelect.value || '').toLowerCase().trim() : '';
+    const locationVal = (rawLoc === 'all') ? '' : rawLoc;
     
     // Get checked genders
     const checkedGenders = Array.from(sidebarForm.querySelectorAll('input[name="gender[]"]:checked, input[name="gender"]:checked')).map(cb => cb.value.toLowerCase());
@@ -655,18 +717,14 @@ function initSidebarFilter() {
 
     if (!isNaN(priceMin) && !isNaN(priceMax)) {
       if (priceMin > priceMax) {
-        // Check if user is actively typing in the Max input field (e.g. Min is '50000' and user has only typed '6')
         const isTypingMax = (document.activeElement === priceMaxEl) && (rawMaxStr.length < rawMinStr.length);
         const isTypingMin = (document.activeElement === priceMinEl) && (rawMinStr.length < rawMaxStr.length);
 
         if (isTypingMax) {
-          // Temporarily ignore incomplete Max value while user is typing it out
           effectiveMax = NaN;
         } else if (isTypingMin) {
-          // Temporarily ignore incomplete Min value while user is typing it out
           effectiveMin = NaN;
         } else {
-          // Both numbers are completely typed but inverted (e.g. min 60000, max 50000): swap them
           effectiveMin = Math.min(priceMin, priceMax);
           effectiveMax = Math.max(priceMin, priceMax);
         }
@@ -695,6 +753,13 @@ function initSidebarFilter() {
         else if (maxAgeUnit === 'months') maxDays = maxAgeVal * 30;
         else maxDays = maxAgeVal;
     }
+
+    // Date Posted Filter
+    const dateSelect = document.getElementById('filterDate');
+    const dateVal = dateSelect ? (dateSelect.value || '').trim() : '';
+
+    // Vaccinated Filter
+    const vaccinatedCb = sidebarForm.querySelector('input[name="health"][value="vaccinated"]:checked');
 
     let visibleCount = 0;
 
@@ -814,7 +879,26 @@ function initSidebarFilter() {
           }
       }
 
-      if (matchesCategory && matchesBreed && matchesLocation && matchesGender && matchesAge && matchesPrice && matchesFeatured) {
+      // Check Date Posted
+      let matchesDate = true;
+      if (dateVal && dateVal !== 'all') {
+          const cardTimestamp = parseInt(card.dataset.createdAt || 0);
+          if (cardTimestamp > 0) {
+              const nowSec = Math.floor(Date.now() / 1000);
+              const diffHours = (nowSec - cardTimestamp) / 3600;
+              if (dateVal === '24h' && diffHours > 24) matchesDate = false;
+              else if (dateVal === 'week' && diffHours > 168) matchesDate = false;
+              else if (dateVal === 'month' && diffHours > 720) matchesDate = false;
+          }
+      }
+
+      // Check Vaccinated
+      let matchesVaccinated = true;
+      if (vaccinatedCb) {
+          matchesVaccinated = card.dataset.vaccinated === '1';
+      }
+
+      if (matchesCategory && matchesBreed && matchesLocation && matchesGender && matchesAge && matchesPrice && matchesFeatured && matchesDate && matchesVaccinated) {
         card.style.display = '';
         visibleCount++;
       } else {
@@ -837,8 +921,14 @@ function initSidebarFilter() {
       }
     }
 
+    // Update live matching count in header subtitle
+    const countDisplay = document.getElementById('listingsCountDisplay');
+    if (countDisplay) {
+      countDisplay.innerText = visibleCount;
+    }
+
     // Handle Reset Button and Pagination Visibility
-    const hasActiveFilters = categoryVal || breedVal || locationVal || checkedGenders.length > 0 || minDays !== null || maxDays !== null || !isNaN(effectiveMin) || !isNaN(effectiveMax);
+    const hasActiveFilters = categoryVal || breedVal || locationVal || checkedGenders.length > 0 || minDays !== null || maxDays !== null || !isNaN(effectiveMin) || !isNaN(effectiveMax) || dateVal || vaccinatedCb;
     const resetBtn = document.getElementById('resetFiltersBtn');
     const paginationRow = document.querySelector('.category-pagination-row');
 
@@ -867,9 +957,9 @@ function initSidebarFilter() {
     const isFeaturedPage = window.location.pathname.includes('/featured-pets');
     let basePath = isFeaturedPage ? '/featured-pets' : '/category';
     
-    const catVal = categorySelect ? (categorySelect.value || '').trim() : '';
-    const breedVal = breedSelect ? (breedSelect.value || '').trim() : '';
-    const locVal = locationSelect ? (locationSelect.value || '').trim() : '';
+    const catVal = (categorySelect && categorySelect.value !== 'all') ? (categorySelect.value || '').trim() : '';
+    const breedVal = (breedSelect && breedSelect.value !== 'all') ? (breedSelect.value || '').trim() : '';
+    const locVal = (locationSelect && locationSelect.value !== 'all') ? (locationSelect.value || '').trim() : '';
 
     if (!isFeaturedPage) {
       const pathParts = [];
@@ -880,6 +970,11 @@ function initSidebarFilter() {
     }
 
     const params = new URLSearchParams();
+    if (isFeaturedPage) {
+      if (catVal && catVal !== 'all') params.set('category', catVal);
+      if (breedVal && breedVal !== 'all') params.set('breed', breedVal);
+      if (locVal && locVal !== 'all') params.set('location', locVal);
+    }
 
     // Price Range (smart swapped if inverted)
     const priceMinEl = document.getElementById('priceMin');
@@ -993,11 +1088,13 @@ function initSidebarFilter() {
     });
   }
 
+  // USER PROMPT: "yr ya filters sai kaam ni kr rahy hain authentic bnao in ko"
   const resetBtn = document.getElementById('resetFiltersBtn');
   if (resetBtn) {
     resetBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = window.location.pathname;
+      const isFeatured = window.location.pathname.includes('/featured-pets');
+      window.location.href = isFeatured ? '/featured-pets' : '/category';
     });
   }
 
