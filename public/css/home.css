@@ -1543,9 +1543,10 @@
     row-gap: 16px;
   }
 
-  /* Sirf 4 pets mobile pe, baqi "View All Pets" pe */
+  /* USER PROMPT: "listen those pets that are select as favrtouite in desktop view should  be shown in mobile view  both view show paralel things" */
+  /* Show all pet cards in mobile view parallel to desktop view */
   .home-pets-section .home-pet-card:nth-child(n+5) {
-    display: none;
+    display: flex;
   }
 
   /* Figma: card 178 x 284 (image 160 + info 124) */

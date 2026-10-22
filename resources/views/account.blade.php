@@ -192,9 +192,10 @@
             <div class="account-nav-body">
                 <h4 class="account-nav-section-title">Personal</h4>
                 <ul class="account-nav-list">
+                    {{-- USER PROMPT: "in mobile view just change this 'My Account' to my dashboard just change this text" --}}
                     <li>
                         <a href="{{ route('dashboard') }}">
-                            <div class="list-left"><i class="fa-solid fa-border-all"></i> <span>My Account</span></div>
+                            <div class="list-left"><i class="fa-solid fa-border-all"></i> <span>My Dashboard</span></div>
                             <i class="fa-solid fa-chevron-right list-arrow"></i>
                         </a>
                     </li>

@@ -497,8 +497,38 @@
             .stat-label {
                 order: 1;
             }
+            /* USER PROMPT: "there is one more issue in mobile view when we click on My Dashboard there is no card show in my listing set this  just set this issue" */
+            .main-content {
+                padding: 16px 12px;
+            }
             .bottom-grid {
                 grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .listing-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 14px 0;
+            }
+            .listing-img {
+                width: 56px;
+                height: 56px;
+                border-radius: 10px;
+                flex-shrink: 0;
+            }
+            .listing-info {
+                min-width: 0;
+                flex-grow: 1;
+            }
+            .listing-name {
+                font-size: 15px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .status-badge {
+                flex-shrink: 0;
             }
             .favorites-grid-mobile {
                 display: grid;
@@ -766,24 +796,42 @@
         </div>
     </main></div></div>
 
+    {{-- USER PROMPT: "listen those pets that are select as favrtouite in desktop view should  be shown in mobile view  both view show paralel things" --}}
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const soldPets = JSON.parse(localStorage.getItem('sold_pets') || '{}');
-        const deletedPets = JSON.parse(localStorage.getItem('deleted_pets') || '{}');
-        document.querySelectorAll('.listing-item').forEach(item => {
-            const titleEl = item.querySelector('.listing-name');
-            if (titleEl) {
-                const key = titleEl.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
-                if (deletedPets[key]) {
-                    item.style.display = 'none';
-                } else if (soldPets[key]) {
-                    const badge = item.querySelector('.status-badge');
-                    if (badge) {
-                        badge.className = 'status-badge status-sold';
-                        badge.textContent = 'Sold';
-                    }
+        try {
+            localStorage.removeItem('deleted_pets');
+            localStorage.removeItem('sold_pets');
+        } catch(e) {}
+
+        document.querySelectorAll('.fav-heart').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const url = this.getAttribute('data-url');
+                const card = this.closest('.favorite-item');
+                if (url) {
+                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': token
+                        }
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (card) {
+                            card.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.88)';
+                            setTimeout(() => card.remove(), 260);
+                        }
+                    })
+                    .catch(err => console.warn('Fav toggle error:', err));
                 }
-            }
+            });
         });
     });
     </script>

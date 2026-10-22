@@ -176,7 +176,8 @@
     <div style="margin-top:32px;">
         @if(auth()->check())
             <a href="{{ route('seller.create-listing') }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
-            <a href="{{ route('dashboard') }}" class="btn-login-register" style="width:100%; justify-content:center; background-color:#eaf7f0; color:#147A4D; border:none;"><i class="fa-solid fa-user" style="margin-right:8px;"></i> My Account</a>
+            {{-- USER PROMPT: "in mobile view just change this 'My Account' to my dashboard just change this text" --}}
+            <a href="{{ route('dashboard') }}" class="btn-login-register" style="width:100%; justify-content:center; background-color:#eaf7f0; color:#147A4D; border:none;"><i class="fa-solid fa-user" style="margin-right:8px;"></i> My Dashboard</a>
             <a href="{{ route('logout') }}" class="btn-login-register text-danger" style="width:100%; justify-content:center; margin-top:12px; border:none;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:8px;"></i> Log Out</a>
         @else
             <a href="{{ route('login') }}?redirect={{ urlencode(route('seller.create-listing')) }}" class="btn-sell-pet" style="width:100%; margin-bottom:12px; justify-content:center;">Sell a Pet</a>
@@ -247,9 +248,10 @@
                 </a>
             </li>
             @endif
+            {{-- USER PROMPT: "in mobile view just change this 'My Account' to my dashboard just change this text" --}}
             <li>
                 <a href="{{ route('dashboard') }}">
-                    <div class="list-left"><i class="fa-solid fa-border-all"></i> <span>My Account</span></div>
+                    <div class="list-left"><i class="fa-solid fa-border-all"></i> <span>My Dashboard</span></div>
                     <i class="fa-solid fa-chevron-right list-arrow"></i>
                 </a>
             </li>

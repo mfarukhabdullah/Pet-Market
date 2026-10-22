@@ -18,9 +18,10 @@ class InteractionActionController extends Controller
     /**
      * Toggle listing favorite (wishlist).
      */
+    // USER PROMPT: "listen those pets that are select as favrtouite in desktop view should  be shown in mobile view  both view show paralel things"
     public function toggleFavorite($listingId)
     {
-        $user = auth()->user();
+        $user = auth()->user() ?: $this->getActiveUser();
         if (!$user) {
             $returnUrl = request()->input('redirect')
                 ?: request()->header('referer')
@@ -105,9 +106,10 @@ class InteractionActionController extends Controller
     /**
      * Get list of favorite listing IDs for the currently authenticated user.
      */
+    // USER PROMPT: "listen those pets that are select as favrtouite in desktop view should  be shown in mobile view  both view show paralel things"
     public function getFavoriteIds()
     {
-        $user = auth()->user();
+        $user = auth()->user() ?: $this->getActiveUser();
         $ids = $user ? $user->favorites()->pluck('listing_id')->map(function ($id) {
             return (int) $id;
         })->toArray() : [];

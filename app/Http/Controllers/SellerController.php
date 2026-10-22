@@ -175,9 +175,10 @@ class SellerController extends Controller
         return view('seller-settings-account', compact('user'));
     }
 
+    // USER PROMPT: "listen those pets that are select as favrtouite in desktop view should  be shown in mobile view  both view show paralel things"
     public function favorites()
     {
-        $user = auth()->user();
+        $user = auth()->user() ?: $this->getActiveUser();
         if (!$user) {
             return redirect()->route('login');
         }
