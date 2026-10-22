@@ -139,6 +139,29 @@ class SiteSetting extends Model
         ];
     }
 
+    // USER PROMPT: "ni in ko bhi dynamic kro"
+    /**
+     * Retrieve dynamic quick links for Footer
+     */
+    public static function getQuickLinks(): array
+    {
+        $raw = static::get('footer_quick_links');
+        if (!empty($raw)) {
+            $decoded = is_string($raw) ? json_decode($raw, true) : $raw;
+            if (is_array($decoded) && !empty($decoded)) {
+                return $decoded;
+            }
+        }
+
+        return [
+            ['label' => 'Home', 'url' => '/'],
+            ['label' => 'About Us', 'url' => '/about'],
+            ['label' => 'Contact Us', 'url' => '/contact'],
+            ['label' => 'Categories', 'url' => '/category'],
+            ['label' => 'Breeds', 'url' => '/breeds'],
+        ];
+    }
+
     /**
      * Seed initial sensible defaults if settings are empty.
      */
@@ -216,6 +239,17 @@ class SiteSetting extends Model
             'footer_brand_logo' => ['value' => 'images/Italic-text.png', 'group' => 'footer'],
             'footer_brand_desc' => ['value' => 'A trusted pet marketplace connecting responsible buyers, sellers, breeders, and pet businesses in one safe and easy-to-use platform.', 'group' => 'footer'],
             'footer_quick_links_title' => ['value' => 'Quick Links', 'group' => 'footer'],
+            // USER PROMPT: "ni in ko bhi dynamic kro"
+            'footer_quick_links' => [
+                'value' => json_encode([
+                    ['label' => 'Home', 'url' => '/'],
+                    ['label' => 'About Us', 'url' => '/about'],
+                    ['label' => 'Contact Us', 'url' => '/contact'],
+                    ['label' => 'Categories', 'url' => '/category'],
+                    ['label' => 'Breeds', 'url' => '/breeds'],
+                ]),
+                'group' => 'footer'
+            ],
             'footer_categories_title' => ['value' => 'Pet Categories', 'group' => 'footer'],
             'footer_contact_title' => ['value' => 'Contact & Support', 'group' => 'footer'],
             'footer_email' => ['value' => 'Support@petmarket.com', 'group' => 'footer'],
@@ -297,6 +331,19 @@ class SiteSetting extends Model
             'loc_sec_cities' => ['value' => 'Lahore, Faisalabad, Multan, Sialkot, Karachi, Peshawar, Islamabad', 'group' => 'home_locations'],
             'loc_sec_card_subtext' => ['value' => 'Browse listings', 'group' => 'home_locations'],
             'loc_sec_all_text' => ['value' => 'All Locations', 'group' => 'home_locations'],
+
+            // USER PROMPT: "contact us ka ya section dynamic kro"
+            // Contact Us Page - Contact & Support Section Settings
+            'contact_title' => ['value' => 'Contact & Support', 'group' => 'contact'],
+            'contact_desc' => ['value' => 'Use the details below or send us a message through the form.', 'group' => 'contact'],
+            'contact_email_title' => ['value' => 'Email Support', 'group' => 'contact'],
+            'contact_email' => ['value' => 'support@petmarket.com', 'group' => 'contact'],
+            'contact_phone_title' => ['value' => 'Phone', 'group' => 'contact'],
+            'contact_phone' => ['value' => '+92 310 0865755', 'group' => 'contact'],
+            'contact_social_title' => ['value' => 'Follow Us', 'group' => 'contact'],
+            'contact_facebook_url' => ['value' => '#', 'group' => 'contact'],
+            'contact_instagram_url' => ['value' => '#', 'group' => 'contact'],
+            'contact_youtube_url' => ['value' => '#', 'group' => 'contact'],
         ];
 
         foreach ($defaults as $key => $data) {

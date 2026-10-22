@@ -11,6 +11,8 @@ use App\Http\Controllers\ListingActionController;
 use App\Http\Controllers\ChatActionController;
 use App\Http\Controllers\InteractionActionController;
 use App\Http\Controllers\AdminController;
+// USER PROMPT: "form main smtp ni lga howa lgao andullahkhanmahesar9696@gmail.com Abdullah123#"
+use App\Http\Controllers\ContactController;
 // USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao"
 use App\Http\Controllers\SeoController;
 
@@ -24,7 +26,9 @@ use App\Http\Controllers\SeoController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', function () { return view('about'); })->name('about');
 Route::get('/account', function () { return view('account'); })->name('account');
-Route::get('/contact', function () { return view('contact'); })->name('contact');
+// USER PROMPT: "form main smtp ni lga howa lgao andullahkhanmahesar9696@gmail.com Abdullah123#"
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact/send', [ContactController::class, 'send'])->middleware('throttle:10,1')->name('contact.send');
 
 // USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao"
 // Public Dynamic SEO Routes
@@ -143,6 +147,10 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     // USER PROMPT: "about us ky ya ection dynamic kro or yahi lgao dta admin main"
     // About Us Dynamic Sections Actions
     Route::post('/about/update', [AdminController::class, 'updateAbout'])->name('admin.about.update');
+
+    // USER PROMPT: "contact us ka ya section dynamic kro"
+    // Contact Us Dynamic Section Actions
+    Route::post('/contact/update', [AdminController::class, 'updateContact'])->name('admin.contact.update');
 
     // SEO Engine Actions
     Route::post('/seo/update', [AdminController::class, 'updateSeo'])->name('admin.seo.update');

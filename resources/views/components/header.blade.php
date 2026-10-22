@@ -98,6 +98,18 @@
                                 -webkit-mask-image: url('{{ asset('images/profile-setting-user-icon.svg') }}');
                                 mask-image: url('{{ asset('images/profile-setting-user-icon.svg') }}');
                             }
+                            {{-- USER PROMPT: "yr errow move ni kr rha hai" --}}
+                            .user-profile-dropdown .profile-toggle-btn i {
+                                display: inline-block;
+                                transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
+                            }
+                            .user-profile-dropdown:hover .profile-toggle-btn i,
+                            .user-profile-dropdown.open .profile-toggle-btn i,
+                            .user-profile-dropdown .profile-toggle-btn.active i,
+                            .user-profile-dropdown:has(.profile-dropdown-menu.show) .profile-toggle-btn i {
+                                transform: rotate(180deg);
+                                color: var(--primary-green, #147A4D);
+                            }
                         </style>
                         <div class="user-profile-dropdown">
                             <button class="profile-toggle-btn" id="profileDropdownBtn">
@@ -115,10 +127,10 @@
                                 
                                 <div class="dropdown-divider"></div>
 
-                                {{-- USER PROMPT: "yer admin pannel bnao or seo related ho or jo cheezain user id ky ilawa hain un ko dynamick ro or side main un ky alag alag tab bnao" --}}
+                                {{-- USER PROMPT: "yr ya drop down bohot bara hai or nichay sy cut ho rha hai is ko sai kro" --}}
                                 @if(auth()->user()->role === 'admin')
                                     <a href="{{ route('admin.dashboard') }}" class="dropdown-item" style="color: #147A4D; font-weight: 700;">
-                                        <i class="fa-solid fa-shield-cat" style="width:20px; font-size:16px; text-align:center;"></i> Admin Panel
+                                        <i class="fa-solid fa-shield-cat" style="width:18px; font-size:15px; text-align:center;"></i> Admin Panel
                                     </a>
                                 @endif
                                 <a href="{{ route('dashboard') }}" class="dropdown-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"><span class="dd-icon icon-dash-dd"></span> Dashboard</a>
@@ -129,7 +141,7 @@
                                 <a href="{{ route('seller.settings') }}" class="dropdown-item {{ request()->routeIs('seller.settings*') ? 'active' : '' }}"><span class="dd-icon icon-ps-dd"></span> Profile Settings</a>
                                 
                                 <a href="{{ route('logout') }}" class="dropdown-item">
-                                    <i class="fa-solid fa-arrow-right-from-bracket" style="width:20px; font-size:18px; text-align:center;"></i> Log Out
+                                    <i class="fa-solid fa-arrow-right-from-bracket" style="width:18px; font-size:15px; text-align:center;"></i> Log Out
                                 </a>
                             </div>
                         </div>

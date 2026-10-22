@@ -86,8 +86,8 @@ class AdminController extends Controller
         // USER PROMPT: "admin main home page setting main in ko bhi dynamic kro"
         // USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly"
         // USER PROMPT: "yr home page main in sections ko dynamic kro"
-        // USER PROMPT: "yr breeds ki admin kro access do vo addd kry or vo jo add kry vo breeds hr jaga apply hon jahan per exist krti hain"
-        $validTabs = ['overview', 'featured_pets', 'hero', 'hero_filters', 'home_categories', 'home_cta', 'home_locations', 'category_hero', 'safety', 'footer', 'about', 'seo', 'categories', 'breeds', 'listings', 'users', 'reports', 'settings'];
+        // USER PROMPT: "admin main contact us click able ni hai"
+        $validTabs = ['overview', 'featured_pets', 'hero', 'hero_filters', 'home_categories', 'home_cta', 'home_locations', 'category_hero', 'safety', 'footer', 'about', 'contact', 'seo', 'categories', 'breeds', 'listings', 'users', 'reports', 'settings'];
         if (!in_array($tab, $validTabs)) {
             $tab = 'overview';
         }
@@ -236,6 +236,8 @@ class AdminController extends Controller
             'footer_brand_logo' => SiteSetting::get('footer_brand_logo', 'images/Italic-text.png'),
             'footer_brand_desc' => SiteSetting::get('footer_brand_desc', 'A trusted pet marketplace connecting responsible buyers, sellers, breeders, and pet businesses in one safe and easy-to-use platform.'),
             'footer_quick_links_title' => SiteSetting::get('footer_quick_links_title', 'Quick Links'),
+            // USER PROMPT: "ni in ko bhi dynamic kro"
+            'footer_quick_links' => SiteSetting::getQuickLinks(),
             'footer_categories_title' => SiteSetting::get('footer_categories_title', 'Pet Categories'),
             'footer_contact_title' => SiteSetting::get('footer_contact_title', 'Contact & Support'),
             'footer_email' => SiteSetting::get('footer_email', 'Support@petmarket.com'),
@@ -279,6 +281,20 @@ class AdminController extends Controller
             'about_safer_card_3_icon' => SiteSetting::get('about_safer_card_3_icon', 'fas fa-flag'),
             'about_safer_card_3_title' => SiteSetting::get('about_safer_card_3_title', 'Reporting & Moderation'),
             'about_safer_card_3_desc' => SiteSetting::get('about_safer_card_3_desc', 'Listings and users can be reported so marketplace moderators can review possible policy or safety concerns.'),
+        ];
+
+        // USER PROMPT: "contact us ka ya section dynamic kro"
+        $contactSettings = [
+            'contact_title' => SiteSetting::get('contact_title', 'Contact & Support'),
+            'contact_desc' => SiteSetting::get('contact_desc', 'Use the details below or send us a message through the form.'),
+            'contact_email_title' => SiteSetting::get('contact_email_title', 'Email Support'),
+            'contact_email' => SiteSetting::get('contact_email', 'support@petmarket.com'),
+            'contact_phone_title' => SiteSetting::get('contact_phone_title', 'Phone'),
+            'contact_phone' => SiteSetting::get('contact_phone', '+92 310 0865755'),
+            'contact_social_title' => SiteSetting::get('contact_social_title', 'Follow Us'),
+            'contact_facebook_url' => SiteSetting::get('contact_facebook_url', '#'),
+            'contact_instagram_url' => SiteSetting::get('contact_instagram_url', '#'),
+            'contact_youtube_url' => SiteSetting::get('contact_youtube_url', '#'),
         ];
 
         // USER PROMPT: "category page ka heroo section bhi dynamic kro"
@@ -401,6 +417,8 @@ class AdminController extends Controller
             'safetySettings',
             'footerSettings',
             'aboutSettings',
+            // USER PROMPT: "contact us ka ya section dynamic kro"
+            'contactSettings',
             'seoSettings',
             'generalSettings'
         ));
@@ -598,6 +616,24 @@ class AdminController extends Controller
             SiteSetting::set($key, $value, 'footer');
         }
 
+        // USER PROMPT: "ni in ko bhi dynamic kro"
+        if ($request->has('quick_links') && is_array($request->input('quick_links'))) {
+            $links = [];
+            foreach ($request->input('quick_links') as $item) {
+                $label = trim(strip_tags((string)($item['label'] ?? '')));
+                $url = trim(strip_tags((string)($item['url'] ?? '')));
+                if (!empty($label)) {
+                    $links[] = [
+                        'label' => $label,
+                        'url' => !empty($url) ? $url : '#'
+                    ];
+                }
+            }
+            if (!empty($links)) {
+                SiteSetting::set('footer_quick_links', json_encode($links), 'footer');
+            }
+        }
+
         // Direct single image file upload for footer logo or keep current
         if ($request->hasFile('footer_brand_logo') && $request->file('footer_brand_logo')->isValid()) {
             $file = $request->file('footer_brand_logo');
@@ -680,6 +716,36 @@ class AdminController extends Controller
         \Illuminate\Support\Facades\Cache::forget('site_settings_cache');
 
         return redirect()->route('admin.dashboard', ['tab' => 'about'])->with('success', 'About Us sections updated successfully!');
+    }
+
+    /* ========================================================
+       CONTACT US DYNAMIC SECTION ACTIONS
+       ======================================================== */
+
+    // USER PROMPT: "contact us ka ya section dynamic kro"
+    public function updateContact(Request $request)
+    {
+        $keys = [
+            'contact_title',
+            'contact_desc',
+            'contact_email_title',
+            'contact_email',
+            'contact_phone_title',
+            'contact_phone',
+            'contact_social_title',
+            'contact_facebook_url',
+            'contact_instagram_url',
+            'contact_youtube_url',
+        ];
+
+        foreach ($keys as $key) {
+            $value = trim(strip_tags((string) $request->input($key, '')));
+            SiteSetting::set($key, $value, 'contact');
+        }
+
+        \Illuminate\Support\Facades\Cache::forget('site_settings_cache');
+
+        return redirect()->route('admin.dashboard', ['tab' => 'contact'])->with('success', 'Contact Us section settings updated successfully!');
     }
 
     /* ========================================================

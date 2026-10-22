@@ -469,15 +469,23 @@
   text-align: left;
 }
 
+/* USER PROMPT: "is btn ka size oper waly btn ky size ky equal kro" */
 .home-btn-outline {
   background: transparent;
   color: #147A4D;
   border: 1px solid #147A4D;
-  padding: 10px 20px;
+  padding: 10px 24px;
   border-radius: 6px;
   font-weight: 600;
+  font-size: 14px;
+  min-width: 140px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .home-btn-outline:hover {

@@ -766,6 +766,13 @@
                     <span class="nav-pill">Live</span>
                 </a>
             </li>
+            {{-- USER PROMPT: "contact us ka ya section dynamic kro" --}}
+            <li class="admin-nav-item {{ $tab === 'contact' ? 'active' : '' }}">
+                <a href="{{ route('admin.dashboard', ['tab' => 'contact']) }}">
+                    <span class="nav-left"><i class="fa-solid fa-headset"></i> Contact Us Page</span>
+                    <span class="nav-pill">Live</span>
+                </a>
+            </li>
             <li class="admin-nav-item {{ $tab === 'seo' ? 'active' : '' }}">
                 <a href="{{ route('admin.dashboard', ['tab' => 'seo']) }}">
                     <span class="nav-left"><i class="fa-solid fa-magnifying-glass-chart"></i> SEO &amp; Meta Engine</span>
@@ -2669,14 +2676,19 @@
                                 </div>
 
                                 <!-- Column 2 -->
+                                {{-- USER PROMPT: "ni in ko bhi dynamic kro" --}}
                                 <div>
                                     <h4 style="font-size: 15px; font-weight: 700; color: #FFFFFF; margin: 0 0 14px;">{{ $footerSettings['footer_quick_links_title'] }}</h4>
                                     <ul style="list-style: none; padding: 0; margin: 0; font-size: 13px; line-height: 2; color: #CBD5E1;">
-                                        <li>Home</li>
-                                        <li>About Us</li>
-                                        <li>Contact Us</li>
-                                        <li>Categories</li>
-                                        <li>Breeds</li>
+                                        @forelse($footerSettings['footer_quick_links'] as $ql)
+                                            <li>{{ $ql['label'] }}</li>
+                                        @empty
+                                            <li>Home</li>
+                                            <li>About Us</li>
+                                            <li>Contact Us</li>
+                                            <li>Categories</li>
+                                            <li>Breeds</li>
+                                        @endforelse
                                     </ul>
                                 </div>
 
@@ -2788,6 +2800,47 @@
                                 <div class="form-group">
                                     <label class="form-label" for="footer_contact_title">Column 4 Heading</label>
                                     <input type="text" name="footer_contact_title" id="footer_contact_title" class="form-control" value="{{ $footerSettings['footer_contact_title'] }}" required>
+                                </div>
+                            </div>
+
+                            <!-- Column 2 Dynamic Quick Links Manager -->
+                            {{-- USER PROMPT: "ni in ko bhi dynamic kro" --}}
+                            <div style="background: #FAF8F5; border: 1px solid var(--admin-border); border-radius: 12px; padding: 18px; margin-bottom: 24px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <h3 style="font-size: 15px; font-weight: 700; color: #1E293B; margin: 0 0 4px;">
+                                            <i class="fa-solid fa-link" style="color: var(--admin-primary);"></i> Dynamic Quick Links Items
+                                        </h3>
+                                        <p style="font-size: 13px; color: #64748B; margin: 0;">
+                                            Manage and reorder navigation links displayed under Column 2. Enter relative URLs (e.g. <code>/about</code>, <code>/contact</code>) or external links.
+                                        </p>
+                                    </div>
+                                    <button type="button" class="btn-admin btn-admin-secondary btn-sm" onclick="addQuickLink()" style="font-weight: 600;">
+                                        <i class="fa-solid fa-plus"></i> Add New Link
+                                    </button>
+                                </div>
+
+                                <div style="display: flex; flex-direction: column; gap: 10px;" id="quickLinksContainer">
+                                    @foreach($footerSettings['footer_quick_links'] as $idx => $ql)
+                                        <div class="quick-link-row" style="background: #FFFFFF; padding: 10px 14px; border-radius: 8px; border: 1px solid #E2E8F0; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                                            <div class="ql-badge" style="width: 28px; height: 28px; border-radius: 6px; background: rgba(20, 122, 77, 0.1); color: var(--admin-primary); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">
+                                                {{ $idx + 1 }}
+                                            </div>
+                                            <div style="flex: 1; min-width: 140px;">
+                                                <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Link Title / Text</label>
+                                                <input type="text" name="quick_links[{{ $idx }}][label]" class="form-control ql-label" value="{{ $ql['label'] }}" placeholder="e.g. Home" required>
+                                            </div>
+                                            <div style="flex: 2; min-width: 200px;">
+                                                <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Target URL / Route (e.g. /about, /contact)</label>
+                                                <input type="text" name="quick_links[{{ $idx }}][url]" class="form-control ql-url" value="{{ $ql['url'] }}" placeholder="e.g. /about or https://..." required>
+                                            </div>
+                                            <div style="align-self: flex-end; padding-bottom: 2px;">
+                                                <button type="button" class="btn-admin btn-admin-danger btn-sm" onclick="removeQuickLink(this)" title="Delete this link">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
 
@@ -3111,6 +3164,144 @@
                         </div>
                     </div>
                 </form>
+
+            <!-- TAB: CONTACT US DYNAMIC SECTION -->
+            {{-- USER PROMPT: "contact us ka ya section dynamic kro" --}}
+            @elseif($tab === 'contact')
+                <!-- Live Visual Simulation for Contact Us -->
+                <div class="admin-panel" style="margin-bottom: 24px; border-left: 4px solid var(--admin-primary); background: #FAF8F5;">
+                    <div class="panel-head" style="background: transparent; border-bottom: 1px solid rgba(0,0,0,0.06);">
+                        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+                            <h2><i class="fa-solid fa-eye" style="color: var(--admin-primary);"></i> Live Contact &amp; Support Visual Simulation</h2>
+                            <a href="{{ route('contact') }}" target="_blank" class="btn-admin btn-admin-secondary btn-sm">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live Contact Page
+                            </a>
+                        </div>
+                    </div>
+                    <div class="panel-body" style="padding: 24px;">
+                        <div style="background: #FFFFFF; border-radius: 18px; padding: 32px; border: 1px solid #E2E8F0; max-width: 520px; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
+                            <h2 style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: #17211C; margin: 0 0 8px;">{{ $contactSettings['contact_title'] }}</h2>
+                            <p style="font-size: 14px; color: #64748B; margin: 0 0 24px; line-height: 1.5;">{{ $contactSettings['contact_desc'] }}</p>
+
+                            <!-- Email Card -->
+                            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 18px;">
+                                <div style="width: 48px; height: 48px; border-radius: 12px; background: #E8F5EE; display: flex; align-items: center; justify-content: center; color: #147A4D; font-size: 20px; flex-shrink: 0;">
+                                    <i class="fa-regular fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 15px; font-weight: 700; color: #17211C; margin: 0 0 3px;">{{ $contactSettings['contact_email_title'] }}</h3>
+                                    <p style="font-size: 14px; color: #475569; margin: 0;">{{ $contactSettings['contact_email'] }}</p>
+                                </div>
+                            </div>
+
+                            <div style="height: 1px; background: #E2E8F0; margin: 18px 0;"></div>
+
+                            <!-- Phone Card -->
+                            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 18px;">
+                                <div style="width: 48px; height: 48px; border-radius: 12px; background: #E8F5EE; display: flex; align-items: center; justify-content: center; color: #147A4D; font-size: 20px; flex-shrink: 0;">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 15px; font-weight: 700; color: #17211C; margin: 0 0 3px;">{{ $contactSettings['contact_phone_title'] }}</h3>
+                                    <p style="font-size: 14px; color: #475569; margin: 0;">{{ $contactSettings['contact_phone'] }}</p>
+                                </div>
+                            </div>
+
+                            <div style="height: 1px; background: #E2E8F0; margin: 18px 0;"></div>
+
+                            <!-- Social Links -->
+                            <div>
+                                <h3 style="font-size: 15px; font-weight: 700; color: #17211C; margin: 0 0 14px;">{{ $contactSettings['contact_social_title'] }}</h3>
+                                <div style="display: flex; gap: 10px;">
+                                    <span style="width: 40px; height: 40px; border-radius: 10px; background: #E8F5EE; display: inline-flex; align-items: center; justify-content: center; color: #147A4D; font-size: 16px;"><i class="fa-brands fa-facebook-f"></i></span>
+                                    <span style="width: 40px; height: 40px; border-radius: 10px; background: #E8F5EE; display: inline-flex; align-items: center; justify-content: center; color: #147A4D; font-size: 16px;"><i class="fa-brands fa-instagram"></i></span>
+                                    <span style="width: 40px; height: 40px; border-radius: 10px; background: #E8F5EE; display: inline-flex; align-items: center; justify-content: center; color: #147A4D; font-size: 16px;"><i class="fa-brands fa-youtube"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Configuration Form -->
+                <div class="admin-panel">
+                    <div class="panel-head">
+                        <h2><i class="fa-solid fa-sliders" style="color: var(--admin-primary);"></i> Contact &amp; Support Configuration</h2>
+                    </div>
+                    <div class="panel-body">
+                        <form action="{{ route('admin.contact.update') }}" method="POST">
+                            @csrf
+
+                            <!-- Main Title & Description -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="contact_title">Main Heading Title</label>
+                                    <input type="text" name="contact_title" id="contact_title" class="form-control" value="{{ $contactSettings['contact_title'] }}" placeholder="Contact & Support" required>
+                                    <div class="form-help">Headline displayed above the contact info card.</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="contact_desc">Section Subtitle / Description</label>
+                                    <input type="text" name="contact_desc" id="contact_desc" class="form-control" value="{{ $contactSettings['contact_desc'] }}" placeholder="Use the details below or send us a message through the form." required>
+                                    <div class="form-help">Subtitle text explaining the contact options.</div>
+                                </div>
+                            </div>
+
+                            <!-- Email Channels -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="contact_email_title">Email Block Heading</label>
+                                    <input type="text" name="contact_email_title" id="contact_email_title" class="form-control" value="{{ $contactSettings['contact_email_title'] }}" placeholder="Email Support" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="contact_email">Support Email Address</label>
+                                    <input type="email" name="contact_email" id="contact_email" class="form-control" value="{{ $contactSettings['contact_email'] }}" placeholder="support@petmarket.com" required>
+                                    <div class="form-help">Renders with mail icon and clickable mailto link.</div>
+                                </div>
+                            </div>
+
+                            <!-- Phone Channels -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="contact_phone_title">Phone Block Heading</label>
+                                    <input type="text" name="contact_phone_title" id="contact_phone_title" class="form-control" value="{{ $contactSettings['contact_phone_title'] }}" placeholder="Phone" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="contact_phone">Support Phone / Mobile Number</label>
+                                    <input type="text" name="contact_phone" id="contact_phone" class="form-control" value="{{ $contactSettings['contact_phone'] }}" placeholder="+92 310 0865755" required>
+                                    <div class="form-help">Renders with phone icon and clickable tel link.</div>
+                                </div>
+                            </div>
+
+                            <!-- Social Media Channels -->
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+                                <div class="form-group">
+                                    <label class="form-label" for="contact_social_title">Social Section Title</label>
+                                    <input type="text" name="contact_social_title" id="contact_social_title" class="form-control" value="{{ $contactSettings['contact_social_title'] }}" placeholder="Follow Us" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="contact_facebook_url"><i class="fab fa-facebook" style="color: #1877F2;"></i> Facebook URL</label>
+                                    <input type="text" name="contact_facebook_url" id="contact_facebook_url" class="form-control" value="{{ $contactSettings['contact_facebook_url'] }}" placeholder="https://facebook.com/yourpage">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="contact_instagram_url"><i class="fab fa-instagram" style="color: #E4405F;"></i> Instagram URL</label>
+                                    <input type="text" name="contact_instagram_url" id="contact_instagram_url" class="form-control" value="{{ $contactSettings['contact_instagram_url'] }}" placeholder="https://instagram.com/yourprofile">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="contact_youtube_url"><i class="fab fa-youtube" style="color: #FF0000;"></i> YouTube URL</label>
+                                    <input type="text" name="contact_youtube_url" id="contact_youtube_url" class="form-control" value="{{ $contactSettings['contact_youtube_url'] }}" placeholder="https://youtube.com/@yourchannel">
+                                </div>
+                            </div>
+
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--admin-border);">
+                                <a href="{{ route('contact') }}" target="_blank" class="btn-admin btn-admin-secondary">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i> View Live Contact Page
+                                </a>
+                                <button type="submit" class="btn-admin btn-admin-primary">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Contact Settings
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
             <!-- TAB 2: SEO & META ENGINE -->
             @elseif($tab === 'seo')
@@ -4339,6 +4530,66 @@
                 
                 const labelInput = row.querySelector('.tier-label');
                 if (labelInput) labelInput.name = `price_ranges[${idx}][label]`;
+            });
+        }
+
+        // USER PROMPT: "ni in ko bhi dynamic kro"
+        function addQuickLink() {
+            const container = document.getElementById('quickLinksContainer');
+            if (!container) return;
+            const newIdx = container.querySelectorAll('.quick-link-row').length;
+
+            const div = document.createElement('div');
+            div.className = 'quick-link-row';
+            div.style.cssText = 'background: #FFFFFF; padding: 10px 14px; border-radius: 8px; border: 1px solid #E2E8F0; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;';
+            div.innerHTML = `
+                <div class="ql-badge" style="width: 28px; height: 28px; border-radius: 6px; background: rgba(20, 122, 77, 0.1); color: var(--admin-primary); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">
+                    ${newIdx + 1}
+                </div>
+                <div style="flex: 1; min-width: 140px;">
+                    <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Link Title / Text</label>
+                    <input type="text" name="quick_links[${newIdx}][label]" class="form-control ql-label" value="" placeholder="e.g. Help Center" required>
+                </div>
+                <div style="flex: 2; min-width: 200px;">
+                    <label class="form-label" style="font-size: 10px; margin-bottom: 2px;">Target URL / Route (e.g. /about, /contact)</label>
+                    <input type="text" name="quick_links[${newIdx}][url]" class="form-control ql-url" value="" placeholder="e.g. /help or /contact" required>
+                </div>
+                <div style="align-self: flex-end; padding-bottom: 2px;">
+                    <button type="button" class="btn-admin btn-admin-danger btn-sm" onclick="removeQuickLink(this)" title="Delete this link">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+            reindexQuickLinks();
+        }
+
+        function removeQuickLink(btn) {
+            const row = btn.closest('.quick-link-row');
+            const container = document.getElementById('quickLinksContainer');
+            if (container && container.querySelectorAll('.quick-link-row').length <= 1) {
+                alert('At least one quick link is required.');
+                return;
+            }
+            if (row) {
+                row.remove();
+                reindexQuickLinks();
+            }
+        }
+
+        function reindexQuickLinks() {
+            const container = document.getElementById('quickLinksContainer');
+            if (!container) return;
+            const rows = container.querySelectorAll('.quick-link-row');
+            rows.forEach((row, idx) => {
+                const badge = row.querySelector('.ql-badge');
+                if (badge) badge.textContent = idx + 1;
+
+                const labelInput = row.querySelector('.ql-label');
+                if (labelInput) labelInput.name = `quick_links[${idx}][label]`;
+
+                const urlInput = row.querySelector('.ql-url');
+                if (urlInput) urlInput.name = `quick_links[${idx}][url]`;
             });
         }
 

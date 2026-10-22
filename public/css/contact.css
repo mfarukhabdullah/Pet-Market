@@ -360,3 +360,167 @@
     gap: 30px;
   }
 }
+
+/* USER PROMPT: "yr msg professional way main close ho" */
+.contact-alert {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  animation: contactAlertSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.contact-alert-success {
+  background: #F0FDF4;
+  border: 1px solid #86EFAC;
+  color: #14532D;
+}
+
+.contact-alert-error {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #991B1B;
+}
+
+.contact-alert-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.contact-alert-success .contact-alert-icon-box {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.contact-alert-error .contact-alert-icon-box {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.contact-alert-content {
+  flex: 1;
+  padding-right: 8px;
+}
+
+.contact-alert-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 3px 0;
+  line-height: 1.25;
+}
+
+.contact-alert-text {
+  font-size: 13.5px;
+  margin: 0;
+  line-height: 1.45;
+  opacity: 0.92;
+}
+
+.contact-alert-close {
+  background: transparent;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  opacity: 0.55;
+  cursor: pointer;
+  padding: 0;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.contact-alert-close:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.07);
+  transform: scale(1.08);
+}
+
+.contact-alert-close:active {
+  transform: scale(0.92);
+}
+
+.contact-alert-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.contact-alert-progress-fill {
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  animation: contactAlertProgress 5s linear forwards;
+}
+
+.contact-alert-success .contact-alert-progress-fill {
+  background: #16A34A;
+}
+
+.contact-alert-error .contact-alert-progress-fill {
+  background: #DC2626;
+}
+
+.contact-alert:hover .contact-alert-progress-fill {
+  animation-play-state: paused;
+}
+
+@keyframes contactAlertSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 200px;
+  }
+}
+
+.contact-alert.closing {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.97);
+  max-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  border-width: 0 !important;
+  pointer-events: none;
+}
+
+@keyframes contactAlertProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.submit-btn.btn-success {
+  background-color: #10B981 !important;
+  color: #FFFFFF !important;
+}
+

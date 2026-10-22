@@ -354,7 +354,8 @@
                         </a>
                         <p class="home-sec-desc home-sec-desc--latest">Fresh listings recently posted by pet owners and businesses.</p>
                     </div>
-                    <button class="home-btn-outline home-btn-desktop" onclick="window.location='{{ route('category') }}'">View All</button>
+                    {{-- USER PROMPT: "is btn ka size oper waly btn ky size ky equal kro" --}}
+                    <button class="home-btn-outline home-btn-desktop" onclick="window.location='{{ route('category') }}'">View All Pets</button>
                 </div>
                 <div class="home-pets-grid">
                     @if(isset($recentListings) && $recentListings->isNotEmpty())

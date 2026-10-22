@@ -337,21 +337,35 @@ document.addEventListener('DOMContentLoaded', function() {
         notifContainer.addEventListener('mouseenter', function() {
             const pm = document.getElementById('profileDropdownMenu');
             if (pm) pm.classList.remove('show');
+            const pb = document.getElementById('profileDropdownBtn');
+            if (pb) pb.classList.remove('active');
+            const pd = document.querySelector('.user-profile-dropdown');
+            if (pd) pd.classList.remove('open');
         });
     }
+    // USER PROMPT: "yr errow move ni kr rha hai"
     const profileBtn = document.getElementById('profileDropdownBtn');
     const profileMenu = document.getElementById('profileDropdownMenu');
+    const profileDropdown = profileBtn ? profileBtn.closest('.user-profile-dropdown') : null;
     
     if (profileBtn && profileMenu) {
         profileBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             document.querySelectorAll('#bannerNotifMenu, .notif-dropdown-menu').forEach(m => m.classList.remove('show'));
-            profileMenu.classList.toggle('show');
+            const isShown = profileMenu.classList.toggle('show');
+            profileBtn.classList.toggle('active', isShown);
+            if (profileDropdown) {
+                profileDropdown.classList.toggle('open', isShown);
+            }
         });
         
         document.addEventListener('click', function(e) {
             if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
                 profileMenu.classList.remove('show');
+                profileBtn.classList.remove('active');
+                if (profileDropdown) {
+                    profileDropdown.classList.remove('open');
+                }
             }
         });
     }

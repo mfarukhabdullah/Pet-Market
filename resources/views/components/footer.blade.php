@@ -15,6 +15,8 @@
     $footerBrandDesc = \App\Models\SiteSetting::get('footer_brand_desc', 'A trusted pet marketplace connecting responsible buyers, sellers, breeders, and pet businesses in one safe and easy-to-use platform.');
     
     $footerQuickLinksTitle = \App\Models\SiteSetting::get('footer_quick_links_title', 'Quick Links');
+    // USER PROMPT: "ni in ko bhi dynamic kro"
+    $footerQuickLinks = \App\Models\SiteSetting::getQuickLinks();
     $footerCategoriesTitle = \App\Models\SiteSetting::get('footer_categories_title', 'Pet Categories');
     $footerContactTitle = \App\Models\SiteSetting::get('footer_contact_title', 'Contact & Support');
 
@@ -52,14 +54,25 @@
                 </div>
 
                 <!-- Column 2: Quick Links -->
+                {{-- USER PROMPT: "ni in ko bhi dynamic kro" --}}
                 <div class="footer-col">
                     <h4 class="footer-col-title">{{ $footerQuickLinksTitle }}</h4>
                     <ul class="footer-link-list">
-                        <li><a href="{{ route('home') }}">Home</a></li>
-                        <li><a href="{{ route('about') }}">About Us</a></li>
-                        <li><a href="{{ route('contact') }}">Contact Us</a></li>
-                        <li><a href="{{ route('category') }}">Categories</a></li>
-                        <li><a href="{{ route('breeds') }}">Breeds</a></li>
+                        @forelse($footerQuickLinks as $qlink)
+                            @php
+                                $targetUrl = $qlink['url'] ?? '#';
+                                $href = (str_starts_with($targetUrl, 'http://') || str_starts_with($targetUrl, 'https://') || str_starts_with($targetUrl, '#')) 
+                                    ? $targetUrl 
+                                    : url($targetUrl);
+                            @endphp
+                            <li><a href="{{ $href }}">{{ $qlink['label'] ?? '' }}</a></li>
+                        @empty
+                            <li><a href="{{ route('home') }}">Home</a></li>
+                            <li><a href="{{ route('about') }}">About Us</a></li>
+                            <li><a href="{{ route('contact') }}">Contact Us</a></li>
+                            <li><a href="{{ route('category') }}">Categories</a></li>
+                            <li><a href="{{ route('breeds') }}">Breeds</a></li>
+                        @endforelse
                     </ul>
                 </div>
 
