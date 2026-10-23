@@ -13,8 +13,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        // USER PROMPT: "yr jitny bhi categories ya breeds banai ha hr aik ki do listings ban kr seeder bna kr add kro with discription details images hr aik breed ki two listings"
         $this->call([
             MarketplaceSeeder::class,
+            BreedListingsSeeder::class,
         ]);
     }
 }

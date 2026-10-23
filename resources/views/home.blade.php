@@ -120,13 +120,10 @@
                     <div class="home-filter custom-dropdown-wrap" data-filter="breed" data-default="{{ $heroBreedPlaceholder }}" tabindex="0">
                         <input type="hidden" name="breed" value="">
                         <div class="home-filter-left">
-                            <!-- Green Breed Icon (DNA) -->
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14794A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M8 3v2c0 3 8 5 8 8v8"/>
-                                <path d="M16 3v2c0 3-8 5-8 8v8"/>
-                                <path d="M8 6h8"/>
-                                <path d="M10 12h4"/>
-                                <path d="M8 18h8"/>
+                            {{-- USER PROMPT: "yr icons sary filled hon" --}}
+                            <!-- Green Breed Icon (Filled DNA) -->
+                            <svg width="20" height="20" viewBox="0 0 448 512" fill="#14794A">
+                                <path d="M416 0c17.7 0 32 14.3 32 32c0 59.8-30.3 107.5-69.4 146.6c-28 28-62.5 53.5-97.3 77.4l-2.5 1.7c-11.9 8.1-23.8 16.1-35.5 23.9c0 0 0 0 0 0s0 0 0 0s0 0 0 0l-1.6 1c-6 4-11.9 7.9-17.8 11.9c-20.9 14-40.8 27.7-59.3 41.5l118.5 0c-9.8-7.4-20.1-14.7-30.7-22.1l7-4.7 3-2c15.1-10.1 30.9-20.6 46.7-31.6c25 18.1 48.9 37.3 69.4 57.7C417.7 372.5 448 420.2 448 480c0 17.7-14.3 32-32 32s-32-14.3-32-32L64 480c0 17.7-14.3 32-32 32s-32-14.3-32-32c0-59.8 30.3-107.5 69.4-146.6c28-28 62.5-53.5 97.3-77.4c-34.8-23.9-69.3-49.3-97.3-77.4C30.3 139.5 0 91.8 0 32C0 14.3 14.3 0 32 0S64 14.3 64 32l320 0c0-17.7 14.3-32 32-32zM338.6 384l-229.2 0c-10.1 10.6-18.6 21.3-25.5 32l280.2 0c-6.8-10.7-15.3-21.4-25.5-32zM109.4 128l229.2 0c10.1-10.7 18.6-21.3 25.5-32L83.9 96c6.8 10.7 15.3 21.3 25.5 32zm55.4 48c18.4 13.8 38.4 27.5 59.3 41.5c20.9-14 40.8-27.7 59.3-41.5l-118.5 0z"/>
                             </svg>
                             <div>
                                 <span class="home-filter-label">{{ $heroBreedLabel }}</span>
@@ -363,6 +360,7 @@
                             <div class="home-pet-card" id="listing-recent-{{ $pet->id }}" onclick="window.location='{{ route('pet.details', ['slug' => $pet->slug ?: $pet->id]) }}'" style="scroll-margin-top: 100px; cursor: pointer;">
                                 <div class="home-pet-media">
                                     <img src="{{ $pet->primary_image_url }}" alt="{{ $pet->title }}" class="home-pet-img" onerror="this.src='{{ asset('images/pets/golden-retriever.jpg') }}'">
+                                    {{-- USER PROMPT: "yr jo pet feature ho jay to vo koi or listing main na ay" --}}
                                     @if($pet->is_featured)
                                         <span class="home-pet-badge">FEATURED</span>
                                     @endif

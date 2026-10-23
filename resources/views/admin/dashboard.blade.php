@@ -481,6 +481,96 @@
             border-radius: 8px;
         }
 
+        /* USER PROMPT: "yr ya ui q kharab hai" */
+        /* PAGINATION STYLES */
+        .admin-pagination-wrapper,
+        nav[role="navigation"] {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 14px 24px;
+            background: #FFFFFF;
+            border-top: 1px solid var(--admin-border);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .admin-pagination-info,
+        nav[role="navigation"] p {
+            font-size: 13px;
+            color: var(--admin-text-muted);
+            margin: 0;
+        }
+
+        .admin-pagination-info strong,
+        nav[role="navigation"] p span {
+            color: var(--admin-text-main);
+            font-weight: 700;
+        }
+
+        .admin-pagination-list {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .admin-pagination-list li a,
+        .admin-pagination-list li span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            padding: 0 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--admin-text-main);
+            background: #FFFFFF;
+            border: 1px solid var(--admin-border);
+            transition: all 0.2s ease;
+        }
+
+        .admin-pagination-list li a:hover {
+            background: var(--admin-primary-light);
+            color: var(--admin-primary);
+            border-color: var(--admin-primary);
+        }
+
+        .admin-pagination-list li.active span {
+            background: var(--admin-primary);
+            color: #FFFFFF;
+            border-color: var(--admin-primary);
+            box-shadow: 0 2px 6px rgba(20, 122, 77, 0.25);
+        }
+
+        .admin-pagination-list li.disabled span {
+            color: #94A3B8;
+            background: #F8FAFC;
+            border-color: #E2E8F0;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Prevent raw/unstyled Tailwind SVGs from exploding */
+        nav[role="navigation"] svg {
+            width: 16px !important;
+            height: 16px !important;
+            max-width: 16px !important;
+            max-height: 16px !important;
+            display: inline-block;
+        }
+
+        nav[role="navigation"] .sm\:hidden {
+            display: none !important;
+        }
+
         /* FORM CONTROLS */
         .form-group {
             margin-bottom: 20px;
@@ -792,10 +882,15 @@
                     <span class="nav-pill" style="background: rgba(139, 92, 246, 0.15); color: #7C3AED; border: 1px solid rgba(139, 92, 246, 0.3);">{{ $stats['total_breeds'] }}</span>
                 </a>
             </li>
+            {{-- USER PROMPT: "jb koi seller listing bna dy pehly vo admin sy approve ho gy" --}}
             <li class="admin-nav-item {{ $tab === 'listings' ? 'active' : '' }}">
                 <a href="{{ route('admin.dashboard', ['tab' => 'listings']) }}">
                     <span class="nav-left"><i class="fa-solid fa-paw"></i> Pet Listings</span>
-                    <span class="nav-pill">{{ $stats['live_listings'] }}</span>
+                    @if($stats['pending_listings'] > 0)
+                        <span class="nav-pill nav-pill-alert" title="{{ $stats['pending_listings'] }} pending approval">{{ $stats['pending_listings'] }} Pending</span>
+                    @else
+                        <span class="nav-pill">{{ $stats['live_listings'] }}</span>
+                    @endif
                 </a>
             </li>
             {{-- USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly" --}}
@@ -1249,13 +1344,16 @@
                                 <tbody>
                                     @foreach($featuredPets as $fPet)
                                         <tr>
-                                            <td>
+                                            {{-- USER PROMPT: "ui bhi sai ni admin discriptiobn ki dot dy do aik do words ky bd" --}}
+                                            <td style="min-width: 220px; max-width: 280px;">
                                                 <div style="display:flex; align-items:center; gap:12px;">
-                                                    <img src="{{ $fPet->primary_image_url }}" alt="{{ $fPet->title }}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid #E2E8F0;">
-                                                    <div>
-                                                        <a href="{{ route('pet.details', ['slug' => $fPet->slug ?: $fPet->id]) }}" target="_blank" style="font-weight:700;color:var(--admin-text-main);text-decoration:none;">{{ $fPet->title }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;color:#94A3B8;margin-left:3px;"></i></a>
-                                                        <div style="font-size:12px;color:var(--admin-text-muted);">
-                                                            {{ $fPet->category ? $fPet->category->name : 'Pet' }} • {{ $fPet->breed_name ?: ($fPet->breed ? $fPet->breed->name : 'N/A') }}
+                                                    <img src="{{ $fPet->primary_image_url }}" alt="{{ $fPet->title }}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid #E2E8F0;flex-shrink:0;">
+                                                    <div style="min-width:0; overflow:hidden;">
+                                                        <a href="{{ route('pet.details', ['slug' => $fPet->slug ?: $fPet->id]) }}" target="_blank" style="font-weight:700;color:var(--admin-text-main);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;" title="{{ $fPet->title }}">
+                                                            {{ \Illuminate\Support\Str::words($fPet->title, 2, '...') }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;color:#94A3B8;margin-left:3px;"></i>
+                                                        </a>
+                                                        <div style="font-size:12px;color:var(--admin-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ $fPet->category ? $fPet->category->name : 'Pet' }} • {{ $fPet->breed_name ?: ($fPet->breed ? $fPet->breed->name : 'N/A') }}">
+                                                            {{ $fPet->category ? $fPet->category->name : 'Pet' }} • {{ \Illuminate\Support\Str::words($fPet->breed_name ?: ($fPet->breed ? $fPet->breed->name : 'N/A'), 2, '...') }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1354,18 +1452,23 @@
                                 <tbody>
                                     @forelse($availableLivePets as $item)
                                         <tr>
-                                            <td>
+                                            {{-- USER PROMPT: "ui bhi sai ni admin discriptiobn ki dot dy do aik do words ky bd" --}}
+                                            <td style="min-width: 220px; max-width: 280px;">
                                                 <div style="display:flex; align-items:center; gap:12px;">
-                                                    <img src="{{ $item->primary_image_url }}" alt="{{ $item->title }}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid #E2E8F0;">
-                                                    <div>
-                                                        <a href="{{ route('pet.details', ['slug' => $item->slug ?: $item->id]) }}" target="_blank" style="font-weight:700;color:var(--admin-text-main);text-decoration:none;">{{ $item->title }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;color:#94A3B8;margin-left:3px;"></i></a>
-                                                        <div style="font-size:12px;color:var(--admin-text-muted);">Listed: {{ $item->created_at->format('M d, Y') }}</div>
+                                                    <img src="{{ $item->primary_image_url }}" alt="{{ $item->title }}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid #E2E8F0;flex-shrink:0;">
+                                                    <div style="min-width:0; overflow:hidden;">
+                                                        <a href="{{ route('pet.details', ['slug' => $item->slug ?: $item->id]) }}" target="_blank" style="font-weight:700;color:var(--admin-text-main);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;" title="{{ $item->title }}">
+                                                            {{ \Illuminate\Support\Str::words($item->title, 2, '...') }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;color:#94A3B8;margin-left:3px;"></i>
+                                                        </a>
+                                                        <div style="font-size:12px;color:var(--admin-text-muted);white-space:nowrap;">Listed: {{ $item->created_at->format('M d, Y') }}</div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td style="min-width: 140px; max-width: 180px;">
                                                 <strong>{{ $item->category ? $item->category->name : 'N/A' }}</strong>
-                                                <div style="font-size:12px;color:var(--admin-text-muted);">{{ $item->breed_name ?: ($item->breed ? $item->breed->name : 'N/A') }}</div>
+                                                <div style="font-size:12px;color:var(--admin-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ $item->breed_name ?: ($item->breed ? $item->breed->name : 'N/A') }}">
+                                                    {{ \Illuminate\Support\Str::words($item->breed_name ?: ($item->breed ? $item->breed->name : 'N/A'), 2, '...') }}
+                                                </div>
                                             </td>
                                             <td>
                                                 <strong>{{ $item->user ? $item->user->name : 'N/A' }}</strong>
@@ -3669,12 +3772,15 @@
                             <tbody>
                                 @forelse($listings as $item)
                                     <tr>
-                                        <td>
+                                        {{-- USER PROMPT: "ui bhi sai ni admin discriptiobn ki dot dy do aik do words ky bd" --}}
+                                        <td style="min-width: 220px; max-width: 280px;">
                                             <div style="display:flex;align-items:center;gap:12px;">
-                                                <img src="{{ $item->primary_image_url }}" alt="" style="width:44px;height:44px;border-radius:8px;object-fit:cover;">
-                                                <div>
-                                                    <a href="{{ route('pet.details', ['slug' => $item->slug ?: $item->id]) }}" target="_blank" style="font-weight:700;color:var(--admin-text-main);text-decoration:none;">{{ $item->title }}</a>
-                                                    <div style="font-size:12px;color:var(--admin-text-muted);">{{ $item->category ? $item->category->name : 'N/A' }} • {{ $item->created_at->format('M d, Y') }}</div>
+                                                <img src="{{ $item->primary_image_url }}" alt="" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;">
+                                                <div style="min-width:0; overflow:hidden;">
+                                                    <a href="{{ route('pet.details', ['slug' => $item->slug ?: $item->id]) }}" target="_blank" style="font-weight:700;color:var(--admin-text-main);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;" title="{{ $item->title }}">
+                                                        {{ \Illuminate\Support\Str::words($item->title, 2, '...') }}
+                                                    </a>
+                                                    <div style="font-size:12px;color:var(--admin-text-muted);white-space:nowrap;">{{ $item->category ? $item->category->name : 'N/A' }} • {{ $item->created_at->format('M d, Y') }}</div>
                                                 </div>
                                             </div>
                                         </td>
@@ -3705,10 +3811,16 @@
                                         </td>
                                         <td>
                                             <div style="display:flex;gap:6px;">
+                                                {{-- USER PROMPT: "jb koi seller listing bna dy pehly vo admin sy approve ho gy" --}}
                                                 @if($item->status === 'pending')
-                                                    <form action="{{ route('admin.listings.approve', ['id' => $item->id]) }}" method="POST">
+                                                    <form action="{{ route('admin.listings.approve', ['id' => $item->id]) }}" method="POST" style="display:inline;">
                                                         @csrf
-                                                        <button type="submit" class="btn-admin btn-admin-primary btn-sm"><i class="fa-solid fa-check"></i></button>
+                                                        <button type="submit" class="btn-admin btn-admin-primary btn-sm" title="Approve Listing" style="display:flex;align-items:center;gap:4px;"><i class="fa-solid fa-check"></i> Approve</button>
+                                                    </form>
+                                                    <form action="{{ route('admin.listings.reject', ['id' => $item->id]) }}" method="POST" style="display:inline;" onsubmit="return confirm('Reject this listing?');">
+                                                        @csrf
+                                                        <input type="hidden" name="reason" value="Listing does not meet platform safety or quality standards.">
+                                                        <button type="submit" class="btn-admin btn-admin-secondary btn-sm" title="Reject Listing" style="display:flex;align-items:center;gap:4px;"><i class="fa-solid fa-xmark"></i> Reject</button>
                                                     </form>
                                                 @endif
                                                 <a href="{{ route('pet.details', ['slug' => $item->slug ?: $item->id]) }}" target="_blank" class="btn-admin btn-admin-secondary btn-sm"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>

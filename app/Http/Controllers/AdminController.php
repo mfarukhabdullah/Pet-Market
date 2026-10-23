@@ -1172,10 +1172,19 @@ class AdminController extends Controller
        LISTINGS ACTIONS
        ======================================================== */
 
+    // USER PROMPT: "jb koi seller listing bna dy pehly vo admin sy approve ho gy"
     public function approveListing($id)
     {
         $listing = Listing::findOrFail($id);
         $listing->update(['status' => 'live']);
+
+        // Invalidate cached catalog & home listings so newly approved pet appears immediately
+        \Illuminate\Support\Facades\Cache::forget('home_featured_listings');
+        \Illuminate\Support\Facades\Cache::forget('home_categories');
+        \Illuminate\Support\Facades\Cache::forget('catalog_categories_tree');
+        \Illuminate\Support\Facades\Cache::forget('catalog_all_breeds');
+        \Illuminate\Support\Facades\Cache::forget('all_category_slugs_list');
+        \Illuminate\Support\Facades\Cache::forget('all_breed_slugs_list');
 
         return redirect()->back()->with('success', "Listing '{$listing->title}' approved and is now live!");
     }

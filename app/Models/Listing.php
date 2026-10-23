@@ -141,9 +141,14 @@ class Listing extends Model
 
     public function scopeFilter($query, array $filters)
     {
-        $query->when($filters['featured'] ?? null, function ($q) {
-            $q->where('is_featured', true);
-        });
+        // USER PROMPT: "yr jo pet feature ho jay to vo koi or listing main na ay"
+        if (!empty($filters['featured'])) {
+            $query->where('is_featured', true);
+        } else {
+            $query->where(function ($q) {
+                $q->where('is_featured', false)->orWhereNull('is_featured');
+            });
+        }
 
         $query->when($filters['category'] ?? null, function ($q, $cat) {
             if ($cat === 'all' || empty($cat)) return;

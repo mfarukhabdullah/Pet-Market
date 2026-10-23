@@ -202,18 +202,22 @@ class ListingActionController extends Controller
         // Process uploaded images directly from request
         $this->processUploadedImages($request, $listing);
 
+        // USER PROMPT: "jb koi seller listing bna dy pehly vo admin sy approve ho gy"
+        $redirectTab = $listing->status === 'live' ? 'live' : 'pending';
+        $statusMsg = $listing->status === 'live' 
+            ? 'Your listing is now live!' 
+            : 'Your listing has been submitted for admin approval and will go live once reviewed.';
+
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => $listing->status === 'live' 
-                    ? 'Your listing is now live!' 
-                    : 'Your listing has been submitted for admin moderation.',
+                'message' => $statusMsg,
                 'listing' => $listing->load('images'),
-                'redirect_url' => route('seller.listings'),
+                'redirect_url' => route('seller.listings', ['tab' => $redirectTab]),
             ]);
         }
 
-        return redirect()->route('seller.listings')->with('success', 'Listing submitted successfully!');
+        return redirect()->route('seller.listings', ['tab' => $redirectTab])->with('success', $statusMsg);
     }
 
     /**

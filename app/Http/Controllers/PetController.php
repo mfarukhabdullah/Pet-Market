@@ -39,6 +39,17 @@ class PetController extends Controller
             abort(404, 'Pet listing not found');
         }
 
+        // USER PROMPT: "jb koi seller listing bna dy pehly vo admin sy approve ho gy"
+        if ($listing->status !== 'live') {
+            $currentUser = auth()->user();
+            $isAdmin = session('admin_logged_in') || ($currentUser && $currentUser->role === 'admin');
+            $isOwner = $currentUser && $currentUser->id === $listing->user_id;
+
+            if (!$isAdmin && !$isOwner) {
+                abort(404, 'Pet listing is awaiting admin approval.');
+            }
+        }
+
         // Increment views count (atomic)
         $listing->increment('views_count');
 

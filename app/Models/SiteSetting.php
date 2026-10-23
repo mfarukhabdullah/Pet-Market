@@ -307,8 +307,8 @@ class SiteSetting extends Model
             'site_support_phone' => ['value' => '+92 300 1234567', 'group' => 'general'],
             'site_whatsapp' => ['value' => '+92 300 1234567', 'group' => 'general'],
             'site_city_default' => ['value' => 'Lahore', 'group' => 'general'],
-            // USER PROMPT: "yr mera ya flow ho ga ab user ay ga vo signup kry ga agr vo pet  sell jo krta hao vo show hon is ky ilawa koi dummy data show pets na hon jo vo listing bany vohi sirf show hon"
-            'site_auto_approve_listings' => ['value' => '1', 'group' => 'general'],
+            // USER PROMPT: "jb koi seller listing bna dy pehly vo admin sy approve ho gy"
+            'site_auto_approve_listings' => ['value' => '0', 'group' => 'general'],
 
             // USER PROMPT: "admin panne main feture pets ka option do jis main admin apni mzarzi sy pet ko feature main daly"
             'featured_sec_title' => ['value' => 'Featured Pets', 'group' => 'featured_pets'],

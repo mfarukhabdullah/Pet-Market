@@ -287,8 +287,12 @@ class CategoryController extends Controller
         // Build listings query
         $query = Listing::live()->with(['images', 'category', 'breed', 'user']);
 
-        // Apply filters
-        $isFeatured = $request->boolean('featured') || $request->query('featured') === 'true' || $request->query('featured') === '1';
+        // USER PROMPT: "yr jo pet feature ho jay to vo koi or listing main na ay"
+        // Apply filters: featured pets are isolated to featured views only
+        $isFeatured = $request->boolean('featured') 
+            || $request->query('featured') === 'true' 
+            || $request->query('featured') === '1' 
+            || optional($request->route())->getName() === 'featured.pets';
 
         // When a category is requested, strictly filter by its ID. If not found, use -1 so no other pets leak through.
         $categoryFilterId = null;

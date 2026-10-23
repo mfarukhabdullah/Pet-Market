@@ -43,13 +43,14 @@ class ListingService
 
     /**
      * Submit listing for publishing.
-     * Verified sellers get immediate live listing, unverified go to pending approval.
+     * All seller listings require admin approval before going live.
      */
-    // USER PROMPT: "yr mera ya flow ho ga ab user ay ga vo signup kry ga agr vo pet  sell jo krta hao vo show hon is ky ilawa koi dummy data show pets na hon jo vo listing bany vohi sirf show hon"
+    // USER PROMPT: "jb koi seller listing bna dy pehly vo admin sy approve ho gy"
     public function publishListing(User $seller, ?int $listingId = null, array $finalData = []): Listing
     {
-        $autoApprove = \App\Models\SiteSetting::get('site_auto_approve_listings', '1') !== '0';
-        $newStatus = ($seller->is_verified || $autoApprove) ? 'live' : 'pending';
+        // USER PROMPT: "jb koi seller listing bna dy pehly vo admin sy approve ho gy"
+        $autoApprove = \App\Models\SiteSetting::get('site_auto_approve_listings', '0') === '1';
+        $newStatus = $autoApprove ? 'live' : 'pending';
         $finalData['status'] = $newStatus;
 
         \Illuminate\Support\Facades\Cache::forget('home_featured_listings');

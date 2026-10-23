@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // USER PROMPT: "yr ya ui q kharab hai"
+        \Illuminate\Pagination\Paginator::defaultView('vendor.pagination.custom');
     }
 }

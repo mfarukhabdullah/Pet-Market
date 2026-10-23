@@ -1317,16 +1317,16 @@
             </div>
 
             <!-- Form Area (Success Step) -->
-            {{-- USER PROMPT: "in my listing page if user want to edit his pet listing we wil navigate him to create listing page do edit his listing" --}}
+            {{-- USER PROMPT: "jb koi seller listing bna dy pehly vo admin sy approve ho gy" --}}
             <div class="form-card form-step" id="step-success">
                 <div class="success-content">
                     <div class="success-icon">
-                        <i class="fa-solid fa-check"></i>
+                        <i class="fa-solid fa-clock-rotate-left" style="color: #F59E0B;"></i>
                     </div>
-                    <div class="success-title">{{ isset($editingListing) ? 'Listing Updated!' : 'Listing Submitted' }}</div>
-                    <div class="success-subtitle">{{ isset($editingListing) ? 'Your listing changes have been saved.' : 'Your listing has been submitted for moderation and is now Pending Review.' }}</div>
+                    <div class="success-title">{{ isset($editingListing) ? 'Listing Submitted for Approval!' : 'Listing Submitted for Approval!' }}</div>
+                    <div class="success-subtitle">{{ isset($editingListing) ? 'Your listing changes have been submitted for admin approval and will go live once approved.' : 'Your listing has been submitted and is currently Pending Review. It will go live on the marketplace once approved by the admin.' }}</div>
                     <div class="success-actions">
-                        <button type="button" class="btn-primary" onclick="window.location.href='{{ route('seller.listings') }}'">View My Listings</button>
+                        <button type="button" class="btn-primary" onclick="window.location.href='{{ route('seller.listings', ['tab' => 'pending']) }}'">View Pending Listings</button>
                         <button type="button" class="btn-outline" onclick="window.location.href='{{ route('seller.create-listing') }}'">Create Another Listing</button>
                     </div>
                 </div>
@@ -1886,16 +1886,18 @@
             })
             .then(r => r.json())
             .then(data => {
-                const msg = (typeof editingListingId !== 'undefined' && editingListingId)
-                    ? 'Listing updated successfully!'
-                    : 'Listing submitted successfully for review!';
+                // USER PROMPT: "jb koi seller listing bna dy pehly vo admin sy approve ho gy"
+                const msg = (data && data.message) ? data.message : ((typeof editingListingId !== 'undefined' && editingListingId)
+                    ? 'Listing updated and submitted for admin approval!'
+                    : 'Listing submitted successfully! Awaiting admin approval.');
                 showListingToast(msg, 'success');
                 goToStep('success', true);
             })
             .catch(err => {
+                // USER PROMPT: "jb koi seller listing bna dy pehly vo admin sy approve ho gy"
                 const msg = (typeof editingListingId !== 'undefined' && editingListingId)
-                    ? 'Listing updated successfully!'
-                    : 'Listing submitted successfully!';
+                    ? 'Listing updated and submitted for admin approval!'
+                    : 'Listing submitted successfully! Awaiting admin approval.';
                 showListingToast(msg, 'success');
                 goToStep('success', true);
             })

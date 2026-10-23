@@ -43,8 +43,12 @@ class HomeController extends Controller
                 ->get();
         });
 
-        // Recent live listings
+        // USER PROMPT: "yr jo pet feature ho jay to vo koi or listing main na ay"
+        // Recent live listings (exclude featured listings so they only appear in Featured section)
         $recentListings = Listing::live()
+            ->where(function ($q) {
+                $q->where('is_featured', false)->orWhereNull('is_featured');
+            })
             ->with(['images', 'category', 'breed', 'user'])
             ->latest()
             ->take(8)
