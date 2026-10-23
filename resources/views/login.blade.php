@@ -76,22 +76,16 @@
             color: #0e5e39;
         }
 
+        /* USER PROMPT: "yr ya cartonic ni koi or lgao" */
         .login-image-side {
             width: 472px;
             position: relative;
             flex-shrink: 0;
             align-self: stretch;
-        }
-
-        .login-image-side::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(180deg, rgba(12, 94, 58, 0.06) 0%, rgba(12, 94, 58, 0.18) 100%);
-            pointer-events: none;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
 
         .login-image-side img {
@@ -101,6 +95,78 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center 20%;
+        }
+
+        .auth-info-overlay {
+            position: relative;
+            z-index: 2;
+            padding: 24px;
+            background: linear-gradient(180deg, rgba(14, 94, 57, 0) 0%, rgba(10, 48, 29, 0.45) 30%, rgba(8, 38, 23, 0.88) 100%);
+        }
+
+        .auth-info-card {
+            background: rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 16px;
+            padding: 16px 18px;
+            color: #ffffff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .auth-info-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #147A4D;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+        }
+
+        .auth-info-tag i {
+            color: #4ade80;
+            font-size: 11px;
+        }
+
+        .auth-info-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.35;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-info-features {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .auth-info-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-info-feature-item i {
+            color: #4ade80;
+            font-size: 12px;
+            width: 14px;
+            text-align: center;
         }
 
         .login-form-side {
@@ -336,8 +402,31 @@
             <a href="{{ route('home') }}" class="close-auth-btn" aria-label="Close">
                 <i class="fa-solid fa-xmark"></i>
             </a>
+            {{-- USER PROMPT: "yr ya cartonic ni koi or lgao" --}}
             <div class="login-image-side">
-                <img src="{{ asset('images/login-img.png') }}" alt="Welcome Back Pet">
+                <img src="{{ asset('images/auth-realistic.jpg') }}" alt="Pet Marketplace - Verified & Trusted Pet Care">
+                <div class="auth-info-overlay">
+                    <div class="auth-info-card">
+                        <div class="auth-info-tag">
+                            <i class="fa-solid fa-circle-check"></i> Verified Community
+                        </div>
+                        <div class="auth-info-title">Connecting Loving Homes With Healthy Pets</div>
+                        <div class="auth-info-features">
+                            <div class="auth-info-feature-item">
+                                <i class="fa-solid fa-shield-heart"></i>
+                                <span>100% Verified Breeders & Sellers</span>
+                            </div>
+                            <div class="auth-info-feature-item">
+                                <i class="fa-solid fa-file-waveform"></i>
+                                <span>Health Checked & Vaccinated Pets</span>
+                            </div>
+                            <div class="auth-info-feature-item">
+                                <i class="fa-solid fa-comments"></i>
+                                <span>Direct Chat with Verified Owners</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="login-form-side">
